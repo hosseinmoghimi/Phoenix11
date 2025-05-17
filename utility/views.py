@@ -32,16 +32,17 @@ class IndexView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
-# Create your views here.
+# Create your views here. 
+
+
+
 
 class ParametersView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
-
+        context['WIDE_LAYOUT']=True
         context['phoenix_apps']=phoenix_apps
-        return render(request,TEMPLATE_ROOT+"parameters.html",context)
-# Create your views here.
+
+        return render(request,TEMPLATE_ROOT+"parameters.html",context) 
+
+ 

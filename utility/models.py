@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 from phoenix.settings import ADMIN_URL,STATIC_URL,MEDIA_URL
 from django.shortcuts import reverse 
 from .calendar import PersianCalendar
-
+from .apps import APP_NAME
 
 
 class DateHelper():
@@ -125,15 +125,59 @@ class LinkHelper():
         """
 
 
+ 
+
+ 
 
 class Parameter(models.Model):
-    name=models.CharField(_("name"),max_length=100)
-    value=models.CharField((_("value")),max_length=500)  
+    app_name = models.CharField(_("app_name"), max_length=50)
+    name = models.CharField(_("نام پارامتر (تغییر ندهید)"), max_length=50)
+    origin_value = models.CharField(
+        _("مقدار پارامتر"), null=True, blank=True, max_length=50000)
+    class_name = "parameter"
+
+    @property
+    def value(self):
+        if self.origin_value is None:
+            return ''
+        return self.origin_value
+
+    @property
+    def boolean_value(self):
+        if self.origin_value is None:
+            return False
+        if self.origin_value == 'True':
+            return True
+        if self.origin_value == '1':
+            return True
+        if self.origin_value == 'true':
+            return True
+        if self.origin_value == 'بله':
+            return True
+        if self.origin_value == 'درست':
+            return True
+        if self.origin_value == 'آری':
+            return True
+        return False
 
     class Meta:
         verbose_name = _("Parameter")
         verbose_name_plural = _("Parameters")
 
     def __str__(self):
-        return self.name
- 
+        return self.app_name+":"+self.name
+
+    def get_edit_url(self):
+        return f"{ADMIN_URL}{APP_NAME}/parameter/{self.pk}/change/"
+
+    def get_delete_url(self):
+        return f"{ADMIN_URL}{APP_NAME}/parameter/{self.pk}/delete/"
+
+    def get_edit_btn(self):
+        return f"""
+            <a title="ویرایش" target="_blank" href="{self.get_edit_url()}">
+                <i class="fa fa-edit text-info mx-2"></i>
+            </a>
+        """
+
+
