@@ -6,10 +6,15 @@ from datetime import datetime, timedelta
 from .log import leolog
 
 class PersianCalendar():
-    def __init__(self,*args, **kwargs):
-        self.gdate_time=datetime.now()
-        if 'gdate_time' in kwargs:
-            self.gdate_time=kwargs['gdate_time']
+    def __init__(self,gdate_time=None,*args, **kwargs):
+
+        
+
+        if gdate_time is not None:
+            self.gdate_time=gdate_time
+        else:
+            self.gdate_time=datetime.now()
+
 
         self.date_time=""
         self.fromgregorian()
@@ -27,16 +32,7 @@ class PersianCalendar():
             self.second=0
 
 
-    def fromgregorian(self,*args, **kwargs): 
-        # if 'gdate_time' in kwargs:
-        #     self.gdate_time=kwargs['gdate_time']
-        
-        
-
-        #     H=self.gdate_time.hour
-        #     mm=self.gdate_time.minute
-        #     s=self.gdate_time.second
-
+    def fromgregorian(self,*args, **kwargs):  
             
         self.hour=self.gdate_time.hour
         self.minute=self.gdate_time.minute
@@ -50,8 +46,19 @@ class PersianCalendar():
         mm=self.gdate_time.minute
         s=self.gdate_time.second
    
+   
         self.date_time=(jdatetime.date.fromgregorian(day=D,month=M,year=Y,hour=H,minute=mm,second=s))
-        return self
+ 
+        if 'end_date' in kwargs:
+            self.hour=23
+            self.minute=59
+            self.second=59
+        if 'start_date' in kwargs:
+            self.hour=0
+            self.minute=0
+            self.second=0
+
+        return str(self)
 
 
     def __str__(self): 
