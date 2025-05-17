@@ -6,4 +6,7 @@ app_name=APP_NAME
 urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"), 
+    path('set_parameter/',login_required(views.ParametersView.as_view()),name="set_parameter"), 
+    path('get_parameters/',login_required(views.ParametersView.as_view()),name="get_parameters"), 
+    path('parameters/',login_required(views.ParametersView.as_view()),name="parameters"), 
 ]

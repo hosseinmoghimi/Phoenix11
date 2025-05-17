@@ -1,0 +1,163 @@
+{% extends "utility/layout.html" %}
+
+{% block content %}
+<div class="row rtl" id="parameters-app">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">
+                انتخاب اپ
+            </div>
+            <div class="card-body">
+                {% for phoenix_app in phoenix_apps %}
+                <div class="my-2">
+
+                    <button class="btn btn-block btn-{{phoenix_app.color}}"
+                    @click="get_parameters('{{phoenix_app.name}}')">{{phoenix_app.title}}</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">
+                پارامتر ها </div>
+            <div class="card-body">
+                <template v-for="parameter in parameters">
+
+                    <parameter-component :parameter="parameter">
+                        
+                    </parameter-component>
+                </template>
+                <hr>
+                <form v-if="app_name.length>0 && false" @submit.prevent="add_parameter()">
+                    <div class="row rtl">
+                        <div class="col-9">
+
+                            <div class="form-group">
+                                <label for="">
+                                    نام پارامتر جدید
+                                </label>
+                                <input type="text" class="form-control" v-model="new_parameter.name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="">
+                                    مقدار پارامتر جدید
+                                   
+                                </label>
+                                <input type="text" class="form-control" v-model="new_parameter.value">
+                            </div>
+                            
+                        </div>
+                        <div class="col-3">
+                            <button type="submit" class="btn btn-success">تایید</button>
+                        </div>
+                    </div>
+                </form>
+                <hr>
+                <div>
+                    فونت های فارسی :
+                    <span class="mx-2">Casablanca</span>
+                    <span class="mx-2">Fanoos</span>
+                    <span class="mx-2">Farnaz</span>
+                    <span class="mx-2">Shabnam</span>
+                    <span class="mx-2">Tanha</span>
+                    <span class="mx-2">Vazir</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock content %}
+
+
+{% block script %} 
+<script>
+
+    let parameter_component_template = `{% include "utility/includes/parameter-app/component.html" %}`
+    let parameter_component = Vue.component('parameter-component', {
+        data: function () {
+            return {
+                saved:false,
+                waiting:false,
+            }
+        },
+        methods: {
+
+            set_parameter: function () {
+                let saved=this.saved
+                this.waiting=true
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    name: this.parameter.name,
+                    value: this.parameter.value,
+                    app_name: this.parameter.app_name,
+                } 
+                let url = "{% url 'utility:set_parameter' %}"
+                let posting = $.post(url, payload)
+                waiting=true
+                parameter_component1=this
+                posting.done(data => {  
+                    parameter_component1.saved=true 
+                    parameter_component1.waiting=false
+                    setTimeout(() => {
+                        parameter_component1.saved=false 
+                    }, 2000);
+                })
+            },
+        },
+        props: ['parameter'],
+        template: parameter_component_template,
+    })
+
+    let parameters_app = new Vue({
+        el: "#parameters-app",
+        data: {
+            parameters: [],
+            new_parameter: { name: "-", value: "-" },
+            app_name: "",
+        },
+        components: {
+            parameter_component,
+        },
+        methods: {
+            get_parameters: function (app_name) {
+                this.app_name = app_name
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    app_name: app_name
+                }
+                let url = "{% url 'utility:get_parameters' %}"
+                console.log(payload)
+                let posting = $.post(url, payload)
+                posting.done(data => {
+                    console.log(data)
+                    parameters_app.parameters = data.parameters
+                })
+            },
+            add_parameter: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    app_name: this.app_name,
+                    name: this.new_parameter.name,
+                    value: this.new_parameter.value,
+                }
+                let url = "{% url 'utility:set_parameter' %}"
+                console.log(payload)
+                let posting = $.post(url, payload)
+                posting.done(data => {
+                    console.log(data)
+                    if (data.result === "SUCCEED") {
+                        parameters_app.parameters.push(data.parameter)
+                    }
+                })
+            }
+        },
+    })
+</script>
+{% endblock script %}
