@@ -5,7 +5,7 @@ from django.views import View
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
- 
+from utility.calendar import PersianCalendar
 
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='core/'
@@ -25,10 +25,14 @@ def CoreContext(app_name,request,*args, **kwargs):
     context['ADMIN_URL']=ADMIN_URL
     context['SITE_URL']=SITE_URL
     context['STATIC_URL']=STATIC_URL
-    # current_datetime=PersianCalendar().persian_date
-    current_datetime='14040225'
+    
+    persian_date=PersianCalendar() 
+
+    current_date=persian_date.to_date()
+    current_datetime=persian_date.to_datetime() 
+
     context['current_datetime']=current_datetime
-    context['current_date']=current_datetime[:10]
+    context['current_date']=current_date
 
     context['phoenix_apps']=phoenix_apps
     

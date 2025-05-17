@@ -58,9 +58,11 @@
       {% include "market/includes/supplier-app/navbar.html" %}
       {% endif %}
 
-       
+      {% if auth_navbar %}
       {% include "authentication/includes/navbar.html" %}
-       
+      {% endif %}
+
+        
       {% if me_customer %}
       {% include "market/includes/customer-app/navbar.html" %}
       {% endif %}
@@ -69,8 +71,8 @@
 
       {% if warehouse_navbar %}
       {% include "warehouse/includes/navbar.html" %}
-      
       {% endif %}
+      
     </ul>
     <form class="form-inline my-2 my-lg-0" method="POST" action="{{SITE_URL}}{{APP_NAME}}/search/">
       {% csrf_token %}
