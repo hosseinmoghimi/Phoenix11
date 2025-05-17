@@ -1,7 +1,7 @@
 django
 pillow
 django-tinymce
-djangorestframework
+djangorestframeworkp
 django-cleanup
 openpyxl
 qrcode
