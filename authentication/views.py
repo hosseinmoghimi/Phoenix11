@@ -9,7 +9,7 @@ from utility.calendar import PersianCalendar
 from core.views import CoreContext 
 
 LAYOUT_PARENT='phoenix/layout.html'
-TEMPLATE_ROOT='accounting/'
+TEMPLATE_ROOT='authentication/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
