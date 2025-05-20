@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from .models import page
+from .models import Page
 
 
-class pageSerializer(serializers.ModelSerializer):
+class PageSerializer(serializers.ModelSerializer):
     class Meta:
-        model=page
+        model=Page
         fields=['id','unit_price', 'get_edit_url','get_delete_url']
  
