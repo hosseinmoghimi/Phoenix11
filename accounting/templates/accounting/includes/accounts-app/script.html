@@ -1,0 +1,18 @@
+<script>
+    
+    let accounts_for_accounts_app=JSON.parse("{{accounts_s|escapejs}}")
+    let accounts_app = new Vue({
+        el: "#accounts-app",
+        data: {
+            accounts: accounts_for_accounts_app
+        },
+        methods: {
+            to_price: function(vall) {
+                let color="primary"
+                if(vall>0)color="success"
+                if(vall<0)color="danger"
+                return "<span class='text-"+color+"'>"+to_price(vall)+"</span>"
+            }
+        }
+    })
+</script>

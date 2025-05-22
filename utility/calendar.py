@@ -5,6 +5,71 @@ from zoneinfo import ZoneInfo
 from datetime import datetime, timedelta
 from .log import leolog
 
+
+
+HOURS_OFFSET=3
+MINUTES_OFFSET=30
+
+
+DAY_LIGHT_SAVING=False
+def to_persian_datetime_tag(value,*args, **kwargs):
+    if 'pure_text' in kwargs and kwargs['pure_text']==True:
+        return f"""
+        {date_} {time_}
+        """
+    try:    
+        a=str(PersianCalendar().from_gregorian(value))
+        date_=a[:10]
+        time_=a[11:]
+        greg=value.strftime("%Y/%m/%d %H:%M:%S") 
+        return f"""<span class="ltr" title="{greg}">{date_} <small class="mx-1 text-muted">{time_}</small></span>"""
+    except:
+        return ""
+
+PERSIAN_MONTH_NAMES=[
+'',
+'فروردین',
+'اردیبهشت',
+'خرداد',
+'تیر',
+'مرداد',
+'شهریور',
+'مهر',
+'آبان',
+'آذر',
+ 'دی',
+ 'بهمن',
+ 'اسفند'
+]
+
+class DateHelper():
+    def persian_start_date(self):
+        return PersianCalendar().from_gregorian(self.start_date)[:10]
+    def persian_start_datetime(self):
+        return PersianCalendar().from_gregorian(self.start_datetime)
+    def persian_date_added(self):
+        return PersianCalendar().from_gregorian(self.date_added)
+    def persian_end_date(self):
+        return PersianCalendar().from_gregorian(self.end_date)[:10]
+    def persian_end_datetime(self):
+        return PersianCalendar().from_gregorian(self.end_datetime)
+    def persian_date(self):
+        return PersianCalendar().from_gregorian(self.date)[:10]
+    
+
+
+def to_persian_month_name(month):
+    # return PERSIAN_MONTH_NAMES[month]
+    if month>-1 and month<12:
+        return PERSIAN_MONTH_NAMES[month]
+    return "نامعتبر"
+
+def days_in_month(year,month,day=1):
+    nn=JalaliDate(year=year,month=month,day=day)
+    return nn.daysinmonth
+
+
+
 class PersianCalendar():
     def __init__(self,gdate_time=None,*args, **kwargs):
 
