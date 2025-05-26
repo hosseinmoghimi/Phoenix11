@@ -39,8 +39,8 @@ class Account(models.Model,LinkHelper):
     app_name=APP_NAME
 
     class Meta:
-        verbose_name = _("Account")
-        verbose_name_plural = _("Accounts")
+        verbose_name = _("حساب")
+        verbose_name_plural = _("حساب ها")
 
     def __str__(self):
         return f'{self.code}-l{self.level} - {self.type} - {self.name}'
@@ -69,7 +69,7 @@ class Account(models.Model,LinkHelper):
         if self.parent is None:
             self.level=0
         else:
-            self.level=self.parent+1
+            self.level=self.parent.level+1
     
         result=SUCCEED
         message="موفقیت آمیز"
@@ -211,8 +211,8 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
         return self.tax_amount+self.amount
 
     class Meta:
-        verbose_name = _("Event")
-        verbose_name_plural = _("Events")
+        verbose_name = _("رویداد مالی")
+        verbose_name_plural = _("رویداد های مالی")
 
     def __str__(self):
         return f"{self.title} , {self.bedehkar},  {self.bestankar} , {to_price(self.amount)}"
@@ -229,3 +229,54 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
             self.app_name=APP_NAME
         return super(FinancialEvent,self).save()
 
+class InvoiceLineItem(models.Model,LinkHelper):
+    name=models.CharField(_("name"), max_length=50)
+    class_name="invoicelineitem"
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("InvoiceLineItem")
+        verbose_name_plural = _("InvoiceLineItems")
+
+    def __str__(self):
+        return self.name
+ 
+
+
+
+class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
+    invoice_line_item=models.ForeignKey("invoicelineitem", verbose_name=_("invoicelineitem"), on_delete=models.CASCADE)
+    unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices, max_length=50)
+    coef=models.FloatField(_("coef"),default=1)
+    unit_price=models.IntegerField(_("unit_price"),default=1)
+    date_added=models.DateTimeField(_("تاریخ "), auto_now=False, auto_now_add=True)
+
+    class_name="invoicelineitemunit"
+    app_name=APP_NAME
+
+    class Meta:
+        verbose_name = _("InvoiceLineItemUnit")
+        verbose_name_plural = _("InvoiceLineItemUnits")
+
+    def __str__(self):
+        return f"{self.invoice_line_item}   {self.unit_name}"
+    
+class Product(InvoiceLineItem):
+
+    
+    class_name="product"
+    app_name=APP_NAME
+
+    class Meta:
+        verbose_name = _("Product")
+        verbose_name_plural = _("Products")
+ 
+class Service(InvoiceLineItem):
+
+    
+    class_name="service"
+    app_name=APP_NAME
+
+    class Meta:
+        verbose_name = _("Service")
+        verbose_name_plural = _("Services")
+ 

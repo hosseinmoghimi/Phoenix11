@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext as _
 from django.conf import settings
+from utility.models import LinkHelper
 
 
 
@@ -14,4 +15,4 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.full_name
- 
+  

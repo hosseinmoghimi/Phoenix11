@@ -14,8 +14,11 @@ NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
 
 
-def CoreContext(app_name,request,*args, **kwargs):
+def CoreContext(request,*args, **kwargs):
     context={}
+    app_name='core'
+    if 'app_name' in kwargs:
+        app_name=kwargs['app_name']
     context['APP_NAME']=app_name
     context['DEBUG']=DEBUG
     # me_profile=ProfileRepo(request=request).me
@@ -25,6 +28,7 @@ def CoreContext(app_name,request,*args, **kwargs):
     context['ADMIN_URL']=ADMIN_URL
     context['SITE_URL']=SITE_URL
     context['STATIC_URL']=STATIC_URL
+    context['SITE_URL']=SITE_URL
     
     persian_date=PersianCalendar() 
 
