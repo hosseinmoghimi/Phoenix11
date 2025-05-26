@@ -2,16 +2,18 @@ from django.db import models
 from .apps import APP_NAME
 from django.utils.translation import gettext as _
 from utility.qrcode import generate_qrcode
+from utility.repo import ParameterRepo
 from utility.enums import *
 from .constants import *
 from utility.constants import FAILED,SUCCEED
-from utility.currency import to_price_colored
+from utility.currency import to_price_colored,to_price
 from .enums import *
 from utility.calendar import PersianCalendar
 from utility.models import LinkHelper,ImageHelper,DateTimeHelper
 from tinymce.models import HTMLField
 from django.shortcuts import reverse
 from django.core.files.storage import FileSystemStorage
+from core.models import Event as CoreEvent
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_URL,MEDIA_URL,ADMIN_URL,FULL_SITE_URL
 IMAGE_FOLDER = "images/"
 from .settings_on_server import  NO_DUPLICATED_ACCOUNT_NAME,NO_DUPLICATED_ACCOUNT_CODE
@@ -168,4 +170,62 @@ class Account(models.Model,LinkHelper):
         if self.parent is None:
             return self.name
         return self.parent.full_name+ACCOUNT_NAME_SEPERATOR+self.name
+
+
+
+
+class EventCategory(models.Model,LinkHelper):
+    class_name="eventcategory"
+    app_name=APP_NAME
+    title=models.CharField(_("title"), max_length=50)
+    color_origin=models.CharField(_("color"),choices=ColorEnum.choices,null=True,blank=True, max_length=50)
+    @property
+    def color(self):
+        if self.color_origin:
+            return self.color_origin
+        if self.title=="هزینه":
+            return "danger"
+        return 'primary'
+    class Meta:
+        verbose_name = 'EventCategory'
+        verbose_name_plural = 'EventCategories' 
+    def __str__(self):
+        return self.title
+ 
+
+class FinancialEvent(CoreEvent,DateTimeHelper):
+    bedehkar=models.ForeignKey("account", related_name="bedehkar_events",verbose_name=_("دریافت کننده"), on_delete=models.PROTECT)
+    bestankar=models.ForeignKey("account",related_name="bestankar_events", verbose_name=_("پرداخت کننده"), on_delete=models.PROTECT)
+    creator=models.ForeignKey("authentication.profile",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
+    category=models.ForeignKey("eventcategory",null=True,blank=True, verbose_name=_("دسته بندی"), on_delete=models.SET_NULL)
+    tax_percent=models.IntegerField(_("درصد مالیات"),default=-1)
+    amount=models.IntegerField(_("مبلغ"),default=0)
+    discount=models.IntegerField(_("تخفیف"),default=0)
+    payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
+      
+    @property
+    def tax_amount(self):
+        return self.amount*self.tax_percent/100
+    @property
+    def sum_total(self):
+        return self.tax_amount+self.amount
+
+    class Meta:
+        verbose_name = _("Event")
+        verbose_name_plural = _("Events")
+
+    def __str__(self):
+        return f"{self.title} , {self.bedehkar},  {self.bestankar} , {to_price(self.amount)}"
+ 
+    
+
+    def save(self,*args, **kwargs):
+        if self.tax_percent is None or self.tax_percent==-1:
+            TAX_PERCENT=ParameterRepo(request=None,app_name=APP_NAME,forced=True).parameter(name="درصد پیش فرض مالیات برای رویدادها",default=10).int_value
+            self.tax_percent=TAX_PERCENT
+        if self.class_name is None or self.class_name=="":
+            self.class_name="financialevent"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(FinancialEvent,self).save()
 

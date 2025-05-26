@@ -39,8 +39,8 @@ class DateTimeHelper(DateHelper):
         return PersianCalendar().from_gregorian(self.datetime_added) 
     def persian_document_datetime(self):
         return PersianCalendar().from_gregorian(self.document_datetime)
-    
- 
+    def persian_event_datetime(self):
+        return PersianCalendar().from_gregorian(self.event_datetime)
 
 class ImageHelper:
     @property
@@ -141,6 +141,14 @@ class Parameter(models.Model):
         if self.origin_value is None:
             return ''
         return self.origin_value
+    
+    
+    @property
+    def int_value(self):
+        if self.origin_value is None:
+            return 0
+        return int(self.origin_value)
+
 
     @property
     def boolean_value(self):

@@ -2,9 +2,14 @@ from phoenix.server_settings import CURRENCY
 from django import template
 from utility.constants import TUMAN,RIAL
 register = template.Library()
-from utility.currency import to_price as to_price_origin,separate as separate_origin
+from utility.currency import separate as separate_origin,to_price as to_price_origin,separate as separate_origin
 from utility.num import to_horuf as to_horuf_num,to_tartib as to_tartib_
 from utility.log import leolog
+
+@register.filter
+def separate(value,*args, **kwargs):
+    return separate_origin(value=value)
+
 
 @register.filter
 def to_price(value,*args, **kwargs):

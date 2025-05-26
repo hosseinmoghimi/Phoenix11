@@ -73,3 +73,41 @@ class Page(models.Model,LinkHelper,ImageHelper):
     def get_absolute_url(self):
         return reverse(self.app_name+":"+self.class_name,kwargs={'pk':self.pk})
 
+
+class Event(Page):
+    status=models.CharField(_("وضعیت"),choices=EventStatusEnum.choices,default=EventStatusEnum.DRAFT, max_length=50)
+    event_datetime = models.DateTimeField(
+        _("event_datetime"), auto_now=False, auto_now_add=False)
+    start_datetime = models.DateTimeField(
+        _("start_datetime"),null=True,blank=True, auto_now=False, auto_now_add=False)
+    end_datetime = models.DateTimeField(
+        _("end_datetime"),null=True,blank=True, auto_now=False, auto_now_add=False)
+    # adder=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        if self.app_name is None:
+            self.app_name = APP_NAME
+        if self.class_name is None:
+            self.class_name = "event"
+        return super(Event, self).save(*args, **kwargs)
+
+    def persian_event_datetime(self):
+        return PersianCalendar().from_gregorian(self.event_datetime)
+
+    def persian_start_datetime(self):
+        return PersianCalendar().from_gregorian(self.start_datetime)
+
+    def persian_end_datetime(self):
+        return PersianCalendar().from_gregorian(self.end_datetime)
+
+    def start_datetime2(self):
+        return self.start_datetime.strftime("%Y-%m-%d %H:%M")
+
+    def end_datetime2(self):
+        return self.end_datetime.strftime("%Y-%m-%d %H:%M")
+
+    class Meta:
+        verbose_name = _("Event")
+        verbose_name_plural = _("رویداد ها")
+
+    
