@@ -26,7 +26,8 @@ class Account(models.Model,LinkHelper):
     nature=models.CharField(_("ماهیت"),choices=AccountNatureEnum.choices,default=AccountNatureEnum.FREE, max_length=50)
     description=models.CharField(_("description"),null=True,blank=True, max_length=500)
     logo_origin=models.ImageField(_("logo"),blank=True,null=True, upload_to=IMAGE_FOLDER+"account", height_field=None, width_field=None, max_length=None)
-    priority=models.IntegerField(default=100)
+    level=models.IntegerField(_("level"))
+    priority=models.IntegerField(_("priority"),default=100)
     bedehkar=models.IntegerField(_("bedehkar"),default=0)
     bestankar=models.IntegerField(_("bestankar"),default=0)
     balance=models.IntegerField("balance",default=0)
@@ -45,12 +46,7 @@ class Account(models.Model,LinkHelper):
             return f"""
                     <a href="{self.get_absolute_url()}" class="ml-2 text-{self.color}"><span>{self.code}</span> {self.name} <span class="badge badge-{self.color}">{self.type}</span></a>
                     """
-    
-    @property
-    def level(self):
-        if self.parent is None:
-            return 0
-        return self.parent.level+1
+     
 
     def childs(self):
         return self.account_set.all()
@@ -67,6 +63,12 @@ class Account(models.Model,LinkHelper):
         # return f"""<span>{self.parent.get_breadcrumb_link()}</span>{ACCOUNT_NAME_SEPERATOR}<span>{self.get_link()}</span>"""
 
     def save(self): 
+        
+        if self.parent is None:
+            self.level=0
+        else:
+            self.level=self.parent+1
+    
         result=SUCCEED
         message="موفقیت آمیز"
         if NO_DUPLICATED_ACCOUNT_NAME and len(Account.objects.filter(name=self.name).exclude(pk=self.pk))>0:
