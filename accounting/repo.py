@@ -1,4 +1,4 @@
-from .models import Account
+from .models import Account,Product,Service,FinancialEvent
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo 
@@ -220,4 +220,156 @@ class AccountRepo():
             account.nature=kwargs["nature"]
         (result,message,account)=account.save()
         return result,message,account
+
+
+
+class ProductRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.request=request
+        self.me=None
+        # profile=ProfileRepo(request=request).me
+        self.objects=Product.objects
+        # if profile is not None:
+        #     self.me=self.objects.filter(profile=profile).first()
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+
+            objects=objects.filter(Q(title__contains=search_for))
+        return objects.all()
+    
+    def add_product_to_category(self,*args, **kwargs):
+        
+        result,message,category,product_categories=FAILED,"",None,[]
+        if not self.request.user.has_perm(APP_NAME+".change_product"):
+            message="دسترسی غیر مجاز"
+            return result,message,category,product_categories
+        
+
+        product=Product.objects.filter(pk=kwargs['product_id']).first()
+        category=Category.objects.filter(pk=kwargs['category_id']).first()
+        if category is not None and product is not None:
+            if product in category.products.all():
+                category.products.remove(product.id)
+                message="حذف شد"
+            else:
+                category.products.add(product.id)
+                message="اضافه شد"
+            result=SUCCEED
+            product_categories=product.category_set.all()
+        return result,message,category,product_categories
+       
+    def product(self,*args, **kwargs):
+        if "product_id" in kwargs and kwargs["product_id"] is not None:
+            return self.objects.filter(pk=kwargs['product_id']).first() 
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        if "code" in kwargs and kwargs["code"] is not None:
+            return self.objects.filter(code=kwargs['code']).first()
+             
+        if "barcode" in kwargs and kwargs["barcode"] is not None:
+            a= self.objects.filter(barcode=kwargs['barcode']).first() 
+            return a 
+           
+    def add_product(self,*args,**kwargs):
+        result,message,product=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_product"):
+            message="دسترسی غیر مجاز"
+            return result,message,product
+        if len(Product.objects.filter(title=kwargs["title"]))>0:
+            message="نام تکراری برای کالای جدید"
+            return result,message,product
+
+        product=Product() 
+
+        if 'title' in kwargs:
+            product.title=kwargs["title"]
+        if 'unit_price' in kwargs:
+            product.unit_price=kwargs["unit_price"]
+        if 'unit_price' in kwargs:
+            product.unit_price=kwargs["unit_price"]
+            
+        if 'barcode' in kwargs and kwargs["barcode"] is not None and not kwargs["barcode"]=="":
+            product.barcode=kwargs["barcode"]
+        
+        if 'unit_name' in kwargs:
+            product.unit_name=kwargs["unit_name"]
+
+            
+        if product.barcode is not None and len(product.barcode)>0:
+            
+            if len(Product.objects.filter(barcode=product.barcode))>0:
+                message="بارکد تکراری برای کالای جدید"
+                return result,message,None
+
+        (result,message,product)=product.save()
+        if 'category_id' in kwargs:
+            category_id=kwargs["category_id"]
+            category=Category.objects.filter(pk=category_id).first()
+            if category is not None:
+                category.products.add(product.id)
+        coef=1
+        if 'coef' in kwargs:
+            coef=kwargs["coef"]
+        if product.unit_price>0:
+            ProductUnitRepo(request=self.request).add_product_unit(product_id=product.id,unit_price=product.unit_price,unit_name=product.unit_name,coef=coef)
+        return result,message,product
+ 
+
+    def import_products_from_excel(self,*args,**kwargs):
+        result,message,products=FAILED,"",[]
+        excel_file=kwargs['excel_file']
+        # import pandas
+        
+        # df = pandas.read_excel(excel_file)
+        # products=[]
+        # for row in df.columns[0]:
+        #     print (df.columns)
+        import openpyxl 
+
+        wb = openpyxl.load_workbook(excel_file)
+        ws = wb.active
+        count=kwargs['count']
+        products_to_import=[]
+
+        for i in range(2,count+2):
+            product={}
+            product['id']=ws['A'+str(i)].value
+            product['title']=ws['B'+str(i)].value
+            product['code']=ws['C'+str(i)].value
+            product['unit_name']=ws['D'+str(i)].value
+            product['unit_price']=ws['E'+str(i)].value
+            product['thumbnail_origin']=ws['F'+str(i)].value
+            # product['thumbnail_origin']=ws['F'+str(i)].value
+            if product['title'] is not None and not product['title']=="":
+                products_to_import.append(product) 
+        modified=added=0
+        for product in products_to_import:
+            old_product=Product.objects.filter(title=product["title"]).filter(code=product["code"]).first()
+            if old_product is not None:
+                old_product.title=product["title"]
+                old_product.unit_name=product["unit_name"]
+                old_product.thumbnail_origin=product["thumbnail_origin"]
+                old_product.unit_price=product["unit_price"] 
+                # old_product.thumbnail_origin=product["thumbnail_origin"] 
+                old_product.save()
+                modified+=1
+            else:
+                new_product=Product()
+                new_product.title=product["title"]
+                new_product.barcode=product["code"]
+                new_product.unit_name=product["unit_name"]
+                new_product.unit_price=product["unit_price"] 
+                new_product.save()
+                added+=1
+        result=SUCCEED
+        message=f"""{added} محصول اضافه شد.
+                    <br>
+                    {modified} محصول ویرایش شد. """
+
+        return result,message,products
 

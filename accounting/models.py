@@ -13,7 +13,7 @@ from utility.models import LinkHelper,ImageHelper,DateTimeHelper
 from tinymce.models import HTMLField
 from django.shortcuts import reverse
 from django.core.files.storage import FileSystemStorage
-from core.models import Event as CoreEvent
+from core.models import Event as CoreEvent,Page as CorePage
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_URL,MEDIA_URL,ADMIN_URL,FULL_SITE_URL
 IMAGE_FOLDER = "images/"
 from .settings_on_server import  NO_DUPLICATED_ACCOUNT_NAME,NO_DUPLICATED_ACCOUNT_CODE
@@ -229,23 +229,19 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
             self.app_name=APP_NAME
         return super(FinancialEvent,self).save()
 
-class InvoiceLineItem(models.Model,LinkHelper):
-    name=models.CharField(_("name"), max_length=50)
+class InvoiceLineItem(CorePage,LinkHelper):
     class_name="invoicelineitem"
     app_name=APP_NAME
     class Meta:
         verbose_name = _("InvoiceLineItem")
         verbose_name_plural = _("InvoiceLineItems")
-
-    def __str__(self):
-        return self.name
  
 
 
 
 class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     invoice_line_item=models.ForeignKey("invoicelineitem", verbose_name=_("invoicelineitem"), on_delete=models.CASCADE)
-    unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices, max_length=50)
+    unit_barcodename=models.CharField(_("unit_name"),choices=UnitNameEnum.choices, max_length=50)
     coef=models.FloatField(_("coef"),default=1)
     unit_price=models.IntegerField(_("unit_price"),default=1)
     date_added=models.DateTimeField(_("تاریخ "), auto_now=False, auto_now_add=True)
@@ -261,10 +257,17 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
         return f"{self.invoice_line_item}   {self.unit_name}"
     
 class Product(InvoiceLineItem):
-
+    barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=50)
     
     class_name="product"
     app_name=APP_NAME
+    def save(self):
+        if self.class_name is None or self.class_name=="":
+            self.class_name="product"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Product,self).save()
+
 
     class Meta:
         verbose_name = _("Product")
@@ -280,3 +283,9 @@ class Service(InvoiceLineItem):
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
  
+    def save(self):
+        if self.class_name is None or self.class_name=="":
+            self.class_name="service"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        super(Service,self).save()
