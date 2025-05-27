@@ -22,12 +22,12 @@ def to_price(value,unit=CURRENCY,*args, **kwargs):
             value=0-value
             sign='- '
         a=separate(value)
-        stringed_number= sign+a+' '+unit
+        stringed_number= sign+a #+' '+unit
     except:
         stringed_number= " مقدار عددی نامعتبر"
     if 'color' in kwargs and value<0:
         return f"""
-            <span class="danger">{stringed_number}<span>
+            <span class="danger">{  }<span>
         """
     return stringed_number
 

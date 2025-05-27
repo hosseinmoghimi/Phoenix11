@@ -6,7 +6,7 @@ from utility.repo import ParameterRepo
 from utility.enums import *
 from .constants import *
 from utility.constants import FAILED,SUCCEED
-from utility.currency import to_price_colored,to_price
+from utility.currency import to_price_colored,to_price,CURRENCY
 from .enums import *
 from utility.calendar import PersianCalendar
 from utility.models import LinkHelper,ImageHelper,DateTimeHelper
@@ -241,7 +241,7 @@ class InvoiceLineItem(CorePage,LinkHelper):
 
 class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     invoice_line_item=models.ForeignKey("invoicelineitem", verbose_name=_("invoicelineitem"), on_delete=models.CASCADE)
-    unit_barcodename=models.CharField(_("unit_name"),choices=UnitNameEnum.choices, max_length=50)
+    unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices, max_length=50)
     coef=models.FloatField(_("coef"),default=1)
     unit_price=models.IntegerField(_("unit_price"),default=1)
     date_added=models.DateTimeField(_("تاریخ "), auto_now=False, auto_now_add=True)
@@ -254,7 +254,7 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
         verbose_name_plural = _("InvoiceLineItemUnits")
 
     def __str__(self):
-        return f"{self.invoice_line_item}   {self.unit_name}"
+        return f"{self.invoice_line_item}  # هر {self.unit_name}  {to_price(self.unit_price)} {CURRENCY}"
     
 class Product(InvoiceLineItem):
     barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=50)
