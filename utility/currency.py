@@ -27,7 +27,7 @@ def to_price(value,unit=CURRENCY,*args, **kwargs):
         stringed_number= " مقدار عددی نامعتبر"
     if 'color' in kwargs and value<0:
         return f"""
-            <span class="danger">{  }<span>
+            <span class="danger">{stringed_number}<span>
         """
     return stringed_number
 

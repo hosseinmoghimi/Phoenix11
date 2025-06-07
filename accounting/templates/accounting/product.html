@@ -2,41 +2,27 @@
 {% block content %}
 <div class="row rtl farsi">
      
-    {% if add_product_form %}
-    <div class="col-md-6">
-        {% include "accounting/includes/add-product-app/template.html" %}
-    </div>
-    {% endif %}
-    {% if import_products_from_excel_form %}
+    <div class="col-12">
+       
+                {% include "accounting/includes/product-app/card.html" %}
 
-    <div class="col-md-6">
-        {% include "accounting/includes/import-products-from-excel/template.html" %}
     </div>
-    {% endif %}
     <div class="col-md-12 ">
-        {% include "accounting/includes/products-app/list-template.html" %}
     </div>
     
 </div>
 {% endblock content %}
 
 {% block script %}
+{% include "accounting/includes/product-app/script.html" %}
 <script>
     
-   
+   const product_id=parseInt("{{product.id}}")
     
 
 </script> 
 
-{% include "accounting/includes/products-app/list-script.html" %}
-{% if add_product_form %}
-{% include "accounting/includes/add-product-app/script.html" %}
-{% endif %}
+ 
 
-{% if import_products_from_excel_form %}
 
-<div class="col-md-6">
-    {% include "accounting/includes/import-products-from-excel/script.html" %}
-</div>
-{% endif %}
 {% endblock script %}

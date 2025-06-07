@@ -1,4 +1,4 @@
-from .models import Account,Product,Service,FinancialEvent
+from .models import Account,Product,Service,FinancialEvent,Invoice
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo 
@@ -269,7 +269,7 @@ class ProductRepo():
         if "id" in kwargs and kwargs["id"] is not None:
             return self.objects.filter(pk=kwargs['id']).first() 
         if "code" in kwargs and kwargs["code"] is not None:
-            return self.objects.filter(code=kwargs['code']).first()
+            return self.objects.filter(barcode=kwargs['code']).first()
              
         if "barcode" in kwargs and kwargs["barcode"] is not None:
             a= self.objects.filter(barcode=kwargs['barcode']).first() 
@@ -372,4 +372,66 @@ class ProductRepo():
                     {modified} محصول ویرایش شد. """
 
         return result,message,products
+
+
+
+class InvoiceRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=Invoice.objects.filter(id=0)
+        profile=ProfileRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_invoice"):
+                self.objects=Invoice.objects
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            codeee=str(filter_number(search_for))
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.all()
+       
+    def roots(self,*args, **kwargs):
+        objects=self.objects.filter(parent_id=None)
+        return objects.all()
+
+    def invoice(self,*args, **kwargs):
+        if "invoice_id" in kwargs and kwargs["invoice_id"] is not None:
+            return self.objects.filter(pk=kwargs['invoice_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+         
+       
+
+    def add_invoice(self,*args,**kwargs):
+        result,message,invoice=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_invoice"):
+            message="دسترسی غیر مجاز"
+            return result,message,invoice
+
+        invoice=Account()
+        if 'name' in kwargs:
+            invoice.name=kwargs["name"]
+        if 'parent_id' in kwargs:
+            if kwargs["parent_id"]>0:
+                invoice.parent_id=kwargs["parent_id"]
+        if 'color' in kwargs:
+            invoice.color=kwargs["color"]
+        if 'code' in kwargs:
+            invoice.code=kwargs["code"]
+        if 'priority' in kwargs:
+            invoice.priority=kwargs["priority"]
+        if 'type' in kwargs:
+            invoice.type=kwargs["type"]
+
+           
+        (result,message,invoice)=invoice.save()
+        return result,message,invoice
 

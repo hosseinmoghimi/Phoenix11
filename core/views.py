@@ -1,11 +1,12 @@
 from django.shortcuts import render
-from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-
+from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,CURRENCY
+from authentication.repo import ProfileRepo
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
+from utility.log import leolog
 
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='core/'
@@ -21,15 +22,16 @@ def CoreContext(request,*args, **kwargs):
         app_name=kwargs['app_name']
     context['APP_NAME']=app_name
     context['DEBUG']=DEBUG
-    # me_profile=ProfileRepo(request=request).me
-    # if me_profile is not None:
-    #     context['me_profile']=me_profile
-        # context['profile']=me_profile
+    me_profile=ProfileRepo(request=request).me
+    if me_profile is not None:
+        context['me_profile']=me_profile
+        context['profile']=me_profile
     context['ADMIN_URL']=ADMIN_URL
     context['SITE_URL']=SITE_URL
     context['STATIC_URL']=STATIC_URL
     context['SITE_URL']=SITE_URL
     
+    context['CURRENCY']=CURRENCY
     persian_date=PersianCalendar() 
 
     current_date=persian_date.to_date()
@@ -61,8 +63,27 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 
+def PageContext(request,page,*args, **kwargs):
+    context={}
+    context['page']=page
+    profile=ProfileRepo(request=request).me
+    context.update(PageLikesContext(request=request,page=page,profile=profile))
+     
+    return context
 
- 
+def PageLikesContext(request,page,profile):
+    context={}
+    likes_count=5
+    my_like = page.my_like(profile=profile)
+    context['my_like']=my_like
+    context['likes_count']=likes_count  
+    if profile is not None:
+        context['toggle_page_like_form']=TogglePageLikeForm()
+    context['page']=page
+    return context
+
+
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

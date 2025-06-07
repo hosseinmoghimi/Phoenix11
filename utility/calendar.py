@@ -73,8 +73,6 @@ def days_in_month(year,month,day=1):
 class PersianCalendar():
     def __init__(self,gdate_time=None,*args, **kwargs):
 
-        
-
         if gdate_time is not None:
             self.gdate_time=gdate_time
         else:

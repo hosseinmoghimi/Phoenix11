@@ -171,41 +171,54 @@ class Account(models.Model,LinkHelper):
             return self.name
         return self.parent.full_name+ACCOUNT_NAME_SEPERATOR+self.name
 
+class Person(models.Model):
+    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.PROTECT)
 
-
-
-class EventCategory(models.Model,LinkHelper):
-    class_name="eventcategory"
-    app_name=APP_NAME
-    title=models.CharField(_("title"), max_length=50)
-    color_origin=models.CharField(_("color"),choices=ColorEnum.choices,null=True,blank=True, max_length=50)
-    @property
-    def color(self):
-        if self.color_origin:
-            return self.color_origin
-        if self.title=="هزینه":
-            return "danger"
-        return 'primary'
     class Meta:
-        verbose_name = 'EventCategory'
-        verbose_name_plural = 'EventCategories' 
+        verbose_name = _("Person")
+        verbose_name_plural = _("اشخاص")
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("Person_detail", kwargs={"pk": self.pk})
+
+class PersonAccount(Account):
+    person=models.ForeignKey("person", verbose_name=_("person"), on_delete=models.PROTECT)
+    category=models.ForeignKey("personaccountcategory", verbose_name=_("person account category"), on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name = _("PersonAccount")
+        verbose_name_plural = _("حساب های اشخاص")
+ 
+class PersonAccountCategory(models.Model):
+    title=models.CharField(_("title"), max_length=50)
+
+    class_name="personaccountcategory"
+    app_name=APP_NAME
+
+    class Meta:
+        verbose_name = _("PersonAccountCategory")
+        verbose_name_plural = _("دسته بندی حساب های اشخاص")
+
     def __str__(self):
         return self.title
  
+
 
 class FinancialEvent(CoreEvent,DateTimeHelper):
     bedehkar=models.ForeignKey("account", related_name="bedehkar_events",verbose_name=_("دریافت کننده"), on_delete=models.PROTECT)
     bestankar=models.ForeignKey("account",related_name="bestankar_events", verbose_name=_("پرداخت کننده"), on_delete=models.PROTECT)
     creator=models.ForeignKey("authentication.profile",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
-    category=models.ForeignKey("eventcategory",null=True,blank=True, verbose_name=_("دسته بندی"), on_delete=models.SET_NULL)
-    tax_percent=models.IntegerField(_("درصد مالیات"),default=-1)
+    tax_percentage=models.IntegerField(_("درصد مالیات"),default=-1)
     amount=models.IntegerField(_("مبلغ"),default=0)
-    discount=models.IntegerField(_("تخفیف"),default=0)
+    discount_percentage=models.IntegerField(_("درصد تخفیف"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
       
     @property
     def tax_amount(self):
-        return self.amount*self.tax_percent/100
+        return self.amount*self.tax_percentage/100
     @property
     def sum_total(self):
         return self.tax_amount+self.amount
@@ -215,12 +228,12 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
         verbose_name_plural = _("رویداد های مالی")
 
     def __str__(self):
-        return f"{self.title} , {self.bedehkar},  {self.bestankar} , {to_price(self.amount)}"
+        return f"{self.title} , {self.bedehkar},  {self.bestankar} , {to_price(self.amount)} {CURRENCY}"
  
     
 
     def save(self,*args, **kwargs):
-        if self.tax_percent is None or self.tax_percent==-1:
+        if self.tax_percentage is None or self.tax_percentage==-1:
             TAX_PERCENT=ParameterRepo(request=None,app_name=APP_NAME,forced=True).parameter(name="درصد پیش فرض مالیات برای رویدادها",default=10).int_value
             self.tax_percent=TAX_PERCENT
         if self.class_name is None or self.class_name=="":
@@ -271,7 +284,7 @@ class Product(InvoiceLineItem):
 
     class Meta:
         verbose_name = _("Product")
-        verbose_name_plural = _("Products")
+        verbose_name_plural = _("کالا ها")
  
 class Service(InvoiceLineItem):
 
@@ -281,7 +294,7 @@ class Service(InvoiceLineItem):
 
     class Meta:
         verbose_name = _("Service")
-        verbose_name_plural = _("Services")
+        verbose_name_plural = _("خدمات")
  
     def save(self):
         if self.class_name is None or self.class_name=="":
@@ -289,3 +302,36 @@ class Service(InvoiceLineItem):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         super(Service,self).save()
+
+
+class Invoice(FinancialEvent):
+    
+    
+
+    class Meta:
+        verbose_name = _("Invoice")
+        verbose_name_plural = _("فاکتور ها")
+
+ 
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name="invoice"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Invoice,self).save()
+
+class InvoiceLine(models.Model):
+    invoice=models.ForeignKey("invoice", verbose_name=_("invoice"), on_delete=models.PROTECT)
+    invoice_line_item=models.ForeignKey("invoicelineitem", verbose_name=_("invoice_line_item"), on_delete=models.PROTECT)
+    row=models.IntegerField(_("row      "))
+    quantity=models.IntegerField(_("quantity"))
+    unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices, max_length=50)
+    unit_price=models.IntegerField(_("unit_price"))
+    discount_percentage=models.IntegerField(_("discount_percentage"))
+    tax_amount=models.IntegerField(_("tax_amount"))
+    description=models.CharField(_("description"),null=True,blank=True, max_length=5000)
+    class Meta:
+        verbose_name = _("InvoiceLine")
+        verbose_name_plural = _("سطر های فاکتور ها")
+
+ 

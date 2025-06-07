@@ -1,14 +1,15 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 
+from django.http import Http404
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
-from core.views import CoreContext 
-from .repo import AccountRepo,ProductRepo
-from .serializers import AccountSerializer,ProductSerializer
+from core.views import CoreContext,PageContext
+from .repo import AccountRepo,ProductRepo,InvoiceRepo
+from .serializers import AccountSerializer,ProductSerializer,InvoiceSerializer
 from utility.currency import to_price_colored
 import json 
 from .models import UnitNameEnum
@@ -331,15 +332,21 @@ class ProductsView(View):
         context[WIDE_LAYOUT]=True
         return render(request,TEMPLATE_ROOT+"products.html",context) 
     
-
+def ProductContext(request,product,*args, **kwargs):
+    context={}
+    context.update(PageContext(request=request,page=product))
+    context["product"]=product
+    return context
 
 class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
+        product=ProductRepo(request=request).product(*args, **kwargs)
+        if product is None:
+            raise Http404
+        
+
+        context.update(ProductContext(request=request,product=product))
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"product.html",context)
@@ -430,4 +437,26 @@ class ExportProductsToExcelView(View):
         message_view.title = 'دسترسی غیر مجاز'
        
         return message_view.get(request=request)
+
+
+
+class InvoicesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        invoices=InvoiceRepo(request=request).list()
+        invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
+        context['invoices']=invoices
+        context['invoices_s']=invoices_s
+        context['WIDE_LAYOUT']=True
+        return render(request,TEMPLATE_ROOT+"invoices.html",context)
+
+
+class InvoiceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        invoices=InvoiceRepo(request=request).list()
+        context['invoices']=invoices
+        invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
+        context['invoices_s']=invoices_s
+        return render(request,TEMPLATE_ROOT+"invoice.html",context)
 

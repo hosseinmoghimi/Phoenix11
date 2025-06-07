@@ -37,6 +37,8 @@ class DateTimeHelper(DateHelper):
         return PersianCalendar().from_gregorian(self.print_datetime)
     def persian_datetime_added(self):
         return PersianCalendar().from_gregorian(self.datetime_added) 
+    def persian_date_added(self):
+        return PersianCalendar().from_gregorian(self.date_added) 
     def persian_document_datetime(self):
         return PersianCalendar().from_gregorian(self.document_datetime)
     def persian_event_datetime(self):

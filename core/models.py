@@ -29,6 +29,16 @@ class Page(models.Model,LinkHelper,ImageHelper):
     header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'ImageBase/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
     color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY,max_length=50)
     
+    def my_like(self,*args, **kwargs):
+        profile_id=0
+        if 'profile_id' in kwargs:
+            profile_id=kwargs['profile_id']
+        if 'profile' in kwargs:
+            profile=kwargs['profile']
+            profile_id=profile.id
+        
+        my_likes=Like.objects.filter(page_id=self.id).filter(profile_id=profile_id)
+        return len(my_likes)>0
 
     def save(self):
         if self.class_name is None or self.class_name=="":
@@ -68,14 +78,35 @@ class Page(models.Model,LinkHelper,ImageHelper):
             content=FULL_SITE_URL[0:-1]+self.get_absolute_url()
             generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
         return f"{QRCODE_URL}{file_name}"
-
-
+    @property
+    def likes_count(self):
+        return len(Like.objects.filter(page_id=self.pk))
     def get_absolute_url(self):
         return reverse(self.app_name+":"+self.class_name,kwargs={'pk':self.pk})
 
 
+class EventCategory(models.Model,LinkHelper):
+    class_name="eventcategory"
+    app_name=APP_NAME
+    title=models.CharField(_("title"), max_length=50)
+    color_origin=models.CharField(_("color"),choices=ColorEnum.choices,null=True,blank=True, max_length=50)
+    @property
+    def color(self):
+        if self.color_origin:
+            return self.color_origin
+        if self.title=="هزینه":
+            return "danger"
+        return 'primary'
+    class Meta:
+        verbose_name = 'EventCategory'
+        verbose_name_plural = 'دسته بندی رویداد ها' 
+    def __str__(self):
+        return self.title
+ 
+
 class Event(Page):
     status=models.CharField(_("وضعیت"),choices=EventStatusEnum.choices,default=EventStatusEnum.DRAFT, max_length=50)
+    category=models.ForeignKey("eventcategory",null=True,blank=True, verbose_name=_("دسته بندی"), on_delete=models.SET_NULL)
     event_datetime = models.DateTimeField(
         _("event_datetime"), auto_now=False, auto_now_add=False)
     start_datetime = models.DateTimeField(
@@ -92,13 +123,13 @@ class Event(Page):
         return super(Event, self).save(*args, **kwargs)
 
     def persian_event_datetime(self):
-        return PersianCalendar().from_gregorian(self.event_datetime)
+        return PersianCalendar(gdate_time=self.event_datetime).fromgregorian()
 
     def persian_start_datetime(self):
-        return PersianCalendar().from_gregorian(self.start_datetime)
+        return PersianCalendar(gdate_time=self.start_datetime).fromgregorian()
 
     def persian_end_datetime(self):
-        return PersianCalendar().from_gregorian(self.end_datetime)
+        return PersianCalendar(gdate_time=self.end_datetime).fromgregorian()
 
     def start_datetime2(self):
         return self.start_datetime.strftime("%Y-%m-%d %H:%M")
@@ -110,4 +141,29 @@ class Event(Page):
         verbose_name = _("Event")
         verbose_name_plural = _("رویداد ها")
 
+class Comment(models.Model,DateTimeHelper):
+    page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
+    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    comment=HTMLField(verbose_name="comment")
+    datetime_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Comment")
+        verbose_name_plural = _("Comments")
+
+    def __str__(self):
+        return f"{self.profile} : {self.page}"
     
+
+class Like(models.Model,DateTimeHelper):
+    page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
+    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    datetime_added=models.DateTimeField(_("datetime_added"), auto_now=False, auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Like")
+        verbose_name_plural = _("Likes")
+
+    def __str__(self):
+        return f" {self.profile.full_name} @ {self.page.title}"
+

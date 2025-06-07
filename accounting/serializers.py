@@ -1,12 +1,19 @@
 from rest_framework import serializers
-from .models import Account,Product
-
+from .models import Account,Product,Invoice
 
 
 class AccountSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
         fields = ['id','name','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+
+class InvoiceSerializer(serializers.ModelSerializer):
+       bedehkar=AccountSerializer()
+       bestankar=AccountSerializer()
+       class Meta:
+        model = Invoice
+        fields = ['id','title','bedehkar' ,'bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
+
 
 class ProductSerializer(serializers.ModelSerializer):
        class Meta:
