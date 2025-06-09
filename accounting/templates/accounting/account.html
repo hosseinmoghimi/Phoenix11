@@ -3,16 +3,15 @@
 
 {% block content %}
 <div class="row rtl farsi">
-       
-
-   <div class="col-md-12">
-    <div class="card">
-            
-        <div class="card-body">
-
-        </div>
+    <div class="col-md-4">
+        {% include "accounting/includes/account-app/card.html" %}
     </div>
-   </div>
+
+     <div class="col-md-12">
+        {% include "accounting/includes/accounts-app/template.html" %}
+    </div>
+
+     
 
 
 </div>
@@ -20,5 +19,6 @@
 
 
 {% block script %}
+        {% include "accounting/includes/accounts-app/script.html" %}
 
 {% endblock script %}

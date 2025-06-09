@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Account,Product,Invoice,FinancialEvent as Event
+from .models import Account,Product,Invoice,FinancialEvent,AccountingDocumentLine
+
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -15,12 +16,18 @@ class InvoiceSerializer(serializers.ModelSerializer):
         fields = ['id','title','bedehkar' ,'bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
 
 
-class EventSerializer(serializers.ModelSerializer):
+class FinancialEventSerializer(serializers.ModelSerializer):
        bedehkar=AccountSerializer()
        bestankar=AccountSerializer()
        class Meta:
-        model = Event
+        model = FinancialEvent
         fields = ['id','title','bedehkar' ,'bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
+
+
+class AccountingDocumentLineSerializer(serializers.ModelSerializer):
+       class Meta:
+        model = AccountingDocumentLine
+        fields = ['id','get_absolute_url','get_edit_url','get_delete_url']
 
 
 

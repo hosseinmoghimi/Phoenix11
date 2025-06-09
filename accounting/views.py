@@ -8,8 +8,8 @@ from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
-from .repo import AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo
-from .serializers import AccountSerializer,ProductSerializer,InvoiceSerializer,EventSerializer
+from .repo import AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo,AccountingDocumentLineRepo
+from .serializers import AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,AccountingDocumentLineSerializer
 from utility.currency import to_price_colored
 import json 
 from .models import UnitNameEnum
@@ -53,7 +53,7 @@ def EventContext(request,event,*args,**kwargs):
     
     context['add_event_accounting_document_line_form']=AddEventAccountingDocumentLineForm()
     context['event']=event
-    event_s=json.dumps(EventSerializer(event).data)
+    event_s=json.dumps(FinancialEventSerializer(event).data)
     context['event_s']=event_s
 
     
@@ -108,10 +108,10 @@ def AccountContext(request,account,*args, **kwargs):
 
 
     
-    events=FinancialEventRepo(request=request).list(account_code=account.code)
-    events_s=json.dumps(EventSerializer(events,many=True).data)
-    context['events']=events
-    context['events_s']=events_s 
+    financial_events=FinancialEventRepo(request=request).list(account_code=account.code)
+    financial_events_s=json.dumps(FinancialEventSerializer(financial_events,many=True).data)
+    context['financial_events']=financial_events
+    context['financial_events_s']=financial_events_s 
 
 
 
@@ -314,12 +314,11 @@ class AccountsView(View):
 class AccountView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
-
-        context['phoenix_apps']=phoenix_apps
+        account=AccountRepo(request=request).account(*args, **kwargs)
+        if account is None:
+            raise Http404
+        context.update(AccountContext(request=request,account=account))
+ 
         return render(request,TEMPLATE_ROOT+"account.html",context)
 
 
