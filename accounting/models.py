@@ -19,6 +19,7 @@ IMAGE_FOLDER = "images/"
 from .settings_on_server import  NO_DUPLICATED_ACCOUNT_NAME,NO_DUPLICATED_ACCOUNT_CODE
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 
+
 class Account(models.Model,LinkHelper):
     parent=models.ForeignKey("account", verbose_name=_("parent"),null=True,blank=True, on_delete=models.CASCADE)
     name=models.CharField(_("name"), max_length=50)
@@ -171,27 +172,76 @@ class Account(models.Model,LinkHelper):
             return self.name
         return self.parent.full_name+ACCOUNT_NAME_SEPERATOR+self.name
 
+
 class Person(models.Model):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.PROTECT)
+    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.PROTECT)
+    code=models.CharField(_("code"), max_length=50)
+    prefix=models.CharField(_("پیشوند"),default=PersonPrefixEnum.MR,choices=PersonPrefixEnum.choices, max_length=50)
+    first_name=models.CharField(_("نام"), max_length=50)
+    last_name=models.CharField(_("نام خانوادگی"), max_length=50)
+    mobile=models.CharField(_("شماره همراه"),null=True,blank=True, max_length=50)
+    email=models.CharField(_("email"),null=True,blank=True, max_length=50)
+    bio=models.CharField(_("بیو"),null=True,blank=True, max_length=50)
+    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=50)
+    full_name=models.CharField(_("full_name"),null=True,blank=True, max_length=150)
+    image_origin=models.ImageField(_("تصویر"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/", height_field=None, width_field=None, max_length=None)
+    gender=models.CharField(_("جنسیت"),choices=GenderEnum.choices,default=GenderEnum.MALE, max_length=50)
+    type2=models.CharField(_("نوع"),choices=PersonType2Enum.choices,default=PersonType2Enum.HAGHIGHI, max_length=50)
+    type=models.CharField(_("ماهیت"),choices=PersonTypeEnum.choices,default=PersonTypeEnum.FREE, max_length=50)
+    melli_code=models.CharField(_("کد ملی"), max_length=10)
+
+
 
     class Meta:
         verbose_name = _("Person")
         verbose_name_plural = _("اشخاص")
 
+   
+    @property
+    def full_name_(self):
+        full_name=""
+        if self.prefix:
+            full_name=self.prefix
+            
+        if len(full_name)>0:
+            full_name+=" "
+           
+        if self.first_name:
+            full_name+=self.first_name 
+
+            
+            
+        if len(full_name)>0:
+            full_name+=" "
+           
+        if self.last_name:
+            full_name+=self.last_name 
+
+        return full_name
+
+
+
     def __str__(self):
-        return self.name
+        return self.full_name
 
-    def get_absolute_url(self):
-        return reverse("Person_detail", kwargs={"pk": self.pk})
+   
 
-class PersonAccount(Account):
-    person=models.ForeignKey("person", verbose_name=_("person"), on_delete=models.PROTECT)
-    category=models.ForeignKey("personaccountcategory", verbose_name=_("person account category"), on_delete=models.PROTECT)
+    def save(self,*args, **kwargs):
+        result,message,person=FAILED,"",None
+        # others=Person.objects.exclude(pk=self.pk)
+        # if others.filter(code=self.code).first() is not None:
+        #     message="کد تکراری می باشد."
+        #     return result,message,person
+        # self.
+        # 
+        self.full_name=self.full_name_
+        super(Person,self).save()
+        result=SUCCEED
+        message=" با موفقیت اضافه گردید."
+        person=self
+        return result,message,person    
 
-    class Meta:
-        verbose_name = _("PersonAccount")
-        verbose_name_plural = _("حساب های اشخاص")
- 
+
 class PersonAccountCategory(models.Model):
     title=models.CharField(_("title"), max_length=50)
 
@@ -204,7 +254,235 @@ class PersonAccountCategory(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class PersonAccount(Account):
+    person=models.ForeignKey("person", verbose_name=_("person"), on_delete=models.PROTECT)
+    person_category=models.ForeignKey("personcategory", verbose_name=_("person_category"), on_delete=models.PROTECT)
+    
+    
+    class_name='personaccount'
+    app_name=APP_NAME
+
+    @property
+    def category(self):
+        return self.person_category.title    
+
  
+        
+    class Meta:
+        verbose_name = _("PersonAccount")
+        verbose_name_plural = _("حساب های اشخاص")
+
+    def __str__(self):
+        return self.name
+ 
+    def save(self):
+        result,message,person_account=FAILED,"",None
+        
+        p_a=PersonAccount.objects.filter(person_id=self.person_id).filter(person_category_id=self.person_category_id).first()
+        if p_a is not None:
+            message="تکراری است"
+            return result,message,person_account
+
+        person_category=PersonCategory.objects.filter(id=self.person_category_id).first()
+        if person_category is not None:
+            self.parent=person_category.account
+        code=self.parent.code+fixed_length(1,person_category.code_length)
+        last=PersonAccount.objects.filter(person_category_id=self.person_category_id).last()
+      
+      
+        if last is not None:
+            code=str(int(last.code)+1) 
+        self.code=code
+        self.name=f'{self.person} # {self.category}'
+        super(PersonAccount,self).save()
+        result=SUCCEED
+        message="با موفقیت اضافه شد."
+        person_account=self
+        return result,message,person_account
+
+
+class AccountingDocument(models.Model,LinkHelper):
+    financial_year=models.ForeignKey("financialyear" , verbose_name=_("سال مالی"), on_delete=models.PROTECT)
+    title=models.CharField(_("title"), max_length=500)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    date_time=models.DateTimeField(_("date_time"), auto_now=True, auto_now_add=False)
+    date_modified=models.DateTimeField(_("date_modified "), auto_now=True, auto_now_add=False)
+    status=models.CharField(_("status"),max_length=20,choices=AccountingDocumentStatusEnum.choices,default=AccountingDocumentStatusEnum.DRAFT)
+    bedehkar=models.IntegerField(_("بدهکار"),default=0)
+    bestankar=models.IntegerField(_("بستانکار"),default=0)
+    balance=models.IntegerField(_("تراز"),default=0)
+
+    @property 
+    def lines(self):
+        return self.accountingdocumentline_set.all()
+
+
+    @property 
+    def status_color(self):
+        if self.status==AccountingDocumentStatusEnum.ACCEPTED:
+            return "success"
+        if self.status==AccountingDocumentStatusEnum.DENIED:
+            return "danger"
+        if self.status==AccountingDocumentStatusEnum.DRAFT:
+            return "secondary"
+        return "primary"
+
+    def save(self):
+        # result,message,accounting_document=FAILED,"",self
+        # if self.financial_year.start_date>self.date_time or self.financial_year.end_date<self.date_time:
+        #     message="تاریخ سند خارج از محدوده تاریخ سال مالی جاری است."
+        super(AccountingDocument,self).save()
+        result=SUCCEED
+        message="با موفقیت اضافه شد."
+        return result,message,self
+
+    class_name="accountingdocument"
+    app_name=APP_NAME    
+    class Meta:
+        verbose_name = _("AccountingDocument")
+        verbose_name_plural = _("AccountingDocuments")
+
+    def __str__(self):
+        return self.title
+ 
+    def normalize(self):
+        bedehkar=0
+        bestankar=0
+        for line in self.lines:
+            bedehkar+=line.bedehkar
+            bestankar+=line.bestankar
+
+        self.bedehkar=bedehkar
+        self.bestankar=bestankar
+        self.balance=bestankar-bedehkar
+        self.save()
+                 
+
+class AccountingDocumentLine(models.Model,LinkHelper):
+    accounting_document=models.ForeignKey("accountingdocument", verbose_name=_("accountingdocument"), on_delete=models.CASCADE)
+    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
+    event=models.ForeignKey("financialevent", null=True,blank=True,verbose_name=_("event"), on_delete=models.PROTECT)
+    title=models.CharField(_("title"), max_length=500)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    date_time=models.DateTimeField(_("date_time"), auto_now=False, auto_now_add=False)
+    date_modified=models.DateTimeField(_("date_modified "),null=True, auto_now=True, auto_now_add=False)
+    bedehkar=models.IntegerField(_("بدهکار"),default=0)
+    bestankar=models.IntegerField(_("بستانکار"),default=0)
+    balance=models.IntegerField(_("بالانس"),default=0)
+    @property
+    def persian_date_time(self):
+        a= PersianCalendar().from_gregorian(self.date_time)    
+        return f"""
+                    <span>{a[:11]}</span>
+                    <small class="text-muted mr-1">{a[11:]}</small>
+
+                """
+    def save(self):
+
+        
+        result,message,accounting_document_line=FAILED,"",self
+        # import datetime
+        # import pytz
+        # utc=pytz.UTC
+        # start_date=utc.localize(self.accounting_document.financial_year.start_date)
+        # end_date=utc.localize(self.accounting_document.financial_year.end_date)
+        # date_time=utc.localize(self.date_time)
+        # leolog(start_date=start_date,end_date=end_date,date_time=date_time)
+        # if self.accounting_document.financial_year.start_date>self.date_time or self.accounting_document.financial_year.end_date<self.date_time:
+        #     message="تاریخ سند خارج از محدوده تاریخ سال مالی جاری است."
+        #     return result,message,accounting_document
+
+        if not self.bedehkar==0 and not self.bestankar==0:
+            return
+        if self.account.nature==AccountNatureEnum.ONLY_BEDEHKAR and self.bestankar>0:
+            return
+        if self.account.nature==AccountNatureEnum.ONLY_BESTANKAR and self.bedehkar>0:
+            return
+        super(AccountingDocumentLine,self).save()
+        self.accounting_document.normalize()
+        self.account.normalize_total()
+    @property
+    def rest(self):
+        return 0
+    @property
+    def amount(self):  
+        return self.bedehkar+self.bestankar
+    class_name="accountingdocumentline"
+    app_name=APP_NAME 
+
+    class Meta:
+        verbose_name = _("AccountingDocumentLine")
+        verbose_name_plural = _("AccountingDocumentLines")
+
+    def __str__(self):
+        event=""
+        if self.event is not None :
+            event=self.event.title
+        return f"{self.account.id} , {event} , {self.account.name} , {to_price(self.balance)}, {to_price(self.bestankar)}, {to_price(self.bedehkar)}"
+
+
+class FinancialYear(models.Model,LinkHelper,DateTimeHelper):
+    name=models.CharField(_("نام"),max_length=50)
+    start_date=models.DateTimeField(_("تاریخ شروع"), auto_now=False, auto_now_add=False)
+    end_date=models.DateTimeField(_("تاریخ پایان"), auto_now=False, auto_now_add=False)
+    description=models.CharField(_("description"),max_length=20,null=True,blank=True)
+    status=models.CharField(_("status"),max_length=20,choices=FinancialYearStatusEnum.choices,default=FinancialYearStatusEnum.SUSPEND)
+    in_progress=models.BooleanField(_("in progress"),default=False)
+    class_name='financialyear'
+    app_name=APP_NAME
+
+    class Meta:
+        verbose_name = _("FinancialYear")
+        verbose_name_plural = _("FinancialYears")
+    def __str__(self):
+        return self.name
+
+    def save(self):
+        result,message,financial_year=FAILED,"",self
+        result=SUCCEED
+        message=""
+        if self.in_progress or self.status==FinancialYearStatusEnum.IN_PROGRESS:
+            self.in_progress=True
+            self.status=FinancialYearStatusEnum.IN_PROGRESS
+            for f_y in FinancialYear.objects.exclude(pk=self.pk):
+                f_y.status=FinancialYearStatusEnum.SUSPEND
+                f_y.in_progress=False
+                super(FinancialYear,f_y).save()
+        else:
+            self.in_progress=False
+
+        super(FinancialYear,self).save()
+        return result,message,financial_year
+
+
+class PersonCategory(models.Model,LinkHelper):
+    title=models.CharField(_("title"), max_length=50)
+    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
+    code_length=models.IntegerField(_("code_length"),default=5)
+    
+    class_name="personcategory"
+    app_name=APP_NAME
+
+
+    @property
+    def count(self):
+        return len(PersonAccount.objects.filter(category=self.category))
+        
+    @property
+    def persons(self):
+        person_accounts=PersonAccount.objects.filter(person_category=self)
+        person_ids=[]
+        for p_a in person_accounts:
+            person_ids.append(p_a.person_id)
+        return Person.objects.filter(pk__in=person_ids)
+    class Meta:
+        verbose_name = _("PersonCategory")
+        verbose_name_plural = _("PersonCategorys")
+
+    def __str__(self):
+        return self.title
 
 
 class FinancialEvent(CoreEvent,DateTimeHelper):
@@ -242,14 +520,13 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
             self.app_name=APP_NAME
         return super(FinancialEvent,self).save()
 
+
 class InvoiceLineItem(CorePage,LinkHelper):
     class_name="invoicelineitem"
     app_name=APP_NAME
     class Meta:
         verbose_name = _("InvoiceLineItem")
         verbose_name_plural = _("InvoiceLineItems")
- 
-
 
 
 class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
@@ -269,6 +546,7 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     def __str__(self):
         return f"{self.invoice_line_item}  # هر {self.unit_name}  {to_price(self.unit_price)} {CURRENCY}"
     
+
 class Product(InvoiceLineItem):
     barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=50)
     
@@ -286,6 +564,7 @@ class Product(InvoiceLineItem):
         verbose_name = _("Product")
         verbose_name_plural = _("کالا ها")
  
+
 class Service(InvoiceLineItem):
 
     
@@ -320,6 +599,7 @@ class Invoice(FinancialEvent):
             self.app_name=APP_NAME
         return super(Invoice,self).save()
 
+
 class InvoiceLine(models.Model):
     invoice=models.ForeignKey("invoice", verbose_name=_("invoice"), on_delete=models.PROTECT)
     invoice_line_item=models.ForeignKey("invoicelineitem", verbose_name=_("invoice_line_item"), on_delete=models.PROTECT)
@@ -335,3 +615,40 @@ class InvoiceLine(models.Model):
         verbose_name_plural = _("سطر های فاکتور ها")
 
  
+class Bank(models.Model,LinkHelper):
+    name=models.CharField(_("name"),max_length=50)
+    class_name="bank"
+    app_name=APP_NAME 
+
+    class Meta:
+        verbose_name = _("Bank")
+        verbose_name_plural = _("Banks")
+
+    def __str__(self):
+        return self.name
+        
+    def save(self): 
+        super(Bank,self).save()
+
+
+class BankAccount(Account,LinkHelper):
+    person=models.ForeignKey("person", verbose_name=_("person"), on_delete=models.PROTECT)
+    bank=models.ForeignKey("bank", verbose_name=_("bank"), on_delete=models.PROTECT)
+    title=models.CharField(_("title"),max_length=50)
+    card_no=models.CharField(_("card_no"),max_length=20)
+    shaba_no=models.CharField(_("shaba_no"),max_length=20)
+    account_no=models.CharField(_("account_no"),max_length=20)
+     
+    class_name='bankaccount'
+    app_name=APP_NAME
+
+    class Meta:
+        verbose_name = _("BankAccount")
+        verbose_name_plural = _("BankAccounts")
+
+    def __str__(self):
+        return f"{self.title} /{self.bank} /{self.person}"
+
+    def save(self):
+        return super(BankAccount,self).save()
+

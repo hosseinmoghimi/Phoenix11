@@ -4,12 +4,11 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import ProductRepo,AccountRepo
-from .serializers import  ProductSerializer
+from .repo import ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,AccountingDocumentLineRepo,AccountingDocumentRepo,FinancialEventRepo,PersonAccountRepo
+from .serializers import  ProductSerializer,AccountSerializer
 from django.http import JsonResponse
 from .forms import *
  
-
 
 class ImportProductsFromExcelApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -36,6 +35,72 @@ class ImportProductsFromExcelApi(APIView):
         return JsonResponse(context)
 
  
+class SelectAccountApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            select_account_form=SelectAccountForm(request.POST)
+            if select_account_form.is_valid():
+                log=333
+                cd=select_account_form.cleaned_data
+                account=AccountRepo(request=request).account(**cd)
+                if account is not None:
+                    result=SUCCEED
+                    message="موفقیت آمیز"
+                    context['account']=AccountSerializer(account).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+class InitALLAccountsApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            (result1,message1)=AccountRepo(request=request).initial_default_accounts() 
+            (result2,message2)=PersonCategoryRepo(request=request).initial_default_person_categories()
+            (result3,message3)=BankRepo(request=request).initial_default_banks() 
+        context['message1']=message1
+        context['result1']=result1
+        context['message2']=message2
+        context['result2']=result2
+        context['message3']=message3
+        context['result3']=result3
+        context['log']=log
+        return JsonResponse(context)
+
+
+class DeleteALLAccountsApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            (result3,message3)=AccountingDocumentLineRepo(request=request).delete_all() 
+            (result3,message3)=FinancialEventRepo(request=request).delete_all() 
+            (result3,message3)=PersonRepo(request=request).delete_all() 
+            (result3,message3)=PersonAccountRepo(request=request).delete_all() 
+            (result,message)=AccountRepo(request=request).delete_all_accounts() 
+            (result2,message2)=PersonCategoryRepo(request=request).delete_all() 
+            (result2,message2)=BankRepo(request=request).delete_all() 
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
 class AddProductApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

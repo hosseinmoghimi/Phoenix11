@@ -7,7 +7,7 @@ urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),
     path('selection/',login_required(views.SelectionView.as_view()),name="selection"),
-    path('settings/',login_required(views.IndexView.as_view()),name="settings"),
+    path('settings/',login_required(views.SettingsView.as_view()),name="settings"),
     path('products/',login_required(views.ProductsView.as_view()),name="products"),
     path('invoices/',login_required(views.InvoicesView.as_view()),name="invoices"),
     path('invoice/<int:pk>/',login_required(views.InvoiceView.as_view()),name="invoice"),
@@ -17,7 +17,21 @@ urlpatterns = [
     path("add-product/",login_required(apis.AddProductApi.as_view()),name="add_product"),
     path('account/<int:pk>/',login_required(views.AccountView.as_view()),name="account"),
     path('service/<int:pk>/',login_required(views.ServiceView.as_view()),name="service"),
+
+      
+    path("events/",login_required(views.EventsView.as_view()),name="events"),
+    path("add-event/",login_required(views.AddEventView.as_view()),name="add_event"),
+    
+    path("select-account/",login_required(apis.SelectAccountApi.as_view()),name="select_account"),
+    
+    path("init_all_accounts/",login_required(apis.InitALLAccountsApi.as_view()),name="init_all_accounts"),
+    path("delete_all_accounts/",login_required(apis.DeleteALLAccountsApi.as_view()),name="delete_all_accounts"),
+
+
     path('accounts/',login_required(views.AccountsView.as_view()),name="accounts"),
     path("import-products-from-excel/",login_required(apis.ImportProductsFromExcelApi.as_view()),name="import_products_from_excel"),
     path("tree-chart/<int:pk>/",login_required(views.TreeChartView.as_view()),name="tree_chart"),
+    path("tree-list/",login_required(views.TreeListView.as_view()),name="tree_list"),
+   
+
 ]

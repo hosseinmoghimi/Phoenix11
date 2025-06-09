@@ -8,8 +8,8 @@ from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
-from .repo import AccountRepo,ProductRepo,InvoiceRepo
-from .serializers import AccountSerializer,ProductSerializer,InvoiceSerializer
+from .repo import AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo
+from .serializers import AccountSerializer,ProductSerializer,InvoiceSerializer,EventSerializer
 from utility.currency import to_price_colored
 import json 
 from .models import UnitNameEnum
@@ -24,10 +24,6 @@ def getContext(request,*args, **kwargs):
  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
-
- 
-
-
  
 def AddAccountContext(request,*args, **kwargs):
     context={}
@@ -76,7 +72,6 @@ def AccountsContext(request):
     context['accounts_s']=accounts_s
     return context
 
-
 def AccountContext(request,account,*args, **kwargs):
 
     context={}
@@ -113,7 +108,7 @@ def AccountContext(request,account,*args, **kwargs):
 
 
     
-    events=EventRepo(request=request).list(account_code=account.code)
+    events=FinancialEventRepo(request=request).list(account_code=account.code)
     events_s=json.dumps(EventSerializer(events,many=True).data)
     context['events']=events
     context['events_s']=events_s 
@@ -224,12 +219,17 @@ def PersonContext(request,person):
         context['profile']=person.profile
     return context
 
-
 def FinancialEventContext(request,financial_event):
     context={}
     context['financial_event']=financial_event
     return context
 
+
+def ProductContext(request,product,*args, **kwargs):
+    context={}
+    context.update(PageContext(request=request,page=product))
+    context["product"]=product
+    return context
 
 
 
@@ -244,6 +244,13 @@ class IndexView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
+
+class SettingsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        # accounts =AccountRepo(request=request).roots(*args, **kwargs)
+        # context['accounts']=accounts
+        return render(request,TEMPLATE_ROOT+"settings.html",context) 
 
 
 class TreeChartView(View):
@@ -282,7 +289,16 @@ class TreeChartView(View):
         context['pages_s'] = json.dumps(pages)
         return render(request,TEMPLATE_ROOT+"tree-chart.html",context) 
 
- 
+
+class TreeListView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        accounts =AccountRepo(request=request).roots(*args, **kwargs)
+        context['accounts']=accounts
+        context[WIDE_LAYOUT]=True
+        return render(request,TEMPLATE_ROOT+"tree-list.html",context) 
+
+
 class AccountsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -306,6 +322,7 @@ class AccountView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"account.html",context)
 
+
 class SelectionView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -317,7 +334,6 @@ class SelectionView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"selection.html",context)
 
- 
 
 class ProductsView(View):
     def get(self,request,*args, **kwargs):
@@ -332,12 +348,7 @@ class ProductsView(View):
         context[WIDE_LAYOUT]=True
         return render(request,TEMPLATE_ROOT+"products.html",context) 
     
-def ProductContext(request,product,*args, **kwargs):
-    context={}
-    context.update(PageContext(request=request,page=product))
-    context["product"]=product
-    return context
-
+    
 class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -350,7 +361,6 @@ class ProductView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"product.html",context)
-    
     
 
 class ServiceView(View):
@@ -438,6 +448,38 @@ class ExportProductsToExcelView(View):
        
         return message_view.get(request=request)
 
+
+class EventView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        events=FinancialEventRepo(request=request).event(*args, **kwargs)
+        event_s=json.dumps(EventSerializer(events,many=False).data)
+        context['event']=event
+        context['event_s']=event_s
+        context['WIDE_LAYOUT']=True
+        return render(request,TEMPLATE_ROOT+"event.html",context)
+
+
+class EventsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        events=FinancialEventRepo(request=request).list()
+        events_s=json.dumps(EventSerializer(events,many=True).data)
+        context['events']=events
+        context['events_s']=events_s
+        context['WIDE_LAYOUT']=True
+        return render(request,TEMPLATE_ROOT+"events.html",context)
+
+
+class AddEventView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        invoices=InvoiceRepo(request=request).list()
+        invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
+        context['invoices']=invoices
+        context['invoices_s']=invoices_s
+        context['WIDE_LAYOUT']=True
+        return render(request,TEMPLATE_ROOT+"add-event.html",context)
 
 
 class InvoicesView(View):
