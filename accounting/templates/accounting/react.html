@@ -19,11 +19,11 @@
 <script type="text/babel" data-type="module">
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-
+let list1=['hossein','rauf','shoaib','naser','ahmad'];
 function MyButton() {
   return (
     <button>
-      I'm a button
+      {list1.map(name=><><h4>{name}</h4></>)}
     </button>
   );
 }
