@@ -37,59 +37,67 @@
       }
     }
   </script>
-  <!-- <script>
- 
-    function MyList(my_list) {
-      return (
-        {
-          my_list.map((list_item) => (
-          <>
-          <div className="col-md-4">
-             {ListItem(list_item)}
-              </div>
-            </>
-          ))}
-      );
-    }
-
-   
-  </script>
- 
-  -->
 
   <script type="text/babel" data-type="module">
     import React, { StrictMode } from "react";
     import { createRoot } from "react-dom/client";
     let my_list = [
-    {
-      name:"hossein",
-      age:19,
-    }, 
-    {
-      name:"rauf",
-      age:52,
-    }, 
-    {
-      name:"shoaib",
-      age:24,
-    }, 
-    {
-      name:"naser",
-      age:12,
-    }, 
-    {
-      name:"ahmad",
-      age:34,
-    }, 
-     ];
+      {
+        name: "hossein",
+        age: 19,
+      },
+      {
+        name: "rauf",
+        age: 52,
+      },
+      {
+        name: "shoaib",
+        age: 24,
+      },
+      {
+        name: "naser",
+        age: 12,
+      },
+      {
+        name: "ahmad",
+        age: 34,
+      },
+    ];
+    let likes = 870;
+
+    class LikeButton extends React.Component {
+      handleClick() {
+        likes++;
+      }
+
+      render() {
+        // This syntax ensures `this` is bound within handleClick
+        return <button onClick={() => this.handleClick()}>{likes} Like</button>;
+      }
+    }
     function ListItem(list_item) {
+      function clickLike(){
+        list_item.age++;
+        console.log("You clicked add.");
+
+      }
+      function handleSubmit(e) {
+        e.preventDefault();
+        console.log("You clicked submit.");
+      }
+
       return (
         <>
-          <div className="card">
+          <div className="card mt-3">
             <div className="card-body">
               <h4>{list_item.name}</h4>
               <h3>{list_item.age}</h3>
-              <button ></button>
+              <h4>
+                {
+                  "#".repeat(parseInt(list_item.age))
+                }
+                </h4>
+              <span className="btn btn-primary" onClick={ clickLike()} >+</span>
             </div>
           </div>
         </>
@@ -101,7 +109,11 @@
         <>
           <div className="row">
             {my_list.map((list_item) => (
-              <>{ListItem(list_item)}</>
+              <>
+              <div class="col-md-12">
+                {ListItem(list_item)} 
+                </div>
+                </>
             ))}
           </div>
         </>
@@ -109,7 +121,9 @@
     }
 
     let App = function MyApp() {
-      return <>{MyList()}</>;
+      return <> 
+      {MyList()}
+      </>;
     };
 
     const root = createRoot(document.getElementById("root"));
