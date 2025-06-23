@@ -44,7 +44,7 @@
                       <span v-text="meal_item.meal.name"></span>
                     </div>
                   </a>
-                  <span v-text="meal_item.meal.datetime"></span>
+                  <small class="text-secondary" v-text="meal_item.meal.persian_datetime"></small>
                 </td>
 
                 <td>
@@ -101,7 +101,7 @@
               <th>4</th>
 
               <th>
-                <span v-text="to_price(total())"></span>
+                <span v-text="to_price(total)"></span>
                 <small class="text-secondary"> {{CURRENCY}} </small>
               </th>
 

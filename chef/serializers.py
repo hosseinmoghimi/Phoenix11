@@ -15,7 +15,7 @@ class FoodSerializer(serializers.ModelSerializer):
 class MealSerializer(serializers.ModelSerializer):
        class Meta:
         model = Meal
-        fields = ['id','name', 'datetime' , 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','name', 'persian_datetime' , 'get_absolute_url','get_edit_url','get_delete_url']
 
 class MealItemSerializer(serializers.ModelSerializer):
        meal=MealSerializer()

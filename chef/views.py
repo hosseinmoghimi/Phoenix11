@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from .repo import MealRepo,FoodRepo,FoodItemRepo
-from .serializers import MealSerializer,FoodSerializer,MealItemSerializer
+from .serializers import MealSerializer,FoodSerializer,MealItemSerializer,FoodItemSerializer
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
@@ -102,7 +102,10 @@ class MealView(View):
         meal_items=meal.mealitem_set.all()
         meal_items_s=json.dumps(MealItemSerializer(meal_items,many=True).data)
         context["meal_items_s"]=meal_items_s
-
+        if True:
+            food_items=FoodItemRepo(request=request).list()
+            food_items_s=json.dumps(FoodItemSerializer(food_items,many=True).data)
+            context["food_items_s"]=food_items_s
         return render(request,TEMPLATE_ROOT+"meal.html",context)
 # Create your views here. 
 
@@ -118,4 +121,16 @@ class MealItemView(View):
         context["meal_items_s"]=meal_items_s
 
         return render(request,TEMPLATE_ROOT+"meal-item.html",context)
+# Create your views here. 
+
+class ReportView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        meals=MealRepo(request=request).list(*args, **kwargs)
+        context["meals"]=meals
+        ssss=meals[0].persian_datetime()
+        meals_s=json.dumps(MealSerializer(meals,many=True).data)
+        context["meals_s"]=meals_s
+        return render(request,TEMPLATE_ROOT+"report.html",context)
 # Create your views here. 

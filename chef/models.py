@@ -33,7 +33,7 @@ class FoodItem(models.Model,LinkHelper):
         verbose_name_plural = _("FoodItems")
 
     def __str__(self):
-        return self.name
+        return f"{self.name}  {self.price}"
   
 
 class Meal(models.Model,DateTimeHelper,LinkHelper):
@@ -47,7 +47,11 @@ class Meal(models.Model,DateTimeHelper,LinkHelper):
 
     def __str__(self):
         return f"{self.name}  {self.datetime}"
- 
+    def total(self):
+        sum=0
+        for item in self.mealitem_set.all():
+            sum+=item.price*item.quantity
+        return sum
 
 class MealItem(models.Model,LinkHelper):
     meal=models.ForeignKey("meal", verbose_name=_("meal"), on_delete=models.CASCADE)

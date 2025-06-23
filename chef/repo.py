@@ -1,4 +1,4 @@
-from .models import Meal,Food,FoodItem
+from .models import Meal,Food,FoodItem,MealItem
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo 
@@ -201,3 +201,59 @@ class MealRepo():
             meal.nature=kwargs["nature"]
         (result,message,meal)=meal.save()
         return result,message,meal
+
+
+
+class MealItemRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=MealItem.objects.filter(id=0)
+        profile=ProfileRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_account"):
+                self.objects=MealItem.objects
+                self.my_accounts=self.objects 
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.all()
+        
+    def meal_item(self,*args, **kwargs):
+        if "meal_item_id" in kwargs and kwargs["meal_item_id"] is not None:
+            return self.objects.filter(pk=kwargs['meal_item_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_meal_item(self,*args,**kwargs):
+        result,message,meal=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_meal"):
+            message="دسترسی غیر مجاز"
+            return result,message,meal
+
+        meal_item=MealItem()
+        if 'food_item_id' in kwargs:
+            meal_item.food_item_id=kwargs["food_item_id"]
+        if 'meal_id' in kwargs:
+            if kwargs["meal_id"]>0:
+                meal_item.meal_id=kwargs["meal_id"]
+        if 'quantity' in kwargs:
+            meal_item.quantity=kwargs["quantity"]
+        if 'price' in kwargs:
+            meal_item.price=kwargs["price"]
+        
+
+        result=SUCCEED
+        message="آیتم وعده با موفقیت اضافه شد."     
+ 
+        meal_item.save()
+        return result,message,meal_item
