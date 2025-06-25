@@ -17,7 +17,7 @@
       calculate_total: function () {
         let sum = 0;
         this.meal_items.forEach((meal_item) => {
-          sum += meal_item.price * meal_item.quantity;
+          sum += meal_item.unit_price * meal_item.quantity;
         });
         this.total = sum;
       },

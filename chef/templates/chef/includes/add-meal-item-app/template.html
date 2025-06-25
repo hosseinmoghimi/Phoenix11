@@ -5,14 +5,14 @@
   <div class="card-body">
     <form @submit.prevent="add_meal_item()">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-12">
           <div class="form-group">
             <label for="">آیتم</label>
-            <select   v-model="food_item_id" class="form-control">
+            <select v-model="food_item_id" class="form-control">
               <option
                 :value="food_item.id"
                 v-for="food_item in food_items"
-                v-text="food_item.name+ '  ' +to_price(food_item.price) + '{{CURRENCY}}' "
+                v-text=" food_item.title +' هر '+food_item.unit_name+ '  ' +to_price(food_item.unit_price) + '{{CURRENCY}}' "
               ></option>
             </select>
           </div>
@@ -24,7 +24,19 @@
             <input v-model="quantity" type="number" class="form-control" />
           </div>
         </div>
-
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="">آیتم</label>
+            <select v-model="unit_name" class="form-control">
+              
+                {% for unit_name in unit_names_for_add_invoice_line %}
+                  
+                <option value="{{unit_name}}">{{unit_name}}</option>
+                {% endfor %}
+                  
+            </select>
+          </div>
+        </div>
         <div class="col-md-4">
           <div class="form-group">
             <label for=""
@@ -34,7 +46,7 @@
                 {{CURRENCY}}
               </small>
             </label>
-            <input v-model="price" type="number" class="form-control" />
+            <input v-model="unit_price" type="number" class="form-control" />
           </div>
         </div>
 

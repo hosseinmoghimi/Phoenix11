@@ -97,6 +97,9 @@ class FoodItemRepo():
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
+        if "meal_id" in kwargs:
+            meal_id=kwargs["meal_id"]
+            objects=objects.filter(meal_id=meal_id)  
         return objects.all()
         
     def food_item(self,*args, **kwargs):
@@ -223,6 +226,11 @@ class MealItemRepo():
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
+        if "meal_id" in kwargs:
+            meal_id=kwargs["meal_id"]
+            invoice_id=kwargs["meal_id"]
+            objects=objects.filter(invoice_id=invoice_id)  
+
         return objects.all()
         
     def meal_item(self,*args, **kwargs):
@@ -242,14 +250,19 @@ class MealItemRepo():
 
         meal_item=MealItem()
         if 'food_item_id' in kwargs:
-            meal_item.food_item_id=kwargs["food_item_id"]
+            invoice_line_item_id=kwargs["food_item_id"]
+            meal_item.invoice_line_item_id=invoice_line_item_id
+ 
         if 'meal_id' in kwargs:
-            if kwargs["meal_id"]>0:
-                meal_item.meal_id=kwargs["meal_id"]
+            meal_item.invoice_id=kwargs["meal_id"]
         if 'quantity' in kwargs:
             meal_item.quantity=kwargs["quantity"]
-        if 'price' in kwargs:
-            meal_item.price=kwargs["price"]
+        if 'unit_price' in kwargs:
+            meal_item.unit_price=kwargs["unit_price"]
+        if 'unit_name' in kwargs:
+            meal_item.unit_name=kwargs["unit_name"]
+        
+        
         
 
         result=SUCCEED

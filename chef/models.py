@@ -2,6 +2,8 @@ from django.db import models
 from core.models import _,reverse,Page,LinkHelper,DateTimeHelper
 from phoenix.server_settings import CURRENCY
 from .apps import APP_NAME
+from accounting.models import Product,InvoiceLine,Invoice
+
 class Food(models.Model,LinkHelper):
     name=models.CharField(_("نام"), max_length=50)
     items=models.ManyToManyField("fooditem", verbose_name=_("food items"))
@@ -21,9 +23,7 @@ class Food(models.Model,LinkHelper):
 
 
 
-class FoodItem(models.Model,LinkHelper):
-    name=models.CharField(_("نام"), max_length=50)
-    price=models.IntegerField(_("قیمت"))
+class FoodItem(Product,LinkHelper):
     
     app_name=APP_NAME
     class_name="fooditem"
@@ -31,33 +31,33 @@ class FoodItem(models.Model,LinkHelper):
     class Meta:
         verbose_name = _("FoodItem")
         verbose_name_plural = _("FoodItems")
+ 
+   
+    def save(self):
+        if self.class_name is None or self.class_name=="":
+            self.class_name="fooditem"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(FoodItem,self).save()
 
-    def __str__(self):
-        return f"{self.name}  {self.price}"
-  
 
-class Meal(models.Model,DateTimeHelper,LinkHelper):
-    name=models.CharField(_("نام"), max_length=50)
-    datetime=models.DateTimeField(_("تاریخ"), auto_now=False, auto_now_add=False)
-    app_name=APP_NAME
-    class_name="meal"
+class Meal(Invoice):
+     
     class Meta:
         verbose_name = _("Meal")
         verbose_name_plural = _("Meals")
+ 
+   
 
-    def __str__(self):
-        return f"{self.name}  {self.datetime}"
-    def total(self):
-        sum=0
-        for item in self.mealitem_set.all():
-            sum+=item.price*item.quantity
-        return sum
+    def save(self):
+        if self.class_name is None or self.class_name=="":
+            self.class_name="meal"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Meal,self).save()
+    
 
-class MealItem(models.Model,LinkHelper):
-    meal=models.ForeignKey("meal", verbose_name=_("meal"), on_delete=models.CASCADE)
-    food_item=models.ForeignKey("fooditem", verbose_name=_("fooditem"), on_delete=models.CASCADE)
-    quantity=models.IntegerField(_("quantity"))
-    price=models.IntegerField(_("price"))
+class MealItem(InvoiceLine,LinkHelper):
     app_name=APP_NAME
     class_name="mealitem"
     class Meta:
@@ -65,5 +65,11 @@ class MealItem(models.Model,LinkHelper):
         verbose_name_plural = _("MealItems")
 
     def __str__(self):
-        return f'{self.meal} :  {self.food_item} * {self.quantity} $ {self.price} {CURRENCY}'
+        return f'{self.meal} :  {self.invoice_line_item} * {self.quantity} $ {self.price} {CURRENCY}'
  
+    @property
+    def meal(self):
+        return Meal.objects.filter(pk=self.invoice.id).first()
+    @property
+    def food_item(self):
+        return FoodItem.objects.filter(pk=self.invoice_line_item.id).first()

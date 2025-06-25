@@ -49,22 +49,23 @@
 
                 <td>
                   <a :href="meal_item.food_item.get_absolute_url">
-                    <span v-text="meal_item.food_item.name"></span>
+                    <span v-text="meal_item.food_item.title"></span>
                   </a>
                 </td>
 
                 <td>
                   <span v-text="meal_item.quantity"></span>
+                  <span v-text="meal_item.unit_name"></span>
                 </td>
 
                 <td>
-                  <span v-text="to_price(meal_item.price)"></span>
+                  <span v-text="to_price(meal_item.unit_price)"></span>
                   <small class="text-secondary"> {{CURRENCY}} </small>
                 </td>
 
                 <td>
                   <span
-                    v-text="to_price(meal_item.price*meal_item.quantity)"
+                    v-text="to_price(meal_item.unit_price*meal_item.quantity)"
                   ></span>
                   <small class="text-secondary"> {{CURRENCY}} </small>
                 </td>

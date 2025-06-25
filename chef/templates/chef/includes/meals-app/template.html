@@ -38,13 +38,13 @@
                         <tbody>
                             <tr v-for="meal in meals">
                                 <td>
-                                        <span   v-text="meal.persian_datetime"></span>
+                                        <span   v-text="meal.persian_event_datetime"></span>
                                 </td>
                                
 
                                   <td>
                                     <a :href="meal.get_absolute_url">
-                                        <span  v-text="meal.name"></span>
+                                        <span  v-text="meal.title"></span>
                                     </a>
                                 </td>
                                

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import MealRepo,FoodRepo,FoodItemRepo
+from .repo import MealRepo,FoodRepo,FoodItemRepo,MealItemRepo
 from .serializers import MealSerializer,FoodSerializer,MealItemSerializer,FoodItemSerializer
 from django.views import View
 from .forms import *
@@ -9,7 +9,8 @@ from core.views import CoreContext
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 import json
-
+from utility.log import leolog
+from accounting.views import AddInvoiceLineContext
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='chef/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -99,11 +100,12 @@ class MealView(View):
         context['name3']="name 3333"
         meal=MealRepo(request=request).meal(*args, **kwargs)
         context["meal"]=meal
-        meal_items=meal.mealitem_set.all()
+        meal_items=MealItemRepo(request=request).list(meal_id=meal.id)
         meal_items_s=json.dumps(MealItemSerializer(meal_items,many=True).data)
         context["meal_items_s"]=meal_items_s
         if True:
             food_items=FoodItemRepo(request=request).list()
+            context.update(AddInvoiceLineContext(request=request))
             food_items_s=json.dumps(FoodItemSerializer(food_items,many=True).data)
             context["food_items_s"]=food_items_s
         return render(request,TEMPLATE_ROOT+"meal.html",context)
