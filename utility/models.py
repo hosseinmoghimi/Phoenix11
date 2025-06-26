@@ -44,6 +44,21 @@ class DateTimeHelper(DateHelper):
     def persian_event_datetime(self):
         return PersianCalendar().from_gregorian(self.event_datetime)
 
+    def persian_event_datetime(self):
+        return PersianCalendar().from_gregorian(self.event_datetime)
+
+    def persian_start_datetime(self):
+        return PersianCalendar().from_gregorian(self.start_datetime)
+
+    def persian_end_datetime(self):
+        return PersianCalendar().from_gregorian(self.end_datetime)
+
+    def start_datetime2(self):
+        return self.start_datetime.strftime("%Y-%m-%d %H:%M")
+
+    def end_datetime2(self):
+        return self.end_datetime.strftime("%Y-%m-%d %H:%M")
+
 class ImageHelper:
     @property
     def image(self):

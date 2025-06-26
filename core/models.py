@@ -104,7 +104,7 @@ class EventCategory(models.Model,LinkHelper):
         return self.title
  
 
-class Event(Page):
+class Event(Page,DateTimeHelper):
     status=models.CharField(_("وضعیت"),choices=EventStatusEnum.choices,default=EventStatusEnum.DRAFT, max_length=50)
     category=models.ForeignKey("eventcategory",null=True,blank=True, verbose_name=_("دسته بندی"), on_delete=models.SET_NULL)
     event_datetime = models.DateTimeField(
@@ -121,21 +121,6 @@ class Event(Page):
         if self.class_name is None:
             self.class_name = "event"
         return super(Event, self).save(*args, **kwargs)
-
-    def persian_event_datetime(self):
-        return PersianCalendar(gdate_time=self.event_datetime).fromgregorian()
-
-    def persian_start_datetime(self):
-        return PersianCalendar(gdate_time=self.start_datetime).fromgregorian()
-
-    def persian_end_datetime(self):
-        return PersianCalendar(gdate_time=self.end_datetime).fromgregorian()
-
-    def start_datetime2(self):
-        return self.start_datetime.strftime("%Y-%m-%d %H:%M")
-
-    def end_datetime2(self):
-        return self.end_datetime.strftime("%Y-%m-%d %H:%M")
 
     class Meta:
         verbose_name = _("Event")

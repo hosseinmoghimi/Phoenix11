@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,CURRENCY
+from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,CURRENCY,VUE_VERSION_3,VUE_VERSION_2
 from authentication.repo import ProfileRepo
 from django.views import View
 from .forms import *
@@ -7,7 +7,7 @@ from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-
+from django.utils import timezone
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='core/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -21,6 +21,8 @@ def CoreContext(request,*args, **kwargs):
     if 'app_name' in kwargs:
         app_name=kwargs['app_name']
     context['APP_NAME']=app_name
+    context['VUE_VERSION_3']=VUE_VERSION_3
+    context['VUE_VERSION_2']=VUE_VERSION_2
     context['DEBUG']=DEBUG
     me_profile=ProfileRepo(request=request).me
     if me_profile is not None:
@@ -33,9 +35,9 @@ def CoreContext(request,*args, **kwargs):
     
     context['CURRENCY']=CURRENCY
     persian_date=PersianCalendar() 
-
-    current_date=persian_date.to_date()
-    current_datetime=persian_date.to_datetime() 
+    now=timezone.now()
+    current_datetime=persian_date.from_gregorian(now) 
+    current_date=current_datetime[0:10]
 
     context['current_datetime']=current_datetime
     context['current_date']=current_date

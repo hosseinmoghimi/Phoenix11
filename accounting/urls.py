@@ -11,12 +11,16 @@ urlpatterns = [
     path('products/',login_required(views.ProductsView.as_view()),name="products"),
     path('invoices/',login_required(views.InvoicesView.as_view()),name="invoices"),
     path('invoice/<int:pk>/',login_required(views.InvoiceView.as_view()),name="invoice"),
+    path('invoice/print/<int:pk>/',login_required(views.InvoicePrintView.as_view()),name="invoice_print"),
+    path('invoice_line/<int:pk>/',login_required(views.InvoiceLineView.as_view()),name="invoiceline"),
     path('product/<int:pk>/',login_required(views.ProductView.as_view()),name="product"),
     path('export-products-to-excel/',login_required(views.ExportProductsToExcelView.as_view()),name="export_products_to_excel"),
     path('services/',login_required(views.ServicesView.as_view()),name="services"),
     path("add-product/",login_required(apis.AddProductApi.as_view()),name="add_product"),
     path('account/<int:pk>/',login_required(views.AccountView.as_view()),name="account"),
     path('service/<int:pk>/',login_required(views.ServiceView.as_view()),name="service"),
+    
+    path("add-product-unit/",login_required(apis.AddProductUnitApi.as_view()),name="add_product_unit"),
 
       
     path("events/",login_required(views.EventsView.as_view()),name="events"),

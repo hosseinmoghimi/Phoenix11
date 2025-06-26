@@ -1,11 +1,14 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-
-from django.views import View
+from accounting.repo import ProductRepo
+from accounting.serializers import ProductSerializer
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
+import json
+from django.views import View
+
 
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='market/'
@@ -27,9 +30,10 @@ def CoreContext(app_name,request,*args, **kwargs):
     context['STATIC_URL']=STATIC_URL
     
     persian_date=PersianCalendar() 
-
-    current_date=persian_date.to_date()
-    current_datetime=persian_date.to_datetime() 
+    from django.utils import timezone
+    Now=timezone.now()
+    current_date=persian_date.from_gregorian(Now)
+    current_datetime=persian_date.from_gregorian(Now) 
 
     context['current_datetime']=current_datetime
     context['current_date']=current_date
@@ -70,3 +74,18 @@ class IndexView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
 # Create your views here.
+
+ 
+
+class ProductsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        products =ProductRepo(request=request).list(*args, **kwargs)
+        context['products']=products
+        products_s=json.dumps(ProductSerializer(products,many=True).data)
+        context['products_s']=products_s
+ 
+        context[WIDE_LAYOUT]=True
+        return render(request,TEMPLATE_ROOT+"products.html",context) 
+    
+    

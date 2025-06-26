@@ -11,6 +11,14 @@ class AddAccountForm(forms.Form):
     nature=forms.CharField( max_length=100, required=False)
 
 
+class AddProductUnitForm(forms.Form):
+    product_id=forms.IntegerField(required=True)
+    unit_name=forms.CharField(max_length=100, required=True)
+    unit_price=forms.IntegerField(required=True)
+    coef=forms.FloatField(required=True)
+    default=forms.BooleanField(required=False)
+
+
 class GetReportForm(forms.Form):
     account_id=forms.IntegerField(required=False)
     amount=forms.IntegerField(required=False)
@@ -82,13 +90,7 @@ class AddPersonCategoryForm(forms.Form):
     title=forms.CharField(max_length=100, required=True)
     account_code=forms.IntegerField(required=True)
 
-
-class AddProductUnitForm(forms.Form):
-    product_id=forms.IntegerField(required=True)
-    unit_name=forms.CharField(max_length=100, required=True)
-    unit_price=forms.IntegerField(required=True)
-    coef=forms.FloatField(required=True)
-
+ 
 class AddProductSpecificationForm(forms.Form):
     priority=forms.IntegerField(required=False)
     product_id=forms.IntegerField(required=True)

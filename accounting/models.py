@@ -494,6 +494,7 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
     discount_percentage=models.IntegerField(_("درصد تخفیف"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
       
+
     @property
     def tax_amount(self):
         return self.amount*self.tax_percentage/100
@@ -528,24 +529,58 @@ class InvoiceLineItem(CorePage,LinkHelper):
         verbose_name = _("InvoiceLineItem")
         verbose_name_plural = _("InvoiceLineItems")
 
+    @property    
+    def unit_name(self):
+        unit= InvoiceLineItemUnit.objects.filter(invoice_line_item_id=self.id).filter(default=True).first()
+        if unit is not None:
+            return unit.unit_name
+        return UnitNameEnum.ADAD
+    @property    
+    def unit_price(self):
+        unit= InvoiceLineItemUnit.objects.filter(invoice_line_item_id=self.id).filter(default=True).first()
+        if unit is not None:
+            return unit.unit_price
+        return 0
 
 class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
-    invoice_line_item=models.ForeignKey("invoicelineitem", verbose_name=_("invoicelineitem"), on_delete=models.CASCADE)
+    invoice_line_item=models.ForeignKey("invoicelineitem",related_name="units" ,verbose_name=_("invoicelineitem"), on_delete=models.CASCADE)
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices, max_length=50)
     coef=models.FloatField(_("coef"),default=1)
     unit_price=models.IntegerField(_("unit_price"),default=1)
     date_added=models.DateTimeField(_("تاریخ "), auto_now=False, auto_now_add=True)
-
+    default=models.BooleanField(_("default"),default=False)
     class_name="invoicelineitemunit"
     app_name=APP_NAME
-
+    
     class Meta:
         verbose_name = _("InvoiceLineItemUnit")
         verbose_name_plural = _("InvoiceLineItemUnits")
-
-    def __str__(self):
-        return f"{self.invoice_line_item}  # هر {self.unit_name}  {to_price(self.unit_price)} {CURRENCY}"
+    @property
+    def product(self):
+        return Product.objects.filter(pk=self.invoice_line_item_id).first()
     
+    def __str__(self):
+        return f"{self.invoice_line_item}  # هر {self.unit_name}  {to_price(self.unit_price)} {CURRENCY} #  {str(self.default)} "
+    
+    def save(self):
+        invoice_line_item_units=InvoiceLineItemUnit.objects.filter(invoice_line_item_id=self.invoice_line_item.id)
+        invoice_line_item_units1=invoice_line_item_units.filter(unit_name=self.unit_name)
+        from django.utils import timezone
+        from utility.log import leolog
+        leolog(invoice_line_item_units=invoice_line_item_units)
+        invoice_line_item_units1.delete()
+        # self.id=0
+        Now=timezone.now()
+        self.date_added=Now
+        if self.default is True:
+            other_invoice_line_item_units=invoice_line_item_units.filter(default=True)
+            leolog(other_invoice_line_item_units=other_invoice_line_item_units)
+            for other_invoice_line_item_unit in other_invoice_line_item_units:
+                other_invoice_line_item_unit.default=False
+                other_invoice_line_item_unit.save()
+
+        super(InvoiceLineItemUnit,self).save()
+
 
 class Product(InvoiceLineItem):
     barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=50)
@@ -600,21 +635,47 @@ class Invoice(FinancialEvent):
         return super(Invoice,self).save()
 
 
-class InvoiceLine(models.Model):
+
+    @property
+    def statistics(self):
+        total=0
+        discount=0
+        tax=0
+        amount=0
+        shipping_fee=0
+        for line in self.invoiceline_set.all():
+            total+=line.unit_price*line.quantity 
+            discount+=line.discount
+        total_after_discount=total-discount
+        tax=(total_after_discount)*(self.tax_percentage)/100
+        amount=total-discount+tax+shipping_fee
+        return (total,discount,total_after_discount,tax,amount)
+    
+
+class InvoiceLine(models.Model,LinkHelper):
     invoice=models.ForeignKey("invoice", verbose_name=_("invoice"), on_delete=models.PROTECT)
     invoice_line_item=models.ForeignKey("invoicelineitem", verbose_name=_("invoice_line_item"), on_delete=models.PROTECT)
-    row=models.IntegerField(_("row      "))
+    row=models.IntegerField(_("row"),default=0)
     quantity=models.IntegerField(_("quantity"))
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices, max_length=50)
     unit_price=models.IntegerField(_("unit_price"))
-    discount_percentage=models.IntegerField(_("discount_percentage"))
-    tax_amount=models.IntegerField(_("tax_amount"))
+    discount_percentage=models.IntegerField(_("discount_percentage"),default=0)
+    tax_amount=models.IntegerField(_("tax_amount"),default=0)
     description=models.CharField(_("description"),null=True,blank=True, max_length=5000)
+
+    class_name="invoiceline"
+    app_name=APP_NAME
     class Meta:
         verbose_name = _("InvoiceLine")
         verbose_name_plural = _("سطر های فاکتور ها")
-
- 
+    @property
+    def discount(self):
+        return self.discount_percentage*self.unit_price*self.quantity/100
+    
+    @property
+    def line_total(self):
+        return (100-self.discount_percentage)*self.unit_price*self.quantity/100
+    
 class Bank(models.Model,LinkHelper):
     name=models.CharField(_("name"),max_length=50)
     class_name="bank"

@@ -58,11 +58,11 @@
         </div>
         {% endif %}
         <div class="mt-2" id="account-code-app">
-            <h5 class="ltr" @click="copy_code()" title="کپی کردن کد حساب" style="cursor: pointer;">
+            <h5 class="ltr" @click="copy_code()"   style="cursor: pointer;">
                 <span class="ltr">
                     {{account.code | account_code_seperator}}
                 </span>
-                <small class="text-muted" v-show="show_code_copied">کپی شد.</small>
+            
             </h5>
 
         </div>
@@ -97,7 +97,7 @@
         <div id="account-balance-app">
             <small class="text-muted">مانده : </small>
             {{account.balance|to_price_color_btn|safe}}
-            <small class="text-muted" v-show="show_balance_copied">کپی شد.</small>
+            <small class="text-muted"  v-show="show_balance_copied">کپی شد.</small>
 
         </div>
 

@@ -1,0 +1,41 @@
+<script>
+    let product_units = JSON.parse("{{product_units_s|escapejs}}")
+    let base_price_=parseInt("{{base_price}}")
+    let product_units_app = new Vue({
+        el: "#product-units-app",
+        data: {
+            product_units: product_units,
+            new_item: { product_id: parseInt("{{product.id}}"),default: false, unit_price: base_price_, unit_name: "عدد", coef: 1 },
+            waiting: false,
+            show_form: false,
+            
+            base_price:base_price_,
+            message: { show: false },
+        },
+        methods: {
+            update_price: function(){
+                this.new_item.unit_price=this.new_item.coef*this.base_price
+            },
+            to_price: vall => to_price(parseInt(vall)),
+            add_product_unit: () => {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    product_id: product_units_app.new_item.product_id,
+                    unit_price: product_units_app.new_item.unit_price,
+                    unit_name: product_units_app.new_item.unit_name,
+                    default: product_units_app.new_item.default,
+                    coef: product_units_app.new_item.coef,
+                }
+                leolog(payload)
+                let url = "{% url 'accounting:add_product_unit' %}"
+                let posting = $.post(url, payload)
+                posting.done(data => {
+                    console.log(data)
+                    if(typeof product_units_app != "undefined"){
+                        product_units_app.product_units.push(data.product_unit)
+                    }
+                })
+            },
+        }
+    })
+</script>

@@ -7,7 +7,7 @@
         <div class="card">
             <div class="card-header">
                 <h5>
-                    {{food_item.name}}
+                    {{food_item.title}}
                 </h5>
             </div>
 
@@ -15,7 +15,14 @@
                 <h5>
                     {{food_item.name}}
                 </h5>
-               
+                 <h5>
+
+                    <a href="{% url 'accounting:product' pk=food_item.id %}">
+
+
+                     {{food_item.title}}
+                 </a>
+                </h5>
                 
                  <a
                     target="_blank"
@@ -39,6 +46,10 @@
             </div>
         </div>
     </div>
+    <div class="col-md-12">
+                {% include "accounting/includes/product-units-app/template.html" %}
+
+    </div>
     <div class="col-12">
         {% include "chef/includes/meal-items-app/template.html" %}
     </div>
@@ -48,5 +59,6 @@
 
 {% block script %}
    {% include "chef/includes/meal-items-app/script.html" %}
+                {% include "accounting/includes/product-units-app/script.html" %}
  
 {% endblock script %}

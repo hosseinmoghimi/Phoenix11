@@ -7,11 +7,20 @@
 <script src="{% static 'dashboard/js/plugins/bootstrap-notify.js' %}"></script>
 
 
-
+{% if VUE_VERSION_3 %}
 
 <script src="{% static 'persian/moment.js' %}"></script>
 <script src="{% static 'persian/moment-jalaali.js' %}"></script>
 <script src="{% static 'persian/vue-persian-datetime-picker-browser.js' %}"></script>
+{% endif %}
+{% if VUE_VERSION_2 %}
+
+<script src="{% static 'persian/moment.js' %}"></script>
+<script src="{% static 'persian/moment-jalaali.js' %}"></script>
+<script src="{% static 'persian/vue-persian-datetime-picker-browser.js' %}"></script>
+
+{% endif %}
+
 
 <script src="{% static 'utility/js/message.js' %}"></script>
 <script>
@@ -19,12 +28,24 @@
 </script>
 
 {% if DEBUG %}
+{% if VUE_VERSION_3 %}
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+{% endif %}
+{% if VUE_VERSION_2 %}
 <script src="{% static 'vendor/js/vue.js' %}"></script>
+{% endif %}
 <script>
     DEBUG = true
 </script>
 {% else %}
+
+{% if VUE_VERSION_3 %}
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+{% endif %}
+{% if VUE_VERSION_2 %}
 <script src="{% static 'vendor/js/vue.min.js' %}"></script>
+{% endif %}
+
 {% endif %}
 
 <script>

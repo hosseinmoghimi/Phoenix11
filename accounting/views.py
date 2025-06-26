@@ -9,7 +9,7 @@ from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
 from .repo import AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo,AccountingDocumentLineRepo
-from .serializers import AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,AccountingDocumentLineSerializer
+from .serializers import InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,ProductUnitSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,AccountingDocumentLineSerializer
 from utility.currency import to_price_colored
 import json 
 from .models import UnitNameEnum
@@ -47,22 +47,7 @@ def AddInvoiceLineContext(request,*args, **kwargs):
     context["unit_names_for_add_invoice_line"]=unit_names
     return context
 
-def EventContext(request,event,*args,**kwargs):
-    context={}
-    context.update(PageContext(request=request,page=event))
-    
-    context['add_event_accounting_document_line_form']=AddEventAccountingDocumentLineForm()
-    context['event']=event
-    event_s=json.dumps(FinancialEventSerializer(event).data)
-    context['event_s']=event_s
 
-    
-    accounting_document_lines=AccountingDocumentLineRepo(request=request).list(event_id=event.id).order_by('-bedehkar')
-    accounting_document_lines_s=json.dumps(AccountingDocumentLineSerializer(accounting_document_lines,many=True).data)
-    context["accounting_document_lines_s"]=accounting_document_lines_s
-    
-
-    return context
 
 def AccountsContext(request):
     context={}
@@ -131,20 +116,57 @@ def InvoiceLineItemContext(request,invoice_line_item,*args, **kwargs):
     context['invoice_lines']=invoice_lines
     invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
     context['invoice_lines_s']=invoice_lines_s
+    context.update(AddInvoiceLineItemUnitsContext(request=request,invoice_line_item=invoice_line_item))
+
 
 
     return context
 
-def InvoiceContext(request,invoice,*args, **kwargs):
+
+def AddInvoiceLineItemUnitsContext(request,invoice_line_item,*args, **kwargs):
     context={}
+    
+    product_units=invoice_line_item.units.all()
+    product_units_s=json.dumps(ProductUnitSerializer(product_units,many=True).data)
+    context['product_units']=product_units
+    context['product_units_s']=product_units_s
+    if request.user.has_perm(APP_NAME+".add_productunit"):
+        context["add_product_unit_form"]=AddProductUnitForm()
+        context['unit_names']=(i[0] for i in UnitNameEnum.choices)
+     
+    return context
+def FinancialEventContext(request,financial_event):
+    context={}
+    context['financial_event']=financial_event 
+    context.update(PageContext(request=request,page=financial_event))
+    
+    context['add_event_accounting_document_line_form']=AddEventAccountingDocumentLineForm()
+    context['financial_event']=financial_event
+    financial_event_s=json.dumps(FinancialEventSerializer(financial_event).data)
+    context['financial_event_s']=financial_event_s
+
+    
+    accounting_document_lines=AccountingDocumentLineRepo(request=request).list(event_id=financial_event.id).order_by('-bedehkar')
+    accounting_document_lines_s=json.dumps(AccountingDocumentLineSerializer(accounting_document_lines,many=True).data)
+    context["accounting_document_lines_s"]=accounting_document_lines_s
+    
+
+    return context
+
+def InvoiceContext(request,invoice,*args, **kwargs):
+    context=FinancialEventContext(request=request,financial_event=invoice)
     context.update(AddInvoiceLineContext(request=request))
-    context.update(EventContext(request=request,event=invoice))
     context['invoice'] = invoice
-    context['invoice_s'] = context['event_s'] 
-    invoice_lines=invoice.invoiceline_set.order_by('row')
-    context['invoice_lines']=invoice_lines
-    invoice_lines_s=json.dumps(InvoiceLineSerializer(invoice_lines,many=True).data)
-    context['invoice_lines_s']=invoice_lines_s
+    invoice_s=json.dumps(InvoiceSerializer(invoice).data)
+    context['invoice_s'] =invoice_s
+
+    SHOW_LINES=True
+    if SHOW_LINES:
+        invoice_lines=invoice.invoiceline_set.order_by('row')
+        context['invoice_lines']=invoice_lines
+        invoice_lines_s=json.dumps(InvoiceLineSerializer(invoice_lines,many=True).data)
+        context['invoice_lines_s']=invoice_lines_s
+    
     (total,discount,total_after_discount,tax,amount)=invoice.statistics
     context['total']=total
     context['total_after_discount']=total_after_discount
@@ -152,7 +174,7 @@ def InvoiceContext(request,invoice,*args, **kwargs):
     context['discount']=discount
     context['tax']=tax
     return context
-    
+     
 def ProductContext(request,product,*args, **kwargs):
     context=InvoiceLineItemContext(request=request,invoice_line_item=product)
     context['product']=product
@@ -171,15 +193,6 @@ def ProductContext(request,product,*args, **kwargs):
         context['specification_names']=specification_names
      
 
-
-    product_units=product.productunit_set.all()
-    product_units_s=json.dumps(ProductUnitSerializer(product_units,many=True).data)
-    context['product_units']=product_units
-    context['product_units_s']=product_units_s
-    if request.user.has_perm(APP_NAME+".add_productunit"):
-        context["add_product_unit_form"]=AddProductUnitForm()
-        context['unit_names']=(i[0] for i in UnitNameEnum.choices)
-     
 
      
     if request.user.has_perm(APP_NAME+".change_product"):
@@ -219,19 +232,12 @@ def PersonContext(request,person):
         context['profile']=person.profile
     return context
 
-def FinancialEventContext(request,financial_event):
-    context={}
-    context['financial_event']=financial_event
-    return context
-
-
 def ProductContext(request,product,*args, **kwargs):
     context={}
-    context.update(PageContext(request=request,page=product))
+    context.update(InvoiceLineItemContext(request=request,invoice_line_item=product))
     context["product"]=product
     return context
-
-
+ 
 
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -360,6 +366,19 @@ class ProductView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"product.html",context)
+    
+class InvoiceLineView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        product=ProductRepo(request=request).product(*args, **kwargs)
+        if product is None:
+            raise Http404
+        
+
+        context.update(ProductContext(request=request,product=product))
+
+        context['phoenix_apps']=phoenix_apps
+        return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
     
 
 class ServiceView(View):
@@ -495,9 +514,21 @@ class InvoicesView(View):
 class InvoiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        invoices=InvoiceRepo(request=request).list()
-        context['invoices']=invoices
-        invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
-        context['invoices_s']=invoices_s
+        invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        context['invoice']=invoice
+        invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)
+        context['invoice_s']=invoice_s
+        context.update(InvoiceContext(request=request,invoice=invoice))
         return render(request,TEMPLATE_ROOT+"invoice.html",context)
+
+
+class InvoicePrintView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        context['invoice']=invoice
+        invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)
+        context['invoice_s']=invoice_s
+        context.update(InvoiceContext(request=request,invoice=invoice))
+        return render(request,TEMPLATE_ROOT+"invoice-print.html",context)
 

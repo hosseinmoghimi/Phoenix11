@@ -4,12 +4,34 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,AccountingDocumentLineRepo,AccountingDocumentRepo,FinancialEventRepo,PersonAccountRepo
-from .serializers import  ProductSerializer,AccountSerializer
+from .repo import InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,AccountingDocumentLineRepo,AccountingDocumentRepo,FinancialEventRepo,PersonAccountRepo
+from .serializers import  ProductUnitSerializer,ProductSerializer,AccountSerializer
 from django.http import JsonResponse
 from .forms import *
  
 
+
+class AddProductUnitApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_product_unit_form=AddProductUnitForm(request.POST)
+            if add_product_unit_form.is_valid():
+                log=333
+                cd=add_product_unit_form.cleaned_data 
+                result,message,product_unit=InvoiceLineItemUnitRepo(request=request).add_product_unit(**cd)
+                if product_unit is not None:
+                    context['product_unit']=ProductUnitSerializer(product_unit).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+    
 class ImportProductsFromExcelApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

@@ -2,11 +2,15 @@
 {% block content %}
 <div class="row rtl farsi">
      
-    <div class="col-12">
+    <div class="col-md-12">
        
                 {% include "accounting/includes/product-app/card.html" %}
 
     </div>
+      <div class="col-md-12">
+                {% include "accounting/includes/product-units-app/template.html" %}
+            </div>
+
     <div class="col-md-12 ">
     </div>
     
@@ -23,6 +27,7 @@
 </script> 
 
  
+                {% include "accounting/includes/product-units-app/script.html" %}
 
 
 {% endblock script %}

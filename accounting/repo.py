@@ -1,7 +1,7 @@
-from .models import Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,AccountingDocument,AccountingDocumentLine,FinancialYear,PersonAccount
+from .models import InvoiceLineItemUnit,Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,AccountingDocument,AccountingDocumentLine,FinancialYear,PersonAccount
 from .apps import APP_NAME
 from .enums import *
-from log.repo import LogRepo 
+from log.repo import LogRepo
 from django.db.models import Q
 from django.shortcuts import reverse
 from authentication.repo import ProfileRepo
@@ -13,6 +13,73 @@ from utility.log import leolog
 from .defaults import default_accounts,default_persons,default_banks
 from .enums import AccountTypeEnum,AccountNatureEnum
 from .settings_on_server import ACCOUNT_LEVEL_NAMES
+# from processmanagement.models import Permission
+class InvoiceLineItemUnitRepo:
+    def __init__(self,request,*args, **kwargs):
+        self.request=request
+        self.me=None
+        # profile=ProfileRepo(request=request).me
+        
+        
+        self.objects=None
+        if request.user.has_perm(APP_NAME+".view_event"):
+            self.objects=InvoiceLineItemUnit.objects
+        elif request.user.is_authenticated:
+            accs=[]
+            for person in Person.objects.filter(profile__user_id=request.user.id):
+
+                my_accounts=AccountRepo(request=request).my_accounts
+                for acc in my_accounts:
+                    accs.append(acc.id)
+            self.objects=Event.objects.filter(Q(bedehkar_id__in=accs)|Q(bestankar_id__in=accs))
+        else:
+            self.objects=Event.objects.filter(pk=0)
+
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for']) 
+        return objects.all()
+    def product_unit(self,*args, **kwargs):
+        if "product_unit_id" in kwargs:
+            return self.objects.filter(pk=kwargs['product_unit_id']).first() 
+        if "pk" in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first() 
+
+                     
+    def add_product_unit(self,*args, **kwargs):
+        product_unit,message,result=(None,"",FAILED)
+        # if not Permission(request=self.request).is_permitted(APP_NAME,OperationEnum.ADD,"productprice"):
+        if not self.request.user.has_perm(APP_NAME+".add_invoicelineitemunit"):
+            message="دسترسی غیر مجاز"
+            return result,message,product_unit
+        # if len(Account.objects.filter(title=kwargs['title']))>0:
+        #     message="از قبل حسابی با همین عنوان ثبت شده است."
+        #     return product_unit,message,result
+        leolog(kwargs=kwargs)
+        leolog(sdsdsdd="sdsdsdsdsdsdsdsdsd")
+        product_unit=InvoiceLineItemUnit()
+        
+        if 'product_id' in kwargs:
+            product_unit.invoice_line_item_id=kwargs['product_id']
+        if 'unit_price' in kwargs:
+            product_unit.unit_price=kwargs['unit_price']
+        if 'unit_name' in kwargs:
+            product_unit.unit_name=kwargs['unit_name']
+        if 'default' in kwargs:
+            product_unit.default=kwargs['default']
+        if 'coef' in kwargs:
+            product_unit.coef=kwargs['coef']
+         
+        product_unit.save()
+        result=SUCCEED
+        message="قیمت جدید با موفقیت اضافه گردید."
+         
+ 
+        return result,message,product_unit
+
 
 
 class AccountRepo():

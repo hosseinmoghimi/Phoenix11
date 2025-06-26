@@ -226,6 +226,9 @@ class MealItemRepo():
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
+        if "food_item_id" in kwargs:
+            food_item_id=kwargs["food_item_id"]
+            objects=objects.filter(invoice_line_item_id=food_item_id)  
         if "meal_id" in kwargs:
             meal_id=kwargs["meal_id"]
             invoice_id=kwargs["meal_id"]
