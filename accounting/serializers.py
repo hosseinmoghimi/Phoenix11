@@ -63,3 +63,7 @@ class InvoiceLineItemUnitSerializer(serializers.ModelSerializer):
         fields = ['id','unit_name','default','unit_price','coef','invoice_line_item','persian_date_added', 'get_edit_url','get_delete_url']
  
   
+class AccountBriefSerializer(serializers.ModelSerializer):
+       class Meta:
+        model = Account
+        fields = ['id','parent_id','full_name','logo','name','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']

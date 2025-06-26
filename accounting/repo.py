@@ -106,6 +106,9 @@ class AccountRepo():
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
+        if "level" in kwargs:
+            level=kwargs["level"]
+            objects=objects.filter(level=level)  
         return objects.all()
        
     def roots(self,*args, **kwargs):

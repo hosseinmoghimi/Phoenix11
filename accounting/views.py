@@ -10,7 +10,7 @@ from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
 from .repo import InvoiceLineItemRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo,AccountingDocumentLineRepo
-from .serializers import InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,AccountingDocumentLineSerializer
+from .serializers import AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,AccountingDocumentLineSerializer
 from utility.currency import to_price_colored
 import json 
 from .models import UnitNameEnum
@@ -342,15 +342,37 @@ class AccountView(View):
         return render(request,TEMPLATE_ROOT+"account.html",context)
 
 
+
 class SelectionView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
 
-        context['phoenix_apps']=phoenix_apps
+        account_groups=AccountRepo(request=request).list(level=1,*args, **kwargs)
+        context['account_groups']=account_groups
+        account_groups_s=json.dumps(AccountBriefSerializer(account_groups,many=True).data)
+        context['account_groups_s']=account_groups_s
+
+        
+
+        basic_accounts=AccountRepo(request=request).list(level=2,*args, **kwargs)
+        context['basic_accounts']=basic_accounts
+        basic_accounts_s=json.dumps(AccountBriefSerializer(basic_accounts,many=True).data)
+        context['basic_accounts_s']=basic_accounts_s
+
+
+        moein_accounts=AccountRepo(request=request).list(level=3,*args, **kwargs)
+        context['moein_accounts']=moein_accounts
+        moein_accounts_s=json.dumps(AccountBriefSerializer(moein_accounts,many=True).data)
+        context['moein_accounts_s']=moein_accounts_s
+
+         
+        moein2_accounts=AccountRepo(request=request).list(level=4,*args, **kwargs)
+        context['moein2_accounts']=moein2_accounts
+        moein2_accounts_s=json.dumps(AccountBriefSerializer(moein2_accounts,many=True).data)
+        context['moein2_accounts_s']=moein2_accounts_s
+
+
+        context['WIDE_LAYOUT']=True
         return render(request,TEMPLATE_ROOT+"selection.html",context)
 
 
