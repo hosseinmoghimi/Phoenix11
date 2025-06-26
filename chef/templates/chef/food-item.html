@@ -15,21 +15,24 @@
                 <h5>
                     {{food_item.name}}
                 </h5>
-                 <h5>
-
-                    <a href="{% url 'accounting:product' pk=food_item.id %}">
-
-
-                     {{food_item.title}}
-                 </a>
-                </h5>
                 
+                <h5>
+                  
+                  <a href="{% url 'accounting:invoicelineitem' pk=food_item.id %}">
+                    
+                    
+                    {{food_item.title}}
+                  </a>
+                </h5>
+                <div>
+                {% include "core/includes/page-like-app/template.html" %}
+
+                </div>
                  <a
                     target="_blank"
                     href="{{food_item.get_edit_url}}"
                     title="ویرایش"
-                    class="text-warning mx-2"
-                  >
+                    class="text-warning mx-2">
                     <i class="fa fa-edit text-warning"> </i>
                     ویرایش
                   </a>
@@ -47,7 +50,7 @@
         </div>
     </div>
     <div class="col-md-12">
-                {% include "accounting/includes/product-units-app/template.html" %}
+                {% include "accounting/includes/invoice-line-item-units-app/template.html" %}
 
     </div>
     <div class="col-12">
@@ -58,7 +61,12 @@
 
 
 {% block script %}
-   {% include "chef/includes/meal-items-app/script.html" %}
-                {% include "accounting/includes/product-units-app/script.html" %}
+{% include "accounting/includes/invoice-line-item-app/script.html" %}
+<script>
+  const food_item_id = parseInt("{{food_item.id}}");
+</script>
+
+{% include "chef/includes/meal-items-app/script.html" %}
+{% include "accounting/includes/invoice-line-item-units-app/script.html" %}
  
 {% endblock script %}

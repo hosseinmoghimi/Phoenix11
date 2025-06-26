@@ -10,7 +10,7 @@ from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 import json
 from utility.log import leolog
-from accounting.views import AddInvoiceLineContext,InvoiceContext,InvoiceLineItemContext
+from accounting.views import AddInvoiceLineContext,InvoiceContext,ProductContext
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='chef/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -64,7 +64,7 @@ class MealsView(View):
 
 
 def FoodItemContext(request,food_item,*args, **kwargs):
-    context=InvoiceLineItemContext(request=request,invoice_line_item=food_item)
+    context=ProductContext(request=request,product=food_item)
     return context
  
 class FoodItemView(View):

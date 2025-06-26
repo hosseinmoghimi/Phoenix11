@@ -7,6 +7,7 @@ class UnitNameEnum(TextChoices):
     KILOGERAM="کیلوگرم",_("کیلوگرم")
     METER="متر",_("متر")
     SHAKHEH="شاخه",_("شاخه")
+    SHISHEH="شیشه",_("شیشه")
     DASTGAH="دستگاه",_("دستگاه")
     GERAM="گرم",_("گرم")
     SHEET="ورق",_("ورق")

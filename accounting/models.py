@@ -15,10 +15,11 @@ from django.shortcuts import reverse
 from django.core.files.storage import FileSystemStorage
 from core.models import Event as CoreEvent,Page as CorePage
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_URL,MEDIA_URL,ADMIN_URL,FULL_SITE_URL
-IMAGE_FOLDER = "images/"
 from .settings_on_server import  NO_DUPLICATED_ACCOUNT_NAME,NO_DUPLICATED_ACCOUNT_CODE
+from django.utils import timezone
+from utility.log import leolog
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
-
+IMAGE_FOLDER = "images/"
 
 class Account(models.Model,LinkHelper):
     parent=models.ForeignKey("account", verbose_name=_("parent"),null=True,blank=True, on_delete=models.CASCADE)
@@ -565,16 +566,13 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     def save(self):
         invoice_line_item_units=InvoiceLineItemUnit.objects.filter(invoice_line_item_id=self.invoice_line_item.id)
         invoice_line_item_units1=invoice_line_item_units.filter(unit_name=self.unit_name)
-        from django.utils import timezone
-        from utility.log import leolog
-        leolog(invoice_line_item_units=invoice_line_item_units)
+
         invoice_line_item_units1.delete()
         # self.id=0
         Now=timezone.now()
         self.date_added=Now
         if self.default is True:
             other_invoice_line_item_units=invoice_line_item_units.filter(default=True)
-            leolog(other_invoice_line_item_units=other_invoice_line_item_units)
             for other_invoice_line_item_unit in other_invoice_line_item_units:
                 other_invoice_line_item_unit.default=False
                 other_invoice_line_item_unit.save()

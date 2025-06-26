@@ -38,13 +38,6 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ['id','title','thumbnail','barcode',  'get_absolute_url','get_edit_url','get_delete_url']
         # fields = ['id','name','get_market_absolute_url','thumbnail','barcode','unit_price', 'unit_name',  'get_absolute_url','get_edit_url','get_delete_url']
 
- 
-class ProductUnitSerializer(serializers.ModelSerializer):
-    product=ProductSerializer()
-    class Meta:
-        model = InvoiceLineItemUnit
-        fields = ['id','unit_name','default','unit_price','coef','product','persian_date_added', 'get_edit_url','get_delete_url']
- 
 class InvoiceLineItemSerializer(serializers.ModelSerializer):
        class Meta:
               model = InvoiceLineItem
@@ -62,3 +55,11 @@ class InvoiceLineWithInvoiceSerializer(InvoiceLineSerializer):
        class Meta:
         model = InvoiceLine
         fields = ['id','unit_price','invoice','line_total','quantity','unit_name','discount','discount_percentage',  'invoice_line_item' , 'get_absolute_url','get_edit_url','get_delete_url']
+
+class InvoiceLineItemUnitSerializer(serializers.ModelSerializer):
+    invoice_line_item=InvoiceLineItemSerializer()
+    class Meta:
+        model = InvoiceLineItemUnit
+        fields = ['id','unit_name','default','unit_price','coef','invoice_line_item','persian_date_added', 'get_edit_url','get_delete_url']
+ 
+  

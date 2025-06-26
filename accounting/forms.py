@@ -11,8 +11,8 @@ class AddAccountForm(forms.Form):
     nature=forms.CharField( max_length=100, required=False)
 
 
-class AddProductUnitForm(forms.Form):
-    product_id=forms.IntegerField(required=True)
+class AddInvoiceLineItemUnitForm(forms.Form):
+    invoice_line_item_id=forms.IntegerField(required=True)
     unit_name=forms.CharField(max_length=100, required=True)
     unit_price=forms.IntegerField(required=True)
     coef=forms.FloatField(required=True)

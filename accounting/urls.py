@@ -11,6 +11,7 @@ urlpatterns = [
     path('products/',login_required(views.ProductsView.as_view()),name="products"),
     path('invoices/',login_required(views.InvoicesView.as_view()),name="invoices"),
     path('invoice/<int:pk>/',login_required(views.InvoiceView.as_view()),name="invoice"),
+    path('invoice-line-item/<int:pk>/',login_required(views.InvoiceLineItemView.as_view()),name="invoicelineitem"),
     path('invoice/print/<int:pk>/',login_required(views.InvoicePrintView.as_view()),name="invoice_print"),
     path('invoice_line/<int:pk>/',login_required(views.InvoiceLineView.as_view()),name="invoiceline"),
     path('product/<int:pk>/',login_required(views.ProductView.as_view()),name="product"),
@@ -20,7 +21,7 @@ urlpatterns = [
     path('account/<int:pk>/',login_required(views.AccountView.as_view()),name="account"),
     path('service/<int:pk>/',login_required(views.ServiceView.as_view()),name="service"),
     
-    path("add-product-unit/",login_required(apis.AddProductUnitApi.as_view()),name="add_product_unit"),
+    path("add-invoice-line-item-unit/",login_required(apis.AddInvoiceLineItemUnitApi.as_view()),name="add_invoice_line_item_unit"),
 
       
     path("events/",login_required(views.EventsView.as_view()),name="events"),

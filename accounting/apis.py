@@ -5,13 +5,13 @@ import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
 from .repo import InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,AccountingDocumentLineRepo,AccountingDocumentRepo,FinancialEventRepo,PersonAccountRepo
-from .serializers import  ProductUnitSerializer,ProductSerializer,AccountSerializer
+from .serializers import  InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer
 from django.http import JsonResponse
 from .forms import *
  
 
 
-class AddProductUnitApi(APIView):
+class AddInvoiceLineItemUnitApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         result=FAILED
@@ -20,13 +20,13 @@ class AddProductUnitApi(APIView):
         context['result']=FAILED
         if request.method=='POST':
             log=222
-            add_product_unit_form=AddProductUnitForm(request.POST)
-            if add_product_unit_form.is_valid():
+            add_invoice_line_item_unit_form=AddInvoiceLineItemUnitForm(request.POST)
+            if add_invoice_line_item_unit_form.is_valid():
                 log=333
-                cd=add_product_unit_form.cleaned_data 
-                result,message,product_unit=InvoiceLineItemUnitRepo(request=request).add_product_unit(**cd)
-                if product_unit is not None:
-                    context['product_unit']=ProductUnitSerializer(product_unit).data
+                cd=add_invoice_line_item_unit_form.cleaned_data 
+                result,message,invoice_line_item_unit=InvoiceLineItemUnitRepo(request=request).add_invoice_line_item_unit(**cd)
+                if invoice_line_item_unit is not None:
+                    context['invoice_line_item_unit']=InvoiceLineItemUnitSerializer(invoice_line_item_unit).data
         context['message']=message
         context['result']=result
         context['log']=log

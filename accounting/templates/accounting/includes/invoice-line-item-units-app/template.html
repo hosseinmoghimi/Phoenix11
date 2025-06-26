@@ -2,22 +2,22 @@
 {% load to_price %}
  {% load to_amount_color %}
  {% load static %}
-<div id="accordion-product-units" class="rtl text-right farsi">
-  <div class="card" id="product-units-app">
-    <div class="card-header" id="heading-product-units">
+<div id="accordion-invoice-line-item-units" class="rtl text-right farsi">
+  <div class="card" id="invoice-line-item-units-app">
+    <div class="card-header" id="heading-invoice-line-item-units">
       <h5 class="text-center">
         <button
           class="btn btn-link"
           data-toggle="collapse"
-          data-target="#collapse-product-units"
+          data-target="#collapse-invoice-line-item-units"
           aria-expanded="true"
-          aria-controls="collapse-product-units"
+          aria-controls="collapse-invoice-line-item-units"
         >
           قیمت های ثبت شده
 
-          <span v-if="product_units.length>0">
+          <span v-if="invoice_line_item_units.length>0">
             <small class="text-danger mx-2">
-              <span v-text="product_units.length"></span>
+              <span v-text="invoice_line_item_units.length"></span>
             </small>
           </span>
         </button>
@@ -32,10 +32,10 @@
       {% endif %}
     </div>
     <div
-      id="collapse-product-units"
-      class="collapse {% if expand_product_units %} show {% endif %}"
-      aria-labelledby="heading-product-units"
-      data-parent="#accordion-product-units"
+      id="collapse-invoice-line-item-units"
+      class="collapse {% if expand_invoice_line_item_units %} show {% endif %}"
+      aria-labelledby="heading-invoice-line-item-units"
+      data-parent="#accordion-invoice-line-item-units"
     >
       <div class="card-body">
         {% load static %}
@@ -52,7 +52,10 @@
           </h6>
           <table class="table table-striped rtl">
             <thead>
+              {% if not invoice_line_item %}
+                
               <th>کالا</th>
+              {% endif %}
 
               <th>نام واحد</th>
               <th>پیشفرض</th>
@@ -63,15 +66,14 @@
               <th></th>
             </thead>
             <tbody>
-              <tr v-for="product_unit in product_units">
-                <td>
-                  <a :href="product_unit.product.get_absolute_url">
-                    <span v-text="product_unit.product.title"> </span>
-                  </a>
+              <tr v-for="invoice_line_item_unit in invoice_line_item_units">
+                 {% if not invoice_line_item %}
+                 <td>
+                 
                   <div class="media">
-                    <a :href="product_unit.product.get_absolute_url">
+                    <a :href="invoice_line_item_unit.invoice_line_item.get_absolute_url">
                       <img
-                        :src="product_unit.product.logo"
+                        :src="invoice_line_item_unit.invoice_line_item.logo"
                         class="rounded"
                         width="32"
                         alt=""
@@ -79,42 +81,46 @@
                     </a>
                     <div class="media-body mr-3">
                       <div>
-                        <a :href="product_unit.product.get_absolute_url">
-                          <span v-text="product_unit.product.title "></span>
+                        <a :href="invoice_line_item_unit.invoice_line_item.get_absolute_url">
+                          <span v-text="invoice_line_item_unit.invoice_line_item.title "></span>
                         </a>
                       </div>
                     </div>
                   </div>
                 </td>
+              {% endif %}
+
+
+                
                 <td>
-                  <span v-text="(product_unit.unit_name)"> </span>
+                  <span v-text="(invoice_line_item_unit.unit_name)"> </span>
 
                  
                 </td>
 
                 <td>
-                  <span v-if="product_unit.default">
+                  <span v-if="invoice_line_item_unit.default">
                     <i class="fa fa-check"></i>
                   </span>
-                  <span v-if="!product_unit.default"> </span>
+                  <span v-if="!invoice_line_item_unit.default"> </span>
                 </td>
 
                 <td>
-                  <span v-text="to_price(product_unit.unit_price)"> </span>
+                  <span v-text="to_price(invoice_line_item_unit.unit_price)"> </span>
                   {{CURRENCY}}
                 </td>
                 <td>
-                  <span v-text="product_unit.coef"> </span>
+                  <span v-text="invoice_line_item_unit.coef"> </span>
                 </td>
                 <td>
                   <span
-                    v-text="to_price(product_unit.unit_price/product_unit.coef)"
+                    v-text="to_price(invoice_line_item_unit.unit_price/invoice_line_item_unit.coef)"
                   >
                   </span>
                   {{CURRENCY}}
                 </td>
                 <td>
-                  <span v-text="product_unit.persian_date_added"> </span>
+                  <span v-text="invoice_line_item_unit.persian_date_added"> </span>
                 </td>
                 <td>
                   {% if perms.accounting.change_productprice %}
@@ -122,7 +128,7 @@
                     class="my-2"
                     target="_blank"
                     title="ویرایش"
-                    :href="product_unit.get_edit_url"
+                    :href="invoice_line_item_unit.get_edit_url"
                   >
                     <i class="fa fa-edit text-warning"></i>
                     <!-- <span class="text-warning">
@@ -134,7 +140,7 @@
                     class="my-2"
                     target="_blank"
                     title="حذف"
-                    :href="product_unit.get_delete_url"
+                    :href="invoice_line_item_unit.get_delete_url"
                   >
                     <i class="fa fa-trash text-danger"></i>
                     <!-- <span class="text-danger">
@@ -152,7 +158,7 @@
         <button @click="show_form=true" v-if="!show_form" class="btn btn-info">
           افزودن قیمت جدید
         </button>
-        {% if add_product_unit_form %}
+        {% if add_invoice_line_item_unit_form %}
 
         <div v-if="show_form">
           <button
@@ -214,10 +220,15 @@
             </div>
 
             <div class="col-md-12">
-              <button class="btn btn-success" @click="add_product_unit()">
+              <button class="btn btn-success" @click="add_invoice_line_item_unit()">
                 ثبت
               </button>
             </div>
+
+          </div>
+          <div :class="'alert alert-'+message.color" v-if="message.show">
+            <h5 v-text="message.title"></h5>
+            <div v-html="message.body"></div>
           </div>
         </div>
         {% endif %}

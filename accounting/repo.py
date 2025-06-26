@@ -1,4 +1,4 @@
-from .models import InvoiceLineItemUnit,Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,AccountingDocument,AccountingDocumentLine,FinancialYear,PersonAccount
+from .models import InvoiceLineItemUnit,InvoiceLineItem,Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,AccountingDocument,AccountingDocumentLine,FinancialYear,PersonAccount
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo
@@ -49,36 +49,40 @@ class InvoiceLineItemUnitRepo:
             return self.objects.filter(pk=kwargs['id']).first() 
 
                      
-    def add_product_unit(self,*args, **kwargs):
-        product_unit,message,result=(None,"",FAILED)
+    def add_invoice_line_item_unit(self,*args, **kwargs):
+        invoice_line_item_unit,message,result=(None,"",FAILED)
         # if not Permission(request=self.request).is_permitted(APP_NAME,OperationEnum.ADD,"productprice"):
         if not self.request.user.has_perm(APP_NAME+".add_invoicelineitemunit"):
             message="دسترسی غیر مجاز"
-            return result,message,product_unit
-        # if len(Account.objects.filter(title=kwargs['title']))>0:
-        #     message="از قبل حسابی با همین عنوان ثبت شده است."
-        #     return product_unit,message,result
-        leolog(kwargs=kwargs)
-        leolog(sdsdsdd="sdsdsdsdsdsdsdsdsd")
-        product_unit=InvoiceLineItemUnit()
+            return result,message,invoice_line_item_unit
+        
+ 
+        invoice_line_item_unit=InvoiceLineItemUnit()
+        if 'invoice_line_item_id' in kwargs:
+            invoice_line_item_unit.invoice_line_item_id=kwargs['invoice_line_item_id']
+
+        if 'service' in kwargs:
+            invoice_line_item_unit.invoice_line_item_id=kwargs['service']
         
         if 'product_id' in kwargs:
-            product_unit.invoice_line_item_id=kwargs['product_id']
+            invoice_line_item_unit.invoice_line_item_id=kwargs['product_id']
         if 'unit_price' in kwargs:
-            product_unit.unit_price=kwargs['unit_price']
+            invoice_line_item_unit.unit_price=kwargs['unit_price']
         if 'unit_name' in kwargs:
-            product_unit.unit_name=kwargs['unit_name']
+            invoice_line_item_unit.unit_name=kwargs['unit_name']
         if 'default' in kwargs:
-            product_unit.default=kwargs['default']
+            invoice_line_item_unit.default=kwargs['default']
         if 'coef' in kwargs:
-            product_unit.coef=kwargs['coef']
-         
-        product_unit.save()
+            invoice_line_item_unit.coef=kwargs['coef']
+        if invoice_line_item_unit.unit_price<1:
+            message='قیمت را صفر انتخاب کرده اید.'
+            return result,message,invoice_line_item_unit
+        invoice_line_item_unit.save()
         result=SUCCEED
         message="قیمت جدید با موفقیت اضافه گردید."
          
  
-        return result,message,product_unit
+        return result,message,invoice_line_item_unit
 
 
 
@@ -711,6 +715,137 @@ class ProductRepo():
 
         return result,message,products
 
+
+
+class InvoiceLineItemRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.request=request
+        self.me=None
+        # profile=ProfileRepo(request=request).me
+        self.objects=InvoiceLineItem.objects
+        # if profile is not None:
+        #     self.me=self.objects.filter(profile=profile).first()
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+
+            objects=objects.filter(Q(title__contains=search_for))
+        return objects.all()
+    
+         
+    def invoice_line_item(self,*args, **kwargs):
+        if "invoice_line_item_id" in kwargs and kwargs["invoice_line_item_id"] is not None:
+            return self.objects.filter(pk=kwargs['invoice_line_item_id']).first() 
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        if "code" in kwargs and kwargs["code"] is not None:
+            return self.objects.filter(barcode=kwargs['code']).first()
+             
+        if "barcode" in kwargs and kwargs["barcode"] is not None:
+            a= self.objects.filter(barcode=kwargs['barcode']).first() 
+            return a 
+           
+    def add_invoice_line_item(self,*args,**kwargs):
+        result,message,invoice_line_item=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_invoice_line_item"):
+            message="دسترسی غیر مجاز"
+            return result,message,invoice_line_item
+        if len(InvoiceLineItem.objects.filter(title=kwargs["title"]))>0:
+            message="نام تکراری برای مورد جدید"
+            return result,message,invoice_line_item
+
+        invoice_line_item=InvoiceLineItem() 
+
+        if 'title' in kwargs:
+            invoice_line_item.title=kwargs["title"]
+        if 'unit_price' in kwargs:
+            invoice_line_item.unit_price=kwargs["unit_price"]
+        if 'unit_price' in kwargs:
+            invoice_line_item.unit_price=kwargs["unit_price"]
+            
+        if 'barcode' in kwargs and kwargs["barcode"] is not None and not kwargs["barcode"]=="":
+            invoice_line_item.barcode=kwargs["barcode"]
+        
+        if 'unit_name' in kwargs:
+            invoice_line_item.unit_name=kwargs["unit_name"]
+
+            
+        if invoice_line_item.barcode is not None and len(invoice_line_item.barcode)>0:
+            
+            if len(Product.objects.filter(barcode=invoice_line_item.barcode))>0:
+                message="بارکد تکراری برای کالای جدید"
+                return result,message,None
+
+        (result,message,invoice_line_item)=invoice_line_item.save()
+        if 'category_id' in kwargs:
+            category_id=kwargs["category_id"]
+            category=Category.objects.filter(pk=category_id).first()
+            if category is not None:
+                category.invoice_line_items.add(invoice_line_item.id)
+        coef=1
+        if 'coef' in kwargs:
+            coef=kwargs["coef"]
+        if invoice_line_item.unit_price>0:
+            InvoiceLineItemUnitRepo(request=self.request).add_invoice_line_item_unit(invoice_line_item_id=invoice_line_item.id,unit_price=invoice_line_item.unit_price,unit_name=invoice_line_item.unit_name,coef=coef)
+        return result,message,invoice_line_item
+ 
+
+    def import_products_from_excel(self,*args,**kwargs):
+        result,message,products=FAILED,"",[]
+        excel_file=kwargs['excel_file']
+        # import pandas
+        
+        # df = pandas.read_excel(excel_file)
+        # products=[]
+        # for row in df.columns[0]:
+        #     print (df.columns)
+        import openpyxl 
+
+        wb = openpyxl.load_workbook(excel_file)
+        ws = wb.active
+        count=kwargs['count']
+        products_to_import=[]
+
+        for i in range(2,count+2):
+            product={}
+            product['id']=ws['A'+str(i)].value
+            product['title']=ws['B'+str(i)].value
+            product['code']=ws['C'+str(i)].value
+            product['unit_name']=ws['D'+str(i)].value
+            product['unit_price']=ws['E'+str(i)].value
+            product['thumbnail_origin']=ws['F'+str(i)].value
+            # product['thumbnail_origin']=ws['F'+str(i)].value
+            if product['title'] is not None and not product['title']=="":
+                products_to_import.append(product) 
+        modified=added=0
+        for product in products_to_import:
+            old_product=Product.objects.filter(title=product["title"]).filter(code=product["code"]).first()
+            if old_product is not None:
+                old_product.title=product["title"]
+                old_product.unit_name=product["unit_name"]
+                old_product.thumbnail_origin=product["thumbnail_origin"]
+                old_product.unit_price=product["unit_price"] 
+                # old_product.thumbnail_origin=product["thumbnail_origin"] 
+                old_product.save()
+                modified+=1
+            else:
+                new_product=Product()
+                new_product.title=product["title"]
+                new_product.barcode=product["code"]
+                new_product.unit_name=product["unit_name"]
+                new_product.unit_price=product["unit_price"] 
+                new_product.save()
+                added+=1
+        result=SUCCEED
+        message=f"""{added} محصول اضافه شد.
+                    <br>
+                    {modified} محصول ویرایش شد. """
+
+        return result,message,products
 
 
 class BankAccountRepo():
