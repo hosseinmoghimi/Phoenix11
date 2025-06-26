@@ -1,11 +1,47 @@
-{% extends "accounting/layout.html" %} {% block content %}
+{% extends "accounting/layout.html" %}
+
+{% block content %}
 <div class="row rtl farsi">
   <div class="col-md-12">
     <div class="card">
       {% load to_price %}
       <div class="card-body">
-        <h5>{{invoice.title}}</h5>
-        <h5>{{invoice.sum_total|to_price}} {{CURRENCY}}</h5>
+        <h5 class="text-center">{{invoice.title}}</h5>
+        <div class="text-center">
+            
+        </div>
+        <div class="row rtl">
+            <div class="col-md-8">
+                <div>
+
+                    فروشنده
+                    :
+                     {{invoice.bestankar.name}} 
+                </div>
+
+                <div>
+
+                    خریدار
+                    :
+                     {{invoice.bedehkar.name}} 
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div>
+                    تاریخ :
+
+                {{invoice.persian_event_datetime}}
+                </div>
+
+                
+                <div>
+                    شماره :
+
+                {{invoice.id}}
+                    
+                </div>
+            </div>
+        </div>
       </div>
     </div>
   </div>
