@@ -347,26 +347,26 @@ class SelectionView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
 
-        account_groups=AccountRepo(request=request).list(level=1,*args, **kwargs)
+        account_groups=AccountRepo(request=request).list(level=0,*args, **kwargs)
         context['account_groups']=account_groups
         account_groups_s=json.dumps(AccountBriefSerializer(account_groups,many=True).data)
         context['account_groups_s']=account_groups_s
 
         
 
-        basic_accounts=AccountRepo(request=request).list(level=2,*args, **kwargs)
+        basic_accounts=AccountRepo(request=request).list(level=1,*args, **kwargs)
         context['basic_accounts']=basic_accounts
         basic_accounts_s=json.dumps(AccountBriefSerializer(basic_accounts,many=True).data)
         context['basic_accounts_s']=basic_accounts_s
 
 
-        moein_accounts=AccountRepo(request=request).list(level=3,*args, **kwargs)
+        moein_accounts=AccountRepo(request=request).list(level=2,*args, **kwargs)
         context['moein_accounts']=moein_accounts
         moein_accounts_s=json.dumps(AccountBriefSerializer(moein_accounts,many=True).data)
         context['moein_accounts_s']=moein_accounts_s
 
          
-        moein2_accounts=AccountRepo(request=request).list(level=4,*args, **kwargs)
+        moein2_accounts=AccountRepo(request=request).list(level=3,*args, **kwargs)
         context['moein2_accounts']=moein2_accounts
         moein2_accounts_s=json.dumps(AccountBriefSerializer(moein2_accounts,many=True).data)
         context['moein2_accounts_s']=moein2_accounts_s
