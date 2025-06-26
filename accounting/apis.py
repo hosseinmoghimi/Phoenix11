@@ -11,6 +11,71 @@ from .forms import *
  
 
 
+class AddAccountApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        add_account_form=AddAccountForm(request.POST)
+        if add_account_form.is_valid():
+            cd=add_account_form.cleaned_data
+            (result,message,account)=AccountRepo(request=request).add_account(**cd) 
+            if result==SUCCEED:
+                context["account"]=AccountSerializer(account).data
+            # (result2,message2)=PersonRepo(request=request).initial_default_persons() 
+        context['message']=message
+        context['result']=result
+        # context['message2']=message2
+        # context['result2']=result2
+        context['log']=log
+        return JsonResponse(context)
+
+class SetAccountPriorityApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            set_account_priority_form=SetAccountPriorityForm(request.POST)
+            if set_account_priority_form.is_valid():
+                log=333
+                cd=set_account_priority_form.cleaned_data
+                priority,message,result=AccountRepo(request=request).set_priority(**cd)
+                if priority is not None:
+                    context['priority']=priority
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+class SetAccountParentApi(APIView): 
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        action=None
+        log=111
+        context['result']=FAILED
+        set_parent_code_form=SetParentCodeForm(request.POST)
+        if set_parent_code_form.is_valid():
+            log=2222
+            cd=set_parent_code_form.cleaned_data
+            (result,message,account,parent)=AccountRepo(request=request).set_account_parent(**cd) 
+            if result==SUCCEED:
+                log=333 
+                context["parent"]=AccountSerializer(parent,many=False).data 
+                context["account"]=AccountSerializer(account,many=False).data 
+        context['message']=message
+        context['result']=result 
+        context['log']=log
+        return JsonResponse(context)
+
+
 class AddInvoiceLineItemUnitApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

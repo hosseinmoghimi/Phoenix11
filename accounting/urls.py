@@ -22,6 +22,7 @@ urlpatterns = [
     path('service/<int:pk>/',login_required(views.ServiceView.as_view()),name="service"),
     
     path("add-invoice-line-item-unit/",login_required(apis.AddInvoiceLineItemUnitApi.as_view()),name="add_invoice_line_item_unit"),
+    path("add-account/",login_required(apis.AddAccountApi.as_view()),name="add_account"),
 
       
     path("events/",login_required(views.EventsView.as_view()),name="events"),
@@ -39,4 +40,8 @@ urlpatterns = [
     path("tree-list/",login_required(views.TreeListView.as_view()),name="tree_list"),
    
 
+    path("set-account-priority/",login_required(apis.SetAccountPriorityApi.as_view()),name="set_account_priority"),
+
+    path("set_account_parent/",login_required(apis.SetAccountParentApi.as_view()),name="set_account_parent"),
+    
 ]

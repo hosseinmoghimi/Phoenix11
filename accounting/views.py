@@ -3,6 +3,7 @@ from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_UR
 
 from django.http import Http404
 from django.views import View
+from .enums import *
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
@@ -240,6 +241,15 @@ def ProductContext(request,product,*args, **kwargs):
     return context
  
 
+def AddAccountContext(request,*args, **kwargs):
+    context={}
+    account_natures=(i[0] for i in AccountNatureEnum.choices)
+    context['account_natures']=account_natures
+    if request.user.has_perm(APP_NAME+".add_account"):
+        context['add_account_form']=AddAccountForm()
+    return context
+
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -326,6 +336,9 @@ class AccountView(View):
             raise Http404
         context.update(AccountContext(request=request,account=account))
  
+        if request.user.has_perm(APP_NAME+".add_account"):
+            context.update(AddAccountContext(request=request))
+
         return render(request,TEMPLATE_ROOT+"account.html",context)
 
 
