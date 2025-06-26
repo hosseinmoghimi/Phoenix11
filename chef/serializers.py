@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Food,Meal,FoodItem,MealItem
-
+from accounting.serializers import FinancialEventSerializer,InvoiceLineSerializer
 class FoodItemSerializer(serializers.ModelSerializer):
        class Meta:
         model = FoodItem
@@ -11,15 +11,16 @@ class FoodSerializer(serializers.ModelSerializer):
        class Meta:
         model = Food
         fields = ['id','name','items', 'get_absolute_url','get_edit_url','get_delete_url']
-
-class MealSerializer(serializers.ModelSerializer):
+ 
+class MealSerializer(FinancialEventSerializer):
        class Meta:
         model = Meal
-        fields = ['id','title', 'persian_event_datetime' , 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','bedehkar','sum_total','bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
 
-class MealItemSerializer(serializers.ModelSerializer):
+
+class MealItemSerializer(InvoiceLineSerializer):
        meal=MealSerializer()
        food_item=FoodItemSerializer()
        class Meta:
         model = MealItem
-        fields = ['id','unit_price','quantity','unit_name', 'meal','food_item' , 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','unit_price','quantity','discount_percentage','line_total','unit_name', 'meal','food_item' , 'get_absolute_url','get_edit_url','get_delete_url']

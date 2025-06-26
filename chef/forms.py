@@ -5,4 +5,5 @@ class AddMealItemForm(forms.Form):
     meal_id=forms.IntegerField(required=True)
     quantity=forms.IntegerField(required=True)
     unit_price=forms.IntegerField(required=True)
+    discount_percentage=forms.IntegerField(required=True)
     unit_name=forms.CharField(max_length=50,required=True)

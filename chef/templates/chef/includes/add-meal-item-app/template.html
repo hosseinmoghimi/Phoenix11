@@ -42,7 +42,7 @@
             <label for=""
               >قیمت
               <small class="text-secondary my-2">
-                <span v-text="to_price(price)"></span>
+                <span v-text="to_price(unit_price)"></span>
                 {{CURRENCY}}
               </small>
             </label>
@@ -50,6 +50,19 @@
           </div>
         </div>
 
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="">
+                درصد تخفیف 
+              
+              <small class="text-secondary my-2">
+                <span v-text="discount_percentage"></span> %
+               
+              </small>
+            </label>
+            <input max="100" min="0" v-model="discount_percentage" type="number" class="form-control" />
+          </div>
+        </div>
         <div class="col-md-4"></div>
 
         <div class="col-md-12">

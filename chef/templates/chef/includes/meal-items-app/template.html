@@ -33,6 +33,7 @@
               <th>نام آیتم وعده</th>
               <th>تعداد</th>
               <th>قیمت</th>
+              <th>تخفیف</th>
 
               <th></th>
             </thead>
@@ -44,7 +45,10 @@
                       <span v-text="meal_item.meal.name"></span>
                     </div>
                   </a>
-                  <small class="text-secondary" v-text="meal_item.meal.persian_datetime"></small>
+                  <small
+                    class="text-secondary"
+                    v-text="meal_item.meal.persian_datetime"
+                  ></small>
                 </td>
 
                 <td>
@@ -62,11 +66,12 @@
                   <span v-text="to_price(meal_item.unit_price)"></span>
                   <small class="text-secondary"> {{CURRENCY}} </small>
                 </td>
+                <td>
+                  <span v-text="meal_item.discount_percentage"></span>
+                </td>
 
                 <td>
-                  <span
-                    v-text="to_price(meal_item.unit_price*meal_item.quantity)"
-                  ></span>
+                  <span v-text="to_price(meal_item.line_total)"></span>
                   <small class="text-secondary"> {{CURRENCY}} </small>
                 </td>
 

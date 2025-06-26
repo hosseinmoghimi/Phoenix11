@@ -255,6 +255,8 @@ class MealItemRepo():
  
         if 'meal_id' in kwargs:
             meal_item.invoice_id=kwargs["meal_id"]
+        if 'discount_percentage' in kwargs:
+            meal_item.discount_percentage=kwargs["discount_percentage"]
         if 'quantity' in kwargs:
             meal_item.quantity=kwargs["quantity"]
         if 'unit_price' in kwargs:

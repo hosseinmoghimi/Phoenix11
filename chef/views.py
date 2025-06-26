@@ -10,7 +10,7 @@ from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 import json
 from utility.log import leolog
-from accounting.views import AddInvoiceLineContext
+from accounting.views import AddInvoiceLineContext,InvoiceContext
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='chef/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -100,6 +100,7 @@ class MealView(View):
         context['name3']="name 3333"
         meal=MealRepo(request=request).meal(*args, **kwargs)
         context["meal"]=meal
+        context.update(InvoiceContext(request=request,invoice=meal))
         meal_items=MealItemRepo(request=request).list(meal_id=meal.id)
         meal_items_s=json.dumps(MealItemSerializer(meal_items,many=True).data)
         context["meal_items_s"]=meal_items_s

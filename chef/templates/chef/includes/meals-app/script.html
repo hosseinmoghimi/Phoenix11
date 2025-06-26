@@ -7,11 +7,8 @@
             meals: meals_for_meals_app
         },
         methods: {
-            to_price: function(vall) {
-                let color="primary"
-                if(vall>0)color="success"
-                if(vall<0)color="danger"
-                return "<span class='text-"+color+"'>"+to_price(vall)+"</span>"
+            to_price: function(vall) { 
+                return  to_price(vall) 
             }
         }
     })

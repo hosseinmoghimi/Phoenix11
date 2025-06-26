@@ -65,7 +65,7 @@ class MealItem(InvoiceLine,LinkHelper):
         verbose_name_plural = _("MealItems")
 
     def __str__(self):
-        return f'{self.meal} :  {self.invoice_line_item} * {self.quantity} $ {self.price} {CURRENCY}'
+        return f'{self.meal} :  {self.invoice_line_item} * {self.quantity} $ {self.unit_price} {CURRENCY}'
  
     @property
     def meal(self):
