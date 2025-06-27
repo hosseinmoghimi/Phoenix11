@@ -85,3 +85,48 @@ FULL_SITE_URL='http://127.0.0.1:8011/'
 ```
 
 
+server_apps.py
+
+```
+from .server_settings import SITE_URL,STATIC_URL
+
+phoenix_apps=[
+    {'priority':1,'name':'core','url':SITE_URL+'','title':'خانه','logo':STATIC_URL+'core'+'/img/'+'logo.png','color':'warning',},
+    {'priority':2,'name':'accounting','url':SITE_URL+'accounting/','title':'حسابداری','logo':STATIC_URL+'accounting'+'/img/'+'logo.png','color':'success',},
+    {'priority':3,'name':'market','url':SITE_URL+'market/','title':'فروشگاه','logo':STATIC_URL+'market'+'/img/'+'logo.png','color':'success',},
+    {'priority':4,'name':'authentication','url':SITE_URL+'authentication/','title':'هویت','logo':STATIC_URL+'authentication'+'/img/'+'logo.png','color':'success',},
+    # {'priority':5,'name':'processmanagement','url':SITE_URL+'processmanagement/','title':'مدیریت فرآیند','logo':STATIC_URL+'processmanagement'+'/img/'+'logo.png','color':'success',},
+    {'priority':5,'name':'utility','url':SITE_URL+'utility/','title':'ابزار های کاربردی','logo':STATIC_URL+'utility'+'/img/'+'logo.png','color':'success',},
+    {'priority':6,'name':'log','url':SITE_URL+'log/','title':'لاگ','logo':STATIC_URL+'log'+'/img/'+'logo.png','color':'success',},
+    {'priority':7,'name':'chef','url':SITE_URL+'chef/','title':'سرآشپز','logo':STATIC_URL+'chef'+'/img/'+'logo.png','color':'success',},
+   
+   
+]
+```
+
+
+server_urls.py
+```
+from django.urls import path,include,re_path
+from django.views.static import serve
+from phoenix.server_settings import QRCODE_ROOT,STATIC_ROOT,MEDIA_ROOT
+urlpatterns = [ 
+    path('', include('core.urls')),
+    path('admin/', admin.site.urls),
+    path('log/', include('log.urls')),
+    path('authentication/', include('authentication.urls')),
+    path('accounting/', include('accounting.urls')),
+    path('market/', include('market.urls')),
+    path('chef/', include('chef.urls')),
+    path('utility/', include('utility.urls')),
+    
+    
+    
+    re_path(r'^qrcode/(?P<path>.*)$', serve, {'document_root': QRCODE_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': STATIC_ROOT}),
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
+
+
+]
+
+```
