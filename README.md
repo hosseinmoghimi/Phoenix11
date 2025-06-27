@@ -107,6 +107,7 @@ phoenix_apps=[
 
 server_urls.py
 ```
+from django.contrib import admin
 from django.urls import path,include,re_path
 from django.views.static import serve
 from phoenix.server_settings import QRCODE_ROOT,STATIC_ROOT,MEDIA_ROOT
