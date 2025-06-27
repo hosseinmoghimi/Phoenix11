@@ -1,7 +1,9 @@
 {% load static %}
 
 <meta charset="utf-8">
+{% if not NOT_REPONSIVE %}
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{% endif %}
 <title>{{app_title}} | {{title}}</title>
 <link href="{% static 'vendor/css/bootstrap.min.css' %}" rel="stylesheet">
 

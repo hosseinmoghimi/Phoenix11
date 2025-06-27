@@ -17,7 +17,7 @@
 <body class="farsi" {% if app_background_image %}
     style="background: linear-gradient(0deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('{{app_background_image.image}}');background-size:cover"
     {% endif %}>
-    {% if not NO_NAVBAR %}
+    {% if not NOT_NAVBAR %}
     {% include "phoenix/includes/navbar.html" %}
     {% endif %}
     <div class="my-3 {% if WIDE_LAYOUT %}mx-3{% else %}container{% endif %}">
@@ -27,7 +27,7 @@
         {% endblock content %}
     </div>
 
-    {% if not NO_FOOTER %}
+    {% if not NOT_FOOTER %}
     {% include "phoenix/includes/footer.html" %}
     {% endif %}
 
