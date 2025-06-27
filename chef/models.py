@@ -34,12 +34,15 @@ class FoodItem(Product,LinkHelper):
  
    
     def save(self):
+        (result,message,food_item)=FAILED,'',self
         if self.class_name is None or self.class_name=="":
             self.class_name="fooditem"
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        return super(FoodItem,self).save()
-
+        super(FoodItem,self).save()
+        result=SUCCEED
+        message="آیتم غذایی با موفقیت اضافه شد."
+        return (result,message,food_item)
 
 class Meal(Invoice):
      

@@ -37,7 +37,7 @@ class UnitNameEnum(TextChoices):
     JABE="جعبه",_("جعبه")
     SABAD="سبد",_("سبد")
     RAS="راس",_("راس")
-    
+    BOTTLE="بطری",_("بطری")
   
 class TextDirectionEnum(TextChoices):
     Rtl='rtl',_('rtl')

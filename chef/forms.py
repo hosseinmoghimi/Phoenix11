@@ -1,4 +1,4 @@
-from django import forms
+from accounting.forms import AddProductForm,forms
 
 class AddMealItemForm(forms.Form):
     food_item_id=forms.IntegerField(required=True)
@@ -13,3 +13,6 @@ class AddMealForm(forms.Form):
     event_datetime=forms.CharField(max_length=50,required=False)
     bestankar_id=forms.IntegerField(required=True)
     bedehkar_id=forms.IntegerField(required=True)
+
+class AddFoodItemForm(AddProductForm):
+    pass

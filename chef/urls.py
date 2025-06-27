@@ -11,6 +11,8 @@ urlpatterns = [
     path('meals/',login_required(views.MealsView.as_view()),name="meals"),  
     path('report/',login_required(views.ReportView.as_view()),name="report"),  
 
+    path('add-food-item',login_required(apis.AddFoodItemApi.as_view()),name="add_food_item"),
+    path('food-items/',login_required(views.FoodItemsView.as_view()),name="food_items"),
     path('add-meal',login_required(apis.AddMealApi.as_view()),name="add_meal"),
     path('add-meal-item',login_required(apis.AddMealItemApi.as_view()),name="add_meal_item"),
     path('food/<int:pk>/',login_required(views.FoodView.as_view()),name="food"),  

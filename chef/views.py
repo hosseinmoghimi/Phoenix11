@@ -9,6 +9,7 @@ from core.views import CoreContext
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 import json
+from utility.enums import UnitNameEnum
 from utility.log import leolog
 from accounting.views import AddInvoiceLineContext,InvoiceContext,ProductContext
 LAYOUT_PARENT='phoenix/layout.html'
@@ -79,6 +80,23 @@ class FoodItemView(View):
         meal_items_s=json.dumps(MealItemSerializer(meal_items,many=True).data)
         context["meal_items_s"]=meal_items_s
         return render(request,TEMPLATE_ROOT+"food-item.html",context)
+# Create your views here. 
+
+
+
+class FoodItemsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        food_items=FoodItemRepo(request=request).list(*args, **kwargs)
+        food_items_s=json.dumps(FoodItemSerializer(food_items,many=True).data)
+        context["food_items"]=food_items
+        context["food_items_s"]=food_items_s
+        if request.user.has_perm(APP_NAME+".add_fooditem"):
+            context['add_food_item_form']=AddFoodItemForm()
+            unit_names=(a[0] for a in UnitNameEnum.choices)
+            context['unit_names_for_add_food_item_app']=unit_names
+        return render(request,TEMPLATE_ROOT+"food-items.html",context)
 # Create your views here. 
 
 

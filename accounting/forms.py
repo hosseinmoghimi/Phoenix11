@@ -46,10 +46,9 @@ class AddProductForm(forms.Form):
     title=forms.CharField( max_length=100, required=True)
     barcode=forms.CharField( max_length=100, required=False) 
     code=forms.CharField( max_length=100, required=False) 
-    bar_code=forms.CharField( max_length=100, required=False) 
+    barcode=forms.CharField( max_length=100, required=False) 
     unit_price=forms.IntegerField( required=False)
     unit_name=forms.CharField( max_length=100, required=False) 
-    color=forms.CharField( max_length=100, required=False) 
     coef=forms.IntegerField( required=False)
     category_id=forms.IntegerField( required=False)
 

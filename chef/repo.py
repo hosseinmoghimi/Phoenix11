@@ -117,32 +117,41 @@ class FoodItemRepo():
             message="دسترسی غیر مجاز"
             return result,message,food
 
-        food=Food()
-        if 'name' in kwargs:
-            food.name=kwargs["name"]
-        if 'parent_id' in kwargs:
-            if kwargs["parent_id"]>0:
-                food.parent_id=kwargs["parent_id"]
-        if 'color' in kwargs:
-            food.color=kwargs["color"]
-        if 'code' in kwargs:
-            food.code=kwargs["code"]
-        if 'priority' in kwargs:
-            food.priority=kwargs["priority"]
-        if 'type' in kwargs:
-            food.type=kwargs["type"]
+        food_item=FoodItem()
+        
+        if 'barcode' in kwargs:
+            food_item.barcode=kwargs["barcode"]
+        if 'priority' in kwargs and kwargs['priority'] is not None:
+            food_item.priority=kwargs["priority"]
+        if 'title' in kwargs:
+            food_item.title=kwargs["title"]
 
             
         if 'parent_code' in kwargs:
             parent_code= kwargs["parent_code"]
             parent=Account.objects.filter(code=parent_code).first()
             if parent is not None:
-                food.parent_id=parent.id
+                food_item.parent_id=parent.id
 
         if 'nature' in kwargs:
-            food.nature=kwargs["nature"]
-        (result,message,food)=food.save()
-        return result,message,food
+            food_item.nature=kwargs["nature"]
+        (result,message,food_item)=food_item.save()
+
+        
+        if 'unit_price' in kwargs:
+            if 'unit_name' in kwargs:
+                if 'coef' in kwargs:
+                    from accounting.models import InvoiceLineItemUnit
+                    ili_unit=InvoiceLineItemUnit()
+                    ili_unit.unit_name=kwargs["unit_name"]
+                    ili_unit.coef=kwargs["coef"]
+                    ili_unit.unit_price=kwargs["unit_price"]
+                    ili_unit.invoice_line_item_id=food_item.id
+                    ili_unit.default=True
+                    ili_unit.save()
+                    leolog(ili_unit=ili_unit)
+
+        return result,message,food_item
 
 
 

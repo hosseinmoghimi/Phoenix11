@@ -1,0 +1,47 @@
+<script>
+    let add_food_item_app = new Vue({
+        el: "#add-food-item-app",
+        data: {
+            unit_price: 0,
+            unit_name: "عدد",
+            title: "",
+            barcode: "",
+            coef:1,
+            show_form: false,
+            message: { show: false },
+        },
+        methods: {
+            add_food_item: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    unit_name: this.unit_name,
+                    coef: this.coef,
+                    barcode: this.barcode,
+                    unit_price: parseInt(this.unit_price),
+                }
+                console.log(payload)
+                let url = "{% url 'chef:add_food_item' %}"
+                let posting = $.post(url, payload)
+                posting.done(data => {
+                    
+                    if (data.result === "SUCCEED") {
+                        if (typeof food_items_app != "undefined") {
+                            food_items_app.food_items.push(data.food_item)
+                        }
+                        show_message(add_food_item_app, "موفقیت آمیز", data.message, "success", 5000)
+                    }
+
+
+                    if (data.result != "SUCCEED") {
+                        show_message(add_food_item_app, "خطا", data.message, "danger", 5000)
+                    }
+
+                })
+            },
+            to_price: function (vall) {
+                return to_price(vall)
+            }
+        }
+    })
+</script>

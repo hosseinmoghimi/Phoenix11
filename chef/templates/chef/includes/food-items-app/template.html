@@ -1,0 +1,89 @@
+<div class="card" id="food-items-app">
+    <div class="card-header">
+        <h4>
+            کالا ها
+
+            <small>(
+                <span v-text="food_items.length"></span>
+                )</small>
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="my-2">
+            <input type="text" class="form-control" v-model="search_for" @input="filter()">
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <th>
+                        نام
+                    </th>
+
+
+                    <th>
+                        بارکد
+                    </th>
+
+
+
+                    <th>
+                        قیمت
+                    </th>
+
+
+                    <th>
+
+                    </th>
+                </thead>
+                <tbody>
+                    <tr v-for="food_item in food_items">
+
+                        <td>
+                            <a :href="food_item.get_absolute_url">
+                                <div class="media">
+                                    <img :src="food_item.thumbnail" width="48" class="rounded" alt="">
+                                    <div class="media-body mr-2">
+                                        <h5 v-text="food_item.title"></h5>
+                                        
+                                    </div>
+                                </div>
+
+                            </a>
+
+                        </td>
+                        <td>
+                            <a :href="food_item.get_absolute_url">
+                                <span :class="'text-'+food_item.color" v-text="food_item.barcode"></span>
+                            </a>
+                        </td>
+
+                        <td>
+                            <h6>
+                                هر
+                                <span v-text="food_item.unit_name"> </span>
+                                <span v-text="to_price(food_item.unit_price)"> </span>
+                                {{CURRENCY}}
+                            </h6>
+                        </td>
+
+
+                        <td>
+                            {% if perms.accounting.change_fooditem %}
+                            <a :href="food_item.get_edit_url" class="my-2 text-warning mx-2" title="ویرایش"
+                                target="_blank">
+                                <i class="fa fa-edit text-warning"></i>
+                            </a>
+                            {% endif %}
+                            {% if perms.accounting.delete_fooditem %}
+                            <a :href="food_item.get_delete_url" class="my-2 text-danger mx-2" title="حذف" target="_blank">
+                                <i class="fa fa-trash text-danger"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

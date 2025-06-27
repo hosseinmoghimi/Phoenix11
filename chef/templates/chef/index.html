@@ -1,51 +1,60 @@
 {% extends "core/layout.html" %}
 {% load static %}
+
 {% block content %}
 <div class="row rtl farsi">
-    
+  <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+    <a href="{% url 'chef:foods' %}">
+      <img
+        src="{% static 'chef/img/logo.png' %}"
+        width="64em"
+        class="mb-2"
+        alt=""
+      />
+      <h6 class="text-center">غذا ها</h6>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+    <a href="{% url 'chef:food_items' %}">
+      <img
+        src="{% static 'chef/img/logo.png' %}"
+        width="64em"
+        class="mb-2"
+        alt=""
+      />
+      <h6 class="text-center">آیتم های غذایی</h6>
+    </a>
+  </div>
 
-    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
-        <a href="{% url 'chef:foods' %}">
-            <img src="{% static 'chef/img/logo.png' %}" width="64em" class="mb-2" alt="">
-            <h6 class="text-center">
+  <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+    <a href="{% url 'chef:meals' %}">
+      <img
+        src="{% static 'chef/img/logo.png' %}"
+        width="64em"
+        class="mb-2"
+        alt=""
+      />
+      <h6 class="text-center">وعده ها</h6>
+    </a>
+  </div>
 
-                غذا ها
-
-            </h6>
-        </a>
-    </div>
-
-     <div class="col-6 col-md-3 col-lg-2 text-center my-3">
-        <a href="{% url 'chef:meals' %}">
-            <img src="{% static 'chef/img/logo.png' %}" width="64em" class="mb-2" alt="">
-            <h6 class="text-center">
-
-                وعده ها
-
-            </h6>
-        </a>
-    </div>
-
-      <div class="col-6 col-md-3 col-lg-2 text-center my-3">
-        <a href="{% url 'chef:report' %}">
-            <img src="{% static 'chef/img/logo.png' %}" width="64em" class="mb-2" alt="">
-            <h6 class="text-center">
-
-                 گزارش
-            </h6>
-        </a>
-    </div>
-
-
-
+  <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+    <a href="{% url 'chef:report' %}">
+      <img
+        src="{% static 'chef/img/logo.png' %}"
+        width="64em"
+        class="mb-2"
+        alt=""
+      />
+      <h6 class="text-center">گزارش</h6>
+    </a>
+  </div>
 </div>
 {% endblock content %}
-
-
 {% block script %}
 <script>
-    console.log("name1: {{name1}}")
-    console.log("name2: {{name2}}")
-    console.log("name3: {{name3}}")
+  console.log("name1: {{name1}}");
+  console.log("name2: {{name2}}");
+  console.log("name3: {{name3}}");
 </script>
 {% endblock script %}
