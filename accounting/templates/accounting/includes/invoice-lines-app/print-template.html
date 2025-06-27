@@ -86,18 +86,20 @@
               </td>
 
               <td class="bordered farsi text-right">
-                <div v-if="invoice_line.discount_percentage>0">
-                  <span
-                    v-text="to_price(invoice_line.unit_price*(invoice_line.discount_percentage)/100)"
-                  ></span>
-                  <div
-                    v-if="invoice_line.discount_percentage>0"
-                    class="text-success"
+                <div v-if="invoice_line.discount_percentage>0"> 
+                  
+                  <div class="text-success"
                   >
+                    <h6>
                     <span
-                      v-text="to_price(invoice_line.discount_percentage)"
-                    ></span>
+                      v-text="to_price(invoice_line.discount_percentage)">
+                  </span>
                     %
+                  </h6>
+                  <h6
+                    v-text="to_price(invoice_line.unit_price*invoice_line.quantity*(invoice_line.discount_percentage)/100)"
+                  ></h6>
+                 
                   </div>
                 </div>
                 <div v-if="invoice_line.discount_percentage==0"></div>
@@ -129,11 +131,24 @@
             {% if invoice %}
 
             <tr>
-              <td colspan="5">
-                <div class="text-left">جمع</div>
+              <td colspan="4">
+                <div class="text-left">
+                  
+                </div>
               </td>
 
+              <td  >
+                <div class="text-right"> 
+                <span class="text-success" v-text="to_price(sum_discounts())"></span>
+
+                </div>
+              </td>
               <td class="bordered farsi text-right">
+                <div>
+
+                 <span style="text-decoration: line-through" v-text="to_price(sum_prices())"></span>
+                
+              </div>
                 <span v-text="to_price(sum_total())"></span>
               </td>
             </tr>
@@ -217,16 +232,16 @@
             </th>
 
             <th>
-              <div class="text-left">
+              <!-- <div class="text-left">
                 جمع بدون تخفیف :
                 <span v-text="to_price(sum_prices())"></span>
                 {{CURRENCY}}
               </div>
-              <div class="text-danger text-left">
+              <div class="text-success text-left">
                 تخفیف :
                 <span v-text="to_price(sum_discounts())"></span>
                 {{CURRENCY}}
-              </div>
+              </div> -->
             </th>
 
             <th>
