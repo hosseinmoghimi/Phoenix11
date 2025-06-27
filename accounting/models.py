@@ -586,11 +586,17 @@ class Product(InvoiceLineItem):
     class_name="product"
     app_name=APP_NAME
     def save(self):
+        result,message,product=FAILED,"",None
         if self.class_name is None or self.class_name=="":
             self.class_name="product"
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        return super(Product,self).save()
+        
+        super(Product,self).save()
+        result=SUCCEED
+        product=self
+        message="کالای جدید افزوده شد."
+        return result,message,product
 
 
     class Meta:

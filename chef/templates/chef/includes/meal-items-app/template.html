@@ -51,10 +51,18 @@
                   ></small>
                 </td>
 
-                <td>
-                  <a :href="meal_item.food_item.get_absolute_url">
-                    <span v-text="meal_item.food_item.title"></span>
-                  </a>
+                <td> 
+
+                   <a :href="meal_item.food_item.get_absolute_url">
+                                            <div class="media text-right farsi">
+                                                <img width="32" :src="meal_item.food_item.thumbnail" alt="">
+                                                <div class="media-body mr-2">
+
+                                                    <span v-text="meal_item.food_item.title"></span>
+                                                </div>
+                                            </div>
+                                        </a>
+
                 </td>
 
                 <td>

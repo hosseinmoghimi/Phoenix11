@@ -633,18 +633,10 @@ class ProductRepo():
 
         if 'title' in kwargs:
             product.title=kwargs["title"]
-        if 'unit_price' in kwargs:
-            product.unit_price=kwargs["unit_price"]
-        if 'unit_price' in kwargs:
-            product.unit_price=kwargs["unit_price"]
-            
+         
         if 'barcode' in kwargs and kwargs["barcode"] is not None and not kwargs["barcode"]=="":
             product.barcode=kwargs["barcode"]
         
-        if 'unit_name' in kwargs:
-            product.unit_name=kwargs["unit_name"]
-
-            
         if product.barcode is not None and len(product.barcode)>0:
             
             if len(Product.objects.filter(barcode=product.barcode))>0:
@@ -652,16 +644,28 @@ class ProductRepo():
                 return result,message,None
 
         (result,message,product)=product.save()
+        leolog(kwargs=kwargs)
+        if 'unit_price' in kwargs:
+            if 'unit_name' in kwargs:
+                if 'coef' in kwargs:
+                    ili_unit=InvoiceLineItemUnit()
+                    ili_unit.unit_name=kwargs["unit_name"]
+                    ili_unit.coef=kwargs["coef"]
+                    ili_unit.unit_price=kwargs["unit_price"]
+                    ili_unit.invoice_line_item_id=product.id
+                    ili_unit.default=True
+                    ili_unit.save()
+                    leolog(ili_unit=ili_unit)
+
+                 
+
         if 'category_id' in kwargs:
-            category_id=kwargs["category_id"]
-            category=Category.objects.filter(pk=category_id).first()
-            if category is not None:
-                category.products.add(product.id)
-        coef=1
-        if 'coef' in kwargs:
-            coef=kwargs["coef"]
-        if product.unit_price>0:
-            ProductUnitRepo(request=self.request).add_product_unit(product_id=product.id,unit_price=product.unit_price,unit_name=product.unit_name,coef=coef)
+            pass
+            # category_id=kwargs["category_id"]
+            # category=Category.objects.filter(pk=category_id).first()
+            # if category is not None:
+            #     category.products.add(product.id)
+        coef=1 
         return result,message,product
  
 
