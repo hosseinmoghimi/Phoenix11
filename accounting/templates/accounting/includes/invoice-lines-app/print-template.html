@@ -31,9 +31,9 @@
             </th>
           </thead>
           <tbody>
-            <tr v-for="invoice_line in invoice_lines">
+            <tr v-for="(invoice_line, index) in invoice_lines" :key="invoice_line.id">
               <td class="bordered farsi text-right">
-                <span v-text="invoice_line.row"></span>
+                <span v-text="index + 1"></span>
               </td>
 
               {% if not invoice_line_item %}

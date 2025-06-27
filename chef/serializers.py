@@ -19,6 +19,14 @@ class MealSerializer(FinancialEventSerializer):
 
 
 class MealItemSerializer(InvoiceLineSerializer):
+       food_item=FoodItemSerializer()
+       class Meta:
+        model = MealItem
+        fields = ['id','unit_price','quantity','discount_percentage','line_total','unit_name', 'food_item' , 'get_absolute_url','get_edit_url','get_delete_url']
+
+
+
+class MealItemWithMealSerializer(InvoiceLineSerializer):
        meal=MealSerializer()
        food_item=FoodItemSerializer()
        class Meta:

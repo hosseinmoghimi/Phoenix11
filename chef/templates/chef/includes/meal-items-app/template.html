@@ -29,8 +29,15 @@
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
-              <th>تاریخ</th>
-              <th>نام آیتم وعده</th>
+              {% if not meal %}
+
+              <th>نام وعده</th>
+              {% endif %}
+              {% if not food_item %}
+
+              <th>نام آیتم غذایی</th>
+              {% endif %}
+
               <th>تعداد</th>
               <th>قیمت</th>
               <th>تخفیف</th>
@@ -39,31 +46,35 @@
             </thead>
             <tbody>
               <tr v-for="meal_item in meal_items">
+                {% if not meal %}
+
                 <td>
                   <a :href="meal_item.meal.get_absolute_url">
                     <div>
-                      <span v-text="meal_item.meal.name"></span>
+                      <span v-text="meal_item.meal.title"></span>
                     </div>
                   </a>
-                  <small
-                    class="text-secondary"
-                    v-text="meal_item.meal.persian_datetime"
-                  ></small>
                 </td>
 
-                <td> 
-
-                   <a :href="meal_item.food_item.get_absolute_url">
-                                            <div class="media text-right farsi">
-                                                <img width="32" :src="meal_item.food_item.thumbnail" alt="">
-                                                <div class="media-body mr-2">
-
-                                                    <span v-text="meal_item.food_item.title"></span>
-                                                </div>
-                                            </div>
-                                        </a>
-
+                {% endif %}
+                
+                {% if not food_item %}
+                  <td>
+                  <a :href="meal_item.food_item.get_absolute_url">
+                    <div class="media text-right farsi">
+                      <img
+                        width="32"
+                        :src="meal_item.food_item.thumbnail"
+                        alt=""
+                      />
+                      <div class="media-body mr-2">
+                        <span v-text="meal_item.food_item.title"></span>
+                      </div>
+                    </div>
+                  </a>
                 </td>
+                {% endif %}
+              
 
                 <td>
                   <span v-text="meal_item.quantity"></span>
@@ -75,7 +86,12 @@
                   <small class="text-secondary"> {{CURRENCY}} </small>
                 </td>
                 <td>
-                  <span v-text="meal_item.discount_percentage"></span>
+                  <span v-if="meal_item.discount_percentage>0"  >
+
+                    <span  v-text="meal_item.discount_percentage"></span>
+                    %
+
+                  </span>
                 </td>
 
                 <td>

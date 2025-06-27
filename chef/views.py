@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from .repo import MealRepo,FoodRepo,FoodItemRepo,MealItemRepo
-from .serializers import MealSerializer,FoodSerializer,MealItemSerializer,FoodItemSerializer
+from .serializers import MealSerializer,FoodSerializer,MealItemSerializer,FoodItemSerializer,MealItemWithMealSerializer
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
@@ -77,7 +77,7 @@ class FoodItemView(View):
         context["food_item"]=food_item
         context.update(FoodItemContext(request=request,food_item=food_item))
         meal_items=MealItemRepo(request=request).list(food_item_id=food_item.id)
-        meal_items_s=json.dumps(MealItemSerializer(meal_items,many=True).data)
+        meal_items_s=json.dumps(MealItemWithMealSerializer(meal_items,many=True).data)
         context["meal_items_s"]=meal_items_s
         return render(request,TEMPLATE_ROOT+"food-item.html",context)
 # Create your views here. 
@@ -94,7 +94,7 @@ class FoodItemsView(View):
         context["food_items_s"]=food_items_s
         if request.user.has_perm(APP_NAME+".add_fooditem"):
             context['add_food_item_form']=AddFoodItemForm()
-            unit_names=(a[0] for a in UnitNameEnum.choices)
+            unit_names=(a[0] for a in UnitNameEnum.ch)
             context['unit_names_for_add_food_item_app']=unit_names
         return render(request,TEMPLATE_ROOT+"food-items.html",context)
 # Create your views here. 
