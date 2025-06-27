@@ -3,10 +3,14 @@
 {% load static %} 
 {% block content %}
 <div class="row rtl farsi">
-    
+    <div class="col-md-12">
+      <div class="text-center">
+
+        <a href="{% url 'accounting:invoice' pk=meal.id %}">فاکتور</a>
+      </div>
+    </div>
    <div class="col-md-4">
         {% include "accounting/includes/invoice-app/card.html" %}
-
    </div>
 
   
@@ -14,9 +18,7 @@
     {% include "chef/includes/add-meal-item-app/template.html" %}
   </div>
 
-   <div class="col-12">
-    {% include "accounting/includes/invoice-lines-app/template.html" %}
-  </div>
+  
 
   <div class="col-12">
     {% include "chef/includes/meal-items-app/template.html" %}
@@ -28,8 +30,7 @@
     let meal_id=parseInt("{{meal.id}}")
 </script>
 {% include "chef/includes/add-meal-item-app/script.html" %}
-
-{% include "accounting/includes/invoice-lines-app/script.html" %}
+  
 
 {% include "chef/includes/meal-items-app/script.html" %} 
 {% endblock script %}

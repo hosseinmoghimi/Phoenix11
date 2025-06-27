@@ -3,7 +3,13 @@
 {% load static %}
 {% block content %}
 <div class="row rtl farsi">
-    <div class="col-12">
+    {% if add_meal_form %}
+      <div class="col-md-12">
+          {% include "chef/includes/add-meal-app/template.html" %}
+
+      </div>
+    {% endif %}
+    <div class="col-md-12">
 
         
         {% include "chef/includes/meals-app/template.html" %}
@@ -14,6 +20,8 @@
 
 
 {% block script %}
-   {% include "chef/includes/meals-app/script.html" %}
- 
+{% include "chef/includes/meals-app/script.html" %}
+{% if add_meal_form %}
+{% include "chef/includes/add-meal-app/script.html" %}
+{% endif %}
 {% endblock script %}

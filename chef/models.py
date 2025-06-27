@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import _,reverse,Page,LinkHelper,DateTimeHelper
+from core.models import _,reverse,Page,LinkHelper,DateTimeHelper,FAILED,SUCCEED
 from phoenix.server_settings import CURRENCY
 from .apps import APP_NAME
 from accounting.models import Product,InvoiceLine,Invoice
@@ -50,11 +50,16 @@ class Meal(Invoice):
    
 
     def save(self):
+        (result,message,meal)=FAILED,"",None
         if self.class_name is None or self.class_name=="":
             self.class_name="meal"
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        return super(Meal,self).save()
+        super(Meal,self).save()
+        meal=self
+        result=SUCCEED
+        message="با موفقیت ذخیره شد."
+        return (result,message,meal)
     
 
 class MealItem(InvoiceLine,LinkHelper):

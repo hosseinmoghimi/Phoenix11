@@ -31,3 +31,24 @@ class AddMealItemApi(APIView):
         context['log']=log
         return JsonResponse(context)
  
+class AddMealApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_meal_form=AddMealForm(request.POST)
+        if add_meal_form.is_valid():
+            log=333
+            cd=add_meal_form.cleaned_data
+            result,message,meal=MealRepo(request=request).add_meal(**cd)
+            if meal is not None:
+                context['meal']=MealSerializer(meal).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 

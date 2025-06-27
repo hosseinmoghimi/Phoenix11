@@ -58,7 +58,8 @@ class MealsView(View):
         meals_s=json.dumps(MealSerializer(meals,many=True).data)
         context["meals_s"]=meals_s
         context["meals"]=meals
-
+        if request.user.has_perm(APP_NAME+".add_meal"):
+            context['add_meal_form']=AddMealForm()
         return render(request,TEMPLATE_ROOT+"meals.html",context)
 # Create your views here. 
 

@@ -182,21 +182,30 @@ class MealRepo():
         if not self.request.user.has_perm(APP_NAME+".add_meal"):
             message="دسترسی غیر مجاز"
             return result,message,meal
-
+        leolog(kwargs=kwargs)
         meal=Meal()
         if 'name' in kwargs:
             meal.name=kwargs["name"]
         if 'parent_id' in kwargs:
             if kwargs["parent_id"]>0:
                 meal.parent_id=kwargs["parent_id"]
-        if 'color' in kwargs:
-            meal.color=kwargs["color"]
+        if 'bedehkar_id' in kwargs:
+            meal.bedehkar_id=kwargs["bedehkar_id"]
+        if 'bestankar_id' in kwargs:
+            meal.bestankar_id=kwargs["bestankar_id"]
         if 'code' in kwargs:
             meal.code=kwargs["code"]
-        if 'priority' in kwargs:
-            meal.priority=kwargs["priority"]
-        if 'type' in kwargs:
-            meal.type=kwargs["type"]
+        if 'event_datetime' in kwargs:
+            meal.event_datetime=kwargs["event_datetime"]
+            meal.event_datetime=kwargs["event_datetime"]
+            year=kwargs['event_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
+            meal.event_datetime=kwargs['event_datetime']
+
+
+        if 'title' in kwargs:
+            meal.title=kwargs["title"]
 
              
 

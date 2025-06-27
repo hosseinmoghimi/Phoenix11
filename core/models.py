@@ -9,6 +9,7 @@ from utility.models import LinkHelper,ImageHelper,DateTimeHelper
 from tinymce.models import HTMLField
 from django.shortcuts import reverse
 from django.core.files.storage import FileSystemStorage
+from utility.constants import FAILED,SUCCEED
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_URL,MEDIA_URL,ADMIN_URL,FULL_SITE_URL
 IMAGE_FOLDER = "images/"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')

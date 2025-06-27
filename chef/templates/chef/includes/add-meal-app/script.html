@@ -1,0 +1,104 @@
+{% include "accounting/includes/account-app/select-script.html" %}
+<script>
+  let add_meal_app = new Vue({
+    el: "#add-meal-app",
+    data: {
+    title: "",
+    event_date: current_date,
+    event_time: "00:00:00",
+    event_datetime: current_datetime,
+    bedehkar: false ,
+    bestankar: false ,  
+    bedehkar_code: "0", 
+    bestankar_code: "0",   
+    },
+
+    components: {
+      DatePicker: VuePersianDatetimePicker,
+    },
+    methods: {
+      
+
+      swap: function () {
+        let bed = add_meal_app.bedehkar;
+        let bes = add_meal_app.bestankar;
+        add_meal_app.bedehkar = bes;
+        add_meal_app.bestankar = bed;
+      },
+      to_price_colored: function (vall) {
+        let colorr = "primary";
+        if (vall > 0) {
+          colorr = "success";
+        }
+
+        if (vall < 0) {
+          colorr = "danger";
+        }
+
+        return `<span class="text-${colorr}">${to_price(
+          vall
+        )} {{CURRENCY}}</span>`;
+      },
+
+      to_price: function (vall) {
+        return to_price(vall) + " {{CURRENCY}}";
+      },
+
+      select_bedehkar: function () {
+          console.log(add_meal_app.bedehkar);
+          select_account_by_code(add_meal_app.bedehkar_code).done((data) => {
+              add_meal_app.bedehkar = data.account;
+              
+              if (data.result === "SUCCEED") {
+                  console.log(data.account);
+            if (data.account.nature === "{{ONLY_BESTANKAR}}") {
+                return;
+            }
+            add_meal_app.bedehkar = data.account;
+        } else {
+            add_meal_app.bedehkar = false
+        }
+        });
+    },
+
+    select_bestankar: function () {
+          console.log(add_meal_app.bestankar);
+        select_account_by_code(add_meal_app.bestankar_code).done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+              console.log(data.account);
+              if (data.account.nature === "{{ONLY_BEDEHKAR}}") {
+                  return;
+                }
+                
+                add_meal_app.bestankar = data.account;
+          } else {
+            add_meal_app.bestankar = false
+          }
+        });
+      },
+
+      add_meal: function () {
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          title: this.title,
+          event_datetime: this.event_date+" "+this.event_time,
+          bedehkar_id: this.bedehkar.id,
+          bestankar_id: this.bestankar.id,
+        };
+
+        console.log(payload);
+        let url = "{% url 'chef:add_meal' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            if (typeof meals_app != "undefined") {
+              meals_app.meals.push(data.meal);
+            }
+          }
+        });
+      },
+    },
+  });
+</script>
