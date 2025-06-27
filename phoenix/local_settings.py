@@ -1,11 +1,3 @@
-# Phoenix11
-
-
-
-server_settings.py
-copy from here
-
-```bash 
 
 from pathlib import Path
 from . import server_settings
@@ -81,7 +73,5 @@ MEDIA_ROOT =os.path.join(PUBLIC_ROOT,"media")
 
 ADMIN_URL=SITE_URL+"admin/"
 FULL_SITE_URL='http://127.0.0.1:8011/'
-
-```
 
 
