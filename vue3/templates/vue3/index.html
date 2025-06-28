@@ -1,0 +1,43 @@
+{% extends "vue3/layout.html" %} {% load static %} {% block head %} {% endblock head %} {% block content %}
+
+<div class="row">
+  <div class="col-md-12">
+    <div id="app">
+      <button @click="count--" class="btn btn-danger">-</button>
+      {% verbatim %} {{count}} {% endverbatim %}
+      <button @click="count++" class="btn btn-success">+</button>
+    </div>
+     
+  </div>
+</div>
+{% endblock content %} {% block script %}
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<script type="importmap">
+  {
+    "imports": {
+      "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+    }
+  }
+</script>
+
+<script type="module" setup>
+  import { createApp } from "vue";
+
+   
+  console.log("start vue by leo");
+
+  const app = createApp({
+    data() {
+      return {
+        count: 85,
+      };
+    },
+  }); 
+  app.mount("#app"); 
+
+  console.log("end vue by leo");
+</script>
+
+
+{% endblock script %}
