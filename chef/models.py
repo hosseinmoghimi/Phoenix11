@@ -10,17 +10,14 @@ class Food(models.Model,LinkHelper):
     
 
     app_name=APP_NAME
-    class_name="food    "
+    class_name="food"
     class Meta:
         verbose_name = _("Food")
         verbose_name_plural = _("Foods")
 
     def __str__(self):
         return self.name
-
-    def get_absolute_url(self):
-        return reverse("Food_detail", kwargs={"pk": self.pk})
-
+ 
 
 
 class FoodItem(Product,LinkHelper):

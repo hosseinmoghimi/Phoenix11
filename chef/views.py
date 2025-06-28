@@ -43,9 +43,10 @@ class IndexView(View):
 class FoodsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
         foods=FoodRepo(request=request).list(*args, **kwargs)
         context["foods"]=foods
+        foods_s=json.dumps(FoodSerializer(foods,many=True).data)
+        context["foods_s"]=foods_s
 
         return render(request,TEMPLATE_ROOT+"foods.html",context)
 # Create your views here. 
