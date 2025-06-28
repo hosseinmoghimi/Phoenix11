@@ -94,7 +94,7 @@ class FoodItemsView(View):
         context["food_items_s"]=food_items_s
         if request.user.has_perm(APP_NAME+".add_fooditem"):
             context['add_food_item_form']=AddFoodItemForm()
-            unit_names=(a[0] for a in UnitNameEnum.ch)
+            unit_names=(a[0] for a in UnitNameEnum.choices)
             context['unit_names_for_add_food_item_app']=unit_names
         return render(request,TEMPLATE_ROOT+"food-items.html",context)
 # Create your views here. 
