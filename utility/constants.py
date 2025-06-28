@@ -1,0 +1,4 @@
+FAILED="FAILED"
+SUCCEED="SUCCEED"
+TUMAN="تومان"
+RIAL="ریال"

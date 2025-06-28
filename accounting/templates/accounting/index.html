@@ -1,0 +1,78 @@
+{% extends "accounting/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="row rtl farsi">
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'accounting:accounts' %}">
+            <img src="{% static 'core/img/logo.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                حساب ها
+            </h6>
+        </a>
+    </div>
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'accounting:tree_chart' pk=0 %}">
+            <img src="{% static 'core/img/logo.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                نمودار درختی
+            </h6>
+        </a>
+    </div>
+
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'accounting:products'  %}">
+            <img src="{% static 'accounting/img/product.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                کالا ها
+            </h6>
+        </a>
+    </div>
+
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'accounting:invoices'  %}">
+            <img src="{% static 'accounting/img/invoice.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                فاکتور ها
+            </h6>
+        </a>
+    </div>
+
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'accounting:add_event'  %}">
+            <img src="{% static 'accounting/img/invoice.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                افزودن رویداد مالی
+            </h6>
+        </a>
+    </div>
+
+
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'accounting:settings'  %}">
+            <img src="{% static 'img/icons/settings.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                تنظیمات
+            </h6>
+        </a>
+    </div>
+   
+
+    <div class="col-lg-2 col-md-3 col-6">
+        <a href="{% url 'accounting:tree_chart' pk=0 %}" class="text-center">
+            <div class="text-center mb-2 mt-3">
+                <img src="{% static 'accounting/img/tree-chart.png' %}" width="64em" alt="">
+            </div>
+            <h6 class="text-center">
+                نمودار درختی حساب ها
+            </h6>
+        </a>
+    </div>
+
+
+
+</div>
+{% endblock content %}
+
+{% block script %}
+
+{% endblock script %}

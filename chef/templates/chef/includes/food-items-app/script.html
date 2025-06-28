@@ -1,0 +1,29 @@
+<script>
+    let food_items_for_food_items_app=JSON.parse("{{food_items_s|escapejs}}")
+    let food_items_app = new Vue({
+        el: "#food-items-app",
+        data: {
+            food_items: food_items_for_food_items_app,
+            search_for:"",
+        },
+        methods: {
+            filter: () => {
+                let search_for = (food_items_app.search_for).toUpperCase()
+                console.log(search_for)
+                food_items_app.food_items = food_items_for_food_items_app.filter(function (food_item) {
+                    let title=(food_item.title).toUpperCase()
+                    
+                    if(title.indexOf(search_for) > -1){
+                        return true
+                    }
+                    return false
+                })
+
+            },
+
+            to_price: (vall) => {
+                return to_price(vall)
+            }
+        }
+    })
+</script>

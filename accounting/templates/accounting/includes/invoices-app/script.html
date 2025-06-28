@@ -1,0 +1,31 @@
+<script>
+    let invoices_app_invoices = JSON.parse(`{{invoices_s|escapejs}}`)
+    let invoices_app = new Vue({
+        el: "#invoices-app",
+        data: {
+            invoices: invoices_app_invoices,
+            search_for: '',
+            waiting: false,
+
+        },
+        methods: {
+            filter: function () {
+                this.invoices = invoices_app_invoices.filter(function (invoice) {
+
+                    if (invoice.title.indexOf(this.search_for) > -1)
+                        return true
+                    if (invoice.bedehkar.full_name.indexOf(this.search_for) > -1)
+                        return true
+                    if (invoice.bestankar.full_name.indexOf(this.search_for) > -1)
+                        return true
+                    return false
+
+                })
+            },
+            to_price: function (vall) {
+                return to_price(vall, " ")
+            },
+
+        }
+    })
+</script>

@@ -1,0 +1,145 @@
+<div id="accordion-meal-items" class="rtl text-right farsi">
+  <div class="card" id="meal-items-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-meal-items"
+          aria-expanded="true"
+          aria-controls="collapse-meal-items"
+        >
+          آیتم وعده ها
+          <span v-if="meal_items.length>0">
+            <small class="text-danger mx-2">
+              <span v-text="meal_items.length"></span>
+            </small>
+          </span>
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-meal-items"
+      class="collapse {% if expand_meal_items %} show {% endif %}"
+      aria-labelledby="heading-meal-items"
+      data-parent="#accordion-meal-items"
+    >
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              {% if not meal %}
+
+              <th>نام وعده</th>
+              {% endif %}
+              {% if not food_item %}
+
+              <th>نام آیتم غذایی</th>
+              {% endif %}
+
+              <th>تعداد</th>
+              <th>قیمت</th>
+              <th>تخفیف</th>
+
+              <th></th>
+            </thead>
+            <tbody>
+              <tr v-for="meal_item in meal_items">
+                {% if not meal %}
+
+                <td>
+                  <a :href="meal_item.meal.get_absolute_url">
+                    <div>
+                      <span v-text="meal_item.meal.title"></span>
+                    </div>
+                  </a>
+                </td>
+
+                {% endif %}
+                
+                {% if not food_item %}
+                  <td>
+                  <a :href="meal_item.food_item.get_absolute_url">
+                    <div class="media text-right farsi">
+                      <img
+                        width="32"
+                        :src="meal_item.food_item.thumbnail"
+                        alt=""
+                      />
+                      <div class="media-body mr-2">
+                        <span v-text="meal_item.food_item.title"></span>
+                      </div>
+                    </div>
+                  </a>
+                </td>
+                {% endif %}
+              
+
+                <td>
+                  <span v-text="meal_item.quantity"></span>
+                  <span v-text="meal_item.unit_name"></span>
+                </td>
+
+                <td>
+                  <span v-text="to_price(meal_item.unit_price)"></span>
+                  <small class="text-secondary"> {{CURRENCY}} </small>
+                </td>
+                <td>
+                  <span v-if="meal_item.discount_percentage>0"  >
+
+                    <span  v-text="meal_item.discount_percentage"></span>
+                    %
+
+                  </span>
+                </td>
+
+                <td>
+                  <span v-text="to_price(meal_item.line_total)"></span>
+                  <small class="text-secondary"> {{CURRENCY}} </small>
+                </td>
+
+                <td>
+                  <a
+                    target="_blank"
+                    :href="meal_item.get_edit_url"
+                    title="ویرایش"
+                    class="text-warning mx-2"
+                  >
+                    <i class="fa fa-edit text-warning"> </i>
+                    ویرایش
+                  </a>
+                  <a
+                    target="_blank"
+                    :href="meal_item.get_delete_url"
+                    title="حذف"
+                    class="text-danger mx-2"
+                  >
+                    <i class="fa fa-trash text-danger"> </i>
+                    حذف
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <th>1</th>
+
+              <th>2</th>
+
+              <th>3</th>
+
+              <th>4</th>
+
+              <th>
+                <span v-text="to_price(total)"></span>
+                <small class="text-secondary"> {{CURRENCY}} </small>
+              </th>
+
+              <th>6</th>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

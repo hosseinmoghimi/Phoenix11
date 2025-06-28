@@ -1,0 +1,31 @@
+{% extends "chef/layout.html" %}
+{% block content %}
+<div class="row rtl farsi">
+     
+    {% if add_food_item_form %}
+    <div class="col-md-6">
+        {% include "chef/includes/add-food-item-app/template.html" %}
+    </div>
+    {% endif %}
+    
+    <div class="col-md-12 ">
+        {% include "chef/includes/food-items-app/template.html" %}
+    </div>
+    
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    
+   
+    
+
+</script> 
+
+{% include "chef/includes/food-items-app/script.html" %}
+{% if add_food_item_form %}
+{% include "chef/includes/add-food-item-app/script.html" %}
+{% endif %}
+ 
+{% endblock script %}

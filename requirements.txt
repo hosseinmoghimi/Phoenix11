@@ -1,8 +1,9 @@
 django
-pillow
 django-tinymce
-djangorestframeworkp
+djangorestframework
 django-cleanup
 openpyxl
 qrcode
 django-social-share
+khayyam
+pillow

@@ -1,0 +1,26 @@
+<script>
+  let meal_items_for_meal_items_app = JSON.parse("{{meal_items_s|escapejs}}");
+  let meal_items_app = new Vue({
+    el: "#meal-items-app",
+    data: {
+      meal_items: meal_items_for_meal_items_app,
+      total: 0,
+    },
+    mounted: function () {
+      this.calculate_total();
+    },
+    methods: {
+      to_price: function (vall) {
+        return to_price(vall);
+      },
+
+      calculate_total: function () {
+        let sum = 0;
+        this.meal_items.forEach((meal_item) => {
+          sum += meal_item.line_total;
+        });
+        this.total = sum;
+      },
+    },
+  });
+</script>

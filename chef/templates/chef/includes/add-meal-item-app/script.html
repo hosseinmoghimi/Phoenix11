@@ -1,0 +1,54 @@
+<script>
+  let food_items_for_add_food_items_app = JSON.parse(
+    "{{food_items_s|escapejs}}"
+  );
+  let add_meal_item_app = new Vue({
+    el: "#add-meal-item-app",
+    data: {
+      food_item_id: 0,
+      food_items: food_items_for_add_food_items_app,
+      unit_price: 0,
+      unit_name: "عدد",
+      discount_percentage:0,
+      quantity: 0,
+    },
+    methods: {
+      select_food_item: function () {
+        food_items_for_add_food_items_app.forEach(food_item => {
+            if(food_item.id==add_meal_item_app.food_item_id){
+                add_meal_item_app.price=food_item.price
+                
+            }
+        });
+      },
+      to_price: function (vall) {
+        return to_price(vall);
+      },
+
+      add_meal_item: function () {
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          meal_id: meal_id,
+          food_item_id: this.food_item_id,
+          quantity: this.quantity,
+          unit_price: this.unit_price,
+          unit_name: this.unit_name,
+          discount_percentage: this.discount_percentage,
+        };
+
+        console.log(payload);
+        let url = "{% url 'chef:add_meal_item' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            if (typeof meal_items_app != "undefined") {
+              meal_items_app.meal_items.push(data.meal_item);
+              meal_items_app.calculate_total()
+            }
+          }
+        });
+      },
+    },
+  });
+</script>
