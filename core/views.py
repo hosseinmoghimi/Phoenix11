@@ -97,3 +97,40 @@ class IndexView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
 # Create your views here.
+
+class MessageView(View):
+    def __init__(self,*args,**kwargs): 
+        self.message ={}
+        self.back_url =""
+        if 'title' in kwargs:
+            self.message['title']=kwargs['title']
+        if 'body' in kwargs:
+            self.message['body']=kwargs['body']
+
+        if 'message' in kwargs:
+            self.message=kwargs['message']
+
+        if 'back_url' in kwargs:
+            self.back_url=kwargs['back_url']
+            
+
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        back_url = request.META.get('HTTP_REFERER')
+        if 'title' in kwargs:
+            self.message['title']=kwargs['title']
+        if 'body' in kwargs:
+            self.message['body']=kwargs['body']
+
+        if 'message' in kwargs:
+            self.message=kwargs['message']
+
+        if 'back_url' in kwargs:
+            self.back_url=kwargs['back_url']
+        
+        context['message']=self.message     
+        context['back_url']=self.back_url     
+        return render(request,TEMPLATE_ROOT+"message.html",context)
+# Create your views here.
+    def response(self,request,*args,**kwargs):
+        return self.get(request,*args,**kwargs)

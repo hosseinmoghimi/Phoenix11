@@ -1,18 +1,20 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 
-from django.http import Http404
+from django.http import Http404,HttpResponse
 from django.views import View
 from .enums import *
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
+from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
 from .repo import InvoiceLineItemRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo,AccountingDocumentLineRepo
 from .serializers import AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,AccountingDocumentLineSerializer
 from utility.currency import to_price_colored
 import json 
+from core.views import MessageView
 from .models import UnitNameEnum
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='accounting/'
@@ -270,6 +272,67 @@ class SettingsView(View):
         # context['accounts']=accounts
         return render(request,TEMPLATE_ROOT+"settings.html",context) 
 
+
+class InvoiceToExcelView(View):
+    def get(self,request,*args, **kwargs):
+        now=PersianCalendar().date
+        invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        if invoice is None:
+            mv=MessageView(request=request)
+            mv.title="فاکتور پیدا نشد."
+            mv.body="فاکتور پیدا نشد."
+            return mv.response()
+        date=PersianCalendar().from_gregorian(now)
+        lines=[]
+        for i,invoice_line in enumerate(invoice.invoiceline_set.all(),start=1):
+            line={
+                'row':i,
+                'title':invoice_line.invoice_line_item.title,
+                'quantity':str(invoice_line.quantity) + invoice_line.unit_name,      
+                'discount':invoice_line.discount,      
+                'unit_price':invoice_line.unit_price,      
+                'line_total':invoice_line.line_total,      
+            }
+            lines.append(line)
+        headers=['ردیف',
+                 'عنوان',
+                 'تعداد', 
+                 'تخفیف',
+                 'فی',
+                 'مبلغ'
+        ]
+        report_work_book=ReportWorkBook()
+        report_work_book=ReportWorkBook(origin_file_name=f'Invoice.xlsx')
+        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
+        # sheet1=ReportSheet(
+        #     data=lines,
+        #     start_row=3,
+        #     start_col=1,
+        #     table_has_header=False,
+        #     table_headers=None,
+        #     style=style,
+        #     sheet_name='links',
+            
+        # )
+        
+        start_row=3
+        report_work_book.add_sheet(
+            data=lines,
+            start_row=start_row,
+            table_has_header=False,
+            table_headers=headers,
+            style=style,
+            sheet_name='Invoice',
+        )
+            
+        file_name=f"""{date.replace('/','').replace(':','')}   Page {1}.xlsx"""
+        
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
+        response["Content-disposition"]=f"attachment; filename={file_name}"
+        report_work_book.work_book.save(response)
+        report_work_book.work_book.close()
+        return response
 
 class TreeChartView(View):
     def get(self,request,*args, **kwargs):
