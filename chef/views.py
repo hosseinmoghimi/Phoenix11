@@ -25,6 +25,10 @@ def getContext(request,*args, **kwargs):
     return context
 
 
+def FoodItemContext(request,food_item,*args, **kwargs):
+    context=ProductContext(request=request,product=food_item)
+    return context
+ 
  
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -66,10 +70,6 @@ class MealsView(View):
 # Create your views here. 
 
 
-def FoodItemContext(request,food_item,*args, **kwargs):
-    context=ProductContext(request=request,product=food_item)
-    return context
- 
 class FoodItemView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

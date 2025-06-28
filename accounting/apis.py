@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,AccountingDocumentLineRepo,AccountingDocumentRepo,FinancialEventRepo,PersonAccountRepo
-from .serializers import  InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer
+from .repo import InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,AccountingDocumentLineRepo,AccountingDocumentRepo,FinancialEventRepo,PersonAccountRepo
+from .serializers import  InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
  
@@ -121,6 +121,27 @@ class ImportProductsFromExcelApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+class AddInvoiceLineApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_invoice_line_form=AddInvoiceLineForm(request.POST)
+            if add_invoice_line_form.is_valid():
+                log=333
+                cd=add_invoice_line_form.cleaned_data 
+                result,message,invoice_line=InvoiceLineRepo(request=request).add_invoice_line(**cd)
+                if invoice_line is not None:
+                    context['invoice_line']=InvoiceLineSerializer(invoice_line).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+    
  
 class SelectAccountApi(APIView):
     def post(self,request,*args, **kwargs):

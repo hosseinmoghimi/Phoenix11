@@ -1,4 +1,4 @@
-from .models import InvoiceLineItemUnit,InvoiceLineItem,Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,AccountingDocument,AccountingDocumentLine,FinancialYear,PersonAccount
+from .models import InvoiceLineItemUnit,InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,AccountingDocument,AccountingDocumentLine,FinancialYear,PersonAccount
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo
@@ -84,7 +84,71 @@ class InvoiceLineItemUnitRepo:
  
         return result,message,invoice_line_item_unit
 
+class InvoiceLineRepo:
+    def __init__(self,request,*args, **kwargs):
+        self.request=request
+        self.me=None
+        # profile=ProfileRepo(request=request).me
+        
+        
+        self.objects=None
+        if request.user.has_perm(APP_NAME+".view_event"):
+            self.objects=InvoiceLine.objects
+        elif request.user.is_authenticated:
+            accs=[]
+            for person in Person.objects.filter(profile__user_id=request.user.id):
 
+                my_accounts=AccountRepo(request=request).my_accounts
+                for acc in my_accounts:
+                    accs.append(acc.id)
+            self.objects=InvoiceLine.objects.filter(Q(bedehkar_id__in=accs)|Q(bestankar_id__in=accs))
+        else:
+            self.objects=InvoiceLine.objects.filter(pk=0)
+
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for']) 
+        return objects.all()
+    def invoice_line(self,*args, **kwargs):
+        if "invoice_line_id" in kwargs:
+            return self.objects.filter(pk=kwargs['invoice_line_id']).first() 
+        if "pk" in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first() 
+
+            
+        
+    def add_invoice_line(self,*args,**kwargs):
+        result,message,meal=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_invoiceline"):
+            message="دسترسی غیر مجاز"
+            return result,message,meal
+
+        invoice_line=InvoiceLine()
+        if 'invoice_line_item_id' in kwargs:
+            invoice_line_item_id=kwargs["invoice_line_item_id"]
+            invoice_line.invoice_line_item_id=invoice_line_item_id
+ 
+        if 'invoice_id' in kwargs:
+            invoice_line.invoice_id=kwargs["invoice_id"]
+        if 'discount_percentage' in kwargs:
+            invoice_line.discount_percentage=kwargs["discount_percentage"]
+        if 'quantity' in kwargs:
+            invoice_line.quantity=kwargs["quantity"]
+        if 'unit_price' in kwargs:
+            invoice_line.unit_price=kwargs["unit_price"]
+        if 'unit_name' in kwargs:
+            invoice_line.unit_name=kwargs["unit_name"]
+        
+        result=SUCCEED
+        message="سطر فاکتور با موفقیت اضافه شد."     
+ 
+        invoice_line.save()
+        return result,message,invoice_line
+           
+    
 
 class AccountRepo():
     def __init__(self,request,*args, **kwargs):

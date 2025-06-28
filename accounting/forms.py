@@ -17,6 +17,7 @@ class AddInvoiceLineItemUnitForm(forms.Form):
     unit_price=forms.IntegerField(required=True)
     coef=forms.FloatField(required=True)
     default=forms.BooleanField(required=False)
+ 
 
 
 class GetReportForm(forms.Form):
@@ -178,7 +179,7 @@ class AddEventAccountingDocumentLineForm(forms.Form):
 class AddInvoiceLineForm(forms.Form):
     invoice_line_item_id=forms.IntegerField(required=True)
     invoice_id=forms.IntegerField(required=True)
-    discount_percent=forms.IntegerField(required=False)
+    discount_percentage=forms.IntegerField(required=False)
     quantity=forms.IntegerField(required=True)
     unit_price=forms.IntegerField(required=True)
     coef=forms.IntegerField(required=False)

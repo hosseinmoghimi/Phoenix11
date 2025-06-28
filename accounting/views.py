@@ -11,7 +11,7 @@ from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
 from .repo import InvoiceLineItemRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo,AccountingDocumentLineRepo
-from .serializers import AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,AccountingDocumentLineSerializer
+from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,AccountingDocumentLineSerializer
 from utility.currency import to_price_colored
 import json 
 from core.views import MessageView
@@ -49,6 +49,10 @@ def AddInvoiceLineContext(request,*args, **kwargs):
     context={}
     unit_names=(i[0] for i in UnitNameEnum.choices)
     context["unit_names_for_add_invoice_line"]=unit_names
+    context["add_invoice_line_form"]=AddInvoiceLineForm
+    invoice_line_items=InvoiceLineItemRepo(request=request).list()
+    invoice_line_items_s=json.dumps(InvoiceLineItemSerializer(invoice_line_items,many=True).data)
+    context["invoice_line_items_s"]=invoice_line_items_s
     return context
 
 
@@ -632,6 +636,14 @@ class InvoiceView(View):
         invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)
         context['invoice_s']=invoice_s
         context.update(InvoiceContext(request=request,invoice=invoice))
+
+        
+        # if True:
+            # invoice_line_items=InvoiceLineItemRepo(request=request).list()
+            # context.update(AddInvoiceLineContext(request=request))
+            # invoice_line_items_s=json.dumps(InvoiceLineItemSerializer(invoice_line_items,many=True).data)
+            # context["invoice_line_items_s"]=invoice_line_items_s
+
         return render(request,TEMPLATE_ROOT+"invoice.html",context)
 
 

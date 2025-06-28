@@ -3,7 +3,11 @@
 
     let tax_percent = parseInt(`{{invoice.tax_percent}}`)
     let invoice_lines_app_data = {}
-    let invoice_lines_app_methods = {}
+    let invoice_lines_app_methods = {
+        calculate_sum:function(){
+            
+        }
+    }
     let invoice_lines_for_app12=JSON.parse("{{invoice_lines_s|escapejs}}")
 </script>
 
