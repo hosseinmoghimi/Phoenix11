@@ -22,6 +22,7 @@ urlpatterns = [
     path('account/<int:pk>/',login_required(views.AccountView.as_view()),name="account"),
     path('service/<int:pk>/',login_required(views.ServiceView.as_view()),name="service"),
     path("add-invoice-line/",login_required(apis.AddInvoiceLineApi.as_view()),name="add_invoice_line"),
+    path('add-invoice/',login_required(apis.AddInvoiceApi.as_view()),name="add_invoice"),
     
     path("add-invoice-line-item-unit/",login_required(apis.AddInvoiceLineItemUnitApi.as_view()),name="add_invoice_line_item_unit"),
     path("add-account/",login_required(apis.AddAccountApi.as_view()),name="add_account"),

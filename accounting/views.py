@@ -55,7 +55,7 @@ def AddInvoiceLineContext(request,*args, **kwargs):
     context["invoice_line_items_s"]=invoice_line_items_s
     return context
 
-
+ 
 
 def AccountsContext(request):
     context={}
@@ -616,6 +616,10 @@ class AddEventView(View):
         context['WIDE_LAYOUT']=True
         return render(request,TEMPLATE_ROOT+"add-event.html",context)
 
+def AddInvoiceContext(request):
+    context={}
+    context['add_invoice_form']=AddInvoiceForm()
+    return context
 
 class InvoicesView(View):
     def get(self,request,*args, **kwargs):
@@ -625,6 +629,8 @@ class InvoicesView(View):
         context['invoices']=invoices
         context['invoices_s']=invoices_s
         context['WIDE_LAYOUT']=True
+        if request.user.has_perm(APP_NAME+".add_invoice"):
+            context.update(AddInvoiceContext(request=request))
         return render(request,TEMPLATE_ROOT+"invoices.html",context)
 
 

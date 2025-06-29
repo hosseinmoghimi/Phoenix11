@@ -138,10 +138,27 @@ class InvoiceLineRepo:
         if 'quantity' in kwargs:
             invoice_line.quantity=kwargs["quantity"]
         if 'unit_price' in kwargs:
-            invoice_line.unit_price=kwargs["unit_price"]
+            unit_price=kwargs["unit_price"]
+            invoice_line.unit_price=unit_price
+
         if 'unit_name' in kwargs:
-            invoice_line.unit_name=kwargs["unit_name"]
-        
+            unit_name=kwargs["unit_name"]
+            invoice_line.unit_name=unit_name
+        if 'save' in kwargs:
+            save=kwargs["save"]
+            if save:
+                if 'coef' in kwargs:
+                    coef=kwargs["coef"]
+                if 'default' in kwargs:
+                    default11=kwargs["default"]
+                InvoiceLineItemUnitRepo(request=self.request).add_invoice_line_item_unit(
+                    invoice_line_item_id=invoice_line_item_id,
+                    coef=coef,
+                    default=default11,
+                    unit_name=unit_name,
+                    unit_price=unit_price,
+                    )
+
         result=SUCCEED
         message="سطر فاکتور با موفقیت اضافه شد."     
  
@@ -1503,9 +1520,9 @@ class InvoiceRepo():
             message="دسترسی غیر مجاز"
             return result,message,invoice
 
-        invoice=Account()
-        if 'name' in kwargs:
-            invoice.name=kwargs["name"]
+        invoice=Invoice()
+        if 'title' in kwargs:
+            invoice.title=kwargs["title"]
         if 'parent_id' in kwargs:
             if kwargs["parent_id"]>0:
                 invoice.parent_id=kwargs["parent_id"]
@@ -1515,6 +1532,17 @@ class InvoiceRepo():
             invoice.code=kwargs["code"]
         if 'priority' in kwargs:
             invoice.priority=kwargs["priority"]
+        if 'bedehkar_id' in kwargs:
+            invoice.bedehkar_id=kwargs["bedehkar_id"]
+        if 'bestankar_id' in kwargs:
+            invoice.bestankar_id=kwargs["bestankar_id"]
+        if 'event_datetime' in kwargs:
+            
+            year=kwargs['event_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
+            invoice.event_datetime=kwargs["event_datetime"]
+
         if 'type' in kwargs:
             invoice.type=kwargs["type"]
 

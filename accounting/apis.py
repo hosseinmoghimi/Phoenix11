@@ -4,12 +4,32 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,AccountingDocumentLineRepo,AccountingDocumentRepo,FinancialEventRepo,PersonAccountRepo
-from .serializers import  InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
+from .repo import InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,AccountingDocumentLineRepo,AccountingDocumentRepo,FinancialEventRepo,PersonAccountRepo
+from .serializers import  InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
  
 
+class AddInvoiceApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_invoice_form=AddInvoiceForm(request.POST)
+        if add_invoice_form.is_valid():
+            log=333
+            cd=add_invoice_form.cleaned_data
+            result,message,invoice=InvoiceRepo(request=request).add_invoice(**cd)
+            if invoice is not None:
+                context['invoice']=InvoiceSerializer(invoice).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
 
 class AddAccountApi(APIView):
     def post(self,request,*args, **kwargs):

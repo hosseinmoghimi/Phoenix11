@@ -543,6 +543,7 @@ class InvoiceLineItem(CorePage,LinkHelper):
             return unit.unit_price
         return 0
 
+
 class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     invoice_line_item=models.ForeignKey("invoicelineitem",related_name="units" ,verbose_name=_("invoicelineitem"), on_delete=models.CASCADE)
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices, max_length=50)
@@ -636,7 +637,12 @@ class Invoice(FinancialEvent):
             self.class_name="invoice"
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        return super(Invoice,self).save()
+
+        result,message,invoice=FAILED,"",self
+
+        super(Invoice,self).save()
+        result=SUCCEED
+        return result,message,invoice
 
 
 

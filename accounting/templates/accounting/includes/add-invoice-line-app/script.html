@@ -6,9 +6,12 @@
       invoice_line_item_id: 0,
       invoice_line_items: invoice_line_items_for_add_invoice_line_items_app,
       unit_price: 0,
+      default11:false,
+      coef:1,
       unit_name: "عدد",
       discount_percentage:0,
       quantity: 0,
+      save:false,
     },
     methods: {
       select_invoice_line_item: function () {
@@ -28,9 +31,12 @@
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           invoice_id: invoice_id,
           invoice_line_item_id: this.invoice_line_item_id,
-          quantity: this.quantity,
-          unit_price: this.unit_price,
+          quantity: parseInt(this.quantity),
+          unit_price: parseInt(this.unit_price),
           unit_name: this.unit_name,
+          default: this.default11,
+          save: this.save,
+          coef: parseInt(this.coef),
           discount_percentage: this.discount_percentage,
         };
 
