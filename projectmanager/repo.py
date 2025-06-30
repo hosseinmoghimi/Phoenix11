@@ -51,17 +51,39 @@ class ProjectRepo():
             return result,message,project
         leolog(kwargs=kwargs)
         project=Project()
-        if 'name' in kwargs:
-            project.name=kwargs["name"]
+        if 'title' in kwargs:
+            project.title=kwargs["title"]
         if 'parent_id' in kwargs:
             if kwargs["parent_id"]>0:
                 project.parent_id=kwargs["parent_id"]
-        if 'bedehkar_id' in kwargs:
-            project.bedehkar_id=kwargs["bedehkar_id"]
-        if 'bestankar_id' in kwargs:
-            project.bestankar_id=kwargs["bestankar_id"]
-        if 'code' in kwargs:
-            project.code=kwargs["code"]
+        if 'employer_id' in kwargs:
+            project.employer_id=kwargs["employer_id"]
+        if 'contractor_id' in kwargs:
+            project.contractor_id=kwargs["contractor_id"]
+        if 'type' in kwargs:
+            project.type=kwargs["type"]
+        if 'weight' in kwargs:
+            project.weight=kwargs["weight"]
+        if 'percentage_completed' in kwargs:
+            project.percentage_completed=kwargs["percentage_completed"]
+        if 'start_datetime' in kwargs:
+            project.start_datetime=kwargs["start_datetime"]
+            project.start_datetime=kwargs["start_datetime"]
+            year=kwargs['start_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['start_datetime']=PersianCalendar().to_gregorian(kwargs["start_datetime"])
+            project.start_datetime=kwargs['start_datetime']
+
+ 
+        if 'end_datetime' in kwargs:
+            project.end_datetime=kwargs["end_datetime"]
+            project.end_datetime=kwargs["end_datetime"]
+            year=kwargs['end_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['end_datetime']=PersianCalendar().to_gregorian(kwargs["end_datetime"])
+            project.end_datetime=kwargs['end_datetime']
+
+ 
         if 'event_datetime' in kwargs:
             project.event_datetime=kwargs["event_datetime"]
             project.event_datetime=kwargs["event_datetime"]
@@ -70,9 +92,7 @@ class ProjectRepo():
                 kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
             project.event_datetime=kwargs['event_datetime']
 
-
-        if 'title' in kwargs:
-            project.title=kwargs["title"]
+ 
         
         (result,message,project)=project.save()
         return result,message,project

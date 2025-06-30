@@ -28,43 +28,37 @@
       <div class="card-body">
         <div class="table-responsive">
           <table class="table table-striped">
-            <thead>
-              <th>تاریخ</th>
-              <th>نام وعده</th>
+            <thead> 
+              <th>نام پروژه</th>
 
-              <th>
-                مبلغ
-              </th>
-              <th>
-
-              </th>
+              <th>کارفرما</th>
+              <th>پیمانکار</th>
+              <th></th>
             </thead>
             <tbody>
               <tr v-for="project in projects">
-                <td>
-                </td>
+               
 
                 <td>
                   <a :href="project.get_absolute_url">
                     <span v-text="project.title"></span>
                   </a>
-
-                  <div>
-                    
-                  </div>
-
-                   <div>
-                     
-                  </div>
-
- 
                 </td>
-                <td>
-                     
-                    <small>
 
-                        {{CURRENCY}}
-                    </small>
+                <td>
+                  <div>
+                    <a :href="project.employer.get_absolute_url">
+                      <span v-text="project.employer.title"></span>
+                    </a>
+                  </div>
+                </td>
+
+                <td>
+                  <div>
+                    <a :href="project.contractor.get_absolute_url">
+                      <span v-text="project.contractor.title"></span>
+                    </a>
+                  </div>
                 </td>
 
                 <td>

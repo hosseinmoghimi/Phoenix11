@@ -4,6 +4,7 @@ from django.views import View
 from .forms import *
 from .serializers import ProjectSerializer
 from .repo import ProjectRepo
+from organization.views import OrganizationRepo,OrganizationSerializer
 from .apps import APP_NAME
 from core.views import CoreContext,PageContext
 from utility.calendar import PersianCalendar
@@ -65,6 +66,9 @@ class ProjectsView(View):
         context['projects_s']=projects_s
         if request.user.has_perm(APP_NAME+".add_project"):
             context['add_project_form']=AddProjectForm
+            organizations=OrganizationRepo(request=request).list()
+            organizations_s=json.dumps(OrganizationSerializer(organizations,many=True).data)
+            context['organizations_s']=organizations_s
         return render(request,TEMPLATE_ROOT+"projects.html",context)
 # Create your views here. 
 
