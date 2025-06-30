@@ -1,0 +1,15 @@
+<script>
+    
+    let organizations_for_organizations_app=JSON.parse("{{organizations_s|escapejs}}")
+    let organizations_app = new Vue({
+        el: "#organizations-app",
+        data: {
+            organizations: organizations_for_organizations_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>
