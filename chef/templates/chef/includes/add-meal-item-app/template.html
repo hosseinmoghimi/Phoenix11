@@ -61,7 +61,34 @@
             <input max="100" min="0" v-model="discount_percentage" type="number" class="form-control" />
           </div>
         </div>
-        <div class="col-md-4"></div>
+        
+        <div class="col-md-12"></div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for=""> ضریب </label>
+            <input
+              max="100"
+              min="0"
+              v-model="coef"
+              type="number"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="">ذخیره</label>
+            <input type="checkbox" class="form-control" v-model="save" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="">پیش فرض</label>
+            <input type="checkbox" class="form-control" v-model="default11" />
+          </div>
+        </div>
+
         <div class="col-md-12">
 
           <span v-text="to_price(unit_price)+'*'+quantity+'='+to_price(unit_price*quantity)"></span>

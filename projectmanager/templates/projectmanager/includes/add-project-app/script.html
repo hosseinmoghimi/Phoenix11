@@ -1,0 +1,44 @@
+{% include "accounting/includes/account-app/select-script.html" %}
+<script>
+  let add_project_app = new Vue({
+    el: "#add-project-app",
+    data: {
+    title: "",
+    event_date: current_date,
+    event_time: "00:00:00",
+    event_datetime: current_datetime,
+    },
+    components: {
+      DatePicker: VuePersianDatetimePicker,
+    },
+    methods: {
+      
+      
+
+      to_price: function (vall) {
+        return to_price(vall) + " {{CURRENCY}}";
+      },
+
+     
+      add_project: function () {
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          title: this.title,
+          event_datetime: this.event_date+" "+this.event_time,
+        };
+
+        console.log(payload);
+        let url = "{% url 'projectmanager:add_project' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            if (typeof projects_app != "undefined") {
+              projects_app.projects.push(data.project);
+            }
+          }
+        });
+      },
+    },
+  });
+</script>
