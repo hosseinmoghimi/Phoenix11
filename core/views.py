@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,CURRENCY,VUE_VERSION_3,VUE_VERSION_2
 from authentication.repo import ProfileRepo
+from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
 from .forms import *
 from .apps import APP_NAME

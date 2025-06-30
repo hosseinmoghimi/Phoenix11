@@ -8,4 +8,7 @@ class ProfileRepo():
         self.me=None
         if self.user.is_authenticated:
             self.me=Profile.objects.filter(user=request.user).first()
-    
+    def logout(self,*args, **kwargs):
+        pass      
+    def login(self,*args, **kwargs):
+        pass      

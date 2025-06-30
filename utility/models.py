@@ -5,6 +5,7 @@ from phoenix.settings import ADMIN_URL,STATIC_URL,MEDIA_URL
 from django.shortcuts import reverse 
 from .calendar import PersianCalendar
 from .apps import APP_NAME
+IMAGE_FOLDER = "images/"
 
 
 class DateHelper():
@@ -142,7 +143,33 @@ class LinkHelper():
         """
 
 
- 
+class Picture(models.Model, LinkHelper):
+    app_name = models.CharField(_("app_name"), max_length=50)
+    name = models.CharField(_("name"), max_length=50)
+    image_origin = models.ImageField(_("image"), upload_to=IMAGE_FOLDER+"pictures/",
+                                     null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    class_name = "picture"
+
+    @property
+    def image(self):
+        if self.image_origin and self.image_origin is not None:
+            return f'{MEDIA_URL}{str(self.image_origin)}'
+        if self.image_origin =="":
+            return f'{STATIC_URL}logo.png'
+        if self.image_origin is None:
+            return f'{STATIC_URL}logo.png'
+        return None
+
+    class Meta:
+        verbose_name = _("Picture")
+        verbose_name_plural = _("Pictures")
+
+    def __str__(self):
+        return self.app_name+" : "+self.name
+
+    def get_edit_url(self):
+        return f"{ADMIN_URL}{APP_NAME}/picture/{self.pk}/change/"
+
 
  
 
