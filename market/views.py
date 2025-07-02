@@ -2,6 +2,8 @@ from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from accounting.repo import ProductRepo
 from accounting.serializers import ProductSerializer
+from .serializers import MenuSerializer,SupplierSerializer
+from .repo import MenuRepo,SupplierRepo
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
@@ -89,3 +91,47 @@ class ProductsView(View):
         return render(request,TEMPLATE_ROOT+"products.html",context) 
     
     
+
+    
+class ProductView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        product =ProductRepo(request=request).list(*args, **kwargs)
+        context['product']=product
+        product_s=json.dumps(ProductSerializer(product,many=True).data)
+        context['product_s']=product_s
+        context[WIDE_LAYOUT]=True
+        return render(request,TEMPLATE_ROOT+"product.html",context) 
+    
+
+class MenusView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        menus =MenuRepo(request=request).list(*args, **kwargs)
+        context['menus']=menus
+        menus_s=json.dumps(MenuSerializer(menus,many=True).data)
+        context['menus_s']=menus_s
+ 
+        context[WIDE_LAYOUT]=True
+        if request.user.has_perm(APP_NAME+".add_menu"):
+            context['add_menu_form']=AddMenuForm()
+            suppliers=SupplierRepo(request=request).list()
+            context['suppliers']=suppliers
+        return render(request,TEMPLATE_ROOT+"menus.html",context) 
+    
+    
+
+    
+class MenuView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        menu =MenuRepo(request=request).menu(*args, **kwargs)
+        context['menu']=menu
+        menu_s=json.dumps(MenuSerializer(menu,many=False).data)
+        context['menu_s']=menu_s
+ 
+        context[WIDE_LAYOUT]=True
+        return render(request,TEMPLATE_ROOT+"menu.html",context) 
+    
+    
+
