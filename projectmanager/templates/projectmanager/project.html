@@ -1,36 +1,41 @@
-{% extends "chef/layout.html" %} 
-{% load to_price %} 
-{% load static %} 
-{% block content %}
-<div class="row rtl farsi">
-    <div class="col-md-12">
-      <div class="text-center">
+{% extends "projectmanager/layout.html" %}
 
-        <a href="{% url 'accounting:invoice' pk=meal.id %}">فاکتور</a>
-      </div>
+{% block content %} 
+<div class="row rtl">
+     
+    <div class="col-md-9">
+        <div class="row rtl">
+
+
+           
+            <div class="col-md-4">
+                {% include "core/includes/page-downloads-app/template.html" %}
+
+            </div>
+            <div class="col-md-4">
+                {% include "core/includes/page-links-app/template.html" %} 
+
+            </div>
+           
+            <div class="col-md-12">
+                {% include "core/includes/page-images-app/template.html" %}
+
+            </div>
+            <div class="col-md-12">
+                {% include "core/includes/page-comments-app/template.html" %}
+
+            </div>  
+            
+        </div>
     </div>
-   <div class="col-md-4">
-        {% include "accounting/includes/invoice-app/card.html" %}
-   </div>
 
-  
-  <div class="col-12">
-    {% include "chef/includes/add-meal-item-app/template.html" %}
-  </div>
 
-  
-
-  <div class="col-12">
-    {% include "chef/includes/meal-items-app/template.html" %}
-  </div>
 </div>
-{% endblock content %} 
-{% block script %} 
-<script>
-    let meal_id=parseInt("{{meal.id}}")
-</script>
-{% include "chef/includes/add-meal-item-app/script.html" %}
-  
 
-{% include "chef/includes/meal-items-app/script.html" %} 
+{% endblock content %}
+
+
+{% block script %}
+{% include "core/includes/page-app/script.html" %}
+
 {% endblock script %}

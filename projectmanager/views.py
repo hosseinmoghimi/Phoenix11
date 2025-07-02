@@ -6,7 +6,7 @@ from .serializers import ProjectSerializer
 from .repo import ProjectRepo
 from organization.views import OrganizationRepo,OrganizationSerializer
 from .apps import APP_NAME
-from core.views import CoreContext,PageContext
+from core.views import CoreContext,PageContext,MessageView
 from utility.calendar import PersianCalendar
 import json
 from utility.enums import UnitNameEnum
@@ -25,8 +25,8 @@ def getContext(request,*args, **kwargs):
     return context
 
 
-def ProjectContext(request,food_item,*args, **kwargs):
-    context=PageContext(request=request,page=food_item)
+def ProjectContext(request,project,*args, **kwargs):
+    context=PageContext(request=request,page=project)
     return context
   
  
@@ -45,10 +45,12 @@ class IndexView(View):
 class ProjectView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
+        project=ProjectRepo(request=request).project(*args, **kwargs)
+        if project is None:
+            mv=MessageView()
+            return mv.get(request=request)
+        
+        context.update(ProjectContext(request=request,project=project))
 
         return render(request,TEMPLATE_ROOT+"project.html",context)
 # Create your views here. 

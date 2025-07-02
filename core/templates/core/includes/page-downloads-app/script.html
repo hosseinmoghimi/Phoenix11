@@ -1,0 +1,52 @@
+<script>
+    let url_add_download = "{% url 'core:add_page_download' %}"
+    // let downloads=JSON.parse(`{1{page_downloads_s|escapejs}}`)
+    let page_downloads_app = new Vue({
+        el: "#page-downloads-app",
+        data: {
+            new_download_title: "",
+            downloads: downloads,
+            waiting: false,
+            new_download_file: '',
+            show_add_download_form: false,
+        },
+        methods: {
+            add_page_download: function () {
+                page_downloads_app.waiting = true
+                let title = this.new_download_title
+                let formData = new FormData();
+                let file1 = $('#add-download-form')[0].elements[1].files[0]
+                formData.append("file1", file1);
+                formData.append("title", title);
+                formData.append("csrfmiddlewaretoken", csrfmiddlewaretoken);
+                formData.append("page_id", page_id);
+
+                $.ajax({
+                    url: url_add_download,
+                    type: 'post',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        page_downloads_app.waiting = false
+
+                        if (data != 0) {
+                            // //console.log(data)
+                            if (data.result === 'SUCCEED') {
+                                page_downloads_app.downloads.push(data.page_download)
+                                page_downloads_app.new_download_title = ''
+                                page_downloads_app.new_download_file = ''
+
+
+                            }
+                        }
+                        else {
+                        }
+                    },
+                });
+
+            },
+
+        }
+    })
+</script>

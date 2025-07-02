@@ -1,0 +1,69 @@
+{% extends "phoenix/layout.html" %}
+
+{% block content %}
+{% include "core/includes/page-app/navbar.html" %}
+<div class="row rtl">
+    <div class="col-md-3">
+        {% include "core/includes/page-app/thumbnail-card.html" %}
+        {% include "core/includes/page-app/brief-card.html" %}
+
+    </div>
+    <div class="col-md-9">
+        <div class="row rtl">
+
+
+            <div class="col-md-12">
+                {% include "core/includes/page-description-app/short-description.html" %}
+                {% include "core/includes/page-description-app/description.html" %}
+            </div>
+            <div class="col-md-4">
+                {% include "core/includes/page-downloads-app/template.html" %}
+
+            </div>
+            <div class="col-md-4">
+                {% include "core/includes/page-links-app/template.html" %}
+                {% include "core/includes/page-metadata-app/template.html" %}
+
+            </div>
+            <div class="col-md-4">
+                {% include "core/includes/page-tags-app/template.html" %}
+
+            </div>
+            <div class="col-md-12">
+                {% include "core/includes/page-images-app/template.html" %}
+
+            </div>
+            <div class="col-md-12">
+                {% include "core/includes/page-comments-app/template.html" %}
+
+            </div>  
+             <div class="col-md-12">
+                {% include "core/includes/page-like-app/page-likes.html" %}
+
+            </div>
+            <div class="col-md-12">
+                {% include "core/includes/page-related-app/template.html" %}
+
+            </div>
+            <div class="col-md-12">
+                {% include "map/includes/locations-app/template.html" %}
+
+            </div>
+
+            <div class="col-md-12">
+                {% include "core/includes/page-permissions-app/template.html" %}
+        
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock content %}
+
+
+{% block script %}
+{% include "core/includes/page-app/script.html" %}
+
+{% endblock script %}
