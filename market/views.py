@@ -2,7 +2,7 @@ from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from accounting.repo import ProductRepo
 from accounting.serializers import ProductSerializer
-from .serializers import MenuSerializer,SupplierSerializer
+from .serializers import MenuSerializer,SupplierSerializer,ShopSerializer
 from .repo import MenuRepo,SupplierRepo
 from .forms import *
 from .apps import APP_NAME
@@ -129,8 +129,14 @@ class MenuView(View):
         context['menu']=menu
         menu_s=json.dumps(MenuSerializer(menu,many=False).data)
         context['menu_s']=menu_s
+
+        shops=menu.shops.all()
+        shops_s=json.dumps(ShopSerializer(shops,many=True).data)
+        context['shops_s']=shops_s
  
         context[WIDE_LAYOUT]=True
+        context['NOT_NAVBAR']=True
+        context['NOT_FOOTER']=True
         return render(request,TEMPLATE_ROOT+"menu.html",context) 
     
     
