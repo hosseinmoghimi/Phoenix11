@@ -5,5 +5,5 @@ from .models import Page
 class PageSerializer(serializers.ModelSerializer):
     class Meta:
         model=Page
-        fields=['id','unit_price', 'get_edit_url','get_delete_url']
+        fields=['id','title','get_absolute_url' ,'get_edit_url','get_delete_url']
  
