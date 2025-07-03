@@ -1,11 +1,4 @@
 {% load static %}
-
- 
-
-
-
-
-
 <div id="accordion-set-page-thumbnail" class="rtl text-right farsi">
   <div class="card" id="set-page-thumbnail-app">
     <div class="card-header" id="heading-set-page-thumbnail">
@@ -17,92 +10,93 @@
           aria-expanded="true"
           aria-controls="collapse-set-page-thumbnail"
         >
-         تغییر دادن تصویر کوچک و سربرگ
-
-          
+          تغییر دادن تصویر کوچک و سربرگ
         </button>
       </h5>
-
-      
     </div>
     <div
       id="collapse-set-page-thumbnail"
-      class="collapse "
+      class="collapse"
       aria-labelledby="heading-set-page-thumbnail"
       data-parent="#accordion-set-page-thumbnail"
     >
-     
+      <div class="card-body">
+        <div id="set-page-thumbnail-header-app" v-cloak>
+          <div class="row">
+            <div class="col-md-12">
+              <form
+                id="set-page-thumbnail-header-form"
+                @submit.prevent="set_thumbnail_header()"
+                enctype="multipart/form-data"
+              >
+                <div class="row">
+                  <div class="col-md-12 text-right">
+                    <span class="btn btn-raised btn-round btn-default btn-file">
+                      <span class="fileinput-new farsi">انتخاب تصویر کوچک</span>
 
-
-
-     <div class="card-body">
-    <div id="set-page-thumbnail-header-app" v-cloak>
-      
-      <div class="row">
-        <div class="col-md-12">
-          <form
-            id="set-page-thumbnail-header-form"
-             
-            @submit.prevent="set_thumbnail_header()"
-            enctype="multipart/form-data"
-          >
-            <div class="row">
-              <div class="col-md-12 text-right">
-                <span class="btn btn-raised btn-round btn-default btn-file">
-                  <span class="fileinput-new farsi">انتخاب تصویر کوچک</span>
-
-                  <input type="file" v-on:change="has_thumbnail=true" name="" />
-                  <div class="ripple-container"></div>
-                </span>
-              </div>
-              <div class="col-md-12 text-right">
-                <span class="btn btn-raised btn-round btn-default btn-file">
-                  <span class="fileinput-new farsi">انتخاب تصویر سربرگ</span>
-                  <input type="file" v-on:change="has_header=true" name="" />
-                  <div class="ripple-container"></div>
-                </span>
-              </div>
-              <div class="col-md-6">
-                <img
-                  src="{% static 'leo/img/loading.gif' %}"
-                  width="32"
-                  v-if="waiting"
-                  alt=""
-                />
-                <button class="farsi btn btn-primary btn-block" type="submit">
-                  تایید
-                </button>
-              </div>
-              <div class="col-md-6">
-                <img
-                  src="{% static 'leo/img/loading.gif' %}"
-                  width="32"
-                  v-if="waiting"
-                  alt=""
-                />
-                <button
-                  @click="show_form=false"
-                  class="farsi btn btn-secondary btn-block"
-                  type="reset"
-                >
-                  انصراف
-                </button>
-              </div>
-              <div class="col-md-12">
-                <div class="my-3 text-right" v-if="message.show">
-                  <div :class="'alert alert-'+message.color">
-                    <div class="farsi" v-html="message.body"></div>
+                      <input
+                        type="file"
+                        v-on:change="has_thumbnail=true"
+                        name=""
+                      />
+                      <div class="ripple-container"></div>
+                    </span>
+                  </div>
+                  <div class="col-md-12 text-right">
+                    <span class="btn btn-raised btn-round btn-default btn-file">
+                      <span class="fileinput-new farsi"
+                        >انتخاب تصویر سربرگ</span
+                      >
+                      <input
+                        type="file"
+                        v-on:change="has_header=true"
+                        name=""
+                      />
+                      <div class="ripple-container"></div>
+                    </span>
+                  </div>
+                  <div class="col-md-6">
+                    <img
+                      src="{% static 'leo/img/loading.gif' %}"
+                      width="32"
+                      v-if="waiting"
+                      alt=""
+                    />
+                    <button
+                      class="farsi btn btn-primary btn-block"
+                      type="submit"
+                    >
+                      تایید
+                    </button>
+                  </div>
+                  <div class="col-md-6">
+                    <img
+                      src="{% static 'leo/img/loading.gif' %}"
+                      width="32"
+                      v-if="waiting"
+                      alt=""
+                    />
+                    <button
+                      @click="show_form=false"
+                      class="farsi btn btn-secondary btn-block"
+                      type="reset"
+                    >
+                      انصراف
+                    </button>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="my-3 text-right" v-if="message.show">
+                      <div :class="'alert alert-'+message.color">
+                        <div class="farsi" v-html="message.body"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
-    </div>
-  </div>
 </div>
-
