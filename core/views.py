@@ -86,6 +86,17 @@ def PageLikesContext(request,page,profile):
     return context
 
 
+class PageView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        phoenix_apps=context["phoenix_apps"]
+        phoenix_apps=phoenix_apps
+        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
+
+        context['phoenix_apps']=phoenix_apps
+        return render(request,TEMPLATE_ROOT+"page.html",context)
+# Create your views here.
 
 class IndexView(View):
     def get(self,request,*args, **kwargs):

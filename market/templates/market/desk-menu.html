@@ -1,33 +1,20 @@
 {% extends "market/layout.html" %} {% load static %} {% block content %}
 <div class="row rtl farsi">
   <div class="col-md-12">
-    <div class="card">
-      <div class="card-body">
-        میز
-        <h5>{{desk.title}}</h5>
-        <h5>{{desk.supplier.title}}</h5>
-      </div>
-    </div>
+    
   </div>
 
   <div class="col-md-12">
-    <div class="card">
-      <div class="card-body">
-        منو
-        <h5>{{menu.title}}</h5>
-        <h5>{{menu.supplier.title}}</h5>
-      </div>
-    </div>
+   
   </div>
-
-  <div class="col-md-12" id="menu-app">
-    <shop-component v-for="shop in shops" :shop="shop"></shop-component>
+  <div class="col-md-12">
+    {% include "market/includes/desk-menu-app/template.html" %}
+   
   </div>
 </div>
 {% endblock content %} {% block script %}
 <script>
   let desk_customer = JSON.parse("{{desk_customer_s|escapejs}}");
   let menu = JSON.parse("{{menu_s|escapejs}}");
- </script>
-{% include "market/includes/menu-app/script.html" %}
-{% endblock script %}
+</script>
+{% include "market/includes/desk-menu-app/script.html" %} {% endblock script %}

@@ -2,7 +2,10 @@
   <img :src="shop.product.thumbnail" width="128" alt="" />
   <div class="media-body mr-2">
     <h6 class="text-right">
-      <span v-text="shop.product.title"></span>
+      <a :href="shop.product.get_absolute_url">
+
+        <span v-text="shop.product.title"></span>
+      </a>
     </h6>
 
     <h6 class="text-right">

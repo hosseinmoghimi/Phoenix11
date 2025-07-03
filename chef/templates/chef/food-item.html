@@ -16,16 +16,8 @@
                     {{food_item.name}}
                 </h5>
                 
-                <h5>
-                  
-                  <a href="{% url 'accounting:invoicelineitem' pk=food_item.id %}">
-                    
-                    
-                    {{food_item.title}}
-                  </a>
-                </h5>
+               
                 <div>
-                {% include "core/includes/page-like-app/template.html" %}
 
                 </div>
                  <a
@@ -45,6 +37,7 @@
                     <i class="fa fa-trash text-danger"> </i>
                     حذف
                   </a>
+                {% include "accounting/includes/product-app/card-contents.html" %}
 
             </div>
         </div>
