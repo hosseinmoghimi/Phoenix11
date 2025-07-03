@@ -21,6 +21,7 @@ urlpatterns = [
     path('desk/<int:pk>/',login_required(views.DeskView.as_view()),name="desk"),
     path('desk/<int:desk_id>/menu/<int:menu_id>/',login_required(views.DeskMenuView.as_view()),name="desk-menu"),
     path('menu/add/ ',login_required(apis.AddMenuApi.as_view()),name="add_menu"),
+    path('add-to-cart/ ',login_required(apis.AddMenuApi.as_view()),name="add_to_cart"),
 
 
 ]
