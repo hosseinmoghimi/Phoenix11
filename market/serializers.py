@@ -1,5 +1,5 @@
 from core.serializer import serializers
-from .models import Shop,Menu,Supplier,Customer,CartItem,Shipper
+from .models import Shop,Menu,Supplier,Customer,CartItem,Shipper,Desk,DeskCustomer
 from accounting.serializers import Product,AccountBriefSerializer
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -45,4 +45,22 @@ class MenuSerializer(serializers.ModelSerializer):
     class Meta:
         model=Menu
         fields=['id','title','supplier','shops', 'get_absolute_url', 'get_edit_url','get_delete_url']
+ 
+
+
+
+
+class DeskSerializer(serializers.ModelSerializer):
+    supplier=SupplierSerializer()
+    class Meta:
+        model=Desk 
+        fields=['id','code','title','supplier',  'get_absolute_url', 'get_edit_url','get_delete_url']
+ 
+
+class DeskCustomerSerializer(serializers.ModelSerializer):
+    account=AccountBriefSerializer()
+    desk=DeskSerializer()
+    class Meta:
+        model=DeskCustomer 
+        fields=['id','desk','account',  'get_absolute_url', 'get_edit_url','get_delete_url']
  

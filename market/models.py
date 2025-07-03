@@ -16,8 +16,7 @@ class MarketPerson(models.Model,LinkHelper):
         verbose_name_plural = _("MarketPersons")
 
     def __str__(self):
-        return self.profile.full_name
-
+        return f'{self.account} # {self.profile.full_name}'
 
 
 class Customer(MarketPerson):
@@ -43,7 +42,6 @@ class Shipper(MarketPerson):
         verbose_name_plural = _("Shippers")
  
  
-
 class Shop(models.Model,LinkHelper,DateTimeHelper):
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
     product=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.CASCADE)
@@ -66,7 +64,6 @@ class Shop(models.Model,LinkHelper,DateTimeHelper):
         return f'{self.product} @ {self.supplier} $ {self.unit_name} {self.unit_price}'
  
 
-
 class CartItem(models.Model):
     row=models.IntegerField(_("ردیف"),default=1,blank=True)
     customer=models.ForeignKey("customer", verbose_name=_("مشتری"), on_delete=models.CASCADE)
@@ -82,6 +79,7 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.customer} @ {self.shop} # {self.quantity} {self.shop.unit_name}"
  
+
 class Menu(CorePage):
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
     # title=models.CharField(_("title"), max_length=50)
@@ -103,3 +101,31 @@ class Menu(CorePage):
         return (result,message,menu)
          
  
+class Desk(models.Model,LinkHelper):
+    title=models.CharField(_("title"), max_length=50)
+    code=models.CharField(_("code"),null=True,blank=True, max_length=50)
+    supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
+    app_name=APP_NAME
+    class_name='desk'
+
+
+    class Meta:
+        verbose_name = _("Desk")
+        verbose_name_plural = _("Desks")
+    def __str__(self):
+        return self.title
+    def save(self):
+        (result,message,desk)=FAILED,'',self
+         
+        super(Desk,self).save()   
+        result=SUCCEED
+        message="میز با موفقیت اضافه شد."
+        return (result,message,desk)
+         
+class DeskCustomer(Customer):
+    desk=models.ForeignKey("desk", verbose_name=_("desk"), on_delete=models.CASCADE)
+    class_name="deskcustomer"
+
+    class Meta:
+        verbose_name = _("DeskCustomer")
+        verbose_name_plural = _("DeskCustomers")  

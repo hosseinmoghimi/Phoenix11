@@ -2,63 +2,26 @@ from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from accounting.repo import ProductRepo
 from accounting.serializers import ProductSerializer
-from .serializers import MenuSerializer,SupplierSerializer,ShopSerializer
-from .repo import MenuRepo,SupplierRepo
+from .serializers import MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
+from .repo import MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 import json
 from django.views import View
-
+from core.views import CoreContext,leolog
 
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='market/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
-
-
-def CoreContext(app_name,request,*args, **kwargs):
-    context={}
-    context['APP_NAME']=app_name
-    context['DEBUG']=DEBUG
-    # me_profile=ProfileRepo(request=request).me
-    # if me_profile is not None:
-    #     context['me_profile']=me_profile
-        # context['profile']=me_profile
-    context['ADMIN_URL']=ADMIN_URL
-    context['SITE_URL']=SITE_URL
-    context['STATIC_URL']=STATIC_URL
-    
-    persian_date=PersianCalendar() 
-    from django.utils import timezone
-    Now=timezone.now()
-    current_date=persian_date.from_gregorian(Now)
-    current_datetime=persian_date.from_gregorian(Now) 
-
-    context['current_datetime']=current_datetime
-    context['current_date']=current_date
-
-    context['phoenix_apps']=phoenix_apps
-    
-    # parameter_repo=ParameterRepo(request=request,app_name=app_name)
-    # context['farsi_font_name']=parameter_repo.parameter(name="نام فونت فارسی",default="Vazir").value
-    # app_has_background=parameter_repo.parameter(name=ParameterNameEnum.HAS_APP_BACKGROUND,default=False).boolean_value
-    # app_background_image=PictureRepo(request=request,app_name=app_name).picture(name=PictureNameEnum.APP_BACKGROUND_IMAGE)
-    # if app_has_background:
-    #     context['app_background_image']=app_background_image
-
-    for appp in phoenix_apps:
-        if appp['name']==app_name:
-            # context['current_app']={'name':appp['name'],'title':appp['title'],'url':appp['url'],'logo':appp['logo']}
-            context['current_app']=appp
-            context['app_title']=appp['title']
-    return context
-
+ 
         
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
+    context[WIDE_LAYOUT]=True 
  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
@@ -125,7 +88,7 @@ class MenusView(View):
 class MenuView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        menu =MenuRepo(request=request).menu(*args, **kwargs)
+        menu =MenuRepo(request=request).menu(*args, **kwargs) 
         context['menu']=menu
         menu_s=json.dumps(MenuSerializer(menu,many=False).data)
         context['menu_s']=menu_s
@@ -138,6 +101,77 @@ class MenuView(View):
         context['NOT_NAVBAR']=True
         context['NOT_FOOTER']=True
         return render(request,TEMPLATE_ROOT+"menu.html",context) 
+    
+    
+
+    
+class DeskView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        desk =DeskRepo(request=request).desk(*args, **kwargs)
+        context['desk']=desk
+        
+        menus=desk.supplier.menu_set.all()
+        menus_s=json.dumps(MenuSerializer(menus,many=True).data)
+        context['menus']=menus
+        context['menus_s']=menus_s
+ 
+  
+        context['NOT_NAVBAR']=True
+        context['NOT_FOOTER']=True
+        return render(request,TEMPLATE_ROOT+"desk.html",context) 
+    
+    
+
+    
+    
+class DeskMenuView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        desk =DeskRepo(request=request).desk(*args, **kwargs)
+        menu =MenuRepo(request=request).menu(*args, **kwargs)
+        context['desk']=desk
+        context['menu']=menu
+        
+        
+        desk_customer=DeskCustomerRepo(request=request).desk_customer(desk_id=desk.id)
+        context['desk_customer']=desk_customer
+        leolog(desk=desk)
+        leolog(menu=menu)
+        leolog(desk_customer=desk_customer)
+
+        desk_customer_s=json.dumps(DeskCustomerSerializer(desk_customer,many=False).data)
+        menu_s=json.dumps(MenuSerializer(menu,many=False).data)
+        context['desk_customer_s']=desk_customer_s
+        context['menu_s']=menu_s
+
+
+  
+        shops=menu.shops.all()
+        shops_s=json.dumps(ShopSerializer(shops,many=True).data)
+        
+        
+        context['shops_s']=shops_s
+ 
+        context['NOT_NAVBAR']=True
+        context['NOT_FOOTER']=True
+        return render(request,TEMPLATE_ROOT+"desk-menu.html",context) 
+    
+    
+
+
+    
+class DesksView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        desks =DeskRepo(request=request).list(*args, **kwargs)
+        context['desks']=desks
+        
+        desks_s=json.dumps(DeskSerializer(desks,many=True).data)
+        context['desks_s']=desks_s
+ 
+ 
+        return render(request,TEMPLATE_ROOT+"desks.html",context) 
     
     
 

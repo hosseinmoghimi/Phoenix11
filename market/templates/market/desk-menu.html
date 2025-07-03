@@ -1,0 +1,73 @@
+{% extends "market/layout.html" %} {% load static %} {% block content %}
+<div class="row rtl farsi">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        میز
+        <h5>{{desk.title}}</h5>
+        <h5>{{desk.supplier.title}}</h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        منو
+        <h5>{{menu.title}}</h5>
+        <h5>{{menu.supplier.title}}</h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12" id="menu-app">
+    <div class="media" v-for="shop in shops">
+      <img :src="shop.product.thumbnail" width="128" alt="" />
+      <div class="media-body mr-2">
+        <h6 class="text-right">
+          <span v-text="shop.product.title"></span>
+        </h6>
+
+        <h6 class="text-right">
+          هر
+          <span v-text="shop.unit_name"></span>
+
+          <span v-text="to_price(shop.unit_price)"></span> {{CURRENCY}}
+        </h6>
+
+        <button class="btn btn-danger" @click="add_to_cart(shop)">
+          افزودن به سبد خرید
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %} {% block script %}
+<script>
+  let desk_customer = JSON.parse("{{desk_customer_s|escapejs}}");
+  let menu = JSON.parse("{{menu_s|escapejs}}");
+
+  let shops_for_menu_app = JSON.parse("{{shops_s|escapejs}}");
+  let menu_app = new Vue({
+    el: "#menu-app",
+    data: {
+      shops: shops_for_menu_app,
+    },
+    methods: {
+      to_price: function (vall) {
+        return to_price(vall);
+      },
+      add_to_cart: function (shop) {
+        let payload={
+          // csrfmiddlewaretoken:csrfmiddlewaretoken,
+          shop_id:shop.id,
+          customer_id:desk_customer.id,
+          quantity:1,
+        }
+        console.log(payload)
+      },
+    },
+  });
+</script>
+
+{% endblock script %}
