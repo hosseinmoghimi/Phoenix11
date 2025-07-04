@@ -12,6 +12,10 @@
     </div>
 
     <div class="col-md-12">
+        {% include "accounting/includes/financial-documents-app/template.html" %}
+    </div>
+
+    <div class="col-md-12">
         {% include "accounting/includes/add-account-app/template.html" %}
     </div>
 
@@ -26,5 +30,6 @@
 {% include "accounting/includes/account-app/script.html" %}
 {% include "accounting/includes/accounts-app/script.html" %}
 {% include "accounting/includes/add-account-app/script.html" %}
+{% include "accounting/includes/financial-documents-app/script.html" %}
 
 {% endblock script %}

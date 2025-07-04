@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import PersonAccount,PersonAccountCategory,Account,FinancialEvent,InvoiceLineItemUnit,InvoiceLineItem,Service,Product,Invoice,InvoiceLine,Person,Bank,BankAccount,PersonCategory
+from .models import FinancialDocument,PersonAccount,PersonAccountCategory,Account,FinancialEvent,InvoiceLineItemUnit,InvoiceLineItem,Service,Product,Invoice,InvoiceLine,Person,Bank,BankAccount,PersonCategory
 
 
+admin.site.register(FinancialDocument)
 admin.site.register(Account)
 admin.site.register(Bank)
 admin.site.register(BankAccount)

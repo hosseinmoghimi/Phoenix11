@@ -5,6 +5,10 @@ class DateTimeForm(forms.Form):
 class ReadExcelFileForm(forms.Form):
     title=forms.CharField(max_length=20, required=True)
 
+class SearchForm(forms.Form):
+    app_name=forms.CharField(max_length=50,required=True)
+    search_for=forms.CharField(max_length=100, required=True)
+
     
 class GetParametersForm(forms.Form):
     app_name=forms.CharField(max_length=50,required=True)

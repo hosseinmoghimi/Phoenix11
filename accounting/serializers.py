@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import InvoiceLineItem,Account,Product,InvoiceLine,Invoice,FinancialEvent,AccountingDocumentLine,InvoiceLineItemUnit
 
-
+from .models import FinancialDocument
 
 class AccountSerializer(serializers.ModelSerializer):
        class Meta:
@@ -67,3 +67,10 @@ class AccountBriefSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
         fields = ['id','parent_id','full_name','logo','name','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+
+class FinancialDocumentSerializer(serializers.ModelSerializer):
+       financial_event=FinancialEventSerializer()
+       account=AccountSerializer()
+       class Meta:
+        model = FinancialDocument
+        fields = ['id','account','title','balance','bedehkar','bestankar','financial_event', 'get_absolute_url','get_edit_url','get_delete_url']

@@ -1,4 +1,4 @@
-from .models import InvoiceLineItemUnit,InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,AccountingDocument,AccountingDocumentLine,FinancialYear,PersonAccount
+from .models import FinancialDocument,InvoiceLineItemUnit,InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,AccountingDocument,AccountingDocumentLine,FinancialYear,PersonAccount
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo
@@ -804,7 +804,6 @@ class ProductRepo():
         return result,message,products
 
 
-
 class InvoiceLineItemRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
@@ -1031,7 +1030,145 @@ class BankAccountRepo():
             message="حساب بانکی جدید با موفقیت اضافه شد."
             result=SUCCEED
         return result,message,bank_account
+
+
+ 
+class FinancialDocumentRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.request=request
+        self.me=None
+        # profile=ProfileRepo(request=request).me
+        self.objects=FinancialDocument.objects
+        # if profile is not None:
+        #     self.me=self.objects.filter(profile=profile).first()
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+
+            objects=objects.filter(Q(title__contains=search_for))
+        return objects.all()
     
+       
+    def financial_document(self,*args, **kwargs):
+        if "financial_document_id" in kwargs and kwargs["financial_document_id"] is not None:
+            return self.objects.filter(pk=kwargs['financial_document_id']).first() 
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        if "code" in kwargs and kwargs["code"] is not None:
+            return self.objects.filter(barcode=kwargs['code']).first()
+             
+        if "barcode" in kwargs and kwargs["barcode"] is not None:
+            a= self.objects.filter(barcode=kwargs['barcode']).first() 
+            return a 
+           
+    def add_financial_document(self,*args,**kwargs):
+        result,message,financial_document=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_financial_document"):
+            message="دسترسی غیر مجاز"
+            return result,message,financial_document
+        if len(FinancialDocument.objects.filter(title=kwargs["title"]))>0:
+            message="نام تکراری برای کالای جدید"
+            return result,message,financial_document
+
+        financial_document=FinancialDocument() 
+
+        if 'title' in kwargs:
+            financial_document.title=kwargs["title"]
+         
+        if 'barcode' in kwargs and kwargs["barcode"] is not None and not kwargs["barcode"]=="":
+            financial_document.barcode=kwargs["barcode"]
+        
+        if financial_document.barcode is not None and len(financial_document.barcode)>0:
+            
+            if len(FinancialDocument.objects.filter(barcode=financial_document.barcode))>0:
+                message="بارکد تکراری برای کالای جدید"
+                return result,message,None
+
+        (result,message,financial_document)=financial_document.save()
+        leolog(kwargs=kwargs)
+        if 'unit_price' in kwargs:
+            if 'unit_name' in kwargs:
+                if 'coef' in kwargs:
+                    ili_unit=InvoiceLineItemUnit()
+                    ili_unit.unit_name=kwargs["unit_name"]
+                    ili_unit.coef=kwargs["coef"]
+                    ili_unit.unit_price=kwargs["unit_price"]
+                    ili_unit.invoice_line_item_id=financial_document.id
+                    ili_unit.default=True
+                    ili_unit.save()
+                    leolog(ili_unit=ili_unit)
+
+                 
+
+        if 'category_id' in kwargs:
+            pass
+            # category_id=kwargs["category_id"]
+            # category=Category.objects.filter(pk=category_id).first()
+            # if category is not None:
+            #     category.financial_documents.add(financial_document.id)
+        coef=1 
+        return result,message,financial_document
+ 
+
+    def import_financial_documents_from_excel(self,*args,**kwargs):
+        result,message,financial_documents=FAILED,"",[]
+        excel_file=kwargs['excel_file']
+        # import pandas
+        
+        # df = pandas.read_excel(excel_file)
+        # financial_documents=[]
+        # for row in df.columns[0]:
+        #     print (df.columns)
+        import openpyxl 
+
+        wb = openpyxl.load_workbook(excel_file)
+        ws = wb.active
+        count=kwargs['count']
+        financial_documents_to_import=[]
+
+        for i in range(2,count+2):
+            financial_document={}
+            financial_document['id']=ws['A'+str(i)].value
+            financial_document['title']=ws['B'+str(i)].value
+            financial_document['code']=ws['C'+str(i)].value
+            financial_document['unit_name']=ws['D'+str(i)].value
+            financial_document['unit_price']=ws['E'+str(i)].value
+            financial_document['thumbnail_origin']=ws['F'+str(i)].value
+            # financial_document['thumbnail_origin']=ws['F'+str(i)].value
+            if financial_document['title'] is not None and not financial_document['title']=="":
+                financial_documents_to_import.append(financial_document) 
+        modified=added=0
+        for financial_document in financial_documents_to_import:
+            old_financial_document=FinancialDocument.objects.filter(title=financial_document["title"]).filter(code=financial_document["code"]).first()
+            if old_financial_document is not None:
+                old_financial_document.title=financial_document["title"]
+                old_financial_document.unit_name=financial_document["unit_name"]
+                old_financial_document.thumbnail_origin=financial_document["thumbnail_origin"]
+                old_financial_document.unit_price=financial_document["unit_price"] 
+                # old_financial_document.thumbnail_origin=financial_document["thumbnail_origin"] 
+                old_financial_document.save()
+                modified+=1
+            else:
+                new_financial_document=FinancialDocument()
+                new_financial_document.title=financial_document["title"]
+                new_financial_document.barcode=financial_document["code"]
+                new_financial_document.unit_name=financial_document["unit_name"]
+                new_financial_document.unit_price=financial_document["unit_price"] 
+                new_financial_document.save()
+                added+=1
+        result=SUCCEED
+        message=f"""{added} محصول اضافه شد.
+                    <br>
+                    {modified} محصول ویرایش شد. """
+
+        return result,message,financial_documents
+
+
+   
       
 
 class BankRepo():

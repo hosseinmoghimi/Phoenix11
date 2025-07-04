@@ -523,6 +523,29 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
         return super(FinancialEvent,self).save()
 
 
+class FinancialDocument(CorePage):
+    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)    
+    bestankar=models.IntegerField(_("bestankar"),default=0)
+    bedehkar=models.IntegerField(_("bedehkar"),default=0)
+    event_datetime=models.DateTimeField(_("event_datetime"), auto_now=False, auto_now_add=False)
+    financial_event=models.ForeignKey("financialevent", verbose_name=_("financial_event"), on_delete=models.CASCADE)
+    @property
+    def balance(self):
+        return 853000
+    class Meta:
+        verbose_name = _("FinancialDocument")
+        verbose_name_plural = _("FinancialDocuments")
+  
+
+    def save(self,*args, **kwargs):
+       
+        if self.class_name is None or self.class_name=="":
+            self.class_name="financialdocument"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(FinancialDocument,self).save()
+
+
 class InvoiceLineItem(CorePage,LinkHelper):
     class_name="invoicelineitem"
     app_name=APP_NAME
@@ -685,7 +708,8 @@ class InvoiceLine(models.Model,LinkHelper):
     @property
     def line_total(self):
         return (100-self.discount_percentage)*self.unit_price*self.quantity/100
-    
+
+
 class Bank(models.Model,LinkHelper):
     name=models.CharField(_("name"),max_length=50)
     class_name="bank"

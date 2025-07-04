@@ -10,7 +10,9 @@ from phoenix.server_apps import phoenix_apps
 from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
-from .repo import InvoiceLineItemRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo,AccountingDocumentLineRepo
+from .repo import FinancialDocumentRepo
+from .repo import FAILED,SUCCEED,InvoiceLineItemRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo,AccountingDocumentLineRepo
+from .serializers import FinancialDocumentSerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,AccountingDocumentLineSerializer
 from utility.currency import to_price_colored
 import json 
@@ -67,8 +69,7 @@ def AccountsContext(request):
 
 def AccountContext(request,account,*args, **kwargs):
 
-    context={}
-    context['expand_accounts']=True
+    context={} 
     if account is None:
         return None 
 
@@ -110,6 +111,8 @@ def AccountContext(request,account,*args, **kwargs):
 
     accounts =account.account_set.all()
     context['accounts']=accounts
+    if len(accounts)>0:
+        context['expand_accounts']=True
     accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
     context['accounts_s']=accounts_s
 
@@ -269,6 +272,39 @@ class IndexView(View):
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
 
+
+class SearchView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        phoenix_apps=context["phoenix_apps"]
+        phoenix_apps=phoenix_apps 
+         
+        return render(request,TEMPLATE_ROOT+"search.html",context)
+
+    def post(self,request,*args, **kwargs):
+        result=FAILED
+        message=''
+        log=1
+        context=getContext(request=request) 
+        search_form=SearchForm(request.POST)
+        if search_form.is_valid():
+            log=2
+            search_for=search_form.cleaned_data['search_for']
+            accounts=AccountRepo(request=request).list(search_for=search_for)
+            result=SUCCEED
+
+            from utility.log import leolog
+            leolog(accounts=accounts)
+            context['accounts']=accounts
+            context['accounts_s']=json.dumps(AccountSerializer(accounts,many=True).data)
+
+        context['message']=message
+        context['log']=log
+        context['result']=result
+        return render(request,TEMPLATE_ROOT+"search.html",context)
+
+
 class SettingsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -383,6 +419,32 @@ class TreeListView(View):
         context[WIDE_LAYOUT]=True
         return render(request,TEMPLATE_ROOT+"tree-list.html",context) 
 
+class FinancialDocumentView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        phoenix_apps=context["phoenix_apps"]
+        phoenix_apps=phoenix_apps
+        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
+        financial_document=FinancialDocumentRepo(request=request).financial_document(*args, **kwargs)
+        context.update(PageContext(request=request,page=financial_document))
+        context['phoenix_apps']=phoenix_apps
+        return render(request,TEMPLATE_ROOT+"financial-document.html",context)
+
+
+
+class FinancialDocumentsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        phoenix_apps=context["phoenix_apps"]
+        phoenix_apps=phoenix_apps
+        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
+
+        context['phoenix_apps']=phoenix_apps
+        return render(request,TEMPLATE_ROOT+"financial-documents.html",context)
+
+
 
 class AccountsView(View):
     def get(self,request,*args, **kwargs):
@@ -395,11 +457,19 @@ class AccountsView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
 
- 
+
 class AccountView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         account=AccountRepo(request=request).account(*args, **kwargs)
+
+
+        financial_documents=account.financialdocument_set.all()
+
+        context['financial_documents']=financial_documents
+        financial_documents_s=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
+        context['financial_documents_s']=financial_documents_s
+
         if account is None:
             raise Http404
         context.update(AccountContext(request=request,account=account))
