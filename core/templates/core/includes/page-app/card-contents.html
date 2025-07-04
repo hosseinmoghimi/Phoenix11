@@ -1,14 +1,16 @@
 {% load static %}
 <h5>
-  <a href="{% url 'core:page' pk=page.id %}">
-    page
-  </a>
+  <a href="{{page.get_absolute_url}}"> {{page.title}} </a>
 </h5>
 
-<img src="{{page.thumbnail}}" width="128" alt="">
-<h5>{{page.title}}</h5>
-<div>{% include "attachments/includes/page-like-app/template.html" %}</div>
+<img src="{{page.thumbnail}}" width="128" alt="" />
+<div class="my-3">
 
+  <h5>{{page.title}}</h5>
+  
+  <small class="text-muted">{{page.class_title}}</small>
+</div>
+<div>{% include "attachments/includes/page-like-app/template.html" %}</div>
 <div>
   <form
     action="https://www.google.com/search"
@@ -26,22 +28,27 @@
 </div>
 
 {% if perms.core.change_page %}
-<a
-  href="{{page.get_edit_url}}"
-  class="my-2 text-warning mx-2"
-  title="ویرایش"
-  target="_blank"
->
-  <i class="fa fa-edit text-warning"></i>
-</a>
-{% endif %}
-{% if perms.core.delete_page %}
-<a
-  href="{{page.get_delete_url}}"
-  class="my-2 text-danger mx-2"
-  title="حذف"
-  target="_blank"
->
-  <i class="fa fa-trash text-danger"></i>
-</a>
+<div>
+  <a
+    href="{{page.get_edit_url}}"
+    class="my-2 text-warning mx-2"
+    title="ویرایش"
+    target="_blank"
+  >
+    <i class="fa fa-edit text-warning"></i>
+    ویرایش
+  </a>
+</div>
+{% endif %} {% if perms.core.delete_page %}
+<div>
+  <a
+    href="{{page.get_delete_url}}"
+    class="my-2 text-danger mx-2"
+    title="حذف"
+    target="_blank"
+  >
+    <i class="fa fa-trash text-danger"></i>
+    حذف
+  </a>
+</div>
 {% endif %}

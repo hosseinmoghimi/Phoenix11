@@ -422,13 +422,9 @@ class TreeListView(View):
 class FinancialDocumentView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
         financial_document=FinancialDocumentRepo(request=request).financial_document(*args, **kwargs)
+        context['financial_document']=financial_document
         context.update(PageContext(request=request,page=financial_document))
-        context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"financial-document.html",context)
 
 

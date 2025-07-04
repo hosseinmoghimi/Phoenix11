@@ -13,7 +13,7 @@ from utility.constants import FAILED,SUCCEED
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_URL,MEDIA_URL,ADMIN_URL,FULL_SITE_URL
 IMAGE_FOLDER = "images/"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
-
+from utility.enums import class_title
 
 class Page(models.Model,LinkHelper,ImageHelper):
     parent=models.ForeignKey("page",null=True,blank=True,related_name="childs", verbose_name=_("parent"), on_delete=models.CASCADE)
