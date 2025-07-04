@@ -24,15 +24,13 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 
-
 def ProjectContext(request,project,*args, **kwargs):
     context=PageContext(request=request,page=project)
     context['project']=project
     context['WIDE_LAYOUT']=True
     return context
-  
- 
- 
+
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -43,7 +41,7 @@ class IndexView(View):
         return render(request,TEMPLATE_ROOT+"index.html",context)
 # Create your views here. 
 
-  
+
 class ProjectView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -57,8 +55,7 @@ class ProjectView(View):
         return render(request,TEMPLATE_ROOT+"project.html",context)
 # Create your views here. 
 
-  
-  
+
 class ProjectsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -75,5 +72,3 @@ class ProjectsView(View):
             context['organizations_s']=organizations_s
         return render(request,TEMPLATE_ROOT+"projects.html",context)
 # Create your views here. 
-
-  
