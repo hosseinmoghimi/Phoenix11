@@ -1,11 +1,11 @@
 <div class="media aaa">
-    <a :title="page_comment.profile.name" :href="page_comment.profile.get_absolute_url">
+    <a :title="page_comment.profile.full_name" :href="page_comment.profile.get_absolute_url">
         <img :src="page_comment.profile.image" class="rounded-circle" width="64" alt="">
     </a>
     <div class="media-body mr-2">
         <div class="text-right">
             <a target="_blank" :href="page_comment.profile.get_absolute_url">
-                <span class="farsi text-right text-primary" v-text="page_comment.profile.name"></span>
+                <span class="farsi text-right text-primary" v-text="page_comment.profile.full_name"></span>
             </a>
             <span class="farsi small text-secondary mr-2 text-right" v-text="page_comment.persian_date_added"></span>
         </div>

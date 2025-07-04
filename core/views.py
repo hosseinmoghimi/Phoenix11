@@ -4,6 +4,7 @@ from authentication.repo import ProfileRepo
 from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
 from .forms import *
+from .repo import PageRepo
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
@@ -57,6 +58,7 @@ def CoreContext(request,*args, **kwargs):
             # context['current_app']={'name':appp['name'],'title':appp['title'],'url':appp['url'],'logo':appp['logo']}
             context['current_app']=appp
             context['app_title']=appp['title']
+ 
     return context
 
         
@@ -70,9 +72,10 @@ def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
     profile=ProfileRepo(request=request).me
-    from attachments.views import PageLikesContext
+    from attachments.views import PageLikesContext,PageCommentsContext
 
     context.update(PageLikesContext(request=request,page=page,profile=profile))
+    context.update(PageCommentsContext(request=request,page=page,profile=profile))
      
     return context
 
@@ -84,9 +87,11 @@ class PageView(View):
         context['name3']="name 3333"
         phoenix_apps=context["phoenix_apps"]
         phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
-
-        context['phoenix_apps']=phoenix_apps
+        page=PageRepo(request=request).page(*args, **kwargs)
+        if page is None:
+            mv=MessageView()
+            return mv.get(request=request)
+        context.update(PageContext(request=request,page=page))
         return render(request,TEMPLATE_ROOT+"page.html",context)
 # Create your views here.
 

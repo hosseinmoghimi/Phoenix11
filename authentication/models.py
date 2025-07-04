@@ -7,13 +7,14 @@ from .apps import APP_NAME
 IMAGE_FOLDER=APP_NAME+"/images/"
 
 
-class Profile(models.Model):
+class Profile(models.Model,LinkHelper):
     full_name=models.CharField(_("full_name"), max_length=50)
     user=models.OneToOneField(settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,null=True,blank=True)
     image_origin=models.ImageField(_("تصویر"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/", height_field=None, width_field=None, max_length=None)
     enabled=models.BooleanField(_("فعال"),default=True)
-    
+    class_name="profile"
+    app_name=APP_NAME
     class Meta:
         verbose_name = _("Profile")
         verbose_name_plural = _("Profiles")

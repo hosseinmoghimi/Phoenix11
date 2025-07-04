@@ -19,8 +19,7 @@ def getContext(request,*args, **kwargs):
  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
-
-
+ 
  
 class IndexView(View):
     def get(self,request,*args, **kwargs):

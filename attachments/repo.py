@@ -1,6 +1,49 @@
-from core.repo import PageRepo,ProfileRepo
-from .models import Like
+from core.repo import PageRepo,ProfileRepo,FAILED,SUCCEED
+from .models import Like,Comment
 
+
+class CommentRepo():
+
+    def __init__(self,request,*args, **kwargs):
+        self.objects=Comment.objects
+        self.request=request
+    def list(self,*args, **kwargs):
+        objects=Comment.objects
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        return objects.all()
+
+    def add_page_comment(self,*args, **kwargs):
+        result,message,comment=FAILED,"",None
+        profile_me=ProfileRepo(request=self.request).me
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if profile_me is None:
+            return None
+        if page is None:
+            return None
+        if 'comment' in kwargs:
+            comment_text=kwargs['comment']
+        if comment_text is None:
+            return result,message,comment
+        comment=Comment(profile_id=profile_me.id,page_id=page.id,comment=comment_text)
+        comment.save()
+        result=SUCCEED
+        message='کامنت با موفقیت اضافه شد.'
+        return result,message,comment
+    
+    def delete_page_comment(self,*args, **kwargs):
+        profile_me=ProfileRepo(request=self.request).me
+        if 'comment_id' in kwargs:
+            comment_id=kwargs['comment_id']
+        # comments=Comment.objects.filter(profile_id=profile_me.id).filter(pk=comment_id)
+        comments=Comment.objects.filter(pk=comment_id)
+        comments.delete()
+        from utility.log import leolog
+        leolog(kwargs=kwargs)
+        result=SUCCEED
+        message="کامنت با موفقیت حذف گردید."
+        return result,message
+     
 class LikeRepo():
     def __init__(self,request,*args, **kwargs):
         self.objects=Like.objects

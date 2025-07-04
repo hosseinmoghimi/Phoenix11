@@ -2,10 +2,10 @@
 
     
 
-    let url_add_page_comment = "{% url 'core:add_page_comment' %}"
+    let url_add_page_comment = "{% url 'attachments:add_page_comment' %}"
     let page_comments = JSON.parse(`{{page_comments_s|escapejs}}`)
-    let url_delete_page_comment = "{% url 'core:delete_page_comment' %}"
-
+    let url_delete_page_comment = "{% url 'attachments:delete_page_comment' %}"
+    let page_comment_component_template=`{% include 'attachments/includes/page-comments-app/component.html' %}`
     let page_comment_component = Vue.component('page-comment-component', {
         data: function () {
             return {
@@ -18,11 +18,12 @@
 
                 let url = url_delete_page_comment
                 let payload = {
-                    page_comment_id: page_comment_id,
+                    comment_id: page_comment_id,
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
                 let posting = $.post(url, payload)
                 posting.done(function (data) {
+                    console.log(data)
                     if (data.result === 'SUCCEED') {
                         page_comments_app.page_comments = page_comments_app.page_comments.filter((page_comment) => {
                             return (page_comment.id != page_comment_id)
@@ -65,10 +66,10 @@
                 }
                 let posting = $.post(url, payload)
                 posting.done((data) => {
-
+                    console.log(data)
                     if (data.result === 'SUCCEED') {
 
-                        page_comments_app.page_comments.push(data.page_comment)
+                        page_comments_app.page_comments.push(data.comment)
                         page_comments_app.comment = ""
                     }
                 })

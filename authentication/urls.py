@@ -6,6 +6,7 @@ app_name=APP_NAME
 urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),
+    path('profile/<int:pk>/',login_required(views.IndexView.as_view()),name="profile"),
     path('settings/',login_required(views.IndexView.as_view()),name="settings"),
     path('login/',login_required(views.LoginView.as_view()),name="login"),
     path('change-password/',login_required(views.ChangePasswordView.as_view()),name="change_password"),

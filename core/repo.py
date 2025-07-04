@@ -1,6 +1,6 @@
-from .models import Page
+from .models import Page,FAILED,SUCCEED
 from authentication.repo import ProfileRepo
-
+  
 class PageRepo():
     def __init__(self,request,*args, **kwargs):
         self.objects=Page.objects
