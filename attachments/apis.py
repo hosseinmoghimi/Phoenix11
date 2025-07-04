@@ -3,14 +3,14 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
 # from .repo import ContactMessageRepo, PageCommentRepo, PageLinkRepo, PagePermissionRepo, PageRepo, PageTagRepo,  ParameterRepo,PageDownloadRepo,PageImageRepo
-from .repo import LikeRepo,CommentRepo
-from .serializer import  CommentSerializer
+from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo
+from .serializer import  CommentSerializer,LinkSerializer,DownloadSerializer
 from utility.constants import SUCCEED, FAILED
 from utility.utils import str_to_html
   
 
  
-class TogglePageLikeApi(APIView):
+class ToggleLikeApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         log=1
@@ -27,7 +27,7 @@ class TogglePageLikeApi(APIView):
         context['log']=log
         return JsonResponse(context)
         
-class AddPageCommentApi(APIView):
+class AddCommentApi(APIView):
     def post(self,request,*args, **kwargs):
         result,message,comment=FAILED,"",None
         context={}
@@ -48,7 +48,7 @@ class AddPageCommentApi(APIView):
         return JsonResponse(context)
     
            
-class DeletePageCommentApi(APIView):
+class DeleteCommentApi(APIView):
     def post(self,request,*args, **kwargs):
         result,message,comment=FAILED,"",None
         context={}
@@ -66,3 +66,46 @@ class DeletePageCommentApi(APIView):
         context['log']=log
         return JsonResponse(context)
         
+            
+class AddLinkApi(APIView):
+    def post(self,request,*args, **kwargs):
+        result,message,comment=FAILED,"",None
+        context={}
+        log=1
+        if request.method=='POST':
+            log+=1
+            add_link_form=AddLinkForm(request.POST)
+            if add_link_form.is_valid():
+                log+=1 
+                (result,message,link) = LinkRepo(request=request).add_link(**add_link_form.cleaned_data)
+                if result==SUCCEED:
+                    context['link'] = LinkSerializer(link).data
+        context['result'] = result
+        context['message'] = message
+        context['log']=log
+        return JsonResponse(context)
+    
+       
+
+           
+class AddDownloadApi(APIView):
+    def post(self,request,*args, **kwargs):
+        result,message,comment=FAILED,"",None
+        context={}
+        log=1
+        if request.method=='POST':
+            log+=1
+            add_page_comment_form=AddPageCommentForm(request.POST)
+            if add_page_comment_form.is_valid():
+                log+=1
+                page_id = add_page_comment_form.cleaned_data['page_id']
+                comment = add_page_comment_form.cleaned_data['comment']
+                (result,message,comment) = CommentRepo(request=request).add_page_comment(page_id=page_id,comment=comment)
+                if result==SUCCEED:
+                    context['comment'] = CommentSerializer(comment).data
+        context['result'] = result
+        context['message'] = message
+        context['log']=log
+        return JsonResponse(context)
+    
+       

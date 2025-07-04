@@ -71,11 +71,13 @@ def getContext(request,*args, **kwargs):
 def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
-    profile=ProfileRepo(request=request).me
-    from attachments.views import PageLikesContext,PageCommentsContext
+    me_profile=ProfileRepo(request=request).me
+    from attachments.views import PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
 
-    context.update(PageLikesContext(request=request,page=page,profile=profile))
-    context.update(PageCommentsContext(request=request,page=page,profile=profile))
+    context.update(PageLikesContext(request=request,page=page,profile=me_profile))
+    context.update(PageCommentsContext(request=request,page=page,profile=me_profile))
+    context.update(PageLinksContext(request=request,page=page,profile=me_profile))
+    context.update(PageDownloadsContext(request=request,page=page,profile=me_profile))
      
     return context
 

@@ -1,12 +1,12 @@
 {% load static %}
-<div id="accordion-page-downloads">
+<div id="accordion-downloads">
 
 
-    <div id="page-downloads-app" class="card">
-        <div class="card-header" id="heading-page-downloads">
+    <div id="downloads-app" class="card">
+        <div class="card-header" id="heading-downloads">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-downloads"
-                    aria-expanded="true" aria-controls="collapse-page-downloads">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-downloads"
+                    aria-expanded="true" aria-controls="collapse-downloads">
                     دانلود ها
 
                     <span v-if="downloads.length>0">
@@ -19,8 +19,8 @@
             </h5>
         </div>
 
-        <div id="collapse-page-downloads" class="collapse" aria-labelledby="heading-page-downloads"
-            data-parent="#accordion-page-downloads">
+        <div id="collapse-downloads" class="collapse" aria-labelledby="heading-downloads"
+            data-parent="#accordion-downloads">
 
             <div class="card-body">
 
@@ -47,7 +47,7 @@
                     </h6>
                 </div>
             </div>
-            {% if add_page_download_form %}
+            {% if add_download_form %}
             <div class="card-footer">
 
                 <p class="text-right" v-if="!show_add_download_form">
@@ -61,7 +61,7 @@
                 </p>
 
 
-                <form id="add-download-form" v-if="show_add_download_form" @submit.prevent="add_page_download()"
+                <form id="add-download-form" v-if="show_add_download_form" @submit.prevent="add_download()"
                     enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-12">

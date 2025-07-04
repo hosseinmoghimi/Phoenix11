@@ -6,8 +6,10 @@ app_name=APP_NAME
 urlpatterns = [
     
     # path('',login_required(views.IndexView.as_view()),name="index"),
-    path('toggle-like/',apis.TogglePageLikeApi.as_view(),name="toggle_like"),
-    path('add-page-comment/',apis.AddPageCommentApi.as_view(),name="add_page_comment"),
-    path('delete-page-comment/',apis.DeletePageCommentApi.as_view(),name="delete_page_comment"),
+    path('toggle-like/',apis.ToggleLikeApi.as_view(),name="toggle_like"),
+    path('add-comment/',apis.AddCommentApi.as_view(),name="add_comment"),
+    path('delete-comment/',apis.DeleteCommentApi.as_view(),name="delete_comment"),
+    path('add-link/',apis.AddLinkApi.as_view(),name="add_link"),
+    path('add-download/',apis.AddDownloadApi.as_view(),name="add_download"),
 
 ]

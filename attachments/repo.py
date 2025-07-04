@@ -1,5 +1,5 @@
 from core.repo import PageRepo,ProfileRepo,FAILED,SUCCEED
-from .models import Like,Comment
+from .models import Like,Comment,Link,Download
 
 
 class CommentRepo():
@@ -82,3 +82,54 @@ class LikeRepo():
         if page is None:
             return None
         return len(Like.objects.filter(page_id=page.pk))    
+    
+
+
+class LinkRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.objects=Link.objects
+        self.request=request
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'page_id' in kwargs:
+            page_id=kwargs['page_id']
+            objects=objects.filter(page_id=page_id)
+        return objects.all()
+    def add_link(self,*args, **kwargs):
+        result,message,link=FAILED,'',None
+        result=SUCCEED
+        link=Link(**kwargs)
+        # link.url=url
+        # link.title=title
+        # link.page_id=page_id
+        link.save()
+        message='لینک با موفقیت اضافه شد.'
+        return result,message,link 
+
+class DownloadRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.objects=Download.objects
+        self.request=request
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'page_id' in kwargs:
+            page_id=kwargs['page_id']
+            objects=objects.filter(page_id=page_id)
+        return objects.all()
+    def page(self,*args, **kwargs):
+        page=None
+        if 'page' in kwargs:
+            page=kwargs['page']
+            return page
+        if 'page_id' in kwargs:
+            page=self.objects.filter(pk=kwargs['page_id']).first()
+        if 'pk' in kwargs:
+            page=self.objects.filter(pk=kwargs['pk']).first()
+        return page
+    
+
+
+
+
+
+

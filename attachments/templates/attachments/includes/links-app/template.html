@@ -1,11 +1,11 @@
-<div id="accordion-page-links">
+<div id="accordion-links">
 
 
-    <div class="card" id="page-links-app">
-        <div class="card-header" id="heading-page-links">
+    <div class="card" id="links-app">
+        <div class="card-header" id="heading-links">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-links"
-                    aria-expanded="true" aria-controls="collapse-page-links">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-links"
+                    aria-expanded="true" aria-controls="collapse-links">
                     لینک ها
 
                     <span v-if="links.length>0">
@@ -16,8 +16,8 @@
                 </button>
             </h5>
         </div>
-        <div id="collapse-page-links" class="collapse " aria-labelledby="heading-page-links"
-            data-parent="#accordion-page-links">
+        <div id="collapse-links" class="collapse " aria-labelledby="heading-links"
+            data-parent="#accordion-links">
 
             <div class="card-body">
 
@@ -30,6 +30,12 @@
 
                                 <a class="mr-2" target="_blank" :href="link.url">
                                     <span class="ml-2" v-html="link.get_icon_tag"></span>
+                                    <!-- <small class="mr-2 text-secondary">
+
+                                        (<span v-text="link.priority">
+                                        </span>
+                                        )
+                                    </small> -->
                                     <span v-text="link.title">
                                     </span>
                                 </a>
@@ -56,7 +62,7 @@
                     </div>
                 </div>
             </div>
-            {% if add_page_link_form %}
+            {% if add_link_form %}
             <div class="card-footer">
 
                 <p class="text-right" v-if="!show_add_link">
@@ -70,13 +76,15 @@
                 </p>
 
 
-                <form v-if="show_add_link" @submit.prevent="add_page_link()">
+                <form v-if="show_add_link" @submit.prevent="add_link()">
                     <div class="row">
                         <div class="col-12">
                             <input required type="text" v-model="new_link_title" class=" mb-2 farsi form-control"
                                 placeholder="عنوان لینک جدید" maxlength="300">
                             <input required type="text" v-model="new_link_url" class=" mb-2 farsi form-control"
                                 placeholder="آدرس لینک جدید">
+                            <input required type="number" v-model="priority" class=" mb-2 farsi form-control"
+                                placeholder="ترتیب">
 
                         </div>
                         <div class="col-12">
