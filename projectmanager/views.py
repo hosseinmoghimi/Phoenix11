@@ -27,6 +27,8 @@ def getContext(request,*args, **kwargs):
 
 def ProjectContext(request,project,*args, **kwargs):
     context=PageContext(request=request,page=project)
+    context['project']=project
+    context['WIDE_LAYOUT']=True
     return context
   
  
