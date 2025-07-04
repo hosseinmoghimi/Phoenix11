@@ -69,4 +69,48 @@ def PageDownloadsContext(request,page,profile,*args, **kwargs):
     if profile is not None:
         context['add_download_form']=AddDownloadForm()
     return context
- 
+
+class DownloadView(View):
+    def get(self, request, *args, **kwargs): 
+        me = ProfileRepo(request=request).me
+        download = DownloadRepo(request=request).download(*args, **kwargs)
+        if download is None or (me is None and not download.is_open):
+            pass
+        elif request.user.has_perm("attachments.change_download") or download.is_open or me in download.profiles.all():
+            file_path = str(download.file.path)
+            # return JsonResponse({'download:':str(file_path)})
+            import os
+            from django.http import HttpResponse
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as fh:
+                    response = HttpResponse(
+                        fh.read(), content_type="application/force-download")
+                    response['Content-Disposition'] = 'inline; filename=  '+ os.path.basename(file_path)
+                    download.download_counter += 1
+                    download.save()
+                    return response
+                    
+        # if self.access(request=request,*args, **kwargs) and document is not None:
+        #     return document.download_response()
+        # from utility.views import MessageView
+        from core.views import MessageView
+        message_view = MessageView(request=request)
+        message_view.links = []
+        message_view.message_color = 'warning'
+        message_view.has_home_link = True
+        message_view.header_color = "rose"
+        message_view.message_icon = ''
+        message_view.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
+        message_view.body = ' شما مجوز دسترسی به این صفحه را ندارید.'
+        message_view.title = 'دسترسی غیر مجاز'
+        if download is None:
+            message_view.body = 'دانلود مورد نظر شما پیدا نشد.'
+            message_view.title = 'دانلود مورد نظر پیدا نشد.'
+        else:
+            from .models import Link
+            message_view.links.append(Link(title='تلاش مجدد', color="warning",
+                                  icon_material="apartment", url=download.get_download_url))
+
+        return message_view.response()
+        
+      

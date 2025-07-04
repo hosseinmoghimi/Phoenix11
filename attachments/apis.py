@@ -87,25 +87,32 @@ class AddLinkApi(APIView):
     
        
 
-           
+      
 class AddDownloadApi(APIView):
-    def post(self,request,*args, **kwargs):
-        result,message,comment=FAILED,"",None
-        context={}
-        log=1
-        if request.method=='POST':
-            log+=1
-            add_page_comment_form=AddPageCommentForm(request.POST)
-            if add_page_comment_form.is_valid():
-                log+=1
-                page_id = add_page_comment_form.cleaned_data['page_id']
-                comment = add_page_comment_form.cleaned_data['comment']
-                (result,message,comment) = CommentRepo(request=request).add_page_comment(page_id=page_id,comment=comment)
-                if result==SUCCEED:
-                    context['comment'] = CommentSerializer(comment).data
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        result,message,download=FAILED,"",None
+        if request.method == 'POST':
+            log += 1
+            add_page_download_form = AddDownloadForm(request.POST, request.FILES)
+            if add_page_download_form.is_valid():
+                log += 1
+                cd=add_page_download_form.cleaned_data
+                page_id = cd['page_id']
+                title = cd['title']
+                file = request.FILES['file1']
+                
+                result,message,download = DownloadRepo(request=request).add_download(
+                    page_id=page_id,
+                    title=title,
+                    file=file,
+                    )
+                if download is not None:
+                    context['download'] = DownloadSerializer(download).data
+        context['log'] = log
         context['result'] = result
         context['message'] = message
-        context['log']=log
         return JsonResponse(context)
-    
+     
        

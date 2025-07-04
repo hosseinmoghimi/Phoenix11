@@ -1,6 +1,6 @@
 from core.repo import PageRepo,ProfileRepo,FAILED,SUCCEED
 from .models import Like,Comment,Link,Download
-
+from .apps import APP_NAME
 
 class CommentRepo():
 
@@ -110,26 +110,48 @@ class DownloadRepo():
     def __init__(self,request,*args, **kwargs):
         self.objects=Download.objects
         self.request=request
+    def download(self,*args, **kwargs):
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'download_id' in kwargs:
+            return self.objects.filter(pk=kwargs['download_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         if 'page_id' in kwargs:
             page_id=kwargs['page_id']
             objects=objects.filter(page_id=page_id)
         return objects.all()
-    def page(self,*args, **kwargs):
-        page=None
-        if 'page' in kwargs:
-            page=kwargs['page']
-            return page
-        if 'page_id' in kwargs:
-            page=self.objects.filter(pk=kwargs['page_id']).first()
-        if 'pk' in kwargs:
-            page=self.objects.filter(pk=kwargs['pk']).first()
-        return page
+     
     
 
 
+    def add_download(self,title,file,priority=1000,*args, **kwargs):
+        result,message,download=FAILED,'',None
+        can_write=False
+        page=PageRepo(request=self.request).page(page_id=kwargs['page_id'])
+         
+        if self.request.user.has_perm(APP_NAME+".change_page"):
+            can_write=True
+         
+        if page is None or not can_write:
+            message='صفحه وجود ندارد.'
+            return result,message,download
 
-
+        if page.app_name=='web':
+            is_open=True
+        else:
+            is_open=False
+        me_profile=ProfileRepo(request=self.request).me
+        if me_profile is None:
+            message='پروفایل وجود ندارد.'
+            return result,message,download
+        download=Download(icon_fa="fa fa-download",title=title,is_open=is_open,file=file,priority=priority,page_id=page.id,profile_id=me_profile.id)
+        download.save()
+        result=SUCCEED
+        message='دانلود با موفقیت اضافه شد.'
+        download.profiles.add(me_profile)
+        return result,message,download
 
 

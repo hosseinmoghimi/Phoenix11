@@ -11,5 +11,6 @@ urlpatterns = [
     path('delete-comment/',apis.DeleteCommentApi.as_view(),name="delete_comment"),
     path('add-link/',apis.AddLinkApi.as_view(),name="add_link"),
     path('add-download/',apis.AddDownloadApi.as_view(),name="add_download"),
+    path('download/<int:pk>/',views.DownloadView.as_view(),name="download"),
 
 ]

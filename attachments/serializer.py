@@ -27,5 +27,5 @@ class DownloadSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
     class Meta:
         model=Download
-        fields=['id', 'profile','comment','persian_datetime_added']
+        fields=['id','get_download_url', 'profile','title','get_edit_url','get_delete_url']
  
