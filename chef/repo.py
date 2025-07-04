@@ -150,7 +150,6 @@ class FoodItemRepo():
                     ili_unit.invoice_line_item_id=food_item.id
                     ili_unit.default=True
                     ili_unit.save()
-                    leolog(ili_unit=ili_unit)
 
         return result,message,food_item
 
@@ -192,7 +191,6 @@ class MealRepo():
         if not self.request.user.has_perm(APP_NAME+".add_meal"):
             message="دسترسی غیر مجاز"
             return result,message,meal
-        leolog(kwargs=kwargs)
         meal=Meal()
         if 'name' in kwargs:
             meal.name=kwargs["name"]

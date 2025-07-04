@@ -39,7 +39,6 @@ class CommentRepo():
         comments=Comment.objects.filter(pk=comment_id)
         comments.delete()
         from utility.log import leolog
-        leolog(kwargs=kwargs)
         result=SUCCEED
         message="کامنت با موفقیت حذف گردید."
         return result,message

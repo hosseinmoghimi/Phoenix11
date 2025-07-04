@@ -136,9 +136,6 @@ class DeskMenuView(View):
         
         desk_customer=DeskCustomerRepo(request=request).desk_customer(desk_id=desk.id)
         context['desk_customer']=desk_customer
-        leolog(desk=desk)
-        leolog(menu=menu)
-        leolog(desk_customer=desk_customer)
 
         desk_customer_s=json.dumps(DeskCustomerSerializer(desk_customer,many=False).data)
         menu_s=json.dumps(MenuSerializer(menu,many=False).data)

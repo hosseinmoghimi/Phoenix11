@@ -17,7 +17,6 @@
         },
         methods: {
             add_account: function () {
-                leolog("add_account !!!!")
                 const url = "{% url 'accounting:add_account'  %}"
                 const payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,

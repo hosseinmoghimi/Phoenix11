@@ -2,6 +2,13 @@
 from django import forms
 from utility.forms import SearchForm
 
+
+class AddFinancialDocumentLineForm(forms.Form):
+    account_id=forms.IntegerField( required=False)
+    bestankar=forms.IntegerField( required=False)
+    bedehkar=forms.IntegerField( required=False)
+    bestankar=forms.IntegerField( required=False)
+
 class AddAccountForm(forms.Form):
     parent_code=forms.IntegerField( required=False)
     parent_id=forms.IntegerField( required=False)
@@ -165,7 +172,7 @@ class AddFinancialYearForm(forms.Form):
     description=forms.CharField(max_length=1000,required=False)
     status=forms.CharField(max_length=50,required=False)
 
-class AddEventAccountingDocumentLineForm(forms.Form):
+class AddEventFinancialDocumentLineForm(forms.Form):
     accounting_document_id=forms.IntegerField(required=True)
     accounting_document_title=forms.CharField(max_length=200,required=True)
     account_code=forms.CharField(max_length=50,required=True)

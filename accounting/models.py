@@ -111,7 +111,7 @@ class Account(models.Model,LinkHelper):
     
     def all_sub_accounts_lines(self):
         ids=self.all_sub_accounts_id()
-        return AccountingDocumentLine.objects.filter(account_id__in=ids)
+        return FinancialDocumentLine.objects.filter(account_id__in=ids)
 
     def all_sub_accounts_id(self):
         ids=[self.id]
@@ -133,10 +133,10 @@ class Account(models.Model,LinkHelper):
         bedehkar=0
         bestankar=0
         balance=0
-        for accounting_document_line in AccountingDocumentLine.objects.filter(account_id=self.pk): 
+        for financial_document_line in FinancialDocumentLine.objects.filter(account_id=self.pk): 
             # basic_account.normalize_total()
-            bedehkar+=accounting_document_line.bedehkar
-            bestankar+=accounting_document_line.bestankar
+            bedehkar+=financial_document_line.bedehkar
+            bestankar+=financial_document_line.bestankar
         childs=self.childs
         if len(childs)>0:
             for acc in childs:
@@ -304,46 +304,46 @@ class PersonAccount(Account):
         return result,message,person_account
 
 
-class AccountingDocument(models.Model,LinkHelper):
+class FinancialDocument(models.Model,LinkHelper):
     financial_year=models.ForeignKey("financialyear" , verbose_name=_("سال مالی"), on_delete=models.PROTECT)
     title=models.CharField(_("title"), max_length=500)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     date_time=models.DateTimeField(_("date_time"), auto_now=True, auto_now_add=False)
     date_modified=models.DateTimeField(_("date_modified "), auto_now=True, auto_now_add=False)
-    status=models.CharField(_("status"),max_length=20,choices=AccountingDocumentStatusEnum.choices,default=AccountingDocumentStatusEnum.DRAFT)
+    status=models.CharField(_("status"),max_length=20,choices=FinancialDocumentStatusEnum.choices,default=FinancialDocumentStatusEnum.DRAFT)
     bedehkar=models.IntegerField(_("بدهکار"),default=0)
     bestankar=models.IntegerField(_("بستانکار"),default=0)
     balance=models.IntegerField(_("تراز"),default=0)
 
     @property 
     def lines(self):
-        return self.accountingdocumentline_set.all()
+        return self.financialdocumentline_set.all()
 
 
     @property 
     def status_color(self):
-        if self.status==AccountingDocumentStatusEnum.ACCEPTED:
+        if self.status==FinancialDocumentStatusEnum.ACCEPTED:
             return "success"
-        if self.status==AccountingDocumentStatusEnum.DENIED:
+        if self.status==FinancialDocumentStatusEnum.DENIED:
             return "danger"
-        if self.status==AccountingDocumentStatusEnum.DRAFT:
+        if self.status==FinancialDocumentStatusEnum.DRAFT:
             return "secondary"
         return "primary"
 
     def save(self):
-        # result,message,accounting_document=FAILED,"",self
+        # result,message,financial_document=FAILED,"",self
         # if self.financial_year.start_date>self.date_time or self.financial_year.end_date<self.date_time:
         #     message="تاریخ سند خارج از محدوده تاریخ سال مالی جاری است."
-        super(AccountingDocument,self).save()
+        super(FinancialDocument,self).save()
         result=SUCCEED
         message="با موفقیت اضافه شد."
         return result,message,self
 
-    class_name="accountingdocument"
+    class_name="financialdocument"
     app_name=APP_NAME    
     class Meta:
-        verbose_name = _("AccountingDocument")
-        verbose_name_plural = _("AccountingDocuments")
+        verbose_name = _("FinancialDocument")
+        verbose_name_plural = _("FinancialDocuments")
 
     def __str__(self):
         return self.title
@@ -361,10 +361,10 @@ class AccountingDocument(models.Model,LinkHelper):
         self.save()
                  
 
-class AccountingDocumentLine(models.Model,LinkHelper):
-    accounting_document=models.ForeignKey("accountingdocument", verbose_name=_("accountingdocument"), on_delete=models.CASCADE)
+class FinancialDocumentLine(models.Model,LinkHelper):
+    financial_document=models.ForeignKey("financialdocument", verbose_name=_("accountingdocument"), on_delete=models.CASCADE)
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
-    event=models.ForeignKey("financialevent", null=True,blank=True,verbose_name=_("event"), on_delete=models.PROTECT)
+    financial_event=models.ForeignKey("financialevent", null=True,blank=True,verbose_name=_("event"), on_delete=models.PROTECT)
     title=models.CharField(_("title"), max_length=500)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     date_time=models.DateTimeField(_("date_time"), auto_now=False, auto_now_add=False)
@@ -383,17 +383,17 @@ class AccountingDocumentLine(models.Model,LinkHelper):
     def save(self):
 
         
-        result,message,accounting_document_line=FAILED,"",self
+        result,message,financial_document_line=FAILED,"",self
         # import datetime
         # import pytz
         # utc=pytz.UTC
-        # start_date=utc.localize(self.accounting_document.financial_year.start_date)
-        # end_date=utc.localize(self.accounting_document.financial_year.end_date)
+        # start_date=utc.localize(self.financial_document.financial_year.start_date)
+        # end_date=utc.localize(self.financial_document.financial_year.end_date)
         # date_time=utc.localize(self.date_time)
         # leolog(start_date=start_date,end_date=end_date,date_time=date_time)
-        # if self.accounting_document.financial_year.start_date>self.date_time or self.accounting_document.financial_year.end_date<self.date_time:
+        # if self.financial_document.financial_year.start_date>self.date_time or self.financial_document.financial_year.end_date<self.date_time:
         #     message="تاریخ سند خارج از محدوده تاریخ سال مالی جاری است."
-        #     return result,message,accounting_document
+        #     return result,message,financial_document
 
         if not self.bedehkar==0 and not self.bestankar==0:
             return
@@ -401,8 +401,8 @@ class AccountingDocumentLine(models.Model,LinkHelper):
             return
         if self.account.nature==AccountNatureEnum.ONLY_BESTANKAR and self.bedehkar>0:
             return
-        super(AccountingDocumentLine,self).save()
-        self.accounting_document.normalize()
+        super(FinancialDocumentLine,self).save()
+        self.financial_document.normalize()
         self.account.normalize_total()
     @property
     def rest(self):
@@ -410,17 +410,17 @@ class AccountingDocumentLine(models.Model,LinkHelper):
     @property
     def amount(self):  
         return self.bedehkar+self.bestankar
-    class_name="accountingdocumentline"
+    class_name="financialdocumentline"
     app_name=APP_NAME 
 
     class Meta:
-        verbose_name = _("AccountingDocumentLine")
-        verbose_name_plural = _("AccountingDocumentLines")
+        verbose_name = _("FinancialDocumentLine")
+        verbose_name_plural = _("FinancialDocumentLines")
 
     def __str__(self):
         event=""
-        if self.event is not None :
-            event=self.event.title
+        if self.financial_event is not None :
+            event=self.financial_event.title
         return f"{self.account.id} , {event} , {self.account.name} , {to_price(self.balance)}, {to_price(self.bestankar)}, {to_price(self.bedehkar)}"
 
 
@@ -522,30 +522,7 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
             self.app_name=APP_NAME
         return super(FinancialEvent,self).save()
 
-
-class FinancialDocument(CorePage):
-    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)    
-    bestankar=models.IntegerField(_("bestankar"),default=0)
-    bedehkar=models.IntegerField(_("bedehkar"),default=0)
-    event_datetime=models.DateTimeField(_("event_datetime"), auto_now=False, auto_now_add=False)
-    financial_event=models.ForeignKey("financialevent", verbose_name=_("financial_event"), on_delete=models.CASCADE)
-    @property
-    def balance(self):
-        return 853000
-    class Meta:
-        verbose_name = _("FinancialDocument")
-        verbose_name_plural = _("FinancialDocuments")
-  
-
-    def save(self,*args, **kwargs):
-       
-        if self.class_name is None or self.class_name=="":
-            self.class_name="financialdocument"
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
-        return super(FinancialDocument,self).save()
-
-
+ 
 class InvoiceLineItem(CorePage,LinkHelper):
     class_name="invoicelineitem"
     app_name=APP_NAME

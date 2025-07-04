@@ -1,4 +1,4 @@
-from .models import FinancialDocument,InvoiceLineItemUnit,InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,AccountingDocument,AccountingDocumentLine,FinancialYear,PersonAccount
+from .models import FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit,InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,FinancialYear,PersonAccount
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo
@@ -304,9 +304,9 @@ class AccountRepo():
         if not self.request.user.has_perm(APP_NAME+".delete_account"):
             message="دسترسی غیر مجاز"
             return message,result
-        AccountingDocumentLine.objects.all().delete()
+        FinancialDocumentLine.objects.all().delete()
         FinancialEvent.objects.all().delete()
-        AccountingDocument.objects.all().delete()
+        FinancialDocument.objects.all().delete()
         # TafsiliAccount.objects.all().delete()
         # MoeinAccount.objects.all().delete()
         # BasicAccount.objects.all().delete()
@@ -725,7 +725,6 @@ class ProductRepo():
                 return result,message,None
 
         (result,message,product)=product.save()
-        leolog(kwargs=kwargs)
         if 'unit_price' in kwargs:
             if 'unit_name' in kwargs:
                 if 'coef' in kwargs:
@@ -736,7 +735,6 @@ class ProductRepo():
                     ili_unit.invoice_line_item_id=product.id
                     ili_unit.default=True
                     ili_unit.save()
-                    leolog(ili_unit=ili_unit)
 
                  
 
@@ -1089,7 +1087,6 @@ class FinancialDocumentRepo():
                 return result,message,None
 
         (result,message,financial_document)=financial_document.save()
-        leolog(kwargs=kwargs)
         if 'unit_price' in kwargs:
             if 'unit_name' in kwargs:
                 if 'coef' in kwargs:
@@ -1100,7 +1097,6 @@ class FinancialDocumentRepo():
                     ili_unit.invoice_line_item_id=financial_document.id
                     ili_unit.default=True
                     ili_unit.save()
-                    leolog(ili_unit=ili_unit)
 
                  
 
@@ -1359,12 +1355,12 @@ class ServiceRepo():
         return result,message,service
  
 
-class AccountingDocumentRepo():
+class FinancialDocumentRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
         # profile=ProfileRepo(request=request).me
-        self.objects=AccountingDocument.objects
+        self.objects=FinancialDocument.objects
         # if profile is not None:
         #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
@@ -1374,67 +1370,67 @@ class AccountingDocumentRepo():
         if "search_for" in kwargs:
             objects=objects.filter(title__contains=kwargs['search_for']) 
         return objects.all()
-    def accounting_document(self,*args, **kwargs):
-        if "accounting_document_id" in kwargs:
-            return self.objects.filter(pk=kwargs['accounting_document_id']).first() 
+    def financial_document(self,*args, **kwargs):
+        if "financial_document_id" in kwargs:
+            return self.objects.filter(pk=kwargs['financial_document_id']).first() 
         if "pk" in kwargs:
             return self.objects.filter(pk=kwargs['pk']).first() 
         if "id" in kwargs:
             return self.objects.filter(pk=kwargs['id']).first() 
 
             
-    def add_accounting_document(self,*args, **kwargs):
-        result,message,accounting_document=FAILED,"",None
-        if not Permission(request=self.request).is_permitted(APP_NAME,OperationEnum.ADD,"accountingdocument"):
-        # if not self.request.user.has_perm(APP_NAME+".add_account"):.
+    def add_financial_document(self,*args, **kwargs):
+        result,message,financial_document=FAILED,"",None
+        # if not Permission(request=self.request).is_permitted(APP_NAME,OperationEnum.ADD,"financialdocument"):
+        if not self.request.user.has_perm(APP_NAME+".add_financialdocument"):
             message="دسترسی غیر مجاز"
-            return result,message,accounting_document
+            return result,message,financial_document
         
         f_year=FinancialYear.objects.filter(status=FinancialYearStatusEnum.IN_PROGRESS).first()
         if f_year is None:
             url=reverse(APP_NAME+":financial_years")
             message="سال مالی فعال وجود ندارد. ابتدا ایجاد کنید."+"<br>"+"<a href='"+url+"'>سال های مالی</a>"
-            return result,message,accounting_document
+            return result,message,financial_document
 
-        accounting_document=AccountingDocument(financial_year_id=f_year.id)
+        financial_document=FinancialDocument(financial_year_id=f_year.id)
 
         if 'title' in kwargs:
-            accounting_document.title=kwargs['title']
+            financial_document.title=kwargs['title']
         if 'profile_id' in kwargs:
-            accounting_document.profile_id=kwargs['profile_id']
+            financial_document.profile_id=kwargs['profile_id']
         if 'description' in kwargs:
-            accounting_document.description=kwargs['description']
+            financial_document.description=kwargs['description']
         if 'address' in kwargs:
-            accounting_document.address=kwargs['address']
+            financial_document.address=kwargs['address']
         if 'tel' in kwargs:
-            accounting_document.tel=kwargs['tel']
+            financial_document.tel=kwargs['tel']
         if 'mobile' in kwargs:
-            accounting_document.mobile=kwargs['mobile']
+            financial_document.mobile=kwargs['mobile']
        
         
         # if 'financial_year_id' in kwargs:
         #     payment.financial_year_id=kwargs['financial_year_id']
         # else:
         #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
-        result,message,accounting_document=accounting_document.save()
+        result,message,financial_document=financial_document.save()
         if result==SUCCEED:
             message="با موفقیت اضافه شد."
             me_profile=ProfileRepo(request=self.request).me
             new_log={}
-            new_log['title']="سند مالی جدید "+" : "+accounting_document.title
+            new_log['title']="سند مالی جدید "+" : "+financial_document.title
             new_log['app_name']=APP_NAME
-            new_log['url']=accounting_document.get_absolute_url()
+            new_log['url']=financial_document.get_absolute_url()
             new_log['profile']=me_profile
             new_log['description']="سند مالی جدید با موفقیت اضافه گردید."
             LogRepo(request=self.request).add_log(**new_log)
-        return result,message,accounting_document
+        return result,message,financial_document
 
-class AccountingDocumentLineRepo:
+class FinancialDocumentLineRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
         # profile=ProfileRepo(request=request).me
-        self.objects=AccountingDocumentLine.objects
+        self.objects=FinancialDocumentLine.objects
         
     def list(self,*args, **kwargs):
         objects=self.objects
@@ -1466,18 +1462,23 @@ class AccountingDocumentLineRepo:
             objects=objects.filter(account_id=account_id)
         if "event_id" in kwargs and kwargs["event_id"] is not None and kwargs["event_id"]>0 :
             event_id=kwargs["event_id"]
-            objects=objects.filter(event_id=event_id)
+            objects=objects.filter(financial_event_id=event_id)
+
+        if "financial_event_id" in kwargs and kwargs["financial_event_id"] is not None and kwargs["financial_event_id"]>0 :
+            financial_event_id=kwargs["financial_event_id"]
+            objects=objects.filter(financial_event_id=financial_event_id)
+        
         return objects.all().order_by('date_time')
 
-    def accounting_document_line(self,*args, **kwargs):
-        if "accounting_document_line_id" in kwargs and kwargs["accounting_document_line_id"] is not None:
-            return self.objects.filter(pk=kwargs['accounting_document_line_id']).first() 
+    def financial_document_line(self,*args, **kwargs):
+        if "financial_document_line_id" in kwargs and kwargs["financial_document_line_id"] is not None:
+            return self.objects.filter(pk=kwargs['financial_document_line_id']).first() 
         if "pk" in kwargs and kwargs["pk"] is not None:
             return self.objects.filter(pk=kwargs['pk']).first() 
         if "id" in kwargs and kwargs["id"] is not None:
             return self.objects.filter(pk=kwargs['id']).first() 
         
-    def add_accounting_document_line(self,*args, **kwargs):
+    def add_financial_document_line(self,*args, **kwargs):
         accounting_document_line,message,result=(None,"",FAILED)
     
         bestankar=kwargs['bestankar']
@@ -1500,7 +1501,7 @@ class AccountingDocumentLineRepo:
             message="دسترسی غیر مجاز"
             return result,message,accounting_document_line
         
-        accounting_document_line=AccountingDocumentLine()
+        accounting_document_line=FinancialDocumentLine()
 
         if 'title' in kwargs:
             accounting_document_line.title=kwargs['title']
@@ -1568,7 +1569,7 @@ class AccountingDocumentLineRepo:
         if not self.request.user.has_perm(APP_NAME+".delete_accountingdocumentline"):
             message="دسترسی غیر مجاز"
             return result,message
-        AccountingDocumentLine.objects.all().delete() 
+        FinancialDocumentLine.objects.all().delete() 
                    
         result=SUCCEED
         message="همه حذف شدند."
@@ -1576,9 +1577,9 @@ class AccountingDocumentLineRepo:
     
     
     
-    def add_event_accounting_document_line(self,*args, **kwargs):
+    def add_event_financial_document_line(self,*args, **kwargs):
         result,message,accounting_document_line=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".add_accountingdocumentline"):
+        if not self.request.user.has_perm(APP_NAME+".add_financialdocumentline"):
             message="دسترسی غیر مجاز"
             return result,message,accounting_document_line
 
@@ -1586,33 +1587,33 @@ class AccountingDocumentLineRepo:
         bestankar=kwargs['bestankar']
         bedehkar=kwargs['bedehkar']
         account_code=kwargs['account_code']
-        accounting_document_id=kwargs['accounting_document_id']
-        accounting_document_title=kwargs['accounting_document_title']
+        financial_document_id=kwargs['financial_document_id']
+        financial_document_title=kwargs['financial_document_title']
 
         account_repo=AccountRepo(request=self.request)
         event_repo=FinancialEventRepo(request=self.request)
-        accounting_document_repo=AccountingDocumentRepo(request=self.request)
+        financial_document_repo=FinancialDocumentRepo(request=self.request)
 
         event=event_repo.event(pk=event_id)
         account=account_repo.account(code=account_code)
 
-        if accounting_document_id==0:
-            result,message,accounting_document=accounting_document_repo.add_accounting_document(title=accounting_document_title)
+        if financial_document_id==0:
+            result,message,financial_document=financial_document_repo.add_financial_document(title=financial_document_title)
         else:
-            accounting_document=accounting_document_repo.accounting_document(pk=accounting_document_id)
-        if account is not None and accounting_document is not None and event is not None:
-            accounting_document_line=AccountingDocumentLine()
-            accounting_document_line.event=event
-            accounting_document_line.bestankar=bestankar
-            accounting_document_line.bedehkar=bedehkar
-            accounting_document_line.account=account
-            accounting_document_line.date_time=event.event_datetime
-            accounting_document_line.title=event.title
-            accounting_document_line.accounting_document=accounting_document
-            accounting_document_line.save()
+            financial_document=financial_document_repo.financial_document(pk=financial_document_id)
+        if account is not None and financial_document is not None and event is not None:
+            financial_document_line=FinancialDocumentLine()
+            financial_document_line.event=event
+            financial_document_line.bestankar=bestankar
+            financial_document_line.bedehkar=bedehkar
+            financial_document_line.account=account
+            financial_document_line.date_time=event.event_datetime
+            financial_document_line.title=event.title
+            financial_document_line.financial_document=financial_document
+            financial_document_line.save()
             result=SUCCEED
             message="اضافه شد."
-            return result,message,accounting_document_line
+            return result,message,financial_document_line
   
 
 

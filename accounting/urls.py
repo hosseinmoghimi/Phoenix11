@@ -7,8 +7,9 @@ urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),
     path('search/',login_required(views.SearchView.as_view()),name="search"),
+    path('financial-document-line/<int:pk>/',login_required(views.FinancialDocumentLineView.as_view()),name="financialdocumentline"),
     path('financial-document/<int:pk>/',login_required(views.FinancialDocumentView.as_view()),name="financialdocument"),
-    path('financialdocuments/',login_required(views.FinancialDocumentView.as_view()),name="financial-documents"),
+    path('financialdocuments/',login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
     path('selection/',login_required(views.SelectionView.as_view()),name="selection"),
     path('settings/',login_required(views.SettingsView.as_view()),name="settings"),
     path('products/',login_required(views.ProductsView.as_view()),name="products"),

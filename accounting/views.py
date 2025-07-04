@@ -11,9 +11,9 @@ from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
 from .repo import FinancialDocumentRepo
-from .repo import FAILED,SUCCEED,InvoiceLineItemRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo,AccountingDocumentLineRepo
+from .repo import FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
 from .serializers import FinancialDocumentSerializer
-from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,AccountingDocumentLineSerializer
+from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from utility.currency import to_price_colored
 import json 
 from core.views import MessageView
@@ -89,16 +89,19 @@ def AccountContext(request,account,*args, **kwargs):
     context['account_s']=account_s
 
     
-    accounting_document_lines=account.accountingdocumentline_set.all().order_by('-bedehkar')
-    context['accounting_document_lines']=accounting_document_lines
+    financial_document_lines=account.financialdocumentline_set.all()
+
+    context['financial_document_lines']=financial_document_lines
+    financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
+    context['financial_document_lines_s']=financial_document_lines_s
 
 
  
     all_sub_accounts_lines=account.all_sub_accounts_lines().order_by('-bedehkar')
-    all_sub_accounts_lines_s=json.dumps(AccountingDocumentLineSerializer(all_sub_accounts_lines,many=True).data)
+    all_sub_accounts_lines_s=json.dumps(FinancialDocumentLineSerializer(all_sub_accounts_lines,many=True).data)
     context['all_sub_accounts_lines_s']=all_sub_accounts_lines_s
-    context['accounting_document_lines']=all_sub_accounts_lines
-    context['accounting_document_lines_s']=all_sub_accounts_lines_s
+    context['financial_document_lines']=all_sub_accounts_lines
+    context['financial_document_lines_s']=all_sub_accounts_lines_s
 
 
     
@@ -152,15 +155,18 @@ def FinancialEventContext(request,financial_event):
     context['financial_event']=financial_event 
     context.update(PageContext(request=request,page=financial_event))
     
-    context['add_event_accounting_document_line_form']=AddEventAccountingDocumentLineForm()
     context['financial_event']=financial_event
     financial_event_s=json.dumps(FinancialEventSerializer(financial_event).data)
     context['financial_event_s']=financial_event_s
 
+    if request.user.has_perm(APP_NAME+'add_financialdocumentline'):
+        context['add_event_financial_document_line_form']=AddEventFinancialDocumentLineForm()
+        context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
     
-    accounting_document_lines=AccountingDocumentLineRepo(request=request).list(event_id=financial_event.id).order_by('-bedehkar')
-    accounting_document_lines_s=json.dumps(AccountingDocumentLineSerializer(accounting_document_lines,many=True).data)
-    context["accounting_document_lines_s"]=accounting_document_lines_s
+    financial_document_lines=FinancialDocumentLineRepo(request=request).list(financial_event_id=financial_event.id).order_by('-bedehkar')
+    financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
+ 
+    context["financial_document_lines_s"]=financial_document_lines_s
     
 
     return context
@@ -295,7 +301,6 @@ class SearchView(View):
             result=SUCCEED
 
             from utility.log import leolog
-            leolog(accounts=accounts)
             context['accounts']=accounts
             context['accounts_s']=json.dumps(AccountSerializer(accounts,many=True).data)
 
@@ -424,7 +429,16 @@ class FinancialDocumentView(View):
         context=getContext(request=request)
         financial_document=FinancialDocumentRepo(request=request).financial_document(*args, **kwargs)
         context['financial_document']=financial_document
-        context.update(PageContext(request=request,page=financial_document))
+
+        
+        financial_document_lines=financial_document.financialdocumentline_set.all()
+
+        context['financial_document_lines']=financial_document_lines
+        financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
+        context['financial_document_lines_s']=financial_document_lines_s
+
+        if request.user.has_perm(APP_NAME+'.add_financialdocumentline'):
+            context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
         return render(request,TEMPLATE_ROOT+"financial-document.html",context)
 
 
@@ -432,13 +446,21 @@ class FinancialDocumentView(View):
 class FinancialDocumentsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
-
-        context['phoenix_apps']=phoenix_apps
+        financial_documents=FinancialDocumentRepo(request=request).list()
+        context['financial_documents']=financial_documents
+        financial_documents_s=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
+        context['financial_documents_s']=financial_documents_s
         return render(request,TEMPLATE_ROOT+"financial-documents.html",context)
+
+
+class FinancialDocumentLineView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request) 
+        financial_document_line=FinancialDocumentLineRepo(request=request).financial_document_line(*args, **kwargs)
+        context['financial_document_line']=financial_document_line
+
+
+        return render(request,TEMPLATE_ROOT+"financial-document-line.html",context)
 
 
 
@@ -459,12 +481,6 @@ class AccountView(View):
         context=getContext(request=request)
         account=AccountRepo(request=request).account(*args, **kwargs)
 
-
-        financial_documents=account.financialdocument_set.all()
-
-        context['financial_documents']=financial_documents
-        financial_documents_s=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
-        context['financial_documents_s']=financial_documents_s
 
         if account is None:
             raise Http404

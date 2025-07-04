@@ -1,0 +1,43 @@
+{% load to_persian_date %} {% load to_price %}
+ 
+
+<div id="accordion-add-financial-document-line" class="rtl text-right farsi">
+  <div class="card bg-success4 farsi" id="add-financial-document-line-app">
+    <div class="card-header" id="heading-financial-document-line-lines">
+        <h5 class="text-center">
+        <button
+        class="btn btn-link"
+        data-toggle="collapse"
+        data-target="#collapse-add-financial-document-line"
+        aria-expanded="true"
+        aria-controls="collapse-add-financial-document-line"
+        >
+            افزودن سطر سند مالی
+           
+        </button>
+    </h5>
+    </div>
+    <div
+      id="collapse-add-financial-document-line"
+      class="collapse "
+      aria-labelledby="heading-add-financial-document-line"
+      data-parent="#accordion-add-financial-document-line"
+    >
+      <div class="card-body">
+         <div class="row">
+            <div class="col-md-4">حساب</div>
+            <div class="col-md-4">بدهکار</div>
+            <div class="col-md-4">بستانکار</div>
+         </div>
+      </div>
+      <div class="card-footer">
+        <div class="text-right">
+          <a class="btn btn-info">
+            <i class="fa fa-print"></i>
+            چاپ
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -49,7 +49,6 @@ class ProjectRepo():
         if not self.request.user.has_perm(APP_NAME+".add_project"):
             message="دسترسی غیر مجاز"
             return result,message,project
-        leolog(kwargs=kwargs)
         project=Project()
         if 'title' in kwargs:
             project.title=kwargs["title"]

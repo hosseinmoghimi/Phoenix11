@@ -49,7 +49,6 @@ class OrganizationRepo():
         if not self.request.user.has_perm(APP_NAME+".add_organization"):
             message="دسترسی غیر مجاز"
             return result,message,organization
-        leolog(kwargs=kwargs)
         organization=Organization()
         if 'name' in kwargs:
             organization.name=kwargs["name"]
