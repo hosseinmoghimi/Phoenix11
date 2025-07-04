@@ -70,20 +70,12 @@ def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
     profile=ProfileRepo(request=request).me
+    from attachments.views import PageLikesContext
+
     context.update(PageLikesContext(request=request,page=page,profile=profile))
      
     return context
 
-def PageLikesContext(request,page,profile):
-    context={}
-    likes_count=5
-    my_like = page.my_like(profile=profile)
-    context['my_like']=my_like
-    context['likes_count']=likes_count  
-    if profile is not None:
-        context['toggle_page_like_form']=TogglePageLikeForm()
-    context['page']=page
-    return context
 
 
 class PageView(View):

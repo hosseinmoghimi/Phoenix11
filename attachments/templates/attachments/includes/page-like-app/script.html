@@ -13,8 +13,8 @@
 </script>
 {% endif %}
 <script>
-    let url_toggle_page_like = "{% url 'core:toggle_like' %}"
-    let likes_count = parseInt("{{page.likes_count}}")
+    let url_toggle_page_like = "{% url 'attachments:toggle_like' %}"
+    let likes_count = parseInt("{{likes_count}}")
     let page_like_app = new Vue({
         el: "#page-like-app",
         data: {
