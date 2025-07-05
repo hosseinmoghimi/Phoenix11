@@ -392,7 +392,7 @@ class InvoiceToExcelView(View):
             sheet_name='Invoice',
         )
             
-        file_name=f"""{date.replace('/','').replace(':','')}   Page {1}.xlsx"""
+        file_name=f"""Phoenix Invoice {invoice.pk} {date.replace('/','').replace(':','')}.xlsx"""
         
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
@@ -610,8 +610,6 @@ class InvoiceLineView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
     
-
-
     
 class ServiceView(View):
     def get(self,request,*args, **kwargs):
@@ -624,6 +622,8 @@ class ServiceView(View):
         context.update(ServiceContext(request=request,service=service))
 
         return render(request,TEMPLATE_ROOT+"service.html",context)   
+
+
 class ServicesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -637,66 +637,66 @@ class ServicesView(View):
 
 
 class ExportProductsToExcelView(View):
-    def get(self, request, *args, **kwargs): 
-        import os
-        from phoenix.server_settings import STATIC_ROOT
-        me = ProfileRepo(request=request).me
-
-
-        message_view=MessageView()
+   
+    def get(self,request,*args, **kwargs):
+        now=PersianCalendar().date
         
-        if me is None :
-            message_view.title = 'دسترسی شما به این لینک مجاز نیست'
-            message_view.body = 'دسترسی شما به چنین دانلودی مجاز نیست'
-            return message_view.get(request=request)
-
-
-        if request.user.has_perm("accounting.view_product") :
+        data=[]  
+        headers=["id","title","barcode","unit_name","unit_price","thumbnail"]
+        
+        products=ProductRepo(request=request).list()
+         
             
-
-            # start create excel
-            from utility.excel import ReportWorkBook 
-            my_excel_report=ReportWorkBook()   
-            data=[]  
-            headers=["id","title","barcode","unit_name","unit_price","thumbnail"]
+        
+        date=PersianCalendar().from_gregorian(now)
+        lines=[]
+        for i,product in enumerate(products,start=1):
+            line={
+                'row':i,
+                'title':product.title,
+                'barcode':product.barcode,      
+                'unit_name':product.unit_name,      
+                'unit_price':product.unit_price,       
+            }
+            lines.append(line)
+        headers=['ردیف',
+                 'عنوان',
+                 'بارکد', 
+                 'واحد',
+                 'فی',
+        ]
+        report_work_book=ReportWorkBook()
+        report_work_book=ReportWorkBook(origin_file_name=f'products.xlsx')
+        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
+        # sheet1=ReportSheet(
+        #     data=lines,
+        #     start_row=3,
+        #     start_col=1,
+        #     table_has_header=False,
+        #     table_headers=None,
+        #     style=style,
+        #     sheet_name='links',
             
-            products=ProductRepo(request=request).list()
-            for product in products:
-                data_row=[product.id,product.title,product.barcode,product.unit_name,product.unit_price,str(product.thumbnail_origin)]
-                data.append(data_row)
-
-            my_excel_report.add_sheet(data=data,sheet_name="محصولات",table_headers=headers)   
-             
-
-            path_excel=os.path.join(STATIC_ROOT,APP_NAME)
-            path_excel=os.path.join(path_excel,'products.xlsx')
-
-            my_excel_report.save(path_excel)
-            # end create excel
-
-
-
-            from django.http import HttpResponse
-            if os.path.exists(path_excel):
-                with open(path_excel, 'rb') as fh:
-                    response = HttpResponse(
-                        fh.read(), content_type="application/force-download")
-                    response['Content-Disposition'] = 'inline; filename=  '+ os.path.basename(path_excel)
-                    return response
-        # if self.access(request=request,*args, **kwargs) and document is not None:
-        #     return document.download_response()
-        message_view = MessageView()
-        message_view.links = []
-        message_view.message_color = 'warning'
-        message_view.has_home_link = True
-        message_view.header_color = "rose"
-        message_view.message_icon = ''
-        message_view.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
-        message_view.body = ' شما مجوز دسترسی به این صفحه را ندارید.'
-        message_view.title = 'دسترسی غیر مجاز'
-       
-        return message_view.get(request=request)
-
+        # )
+        
+        start_row=3
+        report_work_book.add_sheet(
+            data=lines,
+            start_row=start_row,
+            table_has_header=False,
+            table_headers=headers,
+            style=style,
+            sheet_name='products',
+        )
+            
+        file_name=f"""Phoenix Products {date.replace('/','').replace(':','')}.xlsx"""
+        
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
+        response["Content-disposition"]=f"attachment; filename={file_name}"
+        report_work_book.work_book.save(response)
+        report_work_book.work_book.close()
+        return response
 
 class ExportServicesToExcelView(View):
     def get(self, request, *args, **kwargs): 
