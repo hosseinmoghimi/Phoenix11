@@ -76,26 +76,16 @@
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">رویداد</label>
+                {% if not financial_event %}
+                  
                 <input
-                  class="form-control"
-                  v-model="financial_event.id"
-                  @input="select_financial_event_by_id()"
-                  type="text"
+                class="form-control"
+                v-model="financial_event.id"
+                @input="select_financial_event_by_id()"
+                type="text"
                 />
-                <!-- <div class="my-2" v-if="">
-                                <a :href="account.get_absolute_url">
-                                    <div class="media">
-                                        <img :src="account.logo" class="rounded" width="48" alt="">
-                                        <div class="media-body mr-2">
-                                            <h5> <span v-text="account.code"></span></h5>
-                                            <h5> <span v-text="account.name"></span></h5>
-                                            <h5> <span v-text="to_price(account.balance)"></span></h5>
-                                            <h5></h5>
-                                        </div>
-                                    </div>
-
-                                </a>
-                            </div> -->
+                {% endif %}
+               
                 <div class="my-2">
                   <h5 v-if="financial_event.title">
                     <a :href="financial_event.get_absolute_url">
@@ -103,41 +93,33 @@
                     </a>
                   </h5>
                 </div>
-
+                {% if not financial_event %}
+  
                 <h6 class="text-danger">
-                  <a
+                    <a
                     target="_blank"
                     href="{% url 'accounting:financial_events' %}"
-                  >
+                    >
                     <span> همه رویداد ها </span>
-                  </a>
-                </h6>
+                </a>
+            </h6>
+            {% endif %}
               </div>
             </div>
 
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">سند</label>
+                {% if not financial_document %}
+
                 <input
                   class="form-control"
                   v-model="financial_document.id"
                   @input="select_financial_document_by_id()"
                   type="text"
                 />
-                <!-- <div class="my-2" v-if="">
-                                <a :href="account.get_absolute_url">
-                                    <div class="media">
-                                        <img :src="account.logo" class="rounded" width="48" alt="">
-                                        <div class="media-body mr-2">
-                                            <h5> <span v-text="account.code"></span></h5>
-                                            <h5> <span v-text="account.name"></span></h5>
-                                            <h5> <span v-text="to_price(account.balance)"></span></h5>
-                                            <h5></h5>
-                                        </div>
-                                    </div>
+                {% else %} {% endif %}
 
-                                </a>
-                            </div> -->
                 <div class="my-2">
                   <h5 v-if="financial_document.title">
                     <a :href="financial_document.get_absolute_url">
@@ -145,6 +127,7 @@
                     </a>
                   </h5>
                 </div>
+                {% if not financial_document %}
 
                 <h6 class="text-danger">
                   <a
@@ -154,8 +137,10 @@
                     <span> همه سند ها </span>
                   </a>
                 </h6>
+                {% endif %}
               </div>
             </div>
+
             <div class="col-md-4">
               <div class="form-group">
                 <label for="exampleInputDate">تاریخ</label>
@@ -171,8 +156,7 @@
                 />
               </div>
             </div>
-            <div class="col-md-12"></div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <div class="form-group">
                 <label for=""
                   >بدهکار
