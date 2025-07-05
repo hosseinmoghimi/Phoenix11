@@ -56,9 +56,7 @@ def AddInvoiceLineContext(request,*args, **kwargs):
     invoice_line_items_s=json.dumps(InvoiceLineItemSerializer(invoice_line_items,many=True).data)
     context["invoice_line_items_s"]=invoice_line_items_s
     return context
-
  
-
 def AccountsContext(request):
     context={}
     accounts=AccountRepo(request=request).list().order_by('title')
@@ -139,7 +137,6 @@ def InvoiceLineItemContext(request,invoice_line_item,*args, **kwargs):
     if request.user.has_perm(APP_NAME+".add_invoicelineitemunit"):
         context.update(AddInvoiceLineItemUnitsContext(request=request,invoice_line_item=invoice_line_item))
     return context
-
 
 def AddInvoiceLineItemUnitsContext(request,invoice_line_item,*args, **kwargs):
     context={}
@@ -256,7 +253,6 @@ def ProductContext(request,product,*args, **kwargs):
     context["product"]=product
     return context
  
-
 def AddAccountContext(request,*args, **kwargs):
     context={}
     account_natures=(i[0] for i in AccountNatureEnum.choices)
@@ -276,7 +272,6 @@ class IndexView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
-
 
 
 class SearchView(View):
@@ -429,6 +424,8 @@ class FinancialDocumentView(View):
         context=getContext(request=request)
         financial_document=FinancialDocumentRepo(request=request).financial_document(*args, **kwargs)
         context['financial_document']=financial_document
+        financial_document_s=json.dumps(FinancialDocumentSerializer(financial_document).data)
+        context['financial_document_s']=financial_document_s
 
         
         financial_document_lines=financial_document.financialdocumentline_set.all()
@@ -439,6 +436,9 @@ class FinancialDocumentView(View):
 
         if request.user.has_perm(APP_NAME+'.add_financialdocumentline'):
             context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
+
+             
+
         return render(request,TEMPLATE_ROOT+"financial-document.html",context)
 
 
@@ -666,29 +666,29 @@ class ExportProductsToExcelView(View):
         return message_view.get(request=request)
 
 
-class EventView(View):
+class FinancialEventView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        events=FinancialEventRepo(request=request).event(*args, **kwargs)
-        event_s=json.dumps(EventSerializer(events,many=False).data)
-        context['event']=event
-        context['event_s']=event_s
+        financial_event=FinancialEventRepo(request=request).financial_event(*args, **kwargs)
+        financial_event_s=json.dumps(FinancialEventSerializer(financial_event,many=False).data)
+        context['financial_event']=financial_event
+        context['financial_event_s']=financial_event_s
         context['WIDE_LAYOUT']=True
         return render(request,TEMPLATE_ROOT+"event.html",context)
 
 
-class EventsView(View):
+class FinancialEventsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        events=FinancialEventRepo(request=request).list()
-        events_s=json.dumps(EventSerializer(events,many=True).data)
-        context['events']=events
-        context['events_s']=events_s
+        financial_events=FinancialEventRepo(request=request).list()
+        financial_events_s=json.dumps(FinancialEventSerializer(financial_events,many=True).data)
+        context['financial_events']=financial_events
+        context['financial_events_s']=financial_events_s
         context['WIDE_LAYOUT']=True
-        return render(request,TEMPLATE_ROOT+"events.html",context)
+        return render(request,TEMPLATE_ROOT+"financial-events.html",context)
 
 
-class AddEventView(View):
+class AddFinancialEventView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         invoices=InvoiceRepo(request=request).list()
@@ -696,7 +696,7 @@ class AddEventView(View):
         context['invoices']=invoices
         context['invoices_s']=invoices_s
         context['WIDE_LAYOUT']=True
-        return render(request,TEMPLATE_ROOT+"add-event.html",context)
+        return render(request,TEMPLATE_ROOT+"add-finanical-event.html",context)
 
 def AddInvoiceContext(request):
     context={}

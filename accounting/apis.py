@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from .repo import InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
-from .serializers import  InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
+from .serializers import  FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
  
@@ -29,6 +29,31 @@ class AddInvoiceApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+
+
+
+class AddFinancialDocumentLineApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_financial_document_line_form=AddFinancialDocumentLineForm(request.POST)
+        if add_financial_document_line_form.is_valid():
+            log=333
+            cd=add_financial_document_line_form.cleaned_data
+            result,message,financial_document_line=FinancialDocumentLineRepo(request=request).add_financial_document_line(**cd)
+            if financial_document_line is not None:
+                context['financial_document_line']=FinancialDocumentLineSerializer(financial_document_line).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
 
 class AddAccountApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -161,6 +186,55 @@ class AddInvoiceLineApi(APIView):
         context['log']=log
         return JsonResponse(context)
     
+class SelectFinancialEventApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            select_financial_event_form=SelectFinancialEventForm(request.POST)
+            if select_financial_event_form.is_valid():
+                log=333
+                cd=select_financial_event_form.cleaned_data
+                financial_event=FinancialEventRepo(request=request).financial_event(**cd)
+                if financial_event is not None:
+                    result=SUCCEED
+                    message="موفقیت آمیز"
+                    context['financial_event']=FinancialEventSerializer(financial_event).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+class SelectFinancialDocumentApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            select_financial_document_form=SelectFinancialDocumentForm(request.POST)
+            if select_financial_document_form.is_valid():
+                log=333
+                cd=select_financial_document_form.cleaned_data
+                financial_document=FinancialDocumentRepo(request=request).financial_document(**cd)
+                if financial_document is not None:
+                    result=SUCCEED
+                    message="موفقیت آمیز"
+                    context['financial_document']=FinancialDocumentSerializer(financial_document).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+ 
  
 class SelectAccountApi(APIView):
     def post(self,request,*args, **kwargs):

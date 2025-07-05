@@ -22,6 +22,8 @@
 </div>
 {% endblock content %}
 {% block script %}
+    {% include "accounting/includes/financial-document-app/script.html" %}
+
     {% if add_financial_document_line_form %}
         {% include "accounting/includes/add-financial-document-line-app/script.html" %}
     {% endif %}

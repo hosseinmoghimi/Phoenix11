@@ -1,13 +1,13 @@
 <script>
-    let add_event_app = new Vue({
-        el: "#add-event-app",
+    let add_financial_event_app = new Vue({
+        el: "#add-financial-event-app",
         data: {
             title: "",
             amount: 0,
             bedehkar: { code: "0", name: false },
             bestankar: { code: "0", name: false },
             description:"",
-            event_datetime: current_date,
+            financial_event_datetime: current_date,
             message: { show: false },
         },
         components: {
@@ -16,10 +16,10 @@
         },
         methods: {
             swap: function () {
-                let bed = add_event_app.bedehkar
-                let bes = add_event_app.bestankar
-                add_event_app.bedehkar = bes
-                add_event_app.bestankar = bed
+                let bed = add_financial_event_app.bedehkar
+                let bes = add_financial_event_app.bestankar
+                add_financial_event_app.bedehkar = bes
+                add_financial_event_app.bestankar = bed
             },
             to_price_colored: function (vall) {
                 let colorr = "primary"
@@ -40,11 +40,11 @@
                 return  to_price(vall)+" {{CURRENCY}}" 
             },
 
-            add_event: function () {
+            add_financial_event: function () {
 
                 
-                if( !add_event_app.bedehkar.name){
-                    add_event_app.message = {
+                if( !add_financial_event_app.bedehkar.name){
+                    add_financial_event_app.message = {
                         show: true,
                         header: "خطا ",
                         body: `<div  class="text-right text-danger1 farsi"><h4>خطا</h4><p>بدهکار را وارد کنید.</p> </div>`,
@@ -53,8 +53,8 @@
                     return
                 }
 
-                if(!add_event_app.bestankar.name){
-                    add_event_app.message = {
+                if(!add_financial_event_app.bestankar.name){
+                    add_financial_event_app.message = {
                         show: true,
                         header: "خطا ",
                         body: `<div  class="text-right text-danger1 farsi"><h4>خطا</h4><p>بستانکار را وارد کنید.</p> </div>`,
@@ -64,8 +64,8 @@
                 }
 
 
-                if (!add_event_app.amount > 0) {
-                    add_event_app.message = {
+                if (!add_financial_event_app.amount > 0) {
+                    add_financial_event_app.message = {
                         show: true,
                         header: "خطا ",
                         body: `<div  class="text-right text-danger1 farsi"><h4>خطا</h4><p>مبلغ صحیح را وارد کنید.</p> </div>`,
@@ -79,31 +79,31 @@
                     bedehkar_id: this.bedehkar.id,
                     description: this.description,
                     amount: parseInt(this.amount),
-                    event_datetime: (this.event_datetime),
+                    financial_event_datetime: (this.financial_event_datetime),
                     title: (this.title),
                 }
                 console.log(payload)
-                let url = "{% url 'accounting:add_event' %}"
+                let url = "{% url 'accounting:add_financial_event' %}"
                 let posting = $.post(url, payload)
                 posting.done(data => {
                     console.log(data)
                     if (data.result === "SUCCEED") {
-                        // add_event_app.message = {
+                        // add_financial_event_app.message = {
                         //     show: true,
                         //     header: "موفقیت آمیز",
-                        //     body: `<div  class="text-right farsi"><p>${data.message}</p><a target="_blank" href="${data.event.get_absolute_url}">${data.event.title}</a></div>`,
+                        //     body: `<div  class="text-right farsi"><p>${data.message}</p><a target="_blank" href="${data.financial_event.get_absolute_url}">${data.financial_event.title}</a></div>`,
                         //     color: "success",
                         // }
-                        show_message(add_event_app,"موفقیت آمیز", `<div  class="text-right farsi"><p>${data.message}</p><a target="_blank" href="${data.event.get_absolute_url}">${data.event.title}</a></div>`,"success",50000)
+                        show_message(add_financial_event_app,"موفقیت آمیز", `<div  class="text-right farsi"><p>${data.message}</p><a target="_blank" href="${data.financial_event.get_absolute_url}">${data.financial_event.title}</a></div>`,"success",50000)
                     }
                     if (data.result != "SUCCEED") {
-                        // add_event_app.message = {
+                        // add_financial_event_app.message = {
                         //     show: true,
                         //     header: "خطا",
                         //     body: `<div  class="text-right farsi"><p>${data.message}</p></div>`,
                         //     color: "danger",
                         // }
-                        show_message(add_event_app,"خطا", `<div  class="text-right farsi"><p>${data.message}</p></div>`,"danger",50000)
+                        show_message(add_financial_event_app,"خطا", `<div  class="text-right farsi"><p>${data.message}</p></div>`,"danger",50000)
 
                     }
 
@@ -120,10 +120,10 @@
 
                             return
                         }
-                        add_event_app.bedehkar = data.account
+                        add_financial_event_app.bedehkar = data.account
                     }
                     else {
-                        add_event_app.bedehkar = { code: add_event_app.bedehkar.code, name: false }
+                        add_financial_event_app.bedehkar = { code: add_financial_event_app.bedehkar.code, name: false }
 
                     }
                 })
@@ -138,11 +138,11 @@
                         }
 
                         console.log(data.account)
-                        add_event_app.bestankar = data.account
+                        add_financial_event_app.bestankar = data.account
                     }
 
                     else {
-                        add_event_app.bestankar = { code: add_event_app.bestankar.code, name: false }
+                        add_financial_event_app.bestankar = { code: add_financial_event_app.bestankar.code, name: false }
 
                     }
                 })

@@ -36,7 +36,7 @@ class GetReportForm(forms.Form):
     end_date=forms.CharField( max_length=100, required=False)
 
 
-class SelectAccountingDocumentForm(forms.Form):
+class SelectFinancialDocumentForm(forms.Form):
     accounting_document_id=forms.IntegerField(required=True)
 
 
@@ -107,17 +107,26 @@ class AddProductSpecificationForm(forms.Form):
     value=forms.CharField(max_length=100, required=True)
 
 
-class AddAccountingDocumentLineForm(forms.Form):
-    title=forms.CharField(max_length=100, required=True)
-    account_code=forms.CharField(max_length=100, required=True)
-    bedehkar=forms.IntegerField(required=True)
+class AddFinancialDocumentLineForm(forms.Form):
     account_id=forms.IntegerField(required=False)
+    account_code=forms.CharField(max_length=100, required=True)
+    title=forms.CharField(max_length=100, required=True)
+    bedehkar=forms.IntegerField(required=True)
     bestankar=forms.IntegerField(required=True)
-    event_id=forms.IntegerField(required=False)
-    accounting_document_id=forms.IntegerField(required=True)
+    financial_document_id=forms.IntegerField(required=True)
+    financial_event_id=forms.IntegerField(required=True)
     persian_date_time=forms.CharField(max_length=20, required=False)
-    date_time=forms.CharField(max_length=20, required=False)
+    date_time=forms.CharField(max_length=30, required=False)
 
+
+
+class SelectFinancialEventForm(forms.Form):
+    financial_event_id=forms.IntegerField(required=True)
+     
+
+class SelectFinancialDocumentForm(forms.Form):
+    financial_document_id=forms.IntegerField(required=True)
+     
 
 
 class SetAccountPriorityForm(forms.Form):
@@ -125,7 +134,7 @@ class SetAccountPriorityForm(forms.Form):
     priority=forms.IntegerField(required=True)
 
 
-class AddAccountingDocumentForm(forms.Form):
+class AddFinancialDocumentForm(forms.Form):
     title=forms.CharField(max_length=100, required=False)
 
 class AddEventForm(forms.Form):
@@ -175,10 +184,11 @@ class AddFinancialYearForm(forms.Form):
 class AddEventFinancialDocumentLineForm(forms.Form):
     accounting_document_id=forms.IntegerField(required=True)
     accounting_document_title=forms.CharField(max_length=200,required=True)
+    date_time=forms.CharField(max_length=50,required=True)
     account_code=forms.CharField(max_length=50,required=True)
     bestankar=forms.IntegerField(required=True)
     bedehkar=forms.IntegerField(required=True)
-    event_id=forms.IntegerField(required=True)
+    financial_event_id=forms.IntegerField(required=False)
     
 
  

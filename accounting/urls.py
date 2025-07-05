@@ -14,6 +14,7 @@ urlpatterns = [
     path('settings/',login_required(views.SettingsView.as_view()),name="settings"),
     path('products/',login_required(views.ProductsView.as_view()),name="products"),
     path('invoices/',login_required(views.InvoicesView.as_view()),name="invoices"),
+    path('add-financial-document-line/',login_required(apis.AddFinancialDocumentLineApi.as_view()),name="add_financial_document_line"),
     path('invoice/<int:pk>/',login_required(views.InvoiceView.as_view()),name="invoice"),
     path('invoice/excel/<int:pk>/',login_required(views.InvoiceToExcelView.as_view()),name="invoice_to_excel"),
     path('invoice-line-item/<int:pk>/',login_required(views.InvoiceLineItemView.as_view()),name="invoicelineitem"),
@@ -32,11 +33,14 @@ urlpatterns = [
     path("add-account/",login_required(apis.AddAccountApi.as_view()),name="add_account"),
 
       
-    path("events/",login_required(views.EventsView.as_view()),name="events"),
-    path("add-event/",login_required(views.AddEventView.as_view()),name="add_event"),
+    path("financial_events/",login_required(views.FinancialEventsView.as_view()),name="financial_events"),
+    path("financial_event/<int:pk>/",login_required(views.FinancialEventView.as_view()),name="financialevent"),
+    path("add-financial-event/",login_required(views.AddFinancialEventView.as_view()),name="add_financial_event"),
     
     path("select-account/",login_required(apis.SelectAccountApi.as_view()),name="select_account"),
     
+    path("select-financial-event/",login_required(apis.SelectFinancialEventApi.as_view()),name="select_financial_event"),
+    path("select-financial-document/",login_required(apis.SelectFinancialDocumentApi.as_view()),name="select_financial_document"),
     path("init_all_accounts/",login_required(apis.InitALLAccountsApi.as_view()),name="init_all_accounts"),
     path("delete_all_accounts/",login_required(apis.DeleteALLAccountsApi.as_view()),name="delete_all_accounts"),
 

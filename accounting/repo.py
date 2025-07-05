@@ -1468,6 +1468,10 @@ class FinancialDocumentLineRepo:
             financial_event_id=kwargs["financial_event_id"]
             objects=objects.filter(financial_event_id=financial_event_id)
         
+        if "financial_document_id" in kwargs and kwargs["financial_document_id"] is not None and kwargs["financial_document_id"]>0 :
+            financial_document_id=kwargs["financial_document_id"]
+            objects=objects.filter(financial_document_id=financial_document_id)
+        
         return objects.all().order_by('date_time')
 
     def financial_document_line(self,*args, **kwargs):
@@ -1479,58 +1483,63 @@ class FinancialDocumentLineRepo:
             return self.objects.filter(pk=kwargs['id']).first() 
         
     def add_financial_document_line(self,*args, **kwargs):
-        accounting_document_line,message,result=(None,"",FAILED)
+        financial_document_line,message,result=(None,"",FAILED)
     
         bestankar=kwargs['bestankar']
         bedehkar=kwargs['bedehkar']
         if bedehkar==0 and bestankar==0:
             message="مبلغ بدهکار و بستانکار صفر وارد شده است."
-            return result,message,accounting_document_line
+            return result,message,financial_document_line
 
             
         if bedehkar>0 and bestankar>0:
             message="مبلغ بدهکار و بستانکار ، هر دو وارد شده است."
-            return result,message,accounting_document_line
+            return result,message,financial_document_line
 
         if bedehkar<0 or bestankar<0:
             message="مبلغ بدهکار یا بستانکار منفی وارد شده است."
-            return result,message,accounting_document_line
+            return result,message,financial_document_line
 
-        if not Permission(request=self.request).is_permitted(APP_NAME,OperationEnum.ADD,"accountingdocumentline"):
-        # if not self.request.user.has_perm(APP_NAME+".add_accountingdocumentline"):
+        # if not Permission(request=self.request).is_permitted(APP_NAME,OperationEnum.ADD,"accountingdocumentline"):
+        if not self.request.user.has_perm(APP_NAME+".add_accountingdocumentline"):
             message="دسترسی غیر مجاز"
-            return result,message,accounting_document_line
+            return result,message,financial_document_line
         
-        accounting_document_line=FinancialDocumentLine()
-
+        financial_document_line=FinancialDocumentLine()
+        
         if 'title' in kwargs:
-            accounting_document_line.title=kwargs['title']
-        if 'event_id' in kwargs:
-            accounting_document_line.event_id=kwargs['event_id']
-        if 'accounting_document_id' in kwargs:
-            accounting_document_line.accounting_document_id=kwargs['accounting_document_id']
+            financial_document_line.title=kwargs['title']
+        if 'financial_event_id' in kwargs:
+            financial_document_line.financial_event_id=kwargs['financial_event_id']
+        if 'financial_document_id' in kwargs:
+            financial_document_line.financial_document_id=kwargs['financial_document_id']
         if 'description' in kwargs:
-            accounting_document_line.description=kwargs['description']
-        if 'persian_date_time' in kwargs :
-            kwargs['date_time']=PersianCalendar().to_gregorian(kwargs['persian_date_time'])
+            financial_document_line.description=kwargs['description']
+        if 'persian_date_time' in kwargs and kwargs['persian_date_time'] is not None and not kwargs['persian_date_time']=='':
+            persian_date_time=kwargs['persian_date_time']
+            date_time=PersianCalendar().to_gregorian(persian_date_time)
             # date_time=date_time,persian_date_time=kwargs['persian_date_time'])
-            # accounting_document_line.date_time=date_time
+            # financial_document_line.date_time=date_time
         if 'bestankar' in kwargs  :
-            accounting_document_line.bestankar=kwargs['bestankar']
+            financial_document_line.bestankar=kwargs['bestankar']
         if 'bedehkar' in kwargs :
-            accounting_document_line.bedehkar=kwargs['bedehkar'] 
+            financial_document_line.bedehkar=kwargs['bedehkar'] 
+        leolog(kwargs=kwargs)
         if 'date_time' in kwargs :
-            # year=kwargs['date_time'][:2]
-            # if year=="13" or year=="14":
-            #     kwargs['date_time']=PersianCalendar().to_gregorian(kwargs["date_time"])
-            accounting_document_line.date_time=kwargs['date_time'] 
+
+            date_time=kwargs['date_time']
+            leolog(date_time=date_time)
+            year=date_time[:2]
+            if year=="13" or year=="14":
+                date_time=PersianCalendar().to_gregorian(kwargs["date_time"])
+            financial_document_line.date_time=date_time 
 
         if 'account_code' in kwargs and kwargs['account_code'] is not None:
             account=AccountRepo(request=self.request).account(code=kwargs['account_code']) 
             if account is not None:
-                accounting_document_line.account=account
+                financial_document_line.account=account
         if 'account_id' in kwargs and kwargs['account_id'] is not None:
-            accounting_document_line.account_id=kwargs['account_id'] 
+            financial_document_line.account_id=kwargs['account_id'] 
         
         
         # if 'financial_year_id' in kwargs:
@@ -1538,18 +1547,18 @@ class FinancialDocumentLineRepo:
         # else:
         #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
 
-        if accounting_document_line.account.nature==AccountNatureEnum.ONLY_BESTANKAR and accounting_document_line.bedehkar>0:
-            message=accounting_document_line.account.name+" ماهیت فقط بستانکار دارد"
-            accounting_document_line=None
-            return result,message,accounting_document_line
-        if accounting_document_line.account.nature==AccountNatureEnum.ONLY_BEDEHKAR and accounting_document_line.bestankar>0:
+        if financial_document_line.account.nature==AccountNatureEnum.ONLY_BESTANKAR and financial_document_line.bedehkar>0:
+            message=financial_document_line.account.name+" ماهیت فقط بستانکار دارد"
+            financial_document_line=None
+            return result,message,financial_document_line
+        if financial_document_line.account.nature==AccountNatureEnum.ONLY_BEDEHKAR and financial_document_line.bestankar>0:
             message=accounting_document_line.account.name+" ماهیت فقط بدهکار دارد"
             accounting_document_line=None
             return result,message,accounting_document_line
 
 
-        accounting_document_line.save()
-        accounting_document_line.account.normalize_total()
+        financial_document_line.save()
+        financial_document_line.account.normalize_total()
         result=SUCCEED
         message="با موفقیت اضافه گردید."
          
@@ -1558,12 +1567,11 @@ class FinancialDocumentLineRepo:
         new_log={}
         new_log['title']="خط سند مالی جدید "
         new_log['app_name']=APP_NAME
-        new_log['url']=accounting_document_line.get_absolute_url()
+        new_log['url']=financial_document_line.get_absolute_url()
         new_log['profile']=me_profile
         new_log['description']="خط سند مالی جدید با موفقیت اضافه گردید."
         LogRepo(request=self.request).add_log(**new_log)
-        return result,message,accounting_document_line
-
+        return result,message,financial_document_line
     def delete_all(self,*args,**kwargs):
         
         if not self.request.user.has_perm(APP_NAME+".delete_accountingdocumentline"):
@@ -1578,7 +1586,7 @@ class FinancialDocumentLineRepo:
     
     
     def add_event_financial_document_line(self,*args, **kwargs):
-        result,message,accounting_document_line=FAILED,"",None
+        result,message,financial_document_line=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_financialdocumentline"):
             message="دسترسی غیر مجاز"
             return result,message,accounting_document_line
@@ -1715,13 +1723,15 @@ class FinancialEventRepo():
         objects=self.objects.filter(parent_id=None)
         return objects.all()
 
-    def event(self,*args, **kwargs):
-        if "event_id" in kwargs and kwargs["event_id"] is not None:
-            return self.objects.filter(pk=kwargs['event_id']).first()  
+    def financial_event(self,*args, **kwargs):
+        if "financial_event_id" in kwargs and kwargs["financial_event_id"] is not None:
+            return self.objects.filter(pk=kwargs['financial_event_id']).first()  
         if "pk" in kwargs and kwargs["pk"] is not None:
             return self.objects.filter(pk=kwargs['pk']).first() 
         if "id" in kwargs and kwargs["id"] is not None:
             return self.objects.filter(pk=kwargs['id']).first() 
+        if "event_id" in kwargs and kwargs["event_id"] is not None:
+            return self.objects.filter(pk=kwargs['event_id']).first() 
          
        
 

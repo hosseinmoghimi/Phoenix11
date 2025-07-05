@@ -1,5 +1,5 @@
 {% load static %}
-<div class="card rtl" id="add-event-app">
+<div class="card rtl" id="add-financial-event-app">
     <div class="card-header">
         <h4>
             افزودن رویداد مالی
@@ -16,7 +16,7 @@
             <a href="{% url 'accounting:tree_chart' pk=0 %}" target="_blank"> درخت حساب ها</a>
         </h5>
 
-        <form @submit.prevent="add_event()">
+        <form @submit.prfinancial_event="add_financial_event()">
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
@@ -30,13 +30,13 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="exampleInputDate">تاریخ</label>
-                        <date-picker v-model="event_datetime"></date-picker>
-                        <input type="text" required   class="form-control" v-model="event_datetime">
+                        <date-picker v-model="financial_event_datetime"></date-picker>
+                        <input type="text" required   class="form-control" v-model="financial_event_datetime">
 
 
                     </div>
                     <div>
-                        <input type="text" class="form-control" v-model="event_datetime" name="" id="">
+                        <input type="text" class="form-control" v-model="financial_event_datetime" name="" id="">
                     </div>
                 </div>
 
