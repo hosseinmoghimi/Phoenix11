@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import InvoiceLineItem,Account,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
+from .models import InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
 
 from .models import FinancialDocument
 
@@ -32,6 +32,13 @@ class ProductSerializer(serializers.ModelSerializer):
        class Meta:
         model = Product
         fields = ['id','title','thumbnail','unit_name','unit_price','barcode',  'get_absolute_url','get_edit_url','get_delete_url']
+        # fields = ['id','name','get_market_absolute_url','thumbnail','barcode','unit_price', 'unit_name',  'get_absolute_url','get_edit_url','get_delete_url']
+
+
+class ServiceSerializer(serializers.ModelSerializer):
+       class Meta:
+        model = Service
+        fields = ['id','title','thumbnail','unit_name','unit_price','get_absolute_url','get_edit_url','get_delete_url']
         # fields = ['id','name','get_market_absolute_url','thumbnail','barcode','unit_price', 'unit_name',  'get_absolute_url','get_edit_url','get_delete_url']
 
 class InvoiceLineItemSerializer(serializers.ModelSerializer):

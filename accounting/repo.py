@@ -1315,11 +1315,11 @@ class ServiceRepo():
         if not self.request.user.has_perm(APP_NAME+".add_service"):
             message="دسترسی غیر مجاز"
             return result,message,service
-        if len(Product.objects.filter(title=kwargs["title"]))>0:
+        if len(Service.objects.filter(title=kwargs["title"]))>0:
             message="نام تکراری برای کالای جدید"
             return result,message,service
 
-        service=Product() 
+        service=Service() 
 
         if 'title' in kwargs:
             service.title=kwargs["title"]
@@ -1354,7 +1354,45 @@ class ServiceRepo():
             ProductUnitRepo(request=self.request).add_service_unit(service_id=service.id,unit_price=service.unit_price,unit_name=service.unit_name,coef=coef)
         return result,message,service
  
+    def add_service(self,*args,**kwargs):
+        result,message,service=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_service"):
+            message="دسترسی غیر مجاز"
+            return result,message,service
+        if len(Service.objects.filter(title=kwargs["title"]))>0:
+            message="نام تکراری برای سرویس جدید"
+            return result,message,service
 
+        service=Service() 
+
+        if 'title' in kwargs:
+            service.title=kwargs["title"]
+         
+    
+
+        (result,message,service)=service.save()
+        if 'unit_price' in kwargs:
+            if 'unit_name' in kwargs:
+                if 'coef' in kwargs:
+                    ili_unit=InvoiceLineItemUnit()
+                    ili_unit.unit_name=kwargs["unit_name"]
+                    ili_unit.coef=kwargs["coef"]
+                    ili_unit.unit_price=kwargs["unit_price"]
+                    ili_unit.invoice_line_item_id=service.id
+                    ili_unit.default=True
+                    ili_unit.save()
+
+                 
+
+        if 'category_id' in kwargs:
+            pass
+            # category_id=kwargs["category_id"]
+            # category=Category.objects.filter(pk=category_id).first()
+            # if category is not None:
+            #     category.services.add(service.id)
+        coef=1 
+        return result,message,service
+ 
 class FinancialDocumentRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
@@ -1524,11 +1562,9 @@ class FinancialDocumentLineRepo:
             financial_document_line.bestankar=kwargs['bestankar']
         if 'bedehkar' in kwargs :
             financial_document_line.bedehkar=kwargs['bedehkar'] 
-        leolog(kwargs=kwargs)
         if 'date_time' in kwargs :
 
             date_time=kwargs['date_time']
-            leolog(date_time=date_time)
             year=date_time[:2]
             if year=="13" or year=="14":
                 date_time=PersianCalendar().to_gregorian(kwargs["date_time"])
@@ -1552,9 +1588,9 @@ class FinancialDocumentLineRepo:
             financial_document_line=None
             return result,message,financial_document_line
         if financial_document_line.account.nature==AccountNatureEnum.ONLY_BEDEHKAR and financial_document_line.bestankar>0:
-            message=accounting_document_line.account.name+" ماهیت فقط بدهکار دارد"
-            accounting_document_line=None
-            return result,message,accounting_document_line
+            message=financial_document_line.account.name+" ماهیت فقط بدهکار دارد"
+            financial_document_line=None
+            return result,message,financial_document_line
 
 
         financial_document_line.save()

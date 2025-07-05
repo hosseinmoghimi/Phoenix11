@@ -3,8 +3,8 @@ from utility.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
-from .repo import InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
-from .serializers import  FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
+from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
+from .serializers import  ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
  
@@ -140,6 +140,7 @@ class AddInvoiceLineItemUnitApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+ 
     
 class ImportProductsFromExcelApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -164,6 +165,33 @@ class ImportProductsFromExcelApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+
+
+    
+class ImportServicesFromExcelApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            ImportServicesFromExcelForm_=ImportServicesFromExcelForm(request.POST,request.FILES)
+            if ImportServicesFromExcelForm_.is_valid():
+                log=333
+                
+                excel_file = request.FILES['file1']
+                cd=ImportServicesFromExcelForm_.cleaned_data
+                cd['excel_file']=excel_file
+                result,message,products=ServiceRepo(request=request).import_products_from_excel(**cd)
+                if products is not None:
+                    context['products']=ServiceSerializer(products,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
 
 class AddInvoiceLineApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -318,6 +346,28 @@ class AddProductApi(APIView):
             result,message,product=ProductRepo(request=request).add_product(**cd)
             if product is not None:
                 context['product']=ProductSerializer(product).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+ 
+class AddServiceApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_service_form=AddServiceForm(request.POST)
+        if add_service_form.is_valid():
+            log=333
+            cd=add_service_form.cleaned_data
+            result,message,service=ServiceRepo(request=request).add_service(**cd)
+            if service is not None:
+                context['service']=ServiceSerializer(service).data
         context['message']=message
         context['result']=result
         context['log']=log

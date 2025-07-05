@@ -50,16 +50,22 @@ class SetParentCodeForm(forms.Form):
     parent_code=forms.CharField(max_length=100, required=True)
     
 
-class AddProductForm(forms.Form):
+class AddInvoiceLineItemForm(forms.Form):
     priority=forms.IntegerField( required=False)
     title=forms.CharField( max_length=100, required=True)
-    barcode=forms.CharField( max_length=100, required=False) 
     code=forms.CharField( max_length=100, required=False) 
     barcode=forms.CharField( max_length=100, required=False) 
     unit_price=forms.IntegerField( required=False)
     unit_name=forms.CharField( max_length=100, required=False) 
     coef=forms.IntegerField( required=False)
     category_id=forms.IntegerField( required=False)
+
+
+
+class AddProductForm(AddInvoiceLineItemForm):
+    barcode=forms.CharField( max_length=100, required=False) 
+class AddServiceForm(AddInvoiceLineItemForm):
+    pass
 
 
 class AddProductToCategoryForm(forms.Form):
@@ -137,7 +143,8 @@ class SetAccountPriorityForm(forms.Form):
 class AddFinancialDocumentForm(forms.Form):
     title=forms.CharField(max_length=100, required=False)
 
-class AddEventForm(forms.Form):
+
+class AddFinancialEventForm(forms.Form):
     title=forms.CharField(max_length=100, required=True)
     event_datetime=forms.CharField(max_length=50, required=True)
     bedehkar_id=forms.IntegerField(required=False)
@@ -146,7 +153,7 @@ class AddEventForm(forms.Form):
     description=forms.CharField(max_length=1000,required=False)
 
 
-class AddInvoiceForm(AddEventForm):
+class AddInvoiceForm(AddFinancialEventForm):
     pass
 
 
@@ -173,6 +180,13 @@ class AddBankAccountForm(forms.Form):
 class ImportProductsFromExcelForm(forms.Form):
     is_open=forms.BooleanField(required=False)
     count=forms.IntegerField(required=True)
+
+    
+
+class ImportServicesFromExcelForm(forms.Form):
+    is_open=forms.BooleanField(required=False)
+    count=forms.IntegerField(required=True)
+
     
 class AddFinancialYearForm(forms.Form):
     name=forms.CharField(max_length=100, required=True)
@@ -225,8 +239,8 @@ class SearchAccountsForm(forms.Form):
 
 
 
-class AddCostForm(AddEventForm):
+class AddCostForm(AddFinancialEventForm):
     priority=forms.IntegerField(required=False)
 
-class AddTaxForm(AddEventForm):
+class AddTaxForm(AddFinancialEventForm):
     priority=forms.IntegerField(required=False)

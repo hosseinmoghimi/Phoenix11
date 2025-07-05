@@ -11,8 +11,8 @@ from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
 from .repo import FinancialDocumentRepo
-from .repo import FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
-from .serializers import FinancialDocumentSerializer
+from .repo import ProfileRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
+from .serializers import ServiceSerializer,FinancialDocumentSerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from utility.currency import to_price_colored
 import json 
@@ -39,12 +39,21 @@ def AddAccountContext(request,*args, **kwargs):
         context['add_account_form']=AddAccountForm()
     return context
 
-def AddProductContext(request,*args, **kwargs):
+def AddInvoiceLineItemContext(request,*args, **kwargs):
     context={}
     unit_names=(i[0] for i in UnitNameEnum.choices)
+    context['unit_names_for_add_invoice_line_item']=unit_names
+    return context
+
+def AddProductContext(request,*args, **kwargs):
+    context=AddInvoiceLineItemContext(request=request)
     context['import_products_from_excel_form']=ImportProductsFromExcelForm()
     context['add_product_form']=AddProductForm()
-    context['unit_names']=unit_names
+    return context
+
+def AddServiceContext(request):
+    context=AddInvoiceLineItemContext(request=request)
+    context['add_service_form']=AddServiceForm()
     return context
 
 def AddInvoiceLineContext(request,*args, **kwargs):
@@ -253,12 +262,31 @@ def ProductContext(request,product,*args, **kwargs):
     context["product"]=product
     return context
  
+def ServiceContext(request,service,*args, **kwargs):
+    context={}
+    context.update(InvoiceLineItemContext(request=request,invoice_line_item=service))
+    context["service"]=service
+    return context
+ 
 def AddAccountContext(request,*args, **kwargs):
     context={}
     account_natures=(i[0] for i in AccountNatureEnum.choices)
     context['account_natures']=account_natures
     if request.user.has_perm(APP_NAME+".add_account"):
         context['add_account_form']=AddAccountForm()
+    return context
+
+
+def AddFinancialEventContext(request):
+    context={}
+    context['add_financial_event_form']=AddFinancialEventForm()
+    return context
+
+
+def AddInvoiceContext(request):
+    context=AddFinancialEventContext(request=request)
+
+    context['add_invoice_form']=AddInvoiceForm()
     return context
 
 
@@ -295,7 +323,6 @@ class SearchView(View):
             accounts=AccountRepo(request=request).list(search_for=search_for)
             result=SUCCEED
 
-            from utility.log import leolog
             context['accounts']=accounts
             context['accounts_s']=json.dumps(AccountSerializer(accounts,many=True).data)
 
@@ -374,6 +401,7 @@ class InvoiceToExcelView(View):
         report_work_book.work_book.close()
         return response
 
+
 class TreeChartView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -419,6 +447,7 @@ class TreeListView(View):
         context[WIDE_LAYOUT]=True
         return render(request,TEMPLATE_ROOT+"tree-list.html",context) 
 
+
 class FinancialDocumentView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -442,7 +471,6 @@ class FinancialDocumentView(View):
         return render(request,TEMPLATE_ROOT+"financial-document.html",context)
 
 
-
 class FinancialDocumentsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -461,7 +489,6 @@ class FinancialDocumentLineView(View):
 
 
         return render(request,TEMPLATE_ROOT+"financial-document-line.html",context)
-
 
 
 class AccountsView(View):
@@ -485,12 +512,14 @@ class AccountView(View):
         if account is None:
             raise Http404
         context.update(AccountContext(request=request,account=account))
+        
+        if request.user.has_perm(APP_NAME+".add_financialdocumentline"):
+            context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
  
         if request.user.has_perm(APP_NAME+".add_account"):
             context.update(AddAccountContext(request=request))
 
         return render(request,TEMPLATE_ROOT+"account.html",context)
-
 
 
 class SelectionView(View):
@@ -539,6 +568,7 @@ class ProductsView(View):
         context[WIDE_LAYOUT]=True
         return render(request,TEMPLATE_ROOT+"products.html",context) 
  
+
 class InvoiceLineItemView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -566,6 +596,7 @@ class ProductView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"product.html",context)
     
+
 class InvoiceLineView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -580,27 +611,28 @@ class InvoiceLineView(View):
         return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
     
 
+
+    
 class ServiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
+        service=ServiceRepo(request=request).service(*args, **kwargs)
+        if service is None:
+            raise Http404
+        
 
-        context['phoenix_apps']=phoenix_apps
-        return render(request,TEMPLATE_ROOT+"service.html",context)
+        context.update(ServiceContext(request=request,service=service))
 
-
+        return render(request,TEMPLATE_ROOT+"service.html",context)   
 class ServicesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
-
-        context['phoenix_apps']=phoenix_apps
+        services=ServiceRepo(request=request).list(*args, **kwargs)
+        services_s=json.dumps(ServiceSerializer(services,many=True).data)
+        context['services']=services
+        context['services_s']=services_s
+        if request.user.has_perm(APP_NAME+'.add_service'):
+            context.update(AddServiceContext(request=request))
         return render(request,TEMPLATE_ROOT+"services.html",context)
 
 
@@ -666,6 +698,68 @@ class ExportProductsToExcelView(View):
         return message_view.get(request=request)
 
 
+class ExportServicesToExcelView(View):
+    def get(self, request, *args, **kwargs): 
+        import os
+        from phoenix.server_settings import STATIC_ROOT
+        me = ProfileRepo(request=request).me
+
+
+        message_view=MessageView()
+        
+        if me is None :
+            message_view.title = 'دسترسی شما به این لینک مجاز نیست'
+            message_view.body = 'دسترسی شما به چنین دانلودی مجاز نیست'
+            return message_view.get(request=request)
+
+
+        if request.user.has_perm("accounting.view_product") :
+            
+
+            # start create excel
+            from utility.excel import ReportWorkBook 
+            my_excel_report=ReportWorkBook()   
+            data=[]  
+            headers=["id","title", "unit_name","unit_price","thumbnail"]
+            
+            services=ServiceRepo(request=request).list()
+            for service in services:
+                data_row=[service.id,service.title ,service.unit_name,service.unit_price,str(service.thumbnail_origin)]
+                data.append(data_row)
+
+            my_excel_report.add_sheet(data=data,sheet_name="خدمات",table_headers=headers)   
+             
+
+            path_excel=os.path.join(STATIC_ROOT,APP_NAME)
+            path_excel=os.path.join(path_excel,'services.xlsx')
+
+            my_excel_report.save(path_excel)
+            # end create excel
+
+
+
+            from django.http import HttpResponse
+            if os.path.exists(path_excel):
+                with open(path_excel, 'rb') as fh:
+                    response = HttpResponse(
+                        fh.read(), content_type="application/force-download")
+                    response['Content-Disposition'] = 'inline; filename=  '+ os.path.basename(path_excel)
+                    return response
+        # if self.access(request=request,*args, **kwargs) and document is not None:
+        #     return document.download_response()
+        message_view = MessageView()
+        message_view.links = []
+        message_view.message_color = 'warning'
+        message_view.has_home_link = True
+        message_view.header_color = "rose"
+        message_view.message_icon = ''
+        message_view.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
+        message_view.body = ' شما مجوز دسترسی به این صفحه را ندارید.'
+        message_view.title = 'دسترسی غیر مجاز'
+       
+        return message_view.get(request=request)
+
+
 class FinancialEventView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -698,10 +792,6 @@ class AddFinancialEventView(View):
         context['WIDE_LAYOUT']=True
         return render(request,TEMPLATE_ROOT+"add-finanical-event.html",context)
 
-def AddInvoiceContext(request):
-    context={}
-    context['add_invoice_form']=AddInvoiceForm()
-    return context
 
 class InvoicesView(View):
     def get(self,request,*args, **kwargs):

@@ -616,11 +616,15 @@ class Service(InvoiceLineItem):
         verbose_name_plural = _("خدمات")
  
     def save(self):
+        (result,message,service)=FAILED,'',self
         if self.class_name is None or self.class_name=="":
             self.class_name="service"
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         super(Service,self).save()
+        result=SUCCEED
+        message='سرویس جدید با موفقیت اضافه شد.'
+        return (result,message,service)
 
 
 class Invoice(FinancialEvent):

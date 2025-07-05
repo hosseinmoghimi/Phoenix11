@@ -1,16 +1,30 @@
+
+{% include "accounting/includes/financial-document-app/select-script.html" %}
+{% include "accounting/includes/financial-event-app/select-script.html" %}
+{% include "accounting/includes/account-app/select-script.html" %}
+
+
+
 <script>
-let financial_document={id:0}
-let financial_event={id:0} 
+let financial_document_for_add_financial_document_line_app={id:0}
+let financial_event_for_add_financial_document_line_app={id:0} 
+let account_for_add_financial_document_line_app={code:'0'}
 </script>
 {% if financial_document %}
 <script>
-        financial_document=JSON.parse(`{{financial_document_s|escapejs}}`)
+        financial_document_for_add_financial_document_line_app=JSON.parse(`{{financial_document_s|escapejs}}`)
         </script>
 {% endif %}
 {% if financial_event %}
  
 <script>
-    financial_event=JSON.parse(`{{financial_event_s|escapejs}}`)
+    financial_event_for_add_financial_document_line_app=JSON.parse(`{{financial_event_s|escapejs}}`)
+  </script>
+{% endif %}
+{% if account %}
+ 
+<script>
+    account_for_add_financial_document_line_app=JSON.parse(`{{account_s|escapejs}}`)
   </script>
 {% endif %}
 
@@ -22,10 +36,9 @@ let financial_event={id:0}
             date_time: current_date,
             bedehkar: 0,
             bestankar: 0,
-            account: {},
-            financial_event: financial_event,
-            financial_document: financial_document,
-            account_code: 0,
+            account: account_for_add_financial_document_line_app,
+            financial_event: financial_event_for_add_financial_document_line_app,
+            financial_document: financial_document_for_add_financial_document_line_app,
             message: { show: false }
         },
         components: {
@@ -36,7 +49,6 @@ let financial_event={id:0}
 
             to_price: vall => to_price(vall),
             num2persian: function (vall) {
-                leolog("num2persian")
                 return num2persian(vall)
             },
             add_financial_document_line: function () {
@@ -45,17 +57,15 @@ let financial_event={id:0}
                     title: this.title,
                     bedehkar: parseInt(this.bedehkar),
                     bestankar: parseInt(this.bestankar),
-                    account_code: (this.account_code),
+                    account_code: (this.account.code),
                     account_id: (this.account.id),
                     date_time: (this.date_time),
                     financial_event_id: parseInt(this.financial_event.id),
                     financial_document_id: parseInt(this.financial_document.id),
-                }
-                leolog(payload)
+                } 
                 let url = "{% url 'accounting:add_financial_document_line' %}"
                 let posting = $.post(url, payload)
                 posting.done(data => {
-                    leolog(data)
                     if (data.result === "SUCCEED") {
                         if (typeof financial_document_lines_app != "undefined") {
                             financial_document_lines_app.add_financial_document_line(data.financial_document_line)
@@ -90,8 +100,7 @@ let financial_event={id:0}
                 this.bedehkar = a
             },
             select_account: function () {
-                select_account_by_code(this.account_code).done(data => {
-                    leolog(data)
+                select_account_by_code(this.account.code).done(data => {
                     if (data.result === "SUCCEED") {
                         leolog(data.account)
                         add_financial_document_line_app.account = data.account
@@ -99,37 +108,32 @@ let financial_event={id:0}
 
                     if (data.result === "FAILED") {
 
-                        add_financial_document_line_app.account = { logo: null, name: "", code: 0, }
+                        add_financial_document_line_app.account.name=''
                     }
                 })
             },
             select_financial_event_by_id: function () {
-                console.log(this.financial_event_id)
                 select_financial_event_by_id(this.financial_event.id).done(data => {
-                    leolog(data)
                     if (data.result === "SUCCEED") {
-                        leolog(data.financial_event)
                         add_financial_document_line_app.financial_event = data.financial_event
                     }
 
                     if (data.result === "FAILED") {
 
-                        add_financial_document_line_app.financial_event = { logo: null, name: "", code: 0, }
+                        add_financial_document_line_app.financial_event.title=''
                     }
                 })
             },
 
               select_financial_document_by_id: function () {
                 select_financial_document_by_id(this.financial_document.id).done(data => {
-                    leolog(data)
                     if (data.result === "SUCCEED") {
-                        leolog(data.financial_document)
                         add_financial_document_line_app.financial_document = data.financial_document
                     }
 
                     if (data.result === "FAILED") {
 
-                        add_financial_document_line_app.financial_document = { logo: null, name: "", code: 0, }
+                        add_financial_document_line_app.financial_document.title=''
                     }
                 })
             },
