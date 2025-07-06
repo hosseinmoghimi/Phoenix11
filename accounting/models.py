@@ -587,6 +587,57 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
         super(InvoiceLineItemUnit,self).save()
 
 
+class Category(models.Model,LinkHelper,ImageHelper):
+    class_name="category"
+    app_name=APP_NAME
+    
+    parent=models.ForeignKey("category", verbose_name=_("parent"),null=True,blank=True, on_delete=models.SET_NULL)
+    title=models.CharField(_("title"),max_length=100)
+    priority=models.IntegerField(_("priority"),default=100)
+    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'ImageBase/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    products=models.ManyToManyField("product",blank=True, verbose_name=_("products"))
+    def get_link(self):
+            return f"""
+                    <a href="{self.get_absolute_url()}" class="ml-2 "> {self.title} </a>
+                    """
+    def get_market_link(self):
+            return f"""
+                    <a href="{self.get_market_absolute_url()}" class="ml-2 "> {self.title} </a>
+                    """
+    @property
+    def all_products(self):
+        pass
+
+    class Meta:
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categorys")
+
+    def __str__(self):
+        return self.title
+
+    def get_market_absolute_url(self):
+        return reverse("market:category",kwargs={'pk':self.pk})
+        
+    def get_breadcrumb_link(self):
+        if self.parent is None:
+            return  self.get_link() 
+        # return self.parent.get_breadcrumb_link()+f"""<span class="my-2">{ACCOUNT_NAME_SEPERATOR}</span>"""+self.get_link()
+        return f""" {self.parent.get_breadcrumb_link()} / {self.get_link()} """
+        # return f"""<span>{self.parent.get_breadcrumb_link()}</span>{ACCOUNT_NAME_SEPERATOR}<span>{self.get_link()}</span>"""
+    def get_market_breadcrumb_link(self):
+        if self.parent is None:
+            return  self.get_market_link() 
+        # return self.parent.get_breadcrumb_link()+f"""<span class="my-2">{ACCOUNT_NAME_SEPERATOR}</span>"""+self.get_link()
+        return f""" {self.parent.get_market_breadcrumb_link()} / {self.get_market_link()} """
+        # return f"""<span>{self.parent.get_breadcrumb_link()}</span>{ACCOUNT_NAME_SEPERATOR}<span>{self.get_link()}</span>"""
+    @property
+    def full_title(self):
+        if self.parent is None:
+            return self.title
+        return self.parent.full_title+" / "+self.title
+
+
 class Product(InvoiceLineItem):
     barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=50)
     
@@ -610,6 +661,9 @@ class Product(InvoiceLineItem):
         verbose_name = _("Product")
         verbose_name_plural = _("کالا ها")
  
+    def get_market_absolute_url(self):
+        return reverse("market:product",kwargs={'pk':self.pk})
+    
 
 class Service(InvoiceLineItem):
 

@@ -1,4 +1,4 @@
-from .models import FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit,InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,FinancialYear,PersonAccount
+from .models import Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit,InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,FinancialYear,PersonAccount
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo
@@ -84,6 +84,7 @@ class InvoiceLineItemUnitRepo:
  
         return result,message,invoice_line_item_unit
 
+
 class InvoiceLineRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
@@ -165,7 +166,6 @@ class InvoiceLineRepo:
         invoice_line.save()
         return result,message,invoice_line
            
-    
 
 class AccountRepo():
     def __init__(self,request,*args, **kwargs):
@@ -1030,7 +1030,6 @@ class BankAccountRepo():
             result=SUCCEED
         return result,message,bank_account
 
-
  
 class FinancialDocumentRepo():
     def __init__(self,request,*args, **kwargs):
@@ -1165,9 +1164,6 @@ class FinancialDocumentRepo():
         return result,message,financial_documents
 
 
-   
-      
-
 class BankRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
@@ -1258,7 +1254,6 @@ class BankRepo():
         return result,message,bank
 
  
-
 class ServiceRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
@@ -1466,6 +1461,7 @@ class FinancialDocumentRepo():
             LogRepo(request=self.request).add_log(**new_log)
         return result,message,financial_document
 
+
 class FinancialDocumentLineRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
@@ -1668,7 +1664,6 @@ class FinancialDocumentLineRepo:
             return result,message,financial_document_line
   
 
-
 class InvoiceRepo():
     def __init__(self,request,*args, **kwargs):
         self.me=None
@@ -1739,7 +1734,6 @@ class InvoiceRepo():
            
         (result,message,invoice)=invoice.save()
         return result,message,invoice
-
 
 
 class FinancialEventRepo():
@@ -2010,3 +2004,152 @@ class PersonRepo():
         return result,message,person_account_id
 
  
+class CategoryRepo():
+
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_categorys=[]
+        self.request=request
+        self.objects=Category.objects.filter(id=0)
+        profile=ProfileRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_category"):
+                self.objects=Category.objects
+                self.my_categorys=self.objects
+                
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(title__contains=search_for))
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.all()
+       
+    def roots(self,*args, **kwargs):
+        objects=self.objects.filter(parent_id=None)
+        return objects.all()
+
+    def category(self,*args, **kwargs):
+        if "category_id" in kwargs and kwargs["category_id"] is not None:
+            return self.objects.filter(pk=kwargs['category_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        if "code" in kwargs and kwargs["code"] is not None:
+            code=kwargs['code']
+            code=kwargs['code']
+
+            category= self.objects.filter(code=code).first()
+            return category
+        if "category_code" in kwargs and kwargs["category_code"] is not None:
+            a= self.objects.filter(code=kwargs['category_code']).first() 
+            if a is not None:
+                return a
+            else:
+                try:
+                    a= self.objects.filter(pure_code=filter_number(kwargs['category_code'])).first() 
+                    if a is not None:
+                        return a
+                except:
+                    pass
+          
+    def set_priority(self,*args, **kwargs):
+        result,message,priority=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".change_category"):
+            return result,message,category_tags
+        priority=kwargs['priority']
+        category_id=kwargs['category_id']
+        category=Category.objects.filter(pk=category_id).first()
+        if category is not None:
+            category.priority=priority
+            category.save()
+        result=SUCCEED
+        return result,message,priority
+
+    def set_category_parent(self,*args, **kwargs):
+        result,message,category,parent=FAILED,"",None,None
+        category=self.category(*args,**kwargs)
+        parent=None
+        parent_code=kwargs["parent_code"]
+        parent=self.category(category_code=parent_code)
+        category.parent=parent
+        category.save()
+        result=SUCCEED
+        message="با موفقیت تغییر یافت"
+        return result,message,category,parent
+
+    def initial_default_categories(self,*args, **kwargs):
+        category_group_counter=0
+        basic_categorys_counter=0
+        moein_categorys_counter=0
+        moein2_categorys_counter=0
+        tafsili_categorys_counter=0 
+
+        result=SUCCEED
+        message=""  
+        if not self.request.user.has_perm(APP_NAME+".add_category"):
+            message="دسترسی غیر مجاز"
+            result=FAILED
+            return message,result
+        
+        categorys=default_categorys() 
+
+        for category in categorys:
+            parent_category=None
+            if 'parent_code' in category:
+                parent_category=Category.objects.filter(code=category["parent_code"]).first()
+            new_category=Category(name=category["name"],color=category["color"],code=category['code'],priority=category['priority'],parent=parent_category)
+            # new_category=Category(parent=parent_category,**kwargs)
+            new_category.save()
+            # category_group_counter+=1
+            # basic_categorys_counter+=1   
+ 
+                                  
+        categorys=Category.objects
+        category_group_counter=len(categorys.filter(type=CategoryTypeEnum.GROUP))
+        basic_categorys_counter=len(categorys.filter(type=CategoryTypeEnum.BASIC))
+        moein_categorys_counter=len(categorys.filter(type=CategoryTypeEnum.MOEIN_1))
+        moein2_categorys_counter=len(categorys.filter(type=CategoryTypeEnum.MOEIN_2))
+        tafsili_categorys_counter=len(categorys.filter(Q(type=CategoryTypeEnum.TAFSILI_1)|Q(type=CategoryTypeEnum.TAFSILI_2)|Q(type=CategoryTypeEnum.TAFSILI_3)|Q(type=CategoryTypeEnum.TAFSILI_4)))
+                                                        
+
+        if result==SUCCEED:
+            message="با موفقیت اضافه گردید."
+        message+=f"<br>{category_group_counter}   گروه حساب" 
+        message+=f"<br>{basic_categorys_counter}   حساب  کل " 
+        message+=f"<br>{moein_categorys_counter}  حساب معین سطح یک " 
+        message+=f"<br>{moein2_categorys_counter}  حساب معین سطح دو " 
+        message+=f"<br>{tafsili_categorys_counter}  حساب تفصیلی " 
+
+        me_profile=ProfileRepo(request=self.request).me
+        new_log={}
+        new_log['title']="افزودن حساب های پیش فرض"
+        new_log['app_name']=APP_NAME
+        new_log['profile']=me_profile
+        new_log['description']="حساب های پیش فرض اضافه شدند."
+        LogRepo(request=self.request).add_log(**new_log)
+        return result,message
+ 
+    def add_category(self,*args,**kwargs):
+        result,message,category=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_category"):
+            message="دسترسی غیر مجاز"
+            return result,message,category
+        
+        category=Category()
+        if 'title' in kwargs:
+            category.title=kwargs["title"]
+        if 'parent_id' in kwargs:
+            if kwargs["parent_id"]>0:
+                category.parent_id=kwargs["parent_id"]
+        if 'color' in kwargs:
+            category.color=kwargs["color"]
+        if 'priority' in kwargs:
+            category.priority=kwargs["priority"]
+        
+        (result,message,category)=category.save()
+        return result,message,category
+

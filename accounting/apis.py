@@ -3,8 +3,10 @@ from utility.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
-from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
-from .serializers import  ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
+from .repo import CategoryRepo,PersonRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
+from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo
+from .serializers import  ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
+from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
  
@@ -31,7 +33,6 @@ class AddInvoiceApi(APIView):
         return JsonResponse(context)
 
 
-
 class AddFinancialDocumentLineApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -52,7 +53,6 @@ class AddFinancialDocumentLineApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-
 
 
 class AddAccountApi(APIView):
@@ -76,6 +76,7 @@ class AddAccountApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
 class SetAccountPriorityApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -96,6 +97,7 @@ class SetAccountPriorityApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+
 
 class SetAccountParentApi(APIView): 
     def post(self,request,*args, **kwargs):
@@ -166,6 +168,7 @@ class ImportProductsFromExcelApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
 class ImportServicesFromExcelApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -189,6 +192,7 @@ class ImportServicesFromExcelApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+
 
 class AddFinancialEventApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -233,7 +237,8 @@ class AddInvoiceLineApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-    
+
+
 class SelectFinancialEventApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -280,8 +285,6 @@ class SelectFinancialDocumentApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-
-
  
  
 class SelectAccountApi(APIView):
@@ -388,6 +391,28 @@ class AddServiceApi(APIView):
             result,message,service=ServiceRepo(request=request).add_service(**cd)
             if service is not None:
                 context['service']=ServiceSerializer(service).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
+
+class AddCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_category_form=AddCategoryForm(request.POST)
+            if add_category_form.is_valid():
+                log=333
+                cd=add_category_form.cleaned_data
+                result,message,category=CategoryRepo(request=request).add_category(**cd)
+                if category is not None:
+                    context['category']=CategorySerializer(category).data
         context['message']=message
         context['result']=result
         context['log']=log

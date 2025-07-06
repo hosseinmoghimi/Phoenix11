@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
+from .models import Category,InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
 
 from .models import FinancialDocument
 
@@ -75,6 +75,13 @@ class FinancialDocumentSerializer(serializers.ModelSerializer):
        class Meta:
         model = FinancialDocument
         fields = ['id','title','balance','bedehkar','bestankar','get_absolute_url','get_edit_url','get_delete_url']
+
+
+
+class CategorySerializer(serializers.ModelSerializer):
+       class Meta:
+        model = Category
+        fields = ['id','title','priority', 'get_absolute_url','get_edit_url','get_delete_url']
 
 
 class FinancialDocumentLineSerializer(serializers.ModelSerializer):

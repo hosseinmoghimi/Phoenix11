@@ -10,9 +10,9 @@ from phoenix.server_apps import phoenix_apps
 from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
-from .repo import FinancialDocumentRepo
+from .repo import FinancialDocumentRepo,CategoryRepo
 from .repo import ProfileRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
-from .serializers import ServiceSerializer,FinancialDocumentSerializer
+from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from utility.currency import to_price_colored
 import json 
@@ -699,6 +699,7 @@ class ExportProductsToExcelView(View):
         report_work_book.work_book.close()
         return response
 
+
 class ExportServicesToExcelView(View):
   
     def get(self,request,*args, **kwargs):
@@ -759,6 +760,7 @@ class ExportServicesToExcelView(View):
         report_work_book.work_book.close()
         return response
  
+
 class FinancialEventView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -795,6 +797,8 @@ class AddFinancialEventView(View):
     def post(self,request,*args, **kwargs):
         from .apis import AddFinancialEventApi
         return AddFinancialEventApi().post(request=request)
+
+
 class InvoicesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -840,4 +844,27 @@ class InvoicePrintView(View):
         context['invoice_s']=invoice_s
         context.update(InvoiceContext(request=request,invoice=invoice))
         return render(request,TEMPLATE_ROOT+"invoice-print.html",context)
+
+
+
+class CategoryView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        category=CategoryRepo(request=request).category(*args, **kwargs)
+        context['category']=category
+        category_s=json.dumps(CategorySerializer(category,many=False).data)
+        context['category_s']=category_s
+        return render(request,TEMPLATE_ROOT+"category.html",context)
+
+
+class CategoriesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        categories=CategoryRepo(request=request).list(*args, **kwargs)
+        context['categories']=categories
+        categories_s=json.dumps(CategorySerializer(categories,many=False).data)
+        context['categories_s']=categories_s
+        return render(request,TEMPLATE_ROOT+"categorys.html",context)
+
+
 

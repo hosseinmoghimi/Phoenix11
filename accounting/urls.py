@@ -42,6 +42,11 @@ urlpatterns = [
     path('invoice-line-item/<int:pk>/',login_required(views.InvoiceLineItemView.as_view()),name="invoicelineitem"),
     path('invoice/print/<int:pk>/',login_required(views.InvoicePrintView.as_view()),name="invoice_print"),
     path('invoice_line/<int:pk>/',login_required(views.InvoiceLineView.as_view()),name="invoiceline"),
+
+    
+    path('categorys/',login_required(views.CategoriesView.as_view()),name="categories"),
+    path('category/<int:pk>/',login_required(views.CategoryView.as_view()),name="category"),
+    path("add-category/",login_required(apis.AddCategoryApi.as_view()),name="add_category"),
     
     path('services/',login_required(views.ServicesView.as_view()),name="services"),
     path('service/<int:pk>/',login_required(views.ServiceView.as_view()),name="service"),

@@ -121,7 +121,8 @@ class Desk(models.Model,LinkHelper):
         result=SUCCEED
         message="میز با موفقیت اضافه شد."
         return (result,message,desk)
-         
+
+
 class DeskCustomer(Customer):
     desk=models.ForeignKey("desk", verbose_name=_("desk"), on_delete=models.CASCADE)
     class_name="deskcustomer"
@@ -129,3 +130,13 @@ class DeskCustomer(Customer):
     class Meta:
         verbose_name = _("DeskCustomer")
         verbose_name_plural = _("DeskCustomers")  
+
+ 
+
+
+
+
+
+
+
+

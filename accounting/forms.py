@@ -2,12 +2,12 @@
 from django import forms
 from utility.forms import SearchForm
 
-
 class AddFinancialDocumentLineForm(forms.Form):
     account_id=forms.IntegerField( required=False)
     bestankar=forms.IntegerField( required=False)
     bedehkar=forms.IntegerField( required=False)
     bestankar=forms.IntegerField( required=False)
+
 
 class AddAccountForm(forms.Form):
     parent_code=forms.IntegerField( required=False)
@@ -26,7 +26,6 @@ class AddInvoiceLineItemUnitForm(forms.Form):
     coef=forms.FloatField(required=True)
     default=forms.BooleanField(required=False)
  
-
 
 class GetReportForm(forms.Form):
     account_id=forms.IntegerField(required=False)
@@ -61,9 +60,10 @@ class AddInvoiceLineItemForm(forms.Form):
     category_id=forms.IntegerField( required=False)
 
 
-
 class AddProductForm(AddInvoiceLineItemForm):
     barcode=forms.CharField( max_length=100, required=False) 
+
+
 class AddServiceForm(AddInvoiceLineItemForm):
     pass
 
@@ -71,6 +71,7 @@ class AddServiceForm(AddInvoiceLineItemForm):
 class AddProductToCategoryForm(forms.Form):
     product_id=forms.IntegerField( required=True)
     category_id=forms.IntegerField( required=True)
+
 
 class AddCategoryForm(forms.Form):
     parent_id=forms.IntegerField( required=False)
@@ -126,7 +127,6 @@ class AddFinancialDocumentLineForm(forms.Form):
     date_time=forms.CharField(max_length=30, required=False)
 
 
-
 class SelectFinancialEventForm(forms.Form):
     financial_event_id=forms.IntegerField(required=True)
      
@@ -134,7 +134,6 @@ class SelectFinancialEventForm(forms.Form):
 class SelectFinancialDocumentForm(forms.Form):
     financial_document_id=forms.IntegerField(required=True)
      
-
 
 class SetAccountPriorityForm(forms.Form):
     account_id=forms.IntegerField(required=True)
@@ -161,11 +160,14 @@ class AddInvoiceForm(AddFinancialEventForm):
 class AddCostAccountForm(AddAccountForm):
     pass
 
+
 class AddTaxAccountForm(AddAccountForm):
     pass
 
+
 class AddBankForm(forms.Form):
     name=forms.CharField(max_length=100, required=True)
+
 
 class AddBankAccountForm(forms.Form):
     parent_code=forms.CharField(max_length=100, required=True)
@@ -182,7 +184,6 @@ class ImportProductsFromExcelForm(forms.Form):
     is_open=forms.BooleanField(required=False)
     count=forms.IntegerField(required=True)
 
-    
 
 class ImportServicesFromExcelForm(forms.Form):
     is_open=forms.BooleanField(required=False)
@@ -196,6 +197,7 @@ class AddFinancialYearForm(forms.Form):
     description=forms.CharField(max_length=1000,required=False)
     status=forms.CharField(max_length=50,required=False)
 
+
 class AddEventFinancialDocumentLineForm(forms.Form):
     accounting_document_id=forms.IntegerField(required=True)
     accounting_document_title=forms.CharField(max_length=200,required=True)
@@ -205,9 +207,6 @@ class AddEventFinancialDocumentLineForm(forms.Form):
     bedehkar=forms.IntegerField(required=True)
     financial_event_id=forms.IntegerField(required=False)
     
-
- 
-
 
 class AddInvoiceLineForm(forms.Form):
     invoice_line_item_id=forms.IntegerField(required=True)
@@ -239,9 +238,9 @@ class SearchAccountsForm(forms.Form):
     search_for=forms.CharField(max_length=100, required=True)
 
 
-
 class AddCostForm(AddFinancialEventForm):
     priority=forms.IntegerField(required=False)
+
 
 class AddTaxForm(AddFinancialEventForm):
     priority=forms.IntegerField(required=False)
