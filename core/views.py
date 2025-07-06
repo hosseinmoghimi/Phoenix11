@@ -43,6 +43,8 @@ def CoreContext(request,*args, **kwargs):
 
     context['current_datetime']=current_datetime
     context['current_date']=current_date
+    current_time=current_datetime[10:]
+    context['current_time']=current_time
 
     context['phoenix_apps']=phoenix_apps
     

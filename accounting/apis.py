@@ -166,7 +166,27 @@ class ImportProductsFromExcelApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
-
+class AddFinancialEventApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_financial_event_form=AddFinancialEventForm(request.POST,request.FILES)
+            if add_financial_event_form.is_valid():
+                log=333
+                 
+                cd=add_financial_event_form.cleaned_data
+                result,message,financial_event=FinancialEventRepo(request=request).add_financial_event(**cd)
+                if financial_event is not None:
+                    context['financial_event']=FinancialEventSerializer(financial_event,many=False).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
     
 class ImportServicesFromExcelApi(APIView):
     def post(self,request,*args, **kwargs):

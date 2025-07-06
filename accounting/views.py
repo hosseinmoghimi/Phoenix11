@@ -756,16 +756,15 @@ class ExportServicesToExcelView(View):
         report_work_book.work_book.save(response)
         report_work_book.work_book.close()
         return response
-
+ 
 class FinancialEventView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         financial_event=FinancialEventRepo(request=request).financial_event(*args, **kwargs)
-        financial_event_s=json.dumps(FinancialEventSerializer(financial_event,many=False).data)
+        context.update(FinancialEventContext(request=request,financial_event=financial_event))
         context['financial_event']=financial_event
-        context['financial_event_s']=financial_event_s
-        context['WIDE_LAYOUT']=True
-        return render(request,TEMPLATE_ROOT+"event.html",context)
+        context['WIDE_LAYOUT']=True 
+        return render(request,TEMPLATE_ROOT+"financial-event.html",context)
 
 
 class FinancialEventsView(View):
@@ -776,6 +775,8 @@ class FinancialEventsView(View):
         context['financial_events']=financial_events
         context['financial_events_s']=financial_events_s
         context['WIDE_LAYOUT']=True
+        if request.user.has_perm(APP_NAME+'.add_financialevnt'):
+            context.update(AddFinancialEventContext(request=request))
         return render(request,TEMPLATE_ROOT+"financial-events.html",context)
 
 
@@ -789,7 +790,9 @@ class AddFinancialEventView(View):
         context['WIDE_LAYOUT']=True
         return render(request,TEMPLATE_ROOT+"add-finanical-event.html",context)
 
-
+    def post(self,request,*args, **kwargs):
+        from .apis import AddFinancialEventApi
+        return AddFinancialEventApi().post(request=request)
 class InvoicesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

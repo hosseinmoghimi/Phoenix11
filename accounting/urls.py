@@ -58,6 +58,7 @@ urlpatterns = [
     path("financial_events/",login_required(views.FinancialEventsView.as_view()),name="financial_events"),
     path("financial_event/<int:pk>/",login_required(views.FinancialEventView.as_view()),name="financialevent"),
     path("add-financial-event/",login_required(views.AddFinancialEventView.as_view()),name="add_financial_event"),
+    path("add-financial-event-post/",login_required(apis.AddFinancialEventApi.as_view()),name="add_financial_event_post"),
     path("select-financial-event/",login_required(apis.SelectFinancialEventApi.as_view()),name="select_financial_event"),
     
     

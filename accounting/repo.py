@@ -1401,6 +1401,7 @@ class FinancialDocumentRepo():
         self.objects=FinancialDocument.objects
         # if profile is not None:
         #     self.me=self.objects.filter(profile=profile).first()
+    
     def list(self,*args, **kwargs):
         objects=self.objects
         if "financial_year_id" in kwargs:
@@ -1408,6 +1409,7 @@ class FinancialDocumentRepo():
         if "search_for" in kwargs:
             objects=objects.filter(title__contains=kwargs['search_for']) 
         return objects.all()
+    
     def financial_document(self,*args, **kwargs):
         if "financial_document_id" in kwargs:
             return self.objects.filter(pk=kwargs['financial_document_id']).first() 
@@ -1434,17 +1436,7 @@ class FinancialDocumentRepo():
 
         if 'title' in kwargs:
             financial_document.title=kwargs['title']
-        if 'profile_id' in kwargs:
-            financial_document.profile_id=kwargs['profile_id']
-        if 'description' in kwargs:
-            financial_document.description=kwargs['description']
-        if 'address' in kwargs:
-            financial_document.address=kwargs['address']
-        if 'tel' in kwargs:
-            financial_document.tel=kwargs['tel']
-        if 'mobile' in kwargs:
-            financial_document.mobile=kwargs['mobile']
-       
+     
         
         # if 'financial_year_id' in kwargs:
         #     payment.financial_year_id=kwargs['financial_year_id']
@@ -1550,7 +1542,11 @@ class FinancialDocumentLineRepo:
         if 'financial_event_id' in kwargs:
             financial_document_line.financial_event_id=kwargs['financial_event_id']
         if 'financial_document_id' in kwargs:
-            financial_document_line.financial_document_id=kwargs['financial_document_id']
+            financial_document_id=kwargs['financial_document_id']
+            if financial_document_id==0 and 'financial_document_title' in kwargs:
+                result,message,financial_document=FinancialDocumentRepo(request=self.request).add_financial_document(title=kwargs['financial_document_title'])
+                financial_document_id=financial_document.id
+            financial_document_line.financial_document_id=financial_document_id
         if 'description' in kwargs:
             financial_document_line.description=kwargs['description']
         if 'persian_date_time' in kwargs and kwargs['persian_date_time'] is not None and not kwargs['persian_date_time']=='':
@@ -1608,6 +1604,7 @@ class FinancialDocumentLineRepo:
         new_log['description']="خط سند مالی جدید با موفقیت اضافه گردید."
         LogRepo(request=self.request).add_log(**new_log)
         return result,message,financial_document_line
+    
     def delete_all(self,*args,**kwargs):
         
         if not self.request.user.has_perm(APP_NAME+".delete_accountingdocumentline"):
@@ -1771,39 +1768,45 @@ class FinancialEventRepo():
          
        
 
-    def add_event(self,*args,**kwargs):
+    def add_financial_event(self,*args,**kwargs):
         result,message,event=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_event"):
             message="دسترسی غیر مجاز"
             return result,message,event
 
-        event=Account()
-        if 'name' in kwargs:
-            event.name=kwargs["name"]
+        financial_event=FinancialEvent()
+        if 'bedehkar_id' in kwargs:
+            financial_event.bedehkar_id=kwargs["bedehkar_id"]
+        if 'bestankar_id' in kwargs:
+            financial_event.bestankar_id=kwargs["bestankar_id"]
+        if 'title' in kwargs:
+            financial_event.title=kwargs["title"]
+        if 'description' in kwargs:
+            financial_event.description=kwargs["description"]
         if 'parent_id' in kwargs:
             if kwargs["parent_id"]>0:
-                event.parent_id=kwargs["parent_id"]
+                financial_event.parent_id=kwargs["parent_id"]
         if 'color' in kwargs:
-            event.color=kwargs["color"]
-        if 'code' in kwargs:
-            event.code=kwargs["code"]
+            financial_event.color=kwargs["color"]
+        if 'amount' in kwargs:
+            financial_event.amount=kwargs["amount"]
         if 'priority' in kwargs:
-            event.priority=kwargs["priority"]
+            financial_event.priority=kwargs["priority"]
         if 'type' in kwargs:
-            event.type=kwargs["type"]
+            financial_event.type=kwargs["type"]
+        if 'event_datetime' in kwargs:
+            event_datetime=kwargs["event_datetime"]
+            financial_event.event_datetime=event_datetime
 
            
-        (result,message,event)=event.save()
-        return result,message,event
+            year=event_datetime[:2]
+            if year=="13" or year=="14":
+                event_datetime=PersianCalendar().to_gregorian(event_datetime)
+            financial_event.event_datetime=event_datetime
 
-    def delete_all(self,*args, **kwargs):
-        result=FAILED
-        message=""
-        if not self.request.user.has_perm(APP_NAME+".delete_event"):
-            message="دسترسی غیر مجاز"
-            return result,message
-        FinancialEvent.objects.all().delete()
-        return result,message
+        (result,message,financial_event)=financial_event.save()
+        return result,message,financial_event
+ 
  
 class PersonRepo():
     def __init__(self,request,*args, **kwargs):

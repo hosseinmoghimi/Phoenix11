@@ -38,7 +38,7 @@
     </div>
     <div class="col-6 col-md-3 col-lg-2 text-center my-3">
         <a href="{% url 'accounting:services'  %}">
-            <img src="{% static 'accounting/img/product.png' %}" width="64em" class="mb-2" alt="">
+            <img src="{% static 'accounting/img/pages/thumbnail/service.png' %}" width="64em" class="mb-2" alt="">
             <h6 class="text-center">
                 خدمات
             </h6>
@@ -50,6 +50,14 @@
             <img src="{% static 'accounting/img/invoice.png' %}" width="64em" class="mb-2" alt="">
             <h6 class="text-center">
                 فاکتور ها
+            </h6>
+        </a>
+    </div>
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'accounting:financial_events'  %}">
+            <img src="{% static 'accounting/img/invoice.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                رویداد های مالی
             </h6>
         </a>
     </div>
@@ -84,16 +92,7 @@
     </div>
    
 
-    <div class="col-lg-2 col-md-3 col-6">
-        <a href="{% url 'accounting:tree_chart' pk=0 %}" class="text-center">
-            <div class="text-center mb-2 mt-3">
-                <img src="{% static 'accounting/img/tree-chart.png' %}" width="64em" alt="">
-            </div>
-            <h6 class="text-center">
-                نمودار درختی حساب ها
-            </h6>
-        </a>
-    </div>
+   
 
 
 

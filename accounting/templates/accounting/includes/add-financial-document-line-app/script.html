@@ -6,8 +6,8 @@
 
 
 <script>
-let financial_document_for_add_financial_document_line_app={id:0}
-let financial_event_for_add_financial_document_line_app={id:0} 
+let financial_document_for_add_financial_document_line_app={id:0,title:''}
+let financial_event_for_add_financial_document_line_app={id:0,title:''}
 let account_for_add_financial_document_line_app={code:'0'}
 </script>
 {% if financial_document %}
@@ -61,6 +61,7 @@ let account_for_add_financial_document_line_app={code:'0'}
                     account_id: (this.account.id),
                     date_time: (this.date_time),
                     financial_event_id: parseInt(this.financial_event.id),
+                    financial_document_title: this.financial_document.title,
                     financial_document_id: parseInt(this.financial_document.id),
                 } 
                 let url = "{% url 'accounting:add_financial_document_line' %}"

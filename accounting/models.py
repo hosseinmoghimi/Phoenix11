@@ -331,6 +331,8 @@ class FinancialDocument(models.Model,LinkHelper):
         return "primary"
 
     def save(self):
+        if self.financial_year is None:
+            self.financial_year=FinancialYear.objects.filter(in_progress=True).first()
         # result,message,financial_document=FAILED,"",self
         # if self.financial_year.start_date>self.date_time or self.financial_year.end_date<self.date_time:
         #     message="تاریخ سند خارج از محدوده تاریخ سال مالی جاری است."
@@ -401,6 +403,7 @@ class FinancialDocumentLine(models.Model,LinkHelper):
             return
         if self.account.nature==AccountNatureEnum.ONLY_BESTANKAR and self.bedehkar>0:
             return
+        leolog(financial_document=self)
         super(FinancialDocumentLine,self).save()
         self.financial_document.normalize()
         self.account.normalize_total()
@@ -513,6 +516,7 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
     
 
     def save(self,*args, **kwargs):
+        result,message,financial_event=FAILED,'',self
         if self.tax_percentage is None or self.tax_percentage==-1:
             TAX_PERCENT=ParameterRepo(request=None,app_name=APP_NAME,forced=True).parameter(name="درصد پیش فرض مالیات برای رویدادها",default=10).int_value
             self.tax_percent=TAX_PERCENT
@@ -520,7 +524,10 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
             self.class_name="financialevent"
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        return super(FinancialEvent,self).save()
+        result=SUCCEED
+        message='رویداد مالی با موفقیت اضافه شد.'
+        super(FinancialEvent,self).save()
+        return result,message,financial_event
 
  
 class InvoiceLineItem(CorePage,LinkHelper):

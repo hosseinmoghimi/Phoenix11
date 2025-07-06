@@ -74,7 +74,7 @@
                   class="form-control"
                   v-model="financial_event.id"
                   @input="select_financial_event_by_id()"
-                  type="text"
+                  type="number"
                 />
                 {% endif %}
 
@@ -108,8 +108,9 @@
                   class="form-control"
                   v-model="financial_document.id"
                   @input="select_financial_document_by_id()"
-                  type="text"
+                  type="number"
                 />
+                <input type="text" v-model="financial_document.title" class="form-control" placeholder="نام سند جدید">
                 {% else %} {% endif %}
 
                 <div class="my-2">

@@ -120,6 +120,7 @@ class AddFinancialDocumentLineForm(forms.Form):
     bedehkar=forms.IntegerField(required=True)
     bestankar=forms.IntegerField(required=True)
     financial_document_id=forms.IntegerField(required=True)
+    financial_document_title=forms.CharField(max_length=20, required=False)
     financial_event_id=forms.IntegerField(required=True)
     persian_date_time=forms.CharField(max_length=20, required=False)
     date_time=forms.CharField(max_length=30, required=False)
@@ -147,9 +148,9 @@ class AddFinancialDocumentForm(forms.Form):
 class AddFinancialEventForm(forms.Form):
     title=forms.CharField(max_length=100, required=True)
     event_datetime=forms.CharField(max_length=50, required=True)
-    bedehkar_id=forms.IntegerField(required=False)
-    bestankar_id=forms.IntegerField(required=False)
-    amount=forms.IntegerField(required=False)
+    bedehkar_id=forms.IntegerField(required=True)
+    bestankar_id=forms.IntegerField(required=True)
+    amount=forms.IntegerField(required=True)
     description=forms.CharField(max_length=1000,required=False)
 
 

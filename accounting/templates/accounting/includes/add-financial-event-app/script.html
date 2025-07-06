@@ -7,7 +7,9 @@
             bedehkar: { code: "0", name: false },
             bestankar: { code: "0", name: false },
             description:"",
-            financial_event_datetime: current_date,
+            financial_event_date: current_date,
+            financial_event_time: current_time,
+            waiting:false,
             message: { show: false },
         },
         components: {
@@ -79,11 +81,11 @@
                     bedehkar_id: this.bedehkar.id,
                     description: this.description,
                     amount: parseInt(this.amount),
-                    financial_event_datetime: (this.financial_event_datetime),
+                    event_datetime: (this.financial_event_date)+' '+(this.financial_event_time),
                     title: (this.title),
                 }
                 console.log(payload)
-                let url = "{% url 'accounting:add_financial_event' %}"
+                let url = "{% url 'accounting:add_financial_event_post' %}"
                 let posting = $.post(url, payload)
                 posting.done(data => {
                     console.log(data)
