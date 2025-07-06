@@ -166,6 +166,30 @@ class ImportProductsFromExcelApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+class ImportServicesFromExcelApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            ImportServicesFromExcelForm_=ImportServicesFromExcelForm(request.POST,request.FILES)
+            if ImportServicesFromExcelForm_.is_valid():
+                log=333
+                
+                excel_file = request.FILES['file1']
+                cd=ImportServicesFromExcelForm_.cleaned_data
+                cd['excel_file']=excel_file
+                result,message,services=ServiceRepo(request=request).import_services_from_excel(**cd)
+                if services is not None:
+                    context['services']=ServiceSerializer(services,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
 class AddFinancialEventApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -188,30 +212,6 @@ class AddFinancialEventApi(APIView):
         context['log']=log
         return JsonResponse(context)
     
-class ImportServicesFromExcelApi(APIView):
-    def post(self,request,*args, **kwargs):
-        context={}
-        result=FAILED
-        message=""
-        log=111
-        context['result']=FAILED
-        if request.method=='POST':
-            log=222
-            ImportServicesFromExcelForm_=ImportServicesFromExcelForm(request.POST,request.FILES)
-            if ImportServicesFromExcelForm_.is_valid():
-                log=333
-                
-                excel_file = request.FILES['file1']
-                cd=ImportServicesFromExcelForm_.cleaned_data
-                cd['excel_file']=excel_file
-                result,message,products=ServiceRepo(request=request).import_products_from_excel(**cd)
-                if products is not None:
-                    context['products']=ServiceSerializer(products,many=True).data
-        context['message']=message
-        context['result']=result
-        context['log']=log
-        return JsonResponse(context)
-
 
 class AddInvoiceLineApi(APIView):
     def post(self,request,*args, **kwargs):

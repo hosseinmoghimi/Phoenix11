@@ -780,14 +780,14 @@ class ProductRepo():
             old_product=Product.objects.filter(title=product["title"]).filter(barcode=product["barcode"]).first()
             if old_product is not None:
                 old_product.title=product["title"]
-                old_product.unit_name=product["unit_name"]
+                # old_product.unit_name=product["unit_name"]
                 old_product.thumbnail_origin=product["thumbnail_origin"]
-                old_product.unit_price=product["unit_price"] 
+                # old_product.unit_price=product["unit_price"] 
                 # old_product.thumbnail_origin=product["thumbnail_origin"] 
                 old_product.save()
                 modified+=1
             else:
-                result,message,new_product=ProductRepo(request=self.request).add_product(title=product["title"],barcode=product["barcode"],unit_name=product["unit_name"],unit_price=product["unit_price"] ,coef=1)
+                result,message,new_product=self.add_product(title=product["title"],barcode=product["barcode"],unit_name=product["unit_name"],unit_price=product["unit_price"] ,coef=1)
                 # new_product.title=product["title"]
                 # new_product.barcode=product["barcode"]
                 # new_product.unit_name=product["unit_name"]
@@ -1310,51 +1310,7 @@ class ServiceRepo():
         if "barcode" in kwargs and kwargs["barcode"] is not None:
             a= self.objects.filter(barcode=kwargs['barcode']).first() 
             return a 
-           
-    def add_service(self,*args,**kwargs):
-        result,message,service=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".add_service"):
-            message="دسترسی غیر مجاز"
-            return result,message,service
-        if len(Service.objects.filter(title=kwargs["title"]))>0:
-            message="نام تکراری برای کالای جدید"
-            return result,message,service
-
-        service=Service() 
-
-        if 'title' in kwargs:
-            service.title=kwargs["title"]
-        if 'unit_price' in kwargs:
-            service.unit_price=kwargs["unit_price"]
-        if 'unit_price' in kwargs:
-            service.unit_price=kwargs["unit_price"]
             
-        if 'barcode' in kwargs and kwargs["barcode"] is not None and not kwargs["barcode"]=="":
-            service.barcode=kwargs["barcode"]
-        
-        if 'unit_name' in kwargs:
-            service.unit_name=kwargs["unit_name"]
-
-            
-        if service.barcode is not None and len(service.barcode)>0:
-            
-            if len(Product.objects.filter(barcode=service.barcode))>0:
-                message="بارکد تکراری برای کالای جدید"
-                return result,message,None
-
-        (result,message,service)=service.save()
-        if 'category_id' in kwargs:
-            category_id=kwargs["category_id"]
-            category=Category.objects.filter(pk=category_id).first()
-            if category is not None:
-                category.services.add(service.id)
-        coef=1
-        if 'coef' in kwargs:
-            coef=kwargs["coef"]
-        if service.unit_price>0:
-            ProductUnitRepo(request=self.request).add_service_unit(service_id=service.id,unit_price=service.unit_price,unit_name=service.unit_name,coef=coef)
-        return result,message,service
- 
     def add_service(self,*args,**kwargs):
         result,message,service=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_service"):
@@ -1394,6 +1350,60 @@ class ServiceRepo():
         coef=1 
         return result,message,service
  
+    def import_services_from_excel(self,*args,**kwargs):
+        result,message,services=FAILED,"",[]
+        excel_file=kwargs['excel_file']
+        # import pandas
+        
+        # df = pandas.read_excel(excel_file)
+        # services=[]
+        # for row in df.columns[0]:
+        #     print (df.columns)
+        import openpyxl 
+
+        wb = openpyxl.load_workbook(excel_file)
+        ws = wb.active
+        count=kwargs['count']
+        services_to_import=[]
+
+        for i in range(2,count+2):
+            service={}
+            service['id']=ws['A'+str(i)].value
+            service['title']=ws['B'+str(i)].value
+            service['unit_name']=ws['D'+str(i)].value
+            service['unit_price']=ws['E'+str(i)].value
+            service['thumbnail_origin']=ws['F'+str(i)].value
+            # service['thumbnail_origin']=ws['F'+str(i)].value
+            if service['title'] is not None and not service['title']=="":
+                services_to_import.append(service) 
+        modified=added=0
+        for service in services_to_import:
+            old_service=Service.objects.filter(title=service["title"]).first()
+            if old_service is not None:
+                old_service.title=service["title"]
+                # old_service.unit_name=service["unit_name"]
+                old_service.thumbnail_origin=service["thumbnail_origin"]
+                # old_service.unit_price=service["unit_price"] 
+                # old_service.thumbnail_origin=service["thumbnail_origin"] 
+                old_service.save()
+                modified+=1
+            else:
+                result,message,new_service=self.add_service(title=service["title"],unit_name=service["unit_name"],unit_price=service["unit_price"] ,coef=1)
+                # new_service.title=service["title"]
+                # new_service.barcode=service["barcode"]
+                # new_service.unit_name=service["unit_name"]
+                # new_service.unit_price=service["unit_price"] 
+                # new_service.save()
+                if result==SUCCEED:
+                    added+=1
+        result=SUCCEED
+        message=f"""{added} سرویس اضافه شد.
+                    <br>
+                    {modified} سرویس ویرایش شد. """
+        services=self.list()
+        return result,message,services
+
+
 class FinancialDocumentRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request

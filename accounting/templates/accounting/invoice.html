@@ -17,11 +17,22 @@
         {% include "accounting/includes/financial-document-lines-app/template.html" %}
     </div>
     
-  {% if add_financial_document_line_form %}
-  <div class="col-md-12">
-    {% include "accounting/includes/add-financial-document-line-app/template.html" %}
-  </div>
-  {% endif %}
+    {% if add_financial_document_line_form %}
+    <div class="col-md-12">
+      {% include "accounting/includes/add-financial-document-line-app/template.html" %}
+    </div>
+    {% endif %}
+
+      <div class="col-md-4">
+        {% include "attachments/includes/downloads-app/template.html" %}
+      </div>
+      <div class="col-md-4">
+        {% include "attachments/includes/links-app/template.html" %}
+      </div>
+      <div class="col-md-4">
+        {% include "attachments/includes/comments-app/template.html" %}
+      </div>
+
 </div>
 {% endblock content %}
 

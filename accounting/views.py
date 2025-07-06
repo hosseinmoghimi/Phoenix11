@@ -53,6 +53,7 @@ def AddProductContext(request,*args, **kwargs):
 
 def AddServiceContext(request):
     context=AddInvoiceLineItemContext(request=request)
+    context['import_services_from_excel_form']=ImportServicesFromExcelForm()
     context['add_service_form']=AddServiceForm()
     return context
 
@@ -487,6 +488,7 @@ class FinancialDocumentLineView(View):
         financial_document_line=FinancialDocumentLineRepo(request=request).financial_document_line(*args, **kwargs)
         context['financial_document_line']=financial_document_line
 
+        context.update(PageContext(request=request,page=financial_document_line))
 
         return render(request,TEMPLATE_ROOT+"financial-document-line.html",context)
 
