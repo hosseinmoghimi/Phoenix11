@@ -768,7 +768,7 @@ class ProductRepo():
             product={}
             product['id']=ws['A'+str(i)].value
             product['title']=ws['B'+str(i)].value
-            product['code']=ws['C'+str(i)].value
+            product['barcode']=ws['C'+str(i)].value
             product['unit_name']=ws['D'+str(i)].value
             product['unit_price']=ws['E'+str(i)].value
             product['thumbnail_origin']=ws['F'+str(i)].value
@@ -777,7 +777,7 @@ class ProductRepo():
                 products_to_import.append(product) 
         modified=added=0
         for product in products_to_import:
-            old_product=Product.objects.filter(title=product["title"]).filter(code=product["code"]).first()
+            old_product=Product.objects.filter(title=product["title"]).filter(barcode=product["barcode"]).first()
             if old_product is not None:
                 old_product.title=product["title"]
                 old_product.unit_name=product["unit_name"]
@@ -787,13 +787,14 @@ class ProductRepo():
                 old_product.save()
                 modified+=1
             else:
-                new_product=Product()
-                new_product.title=product["title"]
-                new_product.barcode=product["code"]
-                new_product.unit_name=product["unit_name"]
-                new_product.unit_price=product["unit_price"] 
-                new_product.save()
-                added+=1
+                result,message,new_product=ProductRepo(request=self.request).add_product(title=product["title"],barcode=product["barcode"],unit_name=product["unit_name"],unit_price=product["unit_price"] ,coef=1)
+                # new_product.title=product["title"]
+                # new_product.barcode=product["barcode"]
+                # new_product.unit_name=product["unit_name"]
+                # new_product.unit_price=product["unit_price"] 
+                # new_product.save()
+                if result==SUCCEED:
+                    added+=1
         result=SUCCEED
         message=f"""{added} محصول اضافه شد.
                     <br>
