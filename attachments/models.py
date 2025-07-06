@@ -26,6 +26,7 @@ class Comment(models.Model,DateTimeHelper):
 
     def __str__(self):
         return f"{self.profile} : {self.page}"
+     
     
 
 class Like(models.Model,DateTimeHelper):

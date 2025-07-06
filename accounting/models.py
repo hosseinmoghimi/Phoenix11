@@ -403,7 +403,6 @@ class FinancialDocumentLine(models.Model,LinkHelper):
             return
         if self.account.nature==AccountNatureEnum.ONLY_BESTANKAR and self.bedehkar>0:
             return
-        leolog(financial_document=self)
         super(FinancialDocumentLine,self).save()
         self.financial_document.normalize()
         self.account.normalize_total()

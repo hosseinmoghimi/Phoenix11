@@ -10,6 +10,10 @@ from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from utility.log import leolog
 from django.utils import timezone
+import json
+from .repo import PageRepo,FAILED,SUCCEED
+from .serializer import PageSerializer
+
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='core/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -82,6 +86,37 @@ def PageContext(request,page,*args, **kwargs):
     context.update(PageDownloadsContext(request=request,page=page,profile=me_profile))
      
     return context
+
+
+
+class SearchView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        phoenix_apps=context["phoenix_apps"]
+        phoenix_apps=phoenix_apps 
+         
+        return render(request,TEMPLATE_ROOT+"search.html",context)
+
+    def post(self,request,*args, **kwargs):
+        result=FAILED
+        message=''
+        log=1
+        context=getContext(request=request) 
+        search_form=SearchForm(request.POST)
+        if search_form.is_valid():
+            log=2
+            search_for=search_form.cleaned_data['search_for']
+            pages=PageRepo(request=request).list(search_for=search_for)
+            result=SUCCEED
+
+            context['pages']=pages
+            context['pages_s']=json.dumps(PageSerializer(pages,many=True).data)
+
+        context['message']=message
+        context['log']=log
+        context['result']=result
+        return render(request,TEMPLATE_ROOT+"search.html",context)
 
 
 

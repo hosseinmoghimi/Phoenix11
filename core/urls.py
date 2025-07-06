@@ -7,6 +7,7 @@ urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),
     path('settings/',login_required(views.IndexView.as_view()),name="settings"),
+    path('search/',login_required(views.SearchView.as_view()),name="search"),
     path('toggle-like/',apis.TogglePageLikeApi.as_view(),name="toggle_like"),
     path('page/<int:pk>/',views.PageView.as_view(),name="page"),
     path('set-page-thumbnail-header/',apis.SetPageThumbnailHeaderApi.as_view(),name="set_page_thumbnail_header"),

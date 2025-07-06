@@ -1,6 +1,6 @@
 from .models import Page,FAILED,SUCCEED
 from authentication.repo import ProfileRepo
-  
+from django.db.models import Q
 class PageRepo():
     def __init__(self,request,*args, **kwargs):
         self.objects=Page.objects
@@ -16,7 +16,15 @@ class PageRepo():
             page=self.objects.filter(pk=kwargs['pk']).first()
         return page
     
-    
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'meta_data' in kwargs:
+            meta_data=kwargs['meta_data']
+            objects=objects.filter(meta_data=meta_data)
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects=objects.filter(Q(title__contains=search_for) |Q(meta_data=search_for))
+        return objects.all()
     def set_thumbnail_header(self,*args, **kwargs):
         if not self.request.user.has_perm("core.change_page"):
             return
