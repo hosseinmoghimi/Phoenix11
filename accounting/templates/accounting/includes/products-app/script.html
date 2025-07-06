@@ -5,6 +5,7 @@
         category_id: parseInt("{{category_id}}"),
         products: products_for_products_app,
         waiting: false,
+        new_product_title:"",
         message: { show: false },
     }
     let products_app_methods = {}
@@ -14,7 +15,7 @@
     products_app_methods.add_product= function () {
             let payload = {
                 csrfmiddlewaretoken: csrfmiddlewaretoken,
-                title: this.title,
+                title: this.new_product_title,
                 category_id: parseInt(this.category_id),
             }
             console.log(payload)
@@ -23,7 +24,7 @@
             posting.done(data => {
                 if (data.result === "SUCCEED") {
 
-                    products_app.title = ""
+                    products_app.new_product_title = ""
                     products_app.products.push(data.product)
                 }
 
@@ -32,12 +33,12 @@
                 }
 
             })
-        },
+        }
      
 </script>
 {% else %}
 <script>
-    data = {
+    products_app_data = {
         title: "",
         category_id: parseInt("{{category_id}}"),
         products: products,

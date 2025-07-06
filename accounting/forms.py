@@ -74,9 +74,9 @@ class AddProductToCategoryForm(forms.Form):
 
 
 class AddCategoryForm(forms.Form):
-    parent_id=forms.IntegerField( required=False)
-    priority=forms.IntegerField( required=False)
     title=forms.CharField( max_length=100, required=True)
+    parent_id=forms.IntegerField(required=False)
+    priority=forms.IntegerField(required=False)
     color=forms.CharField( max_length=100, required=False) 
 
 

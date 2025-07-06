@@ -5,11 +5,34 @@ import json
 from utility.calendar import PersianCalendar
 from .repo import CategoryRepo,PersonRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
 from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo
+from utility.log import leolog
 from .serializers import  ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
  
+class AddProductToCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_product_to_category_form=AddProductToCategoryForm(request.POST)
+        if add_product_to_category_form.is_valid():
+            log=333
+            cd=add_product_to_category_form.cleaned_data
+            result,message,product_categories=CategoryRepo(request=request).add_product_to_category(**cd)
+            if result==SUCCEED:
+                context['product_categories']=CategorySerializer(product_categories,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
 
 class AddInvoiceApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -403,16 +426,17 @@ class AddCategoryApi(APIView):
         result=FAILED
         message=""
         log=111
-        context['result']=FAILED
-        if request.method=='POST':
-            log=222
-            add_category_form=AddCategoryForm(request.POST)
-            if add_category_form.is_valid():
-                log=333
-                cd=add_category_form.cleaned_data
-                result,message,category=CategoryRepo(request=request).add_category(**cd)
-                if category is not None:
-                    context['category']=CategorySerializer(category).data
+        context['result']=FAILED 
+        log=222
+        add_category_form=AddCategoryForm(request.POST)
+        leolog(asdasd=200)
+        if add_category_form.is_valid():
+            leolog(asdasd=300)
+            log=333
+            cd=add_category_form.cleaned_data
+            result,message,category=CategoryRepo(request=request).add_category(**cd)
+            if category is not None:
+                context['category']=CategorySerializer(category).data
         context['message']=message
         context['result']=result
         context['log']=log

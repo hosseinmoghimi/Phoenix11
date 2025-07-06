@@ -35,6 +35,7 @@ urlpatterns = [
     path("add-product/",login_required(apis.AddProductApi.as_view()),name="add_product"),
     path('export-products-to-excel/',login_required(views.ExportProductsToExcelView.as_view()),name="export_products_to_excel"),
     path("import-products-from-excel/",login_required(apis.ImportProductsFromExcelApi.as_view()),name="import_products_from_excel"),
+    path('add-product-to-category/',login_required(apis.AddProductToCategoryApi.as_view()),name="add_product_to_category"),
     
     path('invoices/',login_required(views.InvoicesView.as_view()),name="invoices"),
     path('invoice/<int:pk>/',login_required(views.InvoiceView.as_view()),name="invoice"),

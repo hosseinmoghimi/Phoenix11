@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
+from utility.log import leolog
 
 from django.http import Http404,HttpResponse
 from django.views import View
@@ -290,6 +291,20 @@ def AddInvoiceContext(request):
     context['add_invoice_form']=AddInvoiceForm()
     return context
 
+
+def AddProductToCategoryContext(request,product,*args, **kwargs):
+    context={}
+
+    category_repo=CategoryRepo(request=request)
+    all_categories=category_repo.list()
+    all_categories_s=json.dumps(CategorySerializer(all_categories,many=True).data)
+    context['all_categories_s']=all_categories_s
+
+    
+    product_categories=product.category_set.all()
+    product_categories_s=json.dumps(CategorySerializer(product_categories,many=True).data)
+    context['product_categories_s']=product_categories_s
+    return context
 
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -594,6 +609,7 @@ class ProductView(View):
         
 
         context.update(ProductContext(request=request,product=product))
+        context.update(AddProductToCategoryContext(request=request,product=product))
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"product.html",context)
@@ -845,15 +861,39 @@ class InvoicePrintView(View):
         context.update(InvoiceContext(request=request,invoice=invoice))
         return render(request,TEMPLATE_ROOT+"invoice-print.html",context)
 
-
-
 class CategoryView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        category=CategoryRepo(request=request).category(*args, **kwargs)
+        category_repo=CategoryRepo(request=request)
+        category=category_repo.category(*args, **kwargs)
         context['category']=category
         category_s=json.dumps(CategorySerializer(category,many=False).data)
         context['category_s']=category_s
+
+
+        if category is None:
+            categories=category_repo.roots()
+            products=[]
+        else:
+            categories=category_repo.list(parent_id=category.id)
+            products=category.products.all()
+            # leolog(all_childs_products=category.all_childs_products())
+
+        context['categories']=categories
+        categories_s=json.dumps(CategorySerializer(categories,many=True).data)
+        context['categories_s']=categories_s
+
+
+
+        context['products']=products
+        products_s=json.dumps(ProductSerializer(products,many=True).data)
+        context['products_s']=products_s
+
+        if request.user.has_perm(APP_NAME+'.add_category'):
+            context['add_category_form']=AddCategoryForm()
+        if request.user.has_perm(APP_NAME+'.add_product'):
+            context['add_product_form']=AddProductForm()
+            context.update(AddProductContext(request=request))
         return render(request,TEMPLATE_ROOT+"category.html",context)
 
 
@@ -862,9 +902,9 @@ class CategoriesView(View):
         context=getContext(request=request)
         categories=CategoryRepo(request=request).list(*args, **kwargs)
         context['categories']=categories
-        categories_s=json.dumps(CategorySerializer(categories,many=False).data)
+        categories_s=json.dumps(CategorySerializer(categories,many=True).data)
         context['categories_s']=categories_s
-        return render(request,TEMPLATE_ROOT+"categorys.html",context)
+        return render(request,TEMPLATE_ROOT+"categories.html",context)
 
 
 

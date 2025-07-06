@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from .apps import APP_NAME
 from django.utils.translation import gettext as _
 from utility.qrcode import generate_qrcode
@@ -605,10 +606,25 @@ class Category(models.Model,LinkHelper,ImageHelper):
             return f"""
                     <a href="{self.get_market_absolute_url()}" class="ml-2 "> {self.title} </a>
                     """
-    @property
-    def all_products(self):
-        pass
+    
+    def all_childs_products(self):
+        ids=self.childs_ids()
+        p_ids=[]
+        for category in Category.objects.filter(Q(id__in=ids) | Q(id=self.pk)):
+            for product in category.products.all():
+                p_ids.append(product.id)
+        return Product.objects.filter(id__in=p_ids)
 
+    def childs_ids(self):
+        ids=[]
+        childs=Category.objects.filter(parent_id=self.pk)
+        if len(childs)==0:
+            return []
+        for child in childs:
+            ids2=child.childs_ids()
+            for id in ids2:
+                ids.append(id)
+        return ids
     class Meta:
         verbose_name = _("Category")
         verbose_name_plural = _("Categorys")
@@ -637,7 +653,12 @@ class Category(models.Model,LinkHelper,ImageHelper):
             return self.title
         return self.parent.full_title+" / "+self.title
 
-
+    def save(self):
+        result,message,category=FAILED,'',self
+        super(Category,self).save()
+        result=SUCCEED
+        message='دسته بندی با موفقیت اضافه شد.'
+        return result,message,category
 class Product(InvoiceLineItem):
     barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=50)
     

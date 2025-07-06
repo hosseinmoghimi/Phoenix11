@@ -1,6 +1,6 @@
 {% load static %}
 <h5>
-  <a href="{{page.get_absolute_url}}"> {{page.title}} </a>
+  <a href="{% url 'core:page' pk=page.pk %}"> page: {{page.title}} </a>
 </h5>
 
 <img src="{{page.thumbnail}}" width="128" alt="" />

@@ -2138,7 +2138,7 @@ class CategoryRepo():
         if not self.request.user.has_perm(APP_NAME+".add_category"):
             message="دسترسی غیر مجاز"
             return result,message,category
-        
+        leolog(kwargs=kwargs)
         category=Category()
         if 'title' in kwargs:
             category.title=kwargs["title"]
@@ -2147,9 +2147,40 @@ class CategoryRepo():
                 category.parent_id=kwargs["parent_id"]
         if 'color' in kwargs:
             category.color=kwargs["color"]
-        if 'priority' in kwargs:
+        if 'priority' in kwargs and kwargs['priority'] is not None:
             category.priority=kwargs["priority"]
         
         (result,message,category)=category.save()
         return result,message,category
-
+    def add_product_to_category(self,*args, **kwargs):
+        result,message,product_categories=FAILED,'',[]
+            
+        if not self.request.user.has_perm(APP_NAME+".add_category"):
+            message="دسترسی غیر مجاز"
+            return result,message,product_categories
+        # product_id=0
+        # category_id=0
+        # if 'category_id' in kwargs:
+        #     category_id=kwargs["category_id"]
+        # if 'product_id' in kwargs:
+        #     product_id=kwargs["product_id"]
+        product=ProductRepo(request=self.request).product(*args, **kwargs)
+        category=self.category(*args, **kwargs)
+        if product is None:
+            message="کالایی پیدا نشد"
+            return result,message,product_categories
+        if category is None:
+            message="دسته بندی پیدا نشد"
+            return result,message,product_categories
+        if product in category.products.all():
+            message='با موفقیت کالا از این دسته بندی حذف شد.'
+            result=SUCCEED
+            category.products.remove(product.id)
+            product_categories=product.category_set.all()
+            return result,message,product_categories
+        category.products.add(product.id)
+        result=SUCCEED
+        message='با موفقیت کالا به دسته بندی اضافه شد.'
+        product_categories=product.category_set.all()
+        return result,message,product_categories
+    
