@@ -899,6 +899,7 @@ class CategoryView(View):
 
 class CategoriesView(View):
     def get(self,request,*args, **kwargs):
+        return CategoryView().get(request=request,pk=0)
         context=getContext(request=request)
         categories=CategoryRepo(request=request).list(*args, **kwargs)
         context['categories']=categories

@@ -3,8 +3,42 @@
     <h4>افزودن سطر فاکتور</h4>
   </div>
   <div class="card-body">
+<div class="row rtl">
+  
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="">جستجو</label>
+            <input v-model="search_for" @input="filter()" class="form-control">
+              
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="row rtl">
+            <div class="col-md-4" v-for="invoice_line_item in buffer_items">
+              <button class="btn btn-info my-2" @click="select_item(invoice_line_item)">
+                <span v-text="invoice_line_item.title"></span>
+                هر
+                <span v-text="invoice_line_item.unit_name"></span>
+                <span v-text="to_price(invoice_line_item.unit_price)"></span>
+                {{CURRENCY}}
+              </button>
+            </div>
+
+            <div class="col-md-12"  >
+              <button class="btn btn-info my-2" @click="more()" v-show="list_length<7">
+               بیشتر
+              </button>
+               <button class="btn btn-info my-2" @click="less()" v-show="list_length>6">
+               کمتر
+              </button>
+            </div>
+          </div>
+        </div>
+</div>
     <form @submit.prevent="add_invoice_line()">
       <div class="row">
+
+        
         <div class="col-md-12">
           <div class="form-group">
             <label for="">آیتم</label>
@@ -17,6 +51,7 @@
             </select>
           </div>
         </div>
+
 
         <div class="col-md-4">
           <div class="form-group">

@@ -45,7 +45,7 @@ urlpatterns = [
     path('invoice_line/<int:pk>/',login_required(views.InvoiceLineView.as_view()),name="invoiceline"),
 
     
-    path('categorys/',login_required(views.CategoriesView.as_view()),name="categories"),
+    path('categories/',login_required(views.CategoriesView.as_view()),name="categories"),
     path('category/<int:pk>/',login_required(views.CategoryView.as_view()),name="category"),
     path("add-category/",login_required(apis.AddCategoryApi.as_view()),name="add_category"),
     
