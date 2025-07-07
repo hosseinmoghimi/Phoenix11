@@ -1,0 +1,27 @@
+
+{% extends "school/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="row rtl farsi">
+    {% if add_school_form %}
+      <div class="col-md-12">
+          {% include "school/includes/add-school-app/template.html" %}
+
+      </div>
+    {% endif %}
+    <div class="col-md-12">
+
+        
+        {% include "school/includes/schools-app/template.html" %}
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "school/includes/schools-app/script.html" %}
+{% if add_school_form %}
+{% include "school/includes/add-school-app/script.html" %}
+{% endif %}
+{% endblock script %}
