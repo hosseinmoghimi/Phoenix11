@@ -1,0 +1,36 @@
+{% extends "accounting/layout.html" %} {% block content %}
+<div class="row rtl farsi">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <div>{{financial_document_line.title}}</div>
+        <div>
+          <a
+            href="{{financial_document_line.financial_document.get_absolute_url}}"
+            >{{financial_document_line.financial_document.title}}</a
+          >
+        </div>
+
+        <div>
+          <a href="{{financial_document_line.financial_event.get_absolute_url}}"
+            >{{financial_document_line.financial_event.title}}</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    {% include "attachments/includes/downloads-app/template.html" %}
+  </div>
+  <div class="col-md-4">
+    {% include "attachments/includes/links-app/template.html" %}
+  </div>
+  <div class="col-md-4">
+    {% include "attachments/includes/comments-app/template.html" %}
+  </div>
+</div>
+{% endblock content %}
+{% block script %} 
+{% include "core/includes/page-app/script.html" %} 
+{% endblock script %}

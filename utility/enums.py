@@ -180,52 +180,56 @@ def class_title(*args, **kwargs):
         class_title = "کتاب"
     if class_name == "page":
         class_title = "صفحه"
-    elif class_name == "appointment":
+    if class_name == "appointment":
         class_title = "قرار ملاقات"
-    elif class_name == "coupon":
+    if class_name == "coupon":
         class_title = "جایزه خرید"
-    elif class_name == "letter":
+    if class_name == "letter":
         class_title = "نامه"
-    elif class_name == "file":
+    if class_name == "file":
         class_title = "فایل"
-    elif class_name == "ourwork":
+    if class_name == "ourwork":
         class_title = "پروژه"
-    elif class_name == "feature":
+    if class_name == "feature":
         class_title = "خدمات"
-    elif class_name == "blog":
+    if class_name == "blog":
         class_title = "مقاله"
-    elif class_name == "material":
+    if class_name == "material":
         class_title = "متریال"
-    elif class_name == "product":
+    if class_name == "product":
         class_title = "کالا"
-    elif class_name == "vehicle":
+    if class_name == "vehicle":
         class_title = "وسیله نقلیه"
-    elif class_name == "project":
+    if class_name == "project":
         class_title = "پروژه"
-    elif class_name == "cost":
+    if class_name == "cost":
         class_title = "هزینه"
-    elif class_name == "service":
+    if class_name == "service":
         class_title = "سرویس"
-    elif class_name=="pm_service":
+    if class_name=="pm_service":
         class_title = "سرویس"
-    elif class_name=="luggage":
+    if class_name=="luggage":
         class_title = "محموله بار"
-    elif class_name == "organizationunit":
+    if class_name == "organizationunit":
         class_title = "واحد سازمانی"
-    elif class_name == "event":
+    if class_name == "event":
         class_title = "رویداد"
-    elif class_name=="invoice":
+    if class_name=="invoice":
         class_title= "فاکتور"
-    elif class_name=="maintenance":
+    if class_name=="maintenance":
         class_title= "تعمیر و نگهداری"
-    elif class_name=="materialinvoice":
+    if class_name=="materialinvoice":
         class_title= "فاکتور متریال"
-    elif class_name=="serviceinvoice":
+    if class_name=="serviceinvoice":
         class_title ="فاکتور خدمات"
-    elif class_name=="workshift":
+    if class_name=="workshift":
         class_title= "شیفت کاری"
-    elif class_name=="role":
+    if class_name=="fooditem":
+        class_title= "آیتم غذایی"
+    if class_name=="role":
         class_title= "نقش"
+    if class_name=="financialdocument":
+        class_title= "سند مالی"
     return class_title
 class ParameterNameEnum(TextChoices):
     VISITOR_COUNTER="تعداد بازدید",_("تعداد بازدید")

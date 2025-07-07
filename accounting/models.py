@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from .apps import APP_NAME
 from django.utils.translation import gettext as _
 from utility.qrcode import generate_qrcode
@@ -111,7 +112,7 @@ class Account(models.Model,LinkHelper):
     
     def all_sub_accounts_lines(self):
         ids=self.all_sub_accounts_id()
-        return AccountingDocumentLine.objects.filter(account_id__in=ids)
+        return FinancialDocumentLine.objects.filter(account_id__in=ids)
 
     def all_sub_accounts_id(self):
         ids=[self.id]
@@ -133,10 +134,10 @@ class Account(models.Model,LinkHelper):
         bedehkar=0
         bestankar=0
         balance=0
-        for accounting_document_line in AccountingDocumentLine.objects.filter(account_id=self.pk): 
+        for financial_document_line in FinancialDocumentLine.objects.filter(account_id=self.pk): 
             # basic_account.normalize_total()
-            bedehkar+=accounting_document_line.bedehkar
-            bestankar+=accounting_document_line.bestankar
+            bedehkar+=financial_document_line.bedehkar
+            bestankar+=financial_document_line.bestankar
         childs=self.childs
         if len(childs)>0:
             for acc in childs:
@@ -304,46 +305,48 @@ class PersonAccount(Account):
         return result,message,person_account
 
 
-class AccountingDocument(models.Model,LinkHelper):
+class FinancialDocument(models.Model,LinkHelper):
     financial_year=models.ForeignKey("financialyear" , verbose_name=_("سال مالی"), on_delete=models.PROTECT)
     title=models.CharField(_("title"), max_length=500)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     date_time=models.DateTimeField(_("date_time"), auto_now=True, auto_now_add=False)
     date_modified=models.DateTimeField(_("date_modified "), auto_now=True, auto_now_add=False)
-    status=models.CharField(_("status"),max_length=20,choices=AccountingDocumentStatusEnum.choices,default=AccountingDocumentStatusEnum.DRAFT)
+    status=models.CharField(_("status"),max_length=20,choices=FinancialDocumentStatusEnum.choices,default=FinancialDocumentStatusEnum.DRAFT)
     bedehkar=models.IntegerField(_("بدهکار"),default=0)
     bestankar=models.IntegerField(_("بستانکار"),default=0)
     balance=models.IntegerField(_("تراز"),default=0)
 
     @property 
     def lines(self):
-        return self.accountingdocumentline_set.all()
+        return self.financialdocumentline_set.all()
 
 
     @property 
     def status_color(self):
-        if self.status==AccountingDocumentStatusEnum.ACCEPTED:
+        if self.status==FinancialDocumentStatusEnum.ACCEPTED:
             return "success"
-        if self.status==AccountingDocumentStatusEnum.DENIED:
+        if self.status==FinancialDocumentStatusEnum.DENIED:
             return "danger"
-        if self.status==AccountingDocumentStatusEnum.DRAFT:
+        if self.status==FinancialDocumentStatusEnum.DRAFT:
             return "secondary"
         return "primary"
 
     def save(self):
-        # result,message,accounting_document=FAILED,"",self
+        if self.financial_year is None:
+            self.financial_year=FinancialYear.objects.filter(in_progress=True).first()
+        # result,message,financial_document=FAILED,"",self
         # if self.financial_year.start_date>self.date_time or self.financial_year.end_date<self.date_time:
         #     message="تاریخ سند خارج از محدوده تاریخ سال مالی جاری است."
-        super(AccountingDocument,self).save()
+        super(FinancialDocument,self).save()
         result=SUCCEED
         message="با موفقیت اضافه شد."
         return result,message,self
 
-    class_name="accountingdocument"
+    class_name="financialdocument"
     app_name=APP_NAME    
     class Meta:
-        verbose_name = _("AccountingDocument")
-        verbose_name_plural = _("AccountingDocuments")
+        verbose_name = _("FinancialDocument")
+        verbose_name_plural = _("FinancialDocuments")
 
     def __str__(self):
         return self.title
@@ -361,10 +364,10 @@ class AccountingDocument(models.Model,LinkHelper):
         self.save()
                  
 
-class AccountingDocumentLine(models.Model,LinkHelper):
-    accounting_document=models.ForeignKey("accountingdocument", verbose_name=_("accountingdocument"), on_delete=models.CASCADE)
+class FinancialDocumentLine(models.Model,LinkHelper):
+    financial_document=models.ForeignKey("financialdocument", verbose_name=_("accountingdocument"), on_delete=models.CASCADE)
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
-    event=models.ForeignKey("financialevent", null=True,blank=True,verbose_name=_("event"), on_delete=models.PROTECT)
+    financial_event=models.ForeignKey("financialevent", null=True,blank=True,verbose_name=_("event"), on_delete=models.PROTECT)
     title=models.CharField(_("title"), max_length=500)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     date_time=models.DateTimeField(_("date_time"), auto_now=False, auto_now_add=False)
@@ -383,17 +386,17 @@ class AccountingDocumentLine(models.Model,LinkHelper):
     def save(self):
 
         
-        result,message,accounting_document_line=FAILED,"",self
+        result,message,financial_document_line=FAILED,"",self
         # import datetime
         # import pytz
         # utc=pytz.UTC
-        # start_date=utc.localize(self.accounting_document.financial_year.start_date)
-        # end_date=utc.localize(self.accounting_document.financial_year.end_date)
+        # start_date=utc.localize(self.financial_document.financial_year.start_date)
+        # end_date=utc.localize(self.financial_document.financial_year.end_date)
         # date_time=utc.localize(self.date_time)
         # leolog(start_date=start_date,end_date=end_date,date_time=date_time)
-        # if self.accounting_document.financial_year.start_date>self.date_time or self.accounting_document.financial_year.end_date<self.date_time:
+        # if self.financial_document.financial_year.start_date>self.date_time or self.financial_document.financial_year.end_date<self.date_time:
         #     message="تاریخ سند خارج از محدوده تاریخ سال مالی جاری است."
-        #     return result,message,accounting_document
+        #     return result,message,financial_document
 
         if not self.bedehkar==0 and not self.bestankar==0:
             return
@@ -401,8 +404,8 @@ class AccountingDocumentLine(models.Model,LinkHelper):
             return
         if self.account.nature==AccountNatureEnum.ONLY_BESTANKAR and self.bedehkar>0:
             return
-        super(AccountingDocumentLine,self).save()
-        self.accounting_document.normalize()
+        super(FinancialDocumentLine,self).save()
+        self.financial_document.normalize()
         self.account.normalize_total()
     @property
     def rest(self):
@@ -410,17 +413,17 @@ class AccountingDocumentLine(models.Model,LinkHelper):
     @property
     def amount(self):  
         return self.bedehkar+self.bestankar
-    class_name="accountingdocumentline"
+    class_name="financialdocumentline"
     app_name=APP_NAME 
 
     class Meta:
-        verbose_name = _("AccountingDocumentLine")
-        verbose_name_plural = _("AccountingDocumentLines")
+        verbose_name = _("FinancialDocumentLine")
+        verbose_name_plural = _("FinancialDocumentLines")
 
     def __str__(self):
         event=""
-        if self.event is not None :
-            event=self.event.title
+        if self.financial_event is not None :
+            event=self.financial_event.title
         return f"{self.account.id} , {event} , {self.account.name} , {to_price(self.balance)}, {to_price(self.bestankar)}, {to_price(self.bedehkar)}"
 
 
@@ -513,6 +516,7 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
     
 
     def save(self,*args, **kwargs):
+        result,message,financial_event=FAILED,'',self
         if self.tax_percentage is None or self.tax_percentage==-1:
             TAX_PERCENT=ParameterRepo(request=None,app_name=APP_NAME,forced=True).parameter(name="درصد پیش فرض مالیات برای رویدادها",default=10).int_value
             self.tax_percent=TAX_PERCENT
@@ -520,9 +524,12 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
             self.class_name="financialevent"
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        return super(FinancialEvent,self).save()
+        result=SUCCEED
+        message='رویداد مالی با موفقیت اضافه شد.'
+        super(FinancialEvent,self).save()
+        return result,message,financial_event
 
-
+ 
 class InvoiceLineItem(CorePage,LinkHelper):
     class_name="invoicelineitem"
     app_name=APP_NAME
@@ -542,6 +549,7 @@ class InvoiceLineItem(CorePage,LinkHelper):
         if unit is not None:
             return unit.unit_price
         return 0
+
 
 class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     invoice_line_item=models.ForeignKey("invoicelineitem",related_name="units" ,verbose_name=_("invoicelineitem"), on_delete=models.CASCADE)
@@ -580,6 +588,77 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
         super(InvoiceLineItemUnit,self).save()
 
 
+class Category(models.Model,LinkHelper,ImageHelper):
+    class_name="category"
+    app_name=APP_NAME
+    
+    parent=models.ForeignKey("category", verbose_name=_("parent"),null=True,blank=True, on_delete=models.SET_NULL)
+    title=models.CharField(_("title"),max_length=100)
+    priority=models.IntegerField(_("priority"),default=100)
+    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'ImageBase/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    products=models.ManyToManyField("product",blank=True, verbose_name=_("products"))
+    def get_link(self):
+            return f"""
+                    <a href="{self.get_absolute_url()}" class="ml-2 "> {self.title} </a>
+                    """
+    def get_market_link(self):
+            return f"""
+                    <a href="{self.get_market_absolute_url()}" class="ml-2 "> {self.title} </a>
+                    """
+    
+    def all_childs_products(self):
+        ids=self.childs_ids()
+        p_ids=[]
+        for category in Category.objects.filter(Q(id__in=ids) | Q(id=self.pk)):
+            for product in category.products.all():
+                p_ids.append(product.id)
+        return Product.objects.filter(id__in=p_ids)
+
+    def childs_ids(self):
+        ids=[]
+        childs=Category.objects.filter(parent_id=self.pk)
+        if len(childs)==0:
+            return []
+        for child in childs:
+            ids2=child.childs_ids()
+            for id in ids2:
+                ids.append(id)
+        return ids
+    class Meta:
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categorys")
+
+    def __str__(self):
+        return self.title
+
+    def get_market_absolute_url(self):
+        return reverse("market:category",kwargs={'pk':self.pk})
+        
+    def get_breadcrumb_link(self):
+        if self.parent is None:
+            return  self.get_link() 
+        # return self.parent.get_breadcrumb_link()+f"""<span class="my-2">{ACCOUNT_NAME_SEPERATOR}</span>"""+self.get_link()
+        return f""" {self.parent.get_breadcrumb_link()} / {self.get_link()} """
+        # return f"""<span>{self.parent.get_breadcrumb_link()}</span>{ACCOUNT_NAME_SEPERATOR}<span>{self.get_link()}</span>"""
+    def get_market_breadcrumb_link(self):
+        if self.parent is None:
+            return  self.get_market_link() 
+        # return self.parent.get_breadcrumb_link()+f"""<span class="my-2">{ACCOUNT_NAME_SEPERATOR}</span>"""+self.get_link()
+        return f""" {self.parent.get_market_breadcrumb_link()} / {self.get_market_link()} """
+        # return f"""<span>{self.parent.get_breadcrumb_link()}</span>{ACCOUNT_NAME_SEPERATOR}<span>{self.get_link()}</span>"""
+    @property
+    def full_title(self):
+        if self.parent is None:
+            return self.title
+        return self.parent.full_title+" / "+self.title
+
+    def save(self):
+        result,message,category=FAILED,'',self
+        super(Category,self).save()
+        result=SUCCEED
+        message='دسته بندی با موفقیت اضافه شد.'
+        return result,message,category
 class Product(InvoiceLineItem):
     barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=50)
     
@@ -603,6 +682,9 @@ class Product(InvoiceLineItem):
         verbose_name = _("Product")
         verbose_name_plural = _("کالا ها")
  
+    def get_market_absolute_url(self):
+        return reverse("market:product",kwargs={'pk':self.pk})
+    
 
 class Service(InvoiceLineItem):
 
@@ -615,11 +697,15 @@ class Service(InvoiceLineItem):
         verbose_name_plural = _("خدمات")
  
     def save(self):
+        (result,message,service)=FAILED,'',self
         if self.class_name is None or self.class_name=="":
             self.class_name="service"
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         super(Service,self).save()
+        result=SUCCEED
+        message='سرویس جدید با موفقیت اضافه شد.'
+        return (result,message,service)
 
 
 class Invoice(FinancialEvent):
@@ -636,7 +722,12 @@ class Invoice(FinancialEvent):
             self.class_name="invoice"
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        return super(Invoice,self).save()
+
+        result,message,invoice=FAILED,"",self
+
+        super(Invoice,self).save()
+        result=SUCCEED
+        return result,message,invoice
 
 
 
@@ -679,7 +770,8 @@ class InvoiceLine(models.Model,LinkHelper):
     @property
     def line_total(self):
         return (100-self.discount_percentage)*self.unit_price*self.quantity/100
-    
+
+
 class Bank(models.Model,LinkHelper):
     name=models.CharField(_("name"),max_length=50)
     class_name="bank"

@@ -1,19 +1,36 @@
-{% extends "accounting/layout.html" %}
-{% block content %}
+{% extends "accounting/layout.html" %} {% block content %}
 <div class="row rtl farsi">
+   
   <div class="col-md-12">
     {% include "accounting/includes/product-app/card.html" %}
   </div>
   <div class="col-md-12">
     {% include "accounting/includes/invoice-line-item-units-app/template.html" %}
   </div>
+  <div class="col-md-12">
+    {% include "accounting/includes/invoice-lines-app/template.html" %}
+  </div>
+  <div class="col-md-4">
+    {% include "attachments/includes/downloads-app/template.html" %}
+  </div>
+  <div class="col-md-4">
+    {% include "attachments/includes/links-app/template.html" %}
+  </div>
+  <div class="col-md-4">
+    {% include "attachments/includes/comments-app/template.html" %}
+  </div>
+  <div class="col-md-4">
+    {% include "core/includes/page-thumbnail-header-app/template.html" %}
+  </div>
 
+  <div class="col-md-4">
+    {% include "accounting/includes/add-product-to-category-app/template.html" %}
+  </div>
   <div class="col-md-12"></div>
 </div>
-{% endblock content %}
-{% block script %}
+{% endblock content %} 
+{% block script %} 
 {% include "accounting/includes/product-app/script.html" %}
- 
-
-{% include "accounting/includes/invoice-line-item-units-app/script.html" %} 
+{% include "accounting/includes/add-product-to-category-app/script.html" %} 
+{% include "accounting/includes/invoice-line-item-units-app/script.html" %}
 {% endblock script %}

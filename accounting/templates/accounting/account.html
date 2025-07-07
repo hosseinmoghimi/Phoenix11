@@ -12,9 +12,20 @@
     </div>
 
     <div class="col-md-12">
+        {% include "accounting/includes/financial-document-lines-app/template.html" %}
+    </div>
+
+    <div class="col-md-12">
         {% include "accounting/includes/add-account-app/template.html" %}
     </div>
 
+    {% if add_financial_document_line_form %}
+     
+    <div class="col-md-12">
+        {% include "accounting/includes/add-financial-document-line-app/template.html" %}
+    </div>
+  
+    {% endif %}
      
 
 
@@ -26,5 +37,10 @@
 {% include "accounting/includes/account-app/script.html" %}
 {% include "accounting/includes/accounts-app/script.html" %}
 {% include "accounting/includes/add-account-app/script.html" %}
+{% include "accounting/includes/financial-document-lines-app/script.html" %}
+{% if add_financial_document_line_form %}
+  
+{% include "accounting/includes/add-financial-document-line-app/script.html" %}
+{% endif %}
 
 {% endblock script %}

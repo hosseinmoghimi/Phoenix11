@@ -2,13 +2,8 @@
   <div class="card" id="meal-items-app">
     <div class="card-header">
       <h5 class="text-center">
-        <button
-          class="btn btn-link"
-          data-toggle="collapse"
-          data-target="#collapse-meal-items"
-          aria-expanded="true"
-          aria-controls="collapse-meal-items"
-        >
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-meal-items" aria-expanded="true"
+          aria-controls="collapse-meal-items">
           آیتم وعده ها
           <span v-if="meal_items.length>0">
             <small class="text-danger mx-2">
@@ -19,12 +14,8 @@
       </h5>
     </div>
 
-    <div
-      id="collapse-meal-items"
-      class="collapse {% if expand_meal_items %} show {% endif %}"
-      aria-labelledby="heading-meal-items"
-      data-parent="#accordion-meal-items"
-    >
+    <div id="collapse-meal-items" class="collapse {% if expand_meal_items %} show {% endif %}"
+      aria-labelledby="heading-meal-items" data-parent="#accordion-meal-items">
       <div class="card-body">
         <div class="table-responsive">
           <table class="table table-striped">
@@ -54,19 +45,18 @@
                       <span v-text="meal_item.meal.title"></span>
                     </div>
                   </a>
+                  <div>
+                    <small class="text-muted" v-text="meal_item.meal.persian_event_datetime"></small>
+                  </div>
                 </td>
 
                 {% endif %}
-                
+
                 {% if not food_item %}
-                  <td>
+                <td>
                   <a :href="meal_item.food_item.get_absolute_url">
                     <div class="media text-right farsi">
-                      <img
-                        width="32"
-                        :src="meal_item.food_item.thumbnail"
-                        alt=""
-                      />
+                      <img width="32" :src="meal_item.food_item.thumbnail" alt="" />
                       <div class="media-body mr-2">
                         <span v-text="meal_item.food_item.title"></span>
                       </div>
@@ -74,7 +64,7 @@
                   </a>
                 </td>
                 {% endif %}
-              
+
 
                 <td>
                   <span v-text="meal_item.quantity"></span>
@@ -86,35 +76,42 @@
                   <small class="text-secondary"> {{CURRENCY}} </small>
                 </td>
                 <td>
-                  <span v-if="meal_item.discount_percentage>0"  >
+                  <div v-if="meal_item.discount_percentage>0" class="text-success">
+                    <div>
 
-                    <span  v-text="meal_item.discount_percentage"></span>
-                    %
+                      <span v-text="meal_item.discount_percentage"></span>
+                      %
+                    </div>
 
-                  </span>
+
+                    <div>
+
+                      <span v-text="to_price(meal_item.discount)"></span>
+
+                    </div>
+
+                  </div>
                 </td>
 
                 <td>
+                  <div v-if="meal_item.discount_percentage>0" style="text-decoration: line-through;">
+
+
+                    <span v-text="to_price(meal_item.quantity*meal_item.unit_price )"></span>
+
+
+                  </div>
+
                   <span v-text="to_price(meal_item.line_total)"></span>
                   <small class="text-secondary"> {{CURRENCY}} </small>
                 </td>
 
                 <td>
-                  <a
-                    target="_blank"
-                    :href="meal_item.get_edit_url"
-                    title="ویرایش"
-                    class="text-warning mx-2"
-                  >
+                  <a target="_blank" :href="meal_item.get_edit_url" title="ویرایش" class="text-warning mx-2">
                     <i class="fa fa-edit text-warning"> </i>
                     ویرایش
                   </a>
-                  <a
-                    target="_blank"
-                    :href="meal_item.get_delete_url"
-                    title="حذف"
-                    class="text-danger mx-2"
-                  >
+                  <a target="_blank" :href="meal_item.get_delete_url" title="حذف" class="text-danger mx-2">
                     <i class="fa fa-trash text-danger"> </i>
                     حذف
                   </a>

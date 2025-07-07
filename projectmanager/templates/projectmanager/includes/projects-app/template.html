@@ -1,0 +1,91 @@
+<div id="accordion-projects" class="rtl text-right farsi">
+  <div class="card" id="projects-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-projects"
+          aria-expanded="true"
+          aria-controls="collapse-projects"
+        >
+          پروژه ها
+          <span v-if="projects.length>0">
+            <small class="text-danger mx-2">
+              <span v-text="projects.length"></span>
+            </small>
+          </span>
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-projects"
+      class="collapse {% if expand_projects %} show {% endif %}"
+      aria-labelledby="heading-projects"
+      data-parent="#accordion-projects"
+    >
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead> 
+              <th>نام پروژه</th>
+
+              <th>کارفرما</th>
+              <th>پیمانکار</th>
+              <th></th>
+            </thead>
+            <tbody>
+              <tr v-for="project in projects">
+               
+
+                <td>
+                  <a :href="project.get_absolute_url">
+                    <span v-text="project.title"></span>
+                  </a>
+                </td>
+
+                <td>
+                  <div>
+                    <a :href="project.employer.get_absolute_url">
+                      <span v-text="project.employer.title"></span>
+                    </a>
+                  </div>
+                </td>
+
+                <td>
+                  <div>
+                    <a :href="project.contractor.get_absolute_url">
+                      <span v-text="project.contractor.title"></span>
+                    </a>
+                  </div>
+                </td>
+
+                <td>
+                  <a
+                    target="_blank"
+                    :href="project.get_edit_url"
+                    title="ویرایش"
+                    class="text-warning mx-2"
+                  >
+                    <i class="fa fa-edit text-warning"> </i>
+                    ویرایش
+                  </a>
+                  <a
+                    target="_blank"
+                    :href="project.get_delete_url"
+                    title="حذف"
+                    class="text-danger mx-2"
+                  >
+                    <i class="fa fa-trash text-danger"> </i>
+                    حذف
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

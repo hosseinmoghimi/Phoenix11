@@ -1,0 +1,15 @@
+<script>
+    
+    let projects_for_projects_app=JSON.parse("{{projects_s|escapejs}}")
+    let projects_app = new Vue({
+        el: "#projects-app",
+        data: {
+            projects: projects_for_projects_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>

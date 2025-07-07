@@ -61,7 +61,6 @@
               <th>پیشفرض</th>
               <th>قیمت واحد</th>
               <th>ضریب</th>
-              <th></th>
               <th>تاریخ</th>
               <th></th>
             </thead>
@@ -111,13 +110,11 @@
                 </td>
                 <td>
                   <span v-text="invoice_line_item_unit.coef"> </span>
-                </td>
-                <td>
+               *
                   <span
                     v-text="to_price(invoice_line_item_unit.unit_price/invoice_line_item_unit.coef)"
                   >
                   </span>
-                  {{CURRENCY}}
                 </td>
                 <td>
                   <span v-text="invoice_line_item_unit.persian_date_added"> </span>

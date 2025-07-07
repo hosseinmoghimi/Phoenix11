@@ -1,65 +1,28 @@
-
-{% extends "core/layout.html" %}
-{% load static %}
-{% block content %}
+{% extends "chef/layout.html" %} {% load static %} {% block content %}
 <div class="row rtl farsi">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>
-                    {{food_item.title}}
-                </h5>
-            </div>
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>{{food_item.title}}</h5>
+      </div>
 
-              <div class="card-body">
-                <h5>
-                    {{food_item.name}}
-                </h5>
-                
-                <h5>
-                  
-                  <a href="{% url 'accounting:invoicelineitem' pk=food_item.id %}">
-                    
-                    
-                    {{food_item.title}}
-                  </a>
-                </h5>
-                <div>
-                {% include "core/includes/page-like-app/template.html" %}
+      <div class="card-body"> 
 
-                </div>
-                 <a
-                    target="_blank"
-                    href="{{food_item.get_edit_url}}"
-                    title="ویرایش"
-                    class="text-warning mx-2">
-                    <i class="fa fa-edit text-warning"> </i>
-                    ویرایش
-                  </a>
-                  <a
-                    target="_blank"
-                    href="{{food_item.get_delete_url}}"
-                    title="حذف"
-                    class="text-danger mx-2"
-                  >
-                    <i class="fa fa-trash text-danger"> </i>
-                    حذف
-                  </a>
-
-            </div>
-        </div>
+        {% include "accounting/includes/product-app/card-contents.html" %}
+      </div>
     </div>
-    <div class="col-md-12">
-                {% include "accounting/includes/invoice-line-item-units-app/template.html" %}
-
-    </div>
-    <div class="col-12">
-        {% include "chef/includes/meal-items-app/template.html" %}
-    </div>
+  </div>
+  <div class="col-md-12">
+    {% include "accounting/includes/invoice-line-item-units-app/template.html" %}
+  </div>
+  <div class="col-md-12">
+    {% include "core/includes/page-thumbnail-header-app/template.html" %}
+  </div>
+  <div class="col-12">
+    {% include "chef/includes/meal-items-app/template.html" %}
+  </div>
 </div>
 {% endblock content %}
-
-
 {% block script %}
 {% include "accounting/includes/invoice-line-item-app/script.html" %}
 <script>
@@ -68,5 +31,4 @@
 
 {% include "chef/includes/meal-items-app/script.html" %}
 {% include "accounting/includes/invoice-line-item-units-app/script.html" %}
- 
 {% endblock script %}

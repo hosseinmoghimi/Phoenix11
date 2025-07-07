@@ -144,11 +144,13 @@
                 </div>
               </td>
               <td class="bordered farsi text-right">
+                {% if  invoice.discount %}
                 <div>
-
-                 <span style="text-decoration: line-through" v-text="to_price(sum_prices())"></span>
-                
-              </div>
+  
+                  <span style="text-decoration: line-through" v-text="to_price(sum_prices())"></span>
+                  
+                </div>
+                {% endif %}
                 <span v-text="to_price(sum_total())"></span>
               </td>
             </tr>

@@ -13,7 +13,7 @@ from utility.constants import FAILED,SUCCEED
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_URL,MEDIA_URL,ADMIN_URL,FULL_SITE_URL
 IMAGE_FOLDER = "images/"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
-
+from utility.enums import class_title
 
 class Page(models.Model,LinkHelper,ImageHelper):
     parent=models.ForeignKey("page",null=True,blank=True,related_name="childs", verbose_name=_("parent"), on_delete=models.CASCADE)
@@ -30,16 +30,7 @@ class Page(models.Model,LinkHelper,ImageHelper):
     header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'ImageBase/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
     color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY,max_length=50)
     
-    def my_like(self,*args, **kwargs):
-        profile_id=0
-        if 'profile_id' in kwargs:
-            profile_id=kwargs['profile_id']
-        if 'profile' in kwargs:
-            profile=kwargs['profile']
-            profile_id=profile.id
-        
-        my_likes=Like.objects.filter(page_id=self.id).filter(profile_id=profile_id)
-        return len(my_likes)>0
+    
 
     def save(self):
         if self.class_name is None or self.class_name=="":
@@ -79,9 +70,7 @@ class Page(models.Model,LinkHelper,ImageHelper):
             content=FULL_SITE_URL[0:-1]+self.get_absolute_url()
             generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
         return f"{QRCODE_URL}{file_name}"
-    @property
-    def likes_count(self):
-        return len(Like.objects.filter(page_id=self.pk))
+    
     def get_absolute_url(self):
         return reverse(self.app_name+":"+self.class_name,kwargs={'pk':self.pk})
 
@@ -126,30 +115,4 @@ class Event(Page,DateTimeHelper):
     class Meta:
         verbose_name = _("Event")
         verbose_name_plural = _("رویداد ها")
-
-class Comment(models.Model,DateTimeHelper):
-    page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
-    comment=HTMLField(verbose_name="comment")
-    datetime_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-
-    class Meta:
-        verbose_name = _("Comment")
-        verbose_name_plural = _("Comments")
-
-    def __str__(self):
-        return f"{self.profile} : {self.page}"
-    
-
-class Like(models.Model,DateTimeHelper):
-    page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
-    datetime_added=models.DateTimeField(_("datetime_added"), auto_now=False, auto_now_add=True)
-
-    class Meta:
-        verbose_name = _("Like")
-        verbose_name_plural = _("Likes")
-
-    def __str__(self):
-        return f" {self.profile.full_name} @ {self.page.title}"
-
+ 

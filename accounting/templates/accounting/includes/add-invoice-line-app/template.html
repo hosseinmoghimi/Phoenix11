@@ -1,0 +1,148 @@
+<div class="card" id="add-invoice-line-app">
+  <div class="card-header">
+    <h4>افزودن سطر فاکتور</h4>
+  </div>
+  <div class="card-body">
+<div class="row rtl">
+  
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="">جستجو</label>
+            <input v-model="search_for" @input="filter()" class="form-control">
+              
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="row rtl">
+            <div class="col-md-4" v-for="invoice_line_item in buffer_items">
+              <button class="btn btn-info my-2" @click="select_item(invoice_line_item)">
+                <span v-text="invoice_line_item.title"></span>
+                هر
+                <span v-text="invoice_line_item.unit_name"></span>
+                <span v-text="to_price(invoice_line_item.unit_price)"></span>
+                {{CURRENCY}}
+              </button>
+            </div>
+
+            <div class="col-md-12"  >
+              <button class="btn btn-info my-2" @click="more()" v-show="list_length<7">
+               بیشتر
+              </button>
+               <button class="btn btn-info my-2" @click="less()" v-show="list_length>6">
+               کمتر
+              </button>
+            </div>
+          </div>
+        </div>
+</div>
+    <form @submit.prevent="add_invoice_line()">
+      <div class="row">
+
+        
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="">آیتم</label>
+            <select v-model="invoice_line_item_id" class="form-control">
+              <option
+                :value="invoice_line_item.id"
+                v-for="invoice_line_item in invoice_line_items"
+                v-text=" invoice_line_item.title +' هر '+invoice_line_item.unit_name+ '  ' +to_price(invoice_line_item.unit_price) + '{{CURRENCY}}' "
+              ></option>
+            </select>
+          </div>
+        </div>
+
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="">تعداد</label>
+            <input v-model="quantity" type="number" class="form-control" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="">واحد</label>
+            <select v-model="unit_name" class="form-control">
+              {% for unit_name in unit_names_for_add_invoice_line %}
+
+              <option value="{{unit_name}}">{{unit_name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for=""
+              >قیمت
+              <small class="text-secondary my-2">
+                <span v-text="to_price(unit_price)"></span>
+                {{CURRENCY}}
+              </small>
+            </label>
+            <input v-model="unit_price" type="number" class="form-control" />
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="">
+              درصد تخفیف
+
+              <small class="text-secondary my-2">
+                <span v-text="discount_percentage"></span> %
+              </small>
+            </label>
+            <input
+              max="100"
+              min="0"
+              v-model="discount_percentage"
+              type="number"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="col-md-12"></div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for=""> ضریب </label>
+            <input
+              max="100"
+              min="0"
+              v-model="coef"
+              type="number"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="">ذخیره</label>
+            <input type="checkbox" class="form-control" v-model="save" />
+          </div>
+        </div>
+          <div class="col-md-3">
+          <div class="form-group">
+            <label for="">پیش فرض</label>
+            <input type="checkbox" class="form-control" v-model="default11" />
+          </div>
+        </div>
+
+        <div class="col-md-4"></div>
+        <div class="col-md-12">
+          <span
+            v-text="to_price(unit_price)+'*'+quantity+'='+to_price(unit_price*quantity)"
+          ></span>
+
+          {{CURRENCY}}
+        </div>
+        <div class="col-md-12">
+          <button class="btn btn-success" type="submit">
+            <i class="fa fa-plus"></i>
+            افزودن
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -10,7 +10,7 @@
     {% if import_products_from_excel_form %}
 
     <div class="col-md-6">
-        {% include "accounting/includes/import-products-from-excel/template.html" %}
+        {% include "accounting/includes/import-products-from-excel-app/template.html" %}
     </div>
     {% endif %}
     <div class="col-md-12 ">
@@ -34,6 +34,6 @@
 {% endif %}
 
 {% if import_products_from_excel_form %}
-    {% include "accounting/includes/import-products-from-excel/script.html" %}
+    {% include "accounting/includes/import-products-from-excel-app/script.html" %}
 {% endif %}
 {% endblock script %}

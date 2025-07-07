@@ -3,12 +3,79 @@ from utility.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
+from .repo import CategoryRepo,PersonRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
+from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo
 from utility.log import leolog
-from .repo import InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,PersonRepo,BankRepo,PersonCategoryRepo,AccountingDocumentLineRepo,AccountingDocumentRepo,FinancialEventRepo,PersonAccountRepo
-from .serializers import  InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer
+from .serializers import  ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
+from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
  
+class AddProductToCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_product_to_category_form=AddProductToCategoryForm(request.POST)
+        if add_product_to_category_form.is_valid():
+            log=333
+            cd=add_product_to_category_form.cleaned_data
+            result,message,product_categories=CategoryRepo(request=request).add_product_to_category(**cd)
+            if result==SUCCEED:
+                context['product_categories']=CategorySerializer(product_categories,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+
+class AddInvoiceApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_invoice_form=AddInvoiceForm(request.POST)
+        if add_invoice_form.is_valid():
+            log=333
+            cd=add_invoice_form.cleaned_data
+            result,message,invoice=InvoiceRepo(request=request).add_invoice(**cd)
+            if invoice is not None:
+                context['invoice']=InvoiceSerializer(invoice).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+class AddFinancialDocumentLineApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_financial_document_line_form=AddFinancialDocumentLineForm(request.POST)
+        if add_financial_document_line_form.is_valid():
+            log=333
+            cd=add_financial_document_line_form.cleaned_data
+            result,message,financial_document_line=FinancialDocumentLineRepo(request=request).add_financial_document_line(**cd)
+            if financial_document_line is not None:
+                context['financial_document_line']=FinancialDocumentLineSerializer(financial_document_line).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
 
 
 class AddAccountApi(APIView):
@@ -32,6 +99,7 @@ class AddAccountApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
 class SetAccountPriorityApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -52,6 +120,7 @@ class SetAccountPriorityApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+
 
 class SetAccountParentApi(APIView): 
     def post(self,request,*args, **kwargs):
@@ -96,6 +165,7 @@ class AddInvoiceLineItemUnitApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+ 
     
 class ImportProductsFromExcelApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -121,6 +191,124 @@ class ImportProductsFromExcelApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
+class ImportServicesFromExcelApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            ImportServicesFromExcelForm_=ImportServicesFromExcelForm(request.POST,request.FILES)
+            if ImportServicesFromExcelForm_.is_valid():
+                log=333
+                
+                excel_file = request.FILES['file1']
+                cd=ImportServicesFromExcelForm_.cleaned_data
+                cd['excel_file']=excel_file
+                result,message,services=ServiceRepo(request=request).import_services_from_excel(**cd)
+                if services is not None:
+                    context['services']=ServiceSerializer(services,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+class AddFinancialEventApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_financial_event_form=AddFinancialEventForm(request.POST,request.FILES)
+            if add_financial_event_form.is_valid():
+                log=333
+                 
+                cd=add_financial_event_form.cleaned_data
+                result,message,financial_event=FinancialEventRepo(request=request).add_financial_event(**cd)
+                if financial_event is not None:
+                    context['financial_event']=FinancialEventSerializer(financial_event,many=False).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+    
+
+class AddInvoiceLineApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_invoice_line_form=AddInvoiceLineForm(request.POST)
+            if add_invoice_line_form.is_valid():
+                log=333
+                cd=add_invoice_line_form.cleaned_data 
+                result,message,invoice_line=InvoiceLineRepo(request=request).add_invoice_line(**cd)
+                if invoice_line is not None:
+                    context['invoice_line']=InvoiceLineSerializer(invoice_line).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+class SelectFinancialEventApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            select_financial_event_form=SelectFinancialEventForm(request.POST)
+            if select_financial_event_form.is_valid():
+                log=333
+                cd=select_financial_event_form.cleaned_data
+                financial_event=FinancialEventRepo(request=request).financial_event(**cd)
+                if financial_event is not None:
+                    result=SUCCEED
+                    message="موفقیت آمیز"
+                    context['financial_event']=FinancialEventSerializer(financial_event).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+class SelectFinancialDocumentApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            select_financial_document_form=SelectFinancialDocumentForm(request.POST)
+            if select_financial_document_form.is_valid():
+                log=333
+                cd=select_financial_document_form.cleaned_data
+                financial_document=FinancialDocumentRepo(request=request).financial_document(**cd)
+                if financial_document is not None:
+                    result=SUCCEED
+                    message="موفقیت آمیز"
+                    context['financial_document']=FinancialDocumentSerializer(financial_document).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
  
 class SelectAccountApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -204,6 +392,51 @@ class AddProductApi(APIView):
             result,message,product=ProductRepo(request=request).add_product(**cd)
             if product is not None:
                 context['product']=ProductSerializer(product).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+ 
+class AddServiceApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_service_form=AddServiceForm(request.POST)
+        if add_service_form.is_valid():
+            log=333
+            cd=add_service_form.cleaned_data
+            result,message,service=ServiceRepo(request=request).add_service(**cd)
+            if service is not None:
+                context['service']=ServiceSerializer(service).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
+
+class AddCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        add_category_form=AddCategoryForm(request.POST)
+        leolog(asdasd=200)
+        if add_category_form.is_valid():
+            leolog(asdasd=300)
+            log=333
+            cd=add_category_form.cleaned_data
+            result,message,category=CategoryRepo(request=request).add_category(**cd)
+            if category is not None:
+                context['category']=CategorySerializer(category).data
         context['message']=message
         context['result']=result
         context['log']=log

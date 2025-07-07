@@ -1,4 +1,4 @@
-{% extends "core/layout.html" %} 
+{% extends "chef/layout.html" %} 
 {% load to_price %} 
 {% load static %} 
 {% block content %}
@@ -19,6 +19,10 @@
   </div>
 
   
+  <div class="col-12">
+    {% include "accounting/includes/financial-documents-app/script.html" %}
+
+  </div>
 
   <div class="col-12">
     {% include "chef/includes/meal-items-app/template.html" %}
@@ -30,7 +34,8 @@
     let meal_id=parseInt("{{meal.id}}")
 </script>
 {% include "chef/includes/add-meal-item-app/script.html" %}
-  
+
 
 {% include "chef/includes/meal-items-app/script.html" %} 
+{% include "accounting/includes/financial-event-app/script.html" %}
 {% endblock script %}

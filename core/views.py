@@ -1,13 +1,19 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,CURRENCY,VUE_VERSION_3,VUE_VERSION_2
 from authentication.repo import ProfileRepo
+from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
 from .forms import *
+from .repo import PageRepo
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from utility.log import leolog
 from django.utils import timezone
+import json
+from .repo import PageRepo,FAILED,SUCCEED
+from .serializer import PageSerializer
+
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='core/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -41,6 +47,8 @@ def CoreContext(request,*args, **kwargs):
 
     context['current_datetime']=current_datetime
     context['current_date']=current_date
+    current_time=current_datetime[10:]
+    context['current_time']=current_time
 
     context['phoenix_apps']=phoenix_apps
     
@@ -56,6 +64,7 @@ def CoreContext(request,*args, **kwargs):
             # context['current_app']={'name':appp['name'],'title':appp['title'],'url':appp['url'],'logo':appp['logo']}
             context['current_app']=appp
             context['app_title']=appp['title']
+ 
     return context
 
         
@@ -68,23 +77,62 @@ def getContext(request,*args, **kwargs):
 def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
-    profile=ProfileRepo(request=request).me
-    context.update(PageLikesContext(request=request,page=page,profile=profile))
+    me_profile=ProfileRepo(request=request).me
+    from attachments.views import PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
+
+    context.update(PageLikesContext(request=request,page=page,profile=me_profile))
+    context.update(PageCommentsContext(request=request,page=page,profile=me_profile))
+    context.update(PageLinksContext(request=request,page=page,profile=me_profile))
+    context.update(PageDownloadsContext(request=request,page=page,profile=me_profile))
      
     return context
 
-def PageLikesContext(request,page,profile):
-    context={}
-    likes_count=5
-    my_like = page.my_like(profile=profile)
-    context['my_like']=my_like
-    context['likes_count']=likes_count  
-    if profile is not None:
-        context['toggle_page_like_form']=TogglePageLikeForm()
-    context['page']=page
-    return context
 
 
+class SearchView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        phoenix_apps=context["phoenix_apps"]
+        phoenix_apps=phoenix_apps 
+         
+        return render(request,TEMPLATE_ROOT+"search.html",context)
+
+    def post(self,request,*args, **kwargs):
+        result=FAILED
+        message=''
+        log=1
+        context=getContext(request=request) 
+        search_form=SearchForm(request.POST)
+        if search_form.is_valid():
+            log=2
+            search_for=search_form.cleaned_data['search_for']
+            pages=PageRepo(request=request).list(search_for=search_for)
+            result=SUCCEED
+
+            context['pages']=pages
+            context['pages_s']=json.dumps(PageSerializer(pages,many=True).data)
+
+        context['message']=message
+        context['log']=log
+        context['result']=result
+        return render(request,TEMPLATE_ROOT+"search.html",context)
+
+
+
+class PageView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        phoenix_apps=context["phoenix_apps"]
+        phoenix_apps=phoenix_apps
+        page=PageRepo(request=request).page(*args, **kwargs)
+        if page is None:
+            mv=MessageView()
+            return mv.get(request=request)
+        context.update(PageContext(request=request,page=page))
+        return render(request,TEMPLATE_ROOT+"page.html",context)
+# Create your views here.
 
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -97,3 +145,40 @@ class IndexView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
 # Create your views here.
+
+class MessageView(View):
+    def __init__(self,*args,**kwargs): 
+        self.message ={}
+        self.back_url =""
+        if 'title' in kwargs:
+            self.message['title']=kwargs['title']
+        if 'body' in kwargs:
+            self.message['body']=kwargs['body']
+
+        if 'message' in kwargs:
+            self.message=kwargs['message']
+
+        if 'back_url' in kwargs:
+            self.back_url=kwargs['back_url']
+            
+
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        back_url = request.META.get('HTTP_REFERER')
+        if 'title' in kwargs:
+            self.message['title']=kwargs['title']
+        if 'body' in kwargs:
+            self.message['body']=kwargs['body']
+
+        if 'message' in kwargs:
+            self.message=kwargs['message']
+
+        if 'back_url' in kwargs:
+            self.back_url=kwargs['back_url']
+        
+        context['message']=self.message     
+        context['back_url']=self.back_url     
+        return render(request,TEMPLATE_ROOT+"message.html",context)
+# Create your views here.
+    def response(self,request,*args,**kwargs):
+        return self.get(request,*args,**kwargs)

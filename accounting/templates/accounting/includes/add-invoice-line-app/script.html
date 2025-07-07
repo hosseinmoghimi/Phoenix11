@@ -1,0 +1,107 @@
+<script>
+  let invoice_line_items_for_add_invoice_line_items_app = JSON.parse(
+    "{{invoice_line_items_s|escapejs}}"
+  );
+  let add_invoice_line_app = new Vue({
+    el: "#add-invoice-line-app",
+    data: {
+      invoice_line_item_id: 0,
+      invoice_line_items: invoice_line_items_for_add_invoice_line_items_app,
+      unit_price: 0,
+      default11: false,
+      coef: 1,
+      unit_name: "عدد",
+      discount_percentage: 0,
+      quantity: 0,
+      save: false,
+      search_for: "",
+      buffer_items: [],
+      list_length: 6,
+    },
+    methods: {
+      more: function () {
+        add_invoice_line_app.list_length = 1000;
+        add_invoice_line_app.filter();
+      },
+      less: function () {
+        add_invoice_line_app.list_length = 6;
+        add_invoice_line_app.filter();
+      },
+      select_item: function (invoice_line_item) {
+        console.log(invoice_line_item);
+        add_invoice_line_app.invoice_line_item_id = invoice_line_item.id;
+        add_invoice_line_app.unit_name = invoice_line_item.unit_name;
+        add_invoice_line_app.unit_price = invoice_line_item.unit_price;
+      },
+      filter: function () {
+        if (add_invoice_line_app.search_for.length < 1) return;
+        let search_for = add_invoice_line_app.search_for.toUpperCase();
+        console.log(search_for);
+        add_invoice_line_app.invoice_line_items =
+          invoice_line_items_for_add_invoice_line_items_app.filter(function (
+            invoice_line_item
+          ) {
+            let title = invoice_line_item.title.toUpperCase();
+
+            if (title.indexOf(search_for) > -1) {
+              return true;
+            }
+            return false;
+          });
+        if (add_invoice_line_app.invoice_line_items.length == 0) {
+        }
+        if (add_invoice_line_app.invoice_line_items.length > 0) {
+          add_invoice_line_app.buffer_items =
+            add_invoice_line_app.invoice_line_items.slice(
+              0,
+              add_invoice_line_app.list_length
+            );
+          add_invoice_line_app.invoice_line_item_id =
+            add_invoice_line_app.invoice_line_items[0].id;
+        }
+      },
+      select_invoice_line_item: function () {
+        invoice_line_items_for_add_invoice_line_items_app.forEach(
+          (invoice_line_item) => {
+            if (
+              invoice_line_item.id == add_invoice_line_app.invoice_line_item_id
+            ) {
+              add_invoice_line_app.price = invoice_line_item.price;
+            }
+          }
+        );
+      },
+      to_price: function (vall) {
+        return to_price(vall);
+      },
+
+      add_invoice_line: function () {
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          invoice_id: invoice_id,
+          invoice_line_item_id: this.invoice_line_item_id,
+          quantity: parseInt(this.quantity),
+          unit_price: parseInt(this.unit_price),
+          unit_name: this.unit_name,
+          default: this.default11,
+          save: this.save,
+          coef: parseInt(this.coef),
+          discount_percentage: this.discount_percentage,
+        };
+
+        console.log(payload);
+        let url = "{% url 'accounting:add_invoice_line' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            if (typeof invoice_lines_app != "undefined") {
+              invoice_lines_app.invoice_lines.push(data.invoice_line);
+              invoice_lines_app.calculate_total();
+            }
+          }
+        });
+      },
+    },
+  });
+</script>

@@ -24,7 +24,10 @@
           حذف
         </a>
       <a 
-          class="text-danger mx-2" href="{% url 'accounting:invoice_print' pk=invoice.id%}"> چاپ </a>
+          class="text-info mx-2" href="{% url 'accounting:invoice_print' pk=invoice.id%}"> چاپ </a>
+
+           <a 
+          class="text-success mx-2" href="{% url 'accounting:invoice_to_excel' pk=invoice.id%}"> اکسل </a>
 
 
   </div>

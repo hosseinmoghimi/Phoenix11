@@ -1,0 +1,15 @@
+<script>
+    
+    let desks_for_desks_app=JSON.parse("{{desks_s|escapejs}}")
+    let desks_app = new Vue({
+        el: "#desks-app",
+        data: {
+            desks: desks_for_desks_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>

@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import InvoiceLineItem,Account,Product,InvoiceLine,Invoice,FinancialEvent,AccountingDocumentLine,InvoiceLineItemUnit
+from .models import Category,InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
 
-
+from .models import FinancialDocument
 
 class AccountSerializer(serializers.ModelSerializer):
        class Meta:
@@ -24,18 +24,21 @@ class FinancialEventSerializer(serializers.ModelSerializer):
         model = FinancialEvent
         fields = ['id','title','bedehkar' ,'bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
 
-
-class AccountingDocumentLineSerializer(serializers.ModelSerializer):
-       class Meta:
-        model = AccountingDocumentLine
-        fields = ['id','get_absolute_url','get_edit_url','get_delete_url']
-
+ 
+ 
 
 
 class ProductSerializer(serializers.ModelSerializer):
        class Meta:
         model = Product
         fields = ['id','title','thumbnail','unit_name','unit_price','barcode',  'get_absolute_url','get_edit_url','get_delete_url']
+        # fields = ['id','name','get_market_absolute_url','thumbnail','barcode','unit_price', 'unit_name',  'get_absolute_url','get_edit_url','get_delete_url']
+
+
+class ServiceSerializer(serializers.ModelSerializer):
+       class Meta:
+        model = Service
+        fields = ['id','title','thumbnail','unit_name','unit_price','get_absolute_url','get_edit_url','get_delete_url']
         # fields = ['id','name','get_market_absolute_url','thumbnail','barcode','unit_price', 'unit_name',  'get_absolute_url','get_edit_url','get_delete_url']
 
 class InvoiceLineItemSerializer(serializers.ModelSerializer):
@@ -67,3 +70,24 @@ class AccountBriefSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
         fields = ['id','parent_id','full_name','logo','name','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+
+class FinancialDocumentSerializer(serializers.ModelSerializer):
+       class Meta:
+        model = FinancialDocument
+        fields = ['id','title','balance','bedehkar','bestankar','get_absolute_url','get_edit_url','get_delete_url']
+
+
+
+class CategorySerializer(serializers.ModelSerializer):
+       class Meta:
+        model = Category
+        fields = ['id','title','full_title','priority', 'get_absolute_url','get_edit_url','get_delete_url']
+
+
+class FinancialDocumentLineSerializer(serializers.ModelSerializer):
+       financial_event=FinancialEventSerializer()
+       financial_document=FinancialDocumentSerializer()
+       account=AccountSerializer()
+       class Meta:
+        model = FinancialDocumentLine
+        fields = ['id','account','financial_document','title','persian_date_time','balance','bedehkar','bestankar','financial_event', 'get_absolute_url','get_edit_url','get_delete_url']

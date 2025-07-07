@@ -30,7 +30,7 @@
                         <div class="form-group">
                             <label for="">نام واحد</label>
                             <select name="" class="form-control" v-model="unit_name">
-                                {% for unit_name in unit_names %}
+                                {% for unit_name in unit_names_for_add_invoice_line_item %}
                                 <option value="{{unit_name}}">{{unit_name}}</option>
                                 {% endfor %}
 

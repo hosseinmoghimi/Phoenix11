@@ -1,0 +1,163 @@
+<div class="card" id="add-invoice-app">
+  <div class="card-header">
+    <h4>افزودن فاکتور</h4>
+  </div>
+  <div class="card-body">
+    <form @submit.prevent="add_invoice()">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="">عنوان</label>
+            <input v-model="title" type="text" class="form-control" />
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="bedehkar_code">بدهکار</label>
+                <input
+                  type="text"
+                  placeholder=""
+                  class="form-control"
+                  id="bedehkar_code"
+                  @input="select_bedehkar()"
+                  v-model="bedehkar_code"
+                />
+              </div>
+            </div>
+
+            <div class="col-6 mt-3">
+              <hr />
+              <a :href="bedehkar.get_absolute_url" v-if="bedehkar">
+                <div class="media">
+                  <img :src="bedehkar.logo" width="64" alt="" />
+                  <div class="mr-2 media-body">
+                    <h5 class="my-2">
+                      <span
+                        :class="'text-'+bedehkar.color"
+                        v-text="bedehkar.name"
+                      ></span>
+                    </h5>
+                    <h6>
+                      <span
+                        :class="'text-'+bedehkar.color"
+                        v-text="bedehkar.code"
+                      ></span>
+                    </h6>
+
+                    <h6>
+                      <span v-html="to_price_colored(bedehkar.balance)"></span>
+                    </h6>
+
+                    <h6>
+                      <small
+                        :class="'text-'+bedehkar.color"
+                        v-text="bedehkar.full_name"
+                      ></small>
+                    </h6>
+                  </div>
+                </div>
+              </a>
+              <div v-if="!bedehkar">
+                <h5 class="text-danger">بدهکار انتخاب نشده است.</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="bestankar_code">بستانکار</label>
+                <input
+                  type="text"
+                  placeholder=""
+                  class="form-control"
+                  id="bestankar_code"
+                  @input="select_bestankar()"
+                  v-model="bestankar_code"
+                />
+              </div>
+            </div>
+            <div class="col-6 mt-3">
+              <hr />
+              <a :href="bestankar.get_absolute_url" v-if="bestankar">
+                <div class="media">
+                  <img :src="bestankar.logo" width="64" alt="" />
+                  <div class="mr-2 media-body">
+                    <h5 class="my-2">
+                      <span
+                        :class="'text-'+bestankar.color"
+                        v-text="bestankar.name"
+                      ></span>
+                    </h5>
+                    <h6>
+                      <span
+                        :class="'text-'+bestankar.color"
+                        v-text="bestankar.code"
+                      ></span>
+                    </h6>
+                    <h6>
+                      <span v-html="to_price_colored(bestankar.balance)"></span>
+                    </h6>
+
+                    <h6>
+                      <small
+                        :class="'text-'+bestankar.color"
+                        v-text="bestankar.full_name"
+                      ></small>
+                    </h6>
+                  </div>
+                </div>
+              </a>
+              <div v-if="!bestankar">
+                <h5 class="text-danger">بستانکار انتخاب نشده است.</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="exampleInputDate">تاریخ</label>
+            <date-picker v-model="event_date"></date-picker>
+
+            <input
+              type="text"
+              required
+              class="form-control"
+              v-model="event_date"
+            />
+          </div>
+        </div>
+
+        
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="exampleInputDate">زمان</label>
+           
+            <input
+              type="text"
+              required
+              class="form-control"
+              v-model="event_time"
+            />
+          </div>
+        </div>
+
+        
+        <div class="col-md-4"></div>
+
+        <div class="col-md-12">
+          <button class="btn btn-success" type="submit">
+            <i class="fa fa-plus"></i>
+            افزودن
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

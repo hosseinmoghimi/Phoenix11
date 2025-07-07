@@ -5,6 +5,7 @@ from log.repo import LogRepo
 from django.db.models import Q
 from django.shortcuts import reverse
 from authentication.repo import ProfileRepo
+from accounting.repo import InvoiceLineItemUnitRepo
 from utility.num import filter_number
 from utility.calendar import PersianCalendar
 from utility.constants import FAILED,SUCCEED
@@ -149,7 +150,6 @@ class FoodItemRepo():
                     ili_unit.invoice_line_item_id=food_item.id
                     ili_unit.default=True
                     ili_unit.save()
-                    leolog(ili_unit=ili_unit)
 
         return result,message,food_item
 
@@ -191,7 +191,6 @@ class MealRepo():
         if not self.request.user.has_perm(APP_NAME+".add_meal"):
             message="دسترسی غیر مجاز"
             return result,message,meal
-        leolog(kwargs=kwargs)
         meal=Meal()
         if 'name' in kwargs:
             meal.name=kwargs["name"]
@@ -215,11 +214,7 @@ class MealRepo():
 
         if 'title' in kwargs:
             meal.title=kwargs["title"]
-
-             
-
-        if 'nature' in kwargs:
-            meal.nature=kwargs["nature"]
+        
         (result,message,meal)=meal.save()
         return result,message,meal
 
@@ -286,7 +281,22 @@ class MealItemRepo():
             meal_item.unit_name=kwargs["unit_name"]
         
         
-        
+        if 'save' in kwargs:
+            save=kwargs["save"]
+            if save:
+                if 'coef' in kwargs:
+                    coef=kwargs["coef"]
+                    unit_name=kwargs["unit_name"]
+                    unit_price=kwargs["unit_price"]
+                if 'default' in kwargs:
+                    default11=kwargs["default"]
+                InvoiceLineItemUnitRepo(request=self.request).add_invoice_line_item_unit(
+                    invoice_line_item_id=invoice_line_item_id,
+                    coef=coef,
+                    default=default11,
+                    unit_name=unit_name,
+                    unit_price=unit_price,
+                    )
 
         result=SUCCEED
         message="آیتم وعده با موفقیت اضافه شد."     

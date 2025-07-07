@@ -1,0 +1,27 @@
+
+{% extends "organization/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="row rtl farsi">
+    {% if add_organization_form %}
+      <div class="col-md-12">
+          {% include "organization/includes/add-organization-app/template.html" %}
+
+      </div>
+    {% endif %}
+    <div class="col-md-12">
+
+        
+        {% include "organization/includes/organizations-app/template.html" %}
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "organization/includes/organizations-app/script.html" %}
+{% if add_organization_form %}
+{% include "organization/includes/add-organization-app/script.html" %}
+{% endif %}
+{% endblock script %}

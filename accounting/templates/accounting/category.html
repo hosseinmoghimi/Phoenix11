@@ -1,0 +1,43 @@
+{% extends "accounting/layout.html" %}
+{% block content %}
+
+
+
+
+{% if category.parent %}
+<div class="text-center rtl">
+  {{category.parent.get_breadcrumb_link|safe}}
+</div>
+{% endif %}
+
+<h4 class="text-center rtl">
+    {{category.title}}
+    {% if perms.accounting.change_category %}
+      <a target="_blank" href="{{category.get_edit_url}}" title="ویرایش">
+        <i class="fa fa-edit text-warning"></i>
+      </a>
+    {% endif %}
+</h4>
+ 
+ 
+
+<div class="col-md-12">
+  {% include "accounting/includes/categories-app/template.html" %}
+</div>
+
+<div class="col-md-12">
+  {% include "accounting/includes/products-app/template.html" %}
+</div>
+
+
+{% endblock content %}
+
+
+
+
+{% block script %}
+{% include "accounting/includes/categories-app/script.html" %}
+
+
+{% include "accounting/includes/products-app/script.html" %}
+{% endblock script %}

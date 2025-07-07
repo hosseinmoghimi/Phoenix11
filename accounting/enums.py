@@ -13,7 +13,7 @@ class RequestStatusEnum(TextChoices):
     DELIVERED="تحویل شده",_("تحویل شده")
 
 
-class AccountingDocumentStatusEnum(TextChoices):
+class FinancialDocumentStatusEnum(TextChoices):
     DRAFT='پیش نویس',_('پیش نویس')
     DENIED='رد شده',_('رد شده')
     ACCEPTED='تایید شده',_('تایید شده')

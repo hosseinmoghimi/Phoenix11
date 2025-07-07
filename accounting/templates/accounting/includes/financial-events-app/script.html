@@ -1,0 +1,21 @@
+<script>
+    let financial_events_app_financial_events = JSON.parse(`{{financial_events_s|escapejs}}`)
+    let financial_events_app = new Vue({
+        el:"#financial-events-app",
+        data: {
+            financial_events: financial_events_app_financial_events,
+            search_for:'',
+            waiting:false,
+
+        },
+        methods: {
+            filter:function(){
+                this.financial_events = financial_events_app_financial_events.filter(financial_event=> financial_event.title.indexOf(this.search_for) > -1 )
+            },
+            to_price: function (vall) {
+                 return  to_price(vall,"")
+            },
+          
+        }
+    })
+</script>

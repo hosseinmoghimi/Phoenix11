@@ -1,0 +1,41 @@
+{% extends "accounting/layout.html" %}
+{% load static %} 
+
+{% block content %}
+<div class="row rtl" id="selection-app">
+    
+    {% if accounts %}
+    <div class="col-md-12">
+        {% include "accounting/includes/accounts-app/template.html" %}
+    </div>
+    {% endif %}
+
+    
+    {% if pages %}
+    <div class="col-md-12">
+        {% include "core/includes/pages-app/template.html" %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+ 
+    {% if accounts %}
+      {% include "accounting/includes/accounts-app/script.html" %}
+      
+    {% endif %}
+    
+    
+    {% if pages %}
+        {% include "core/includes/pages-app/script.html" %}
+    {% endif %}
+
+    <script>
+        let log='{{log}}'
+        let result='{{result}}'
+        let message='{{message}}'
+    </script>
+{% endblock script %}

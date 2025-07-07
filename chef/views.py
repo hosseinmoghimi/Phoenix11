@@ -25,6 +25,10 @@ def getContext(request,*args, **kwargs):
     return context
 
 
+def FoodItemContext(request,food_item,*args, **kwargs):
+    context=ProductContext(request=request,product=food_item)
+    return context
+ 
  
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -43,9 +47,10 @@ class IndexView(View):
 class FoodsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
         foods=FoodRepo(request=request).list(*args, **kwargs)
         context["foods"]=foods
+        foods_s=json.dumps(FoodSerializer(foods,many=True).data)
+        context["foods_s"]=foods_s
 
         return render(request,TEMPLATE_ROOT+"foods.html",context)
 # Create your views here. 
@@ -65,10 +70,6 @@ class MealsView(View):
 # Create your views here. 
 
 
-def FoodItemContext(request,food_item,*args, **kwargs):
-    context=ProductContext(request=request,product=food_item)
-    return context
- 
 class FoodItemView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -94,7 +95,7 @@ class FoodItemsView(View):
         context["food_items_s"]=food_items_s
         if request.user.has_perm(APP_NAME+".add_fooditem"):
             context['add_food_item_form']=AddFoodItemForm()
-            unit_names=(a[0] for a in UnitNameEnum.ch)
+            unit_names=(a[0] for a in UnitNameEnum.choices)
             context['unit_names_for_add_food_item_app']=unit_names
         return render(request,TEMPLATE_ROOT+"food-items.html",context)
 # Create your views here. 
