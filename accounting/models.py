@@ -573,9 +573,15 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     
     def save(self):
         invoice_line_item_units=InvoiceLineItemUnit.objects.filter(invoice_line_item_id=self.invoice_line_item.id)
-        invoice_line_item_units1=invoice_line_item_units.filter(unit_name=self.unit_name)
-
-        invoice_line_item_units1.delete()
+        invoice_line_item_units_with_this_unit=invoice_line_item_units.filter(unit_name=self.unit_name)
+        for invoice_line_item_unit in invoice_line_item_units_with_this_unit:
+            if invoice_line_item_unit.unit_price==0:
+                invoice_line_item_unit.delete()
+            else:
+                if self.default is True:
+                    invoice_line_item_unit.default=False
+                    super(InvoiceLineItemUnit,invoice_line_item_unit).save()
+        # invoice_line_item_units_with_this_unit.delete()
         # self.id=0
         Now=timezone.now()
         self.date_added=Now

@@ -81,8 +81,8 @@ class InvoiceLineItemUnitRepo:
         result=SUCCEED
         message="قیمت جدید با موفقیت اضافه گردید."
          
- 
-        return result,message,invoice_line_item_unit
+        invoice_line_item_units=InvoiceLineItemUnit.objects.filter(invoice_line_item_id=invoice_line_item_unit.invoice_line_item.id)
+        return result,message,invoice_line_item_units
 
 
 class InvoiceLineRepo:

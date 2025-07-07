@@ -158,9 +158,9 @@ class AddInvoiceLineItemUnitApi(APIView):
             if add_invoice_line_item_unit_form.is_valid():
                 log=333
                 cd=add_invoice_line_item_unit_form.cleaned_data 
-                result,message,invoice_line_item_unit=InvoiceLineItemUnitRepo(request=request).add_invoice_line_item_unit(**cd)
-                if invoice_line_item_unit is not None:
-                    context['invoice_line_item_unit']=InvoiceLineItemUnitSerializer(invoice_line_item_unit).data
+                result,message,invoice_line_item_units=InvoiceLineItemUnitRepo(request=request).add_invoice_line_item_unit(**cd)
+                if invoice_line_item_units is not None:
+                    context['invoice_line_item_units']=InvoiceLineItemUnitSerializer(invoice_line_item_units,many=True).data
         context['message']=message
         context['result']=result
         context['log']=log
