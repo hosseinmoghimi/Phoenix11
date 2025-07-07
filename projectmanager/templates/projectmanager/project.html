@@ -19,6 +19,23 @@
       </div>
     </div>
   </div>
+
+  {% if add_invoice_form %}
+    <div class="col-md-6">
+        {% include "accounting/includes/add-invoice-app/template.html" %}
+    </div>
+    {% endif %}
+   
+    <div class="col-md-12 ">
+        {% include "accounting/includes/invoices-app/template.html" %}
+    </div>
 </div>
 
-{% endblock content %} {% block script %} {% include "core/includes/page-app/script.html" %} {% endblock script %}
+{% endblock content %} {% block script %}
+{% if add_invoice_form %}
+        {% include "accounting/includes/add-invoice-app/script.html" %}
+    {% endif %}
+   
+        {% include "accounting/includes/invoices-app/script.html" %}
+ {% include "core/includes/page-app/script.html" %}
+  {% endblock script %}

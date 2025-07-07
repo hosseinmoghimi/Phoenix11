@@ -11,7 +11,7 @@ from utility.calendar import PersianCalendar
 import json
 from utility.enums import UnitNameEnum
 from utility.log import leolog
-from accounting.views import ProductContext,PageContext
+from accounting.views import ProductContext,PageContext,AddInvoiceContext,InvoiceSerializer
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='projectmanager/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -51,6 +51,17 @@ class ProjectView(View):
             return mv.get(request=request)
         
         context.update(ProjectContext(request=request,project=project))
+
+
+
+        
+        invoices=project.invoices.all()
+        invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
+        context['invoices']=invoices
+        context['invoices_s']=invoices_s
+        context['WIDE_LAYOUT']=True
+        if request.user.has_perm(APP_NAME+".add_invoice"):
+            context.update(AddInvoiceContext(request=request))
 
         return render(request,TEMPLATE_ROOT+"project.html",context)
 # Create your views here. 
