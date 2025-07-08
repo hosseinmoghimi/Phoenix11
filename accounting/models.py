@@ -307,6 +307,9 @@ class FinancialDocumentLine(models.Model,LinkHelper):
     bestankar=models.IntegerField(_("بستانکار"),default=0)
     balance=models.IntegerField(_("بالانس"),default=0)
     @property
+    def amount(self):
+        return self.bestankar+self.bedehkar
+    @property
     def persian_date_time(self):
         a= PersianCalendar().from_gregorian(self.date_time)    
         return f"""

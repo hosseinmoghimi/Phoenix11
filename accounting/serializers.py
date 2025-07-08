@@ -90,4 +90,4 @@ class FinancialDocumentLineSerializer(serializers.ModelSerializer):
        account=AccountSerializer()
        class Meta:
         model = FinancialDocumentLine
-        fields = ['id','account','financial_document','title','persian_date_time','balance','bedehkar','bestankar','financial_event', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','account','financial_document','amount','title','persian_date_time','balance','bedehkar','bestankar','financial_event', 'get_absolute_url','get_edit_url','get_delete_url']
