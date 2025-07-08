@@ -4,7 +4,7 @@ from accounting.serializers import FinancialEventSerializer,InvoiceLineSerialize
 class FoodItemSerializer(serializers.ModelSerializer):
        class Meta:
         model = FoodItem
-        fields = ['id','title','thumbnail','unit_price','unit_name','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','barcode','thumbnail','unit_price','unit_name','get_absolute_url','get_edit_url','get_delete_url']
  
 class FoodSerializer(serializers.ModelSerializer):
        items=FoodItemSerializer(many=True)

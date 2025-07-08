@@ -90,6 +90,9 @@
                 posting.done(data => {
                     console.log(data)
                     if (data.result === "SUCCEED") {
+                        if(typeof financial_events_app !="undefined"){
+                            financial_events_app.financial_events.push(data.financial_event)
+                        }
                         // add_financial_event_app.message = {
                         //     show: true,
                         //     header: "موفقیت آمیز",

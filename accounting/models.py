@@ -330,14 +330,27 @@ class FinancialDocumentLine(models.Model,LinkHelper):
         #     return result,message,financial_document
 
         if not self.bedehkar==0 and not self.bestankar==0:
-            return
+            message='مبلغ بدهکار و بستانکار صفر وارد شده است.'
+            return result,message,None
         if self.account.nature==AccountNatureEnum.ONLY_BEDEHKAR and self.bestankar>0:
-            return
+            message='ماهیت حساب فقط بدهکار است.'
+            return result,message,None
         if self.account.nature==AccountNatureEnum.ONLY_BESTANKAR and self.bedehkar>0:
-            return
+            message='ماهیت حساب فقط بستانکار است.'
+            return result,message,None
+        
+        if self.financial_event_id ==0:
+            message='رویداد مالی انتخاب نشده است.'
+            return result,message,None
+        if self.financial_document_id is None or self.financial_document_id==0:
+            message='سند مالی انتخاب نشده است.'
+            return result,message,None
         super(FinancialDocumentLine,self).save()
         self.financial_document.normalize()
         self.account.normalize_total()
+        result=SUCCEED
+        message='سطر سند مالی با موفقیت اضافه شد.'
+        return result,message,financial_document_line
     @property
     def rest(self):
         return 0

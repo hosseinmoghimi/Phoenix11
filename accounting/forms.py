@@ -52,7 +52,6 @@ class SetParentCodeForm(forms.Form):
 class AddInvoiceLineItemForm(forms.Form):
     priority=forms.IntegerField( required=False)
     title=forms.CharField( max_length=100, required=True)
-    code=forms.CharField( max_length=100, required=False) 
     barcode=forms.CharField( max_length=100, required=False) 
     unit_price=forms.IntegerField( required=False)
     unit_name=forms.CharField( max_length=100, required=False) 

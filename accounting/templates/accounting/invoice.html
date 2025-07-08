@@ -1,14 +1,14 @@
 {% extends "accounting/layout.html" %}
 {% block content %}
 <div class="row rtl farsi">
+    <div class="col-md-12">
+        {% include "accounting/includes/invoice-app/card.html" %}
+    </div>
     {% if add_invoice_line_form %}
     <div class="col-md-12 ">
         {% include "accounting/includes/add-invoice-line-app/template.html" %}
     </div>
     {% endif %}
-    <div class="col-md-12">
-        {% include "accounting/includes/invoice-app/card.html" %}
-    </div>
     <div class="col-md-12 ">
         {% include "accounting/includes/invoice-lines-app/template.html" %}
     </div>

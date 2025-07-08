@@ -790,7 +790,11 @@ class ProductRepo():
                 old_product.save()
                 modified+=1
             else:
-                result,message,new_product=self.add_product(title=product["title"],barcode=product["barcode"],unit_name=product["unit_name"],unit_price=product["unit_price"] ,coef=1)
+                try:
+                    result,message,new_product=self.add_product(title=product["title"],barcode=product["barcode"],unit_name=product["unit_name"],unit_price=product["unit_price"] ,coef=1)
+                    products.append(new_product)
+                except:
+                    pass
                 # new_product.title=product["title"]
                 # new_product.barcode=product["barcode"]
                 # new_product.unit_name=product["unit_name"]
@@ -1599,7 +1603,9 @@ class FinancialDocumentLineRepo:
             return result,message,financial_document_line
 
 
-        financial_document_line.save()
+        result,message,financial_document_line=financial_document_line.save()
+        if result==FAILED:
+            return result,message,financial_document_line
         financial_document_line.account.normalize_total()
         result=SUCCEED
         message="با موفقیت اضافه گردید."
