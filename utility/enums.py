@@ -96,6 +96,7 @@ def BS_ColorCode(bs_color):
 class GenderEnum(TextChoices):
     MALE="مرد" , _("مرد")
     FEMALE="زن" , _("زن")
+    OTHERS="دیگر" , _("دیگر")
 
     
 class PersonPrefixEnum(TextChoices):

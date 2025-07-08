@@ -1,49 +1,14 @@
 {% extends "authentication/layout.html" %}
-
-
+{% load static %}
 {% block content %}
-<div class="row">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h4>
-                    aaaaaaaaaaa
-                </h4>
-            </div>
-            <div class="card-body">
-                <h5>
-                    سلام
-                </h5>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h4>
-                    سلام
-                </h4>
-            </div>
-            <div class="card-body">
-                <h5>
-                    سلام
-                </h5>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h4>
-                    سلام
-                </h4>
-            </div>
-            <div class="card-body">
-                <h5>
-                    سلام
-                </h5>
-            </div>
-        </div>
+<div class="row rtl">
+       <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'authentication:persons'  %}">
+            <img src="{% static 'accounting/img/invoice.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                اشخاص
+            </h6>
+        </a>
     </div>
 </div>
 {% endblock content %}

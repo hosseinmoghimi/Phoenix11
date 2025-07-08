@@ -3,13 +3,14 @@ from utility.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
-from .repo import CategoryRepo,PersonRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
+from .repo import CategoryRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
 from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo
 from utility.log import leolog
 from .serializers import  ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
+
  
 class AddProductToCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -363,9 +364,8 @@ class DeleteALLAccountsApi(APIView):
         log=111
         context['result']=FAILED
         if request.method=='POST':
-            (result3,message3)=AccountingDocumentLineRepo(request=request).delete_all() 
+            (result3,message3)=FinancialDocumentLineRepo(request=request).delete_all() 
             (result3,message3)=FinancialEventRepo(request=request).delete_all() 
-            (result3,message3)=PersonRepo(request=request).delete_all() 
             (result3,message3)=PersonAccountRepo(request=request).delete_all() 
             (result,message)=AccountRepo(request=request).delete_all_accounts() 
             (result2,message2)=PersonCategoryRepo(request=request).delete_all() 

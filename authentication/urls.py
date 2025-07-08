@@ -12,6 +12,11 @@ urlpatterns = [
     path('change-password/',login_required(views.ChangePasswordView.as_view()),name="change_password"),
     path('register/',login_required(views.IndexView.as_view()),name="register"),
     path('logout/',login_required(views.IndexView.as_view()),name="logout"),
+
+    
+    path('persons/',login_required(views.PersonsView.as_view()),name="persons"),
+    path('person/<int:pk>/',login_required(views.PersonView.as_view()),name="person"),
+    path('add-person/',login_required(apis.AddPersonApi.as_view()),name='add_person'),
     
 
 

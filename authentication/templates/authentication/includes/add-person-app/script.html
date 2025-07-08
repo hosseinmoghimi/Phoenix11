@@ -1,0 +1,94 @@
+{% include "accounting/includes/account-app/select-script.html" %}
+<script>
+  let add_person_app = new Vue({
+    el: "#add-person-app",
+    data: {
+    name: "", 
+    prefix:'',
+    first_name:'',
+    last_name:'',
+    mobile:'',
+    address:'',
+    bio:'',
+    melli_code:'',
+    type:'',
+    type2:'',
+    email:'',
+    gender:'',
+    profile:{id:0},
+    message:{show:false},
+    waiting:false,
+    },
+
+    components: {
+      DatePicker: VuePersianDatetimePicker,
+    },
+    methods: {
+      to_price_colored: function (vall) {
+        let colorr = "primary";
+        if (vall > 0) {
+          colorr = "success";
+        }
+
+        if (vall < 0) {
+          colorr = "danger";
+        }
+
+        return `<span class="text-${colorr}">${to_price(
+          vall
+        )} {{CURRENCY}}</span>`;
+      },
+
+      to_price: function (vall) {
+        return to_price(vall) + " {{CURRENCY}}";
+      },
+      select_profile: function () {
+          console.log(add_person_app.account);
+          select_account_by_code(add_person_app.account_code).done((data) => {
+              add_person_app.account = data.account;
+              if (data.result === "SUCCEED") {
+                  add_person_app.account = data.account;
+              } else {
+                  add_person_app.account = {}
+              }
+        });
+      },
+      add_person: function () {
+        add_person_app.waiting=true
+        add_person_app.message.show=false
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          first_name: this.first_name,
+          last_name: this.last_name,
+          mobile: this.mobile,
+          prefix: this.prefix,
+          address: this.address,
+          type: this.type,
+          type2: this.type2,
+          gender: this.gender,
+          email: this.email,
+          melli_code: this.melli_code,
+          bio: this.bio,
+          profile_id: this.profile.id,
+        };
+
+        console.log(payload);
+        let url = "{% url 'authentication:add_person' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          add_person_app.waiting=false
+
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            if (typeof persons_app != "undefined") {
+              persons_app.persons.push(data.person);
+              show_message(add_person_app,"موفق",data.message,'success',10000)
+            }
+          }else{
+            show_message(add_person_app,"خطا",data.message,'danger',10000)
+          }
+        });
+      },
+    },
+  });
+</script>

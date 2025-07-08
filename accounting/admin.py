@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Category,FinancialYear,FinancialDocumentLine,FinancialDocument,PersonAccount
 from .models import PersonAccountCategory,Account,FinancialEvent,InvoiceLineItemUnit,InvoiceLineItem 
-from .models import Service,Product,Invoice,InvoiceLine,Person,Bank,BankAccount,PersonCategory
+from .models import Service,Product,Invoice,InvoiceLine,Bank,BankAccount,PersonCategory
 
 
 admin.site.register(Category)
@@ -16,7 +16,6 @@ admin.site.register(Invoice)
 admin.site.register(InvoiceLine)
 admin.site.register(InvoiceLineItem)
 admin.site.register(InvoiceLineItemUnit)
-admin.site.register(Person)
 admin.site.register(PersonAccount)
 admin.site.register(PersonAccountCategory)
 admin.site.register(PersonCategory)
