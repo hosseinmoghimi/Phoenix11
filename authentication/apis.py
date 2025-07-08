@@ -45,9 +45,11 @@ class SelectPersonApi(APIView):
         if select_person_form.is_valid():
             log=333
             cd=select_person_form.cleaned_data
-            result,message,person=PersonRepo(request=request).person(**cd)
+            person=PersonRepo(request=request).person(**cd)
             if person is not None:
                 context['person']=PersonSerializer(person).data
+                result=SUCCEED
+                message='موفق'
         context['message']=message
         context['result']=result
         context['log']=log

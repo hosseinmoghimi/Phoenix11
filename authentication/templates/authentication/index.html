@@ -10,10 +10,33 @@
             </h6>
         </a>
     </div>
+
+     <div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+        <h5>انتخاب شخص</h5>
+      </div>
+      <div class="card-body">
+        {% include "authentication/includes/person-app/select-template.html" %}
+      </div>
+    </div>
+  </div>
+   <div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+        <h5>انتخاب پروفایل</h5>
+      </div>
+      <div class="card-body">
+        {% include "authentication/includes/profile-app/select-template.html" %}
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock content %}
 
 
 {% block script %}
+        {% include "authentication/includes/person-app/select-script.html" %}
+        {% include "authentication/includes/profile-app/select-script.html" %}
 
 {% endblock script %}
