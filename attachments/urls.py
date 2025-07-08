@@ -15,5 +15,9 @@ urlpatterns = [
     path('add-download/',apis.AddDownloadApi.as_view(),name="add_download"),
     path('download/<int:pk>/',views.DownloadView.as_view(),name="download"),
     path('downloads/',views.DownloadsView.as_view(),name="downloads"),
+    path('add-image/',apis.AddImageApi.as_view(),name="add_image"),
+    path('image/<int:pk>/',views.ImageView.as_view(),name="image"),
+    path('image/download/<int:pk>/',views.ImageDownloadView.as_view(),name="image_download"),
+    path('images/',views.ImagesView.as_view(),name="images"),
 
 ]

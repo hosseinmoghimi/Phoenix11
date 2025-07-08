@@ -11,7 +11,7 @@ from django.shortcuts import reverse
 from django.core.files.storage import FileSystemStorage
 from utility.constants import FAILED,SUCCEED
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_URL,MEDIA_URL,ADMIN_URL,FULL_SITE_URL
-IMAGE_FOLDER = "images/"
+IMAGE_FOLDER = "attachments/images/"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
  
 class Comment(models.Model,DateTimeHelper):
@@ -241,5 +241,117 @@ class Link(Icon,LinkHelper):
             content=self.url
             generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
         return f"{QRCODE_URL}{file_name}"
- 
- 
+  
+
+
+class Image(models.Model,LinkHelper,DateTimeHelper):
+    page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
+    app_name=APP_NAME
+    class_name='image'
+
+    title = models.CharField(_("title"), max_length=50)
+    description = HTMLField(_("توضیحات"), null=True,
+                            blank=True, max_length=50000)
+    priority = models.IntegerField(_("priority"), default=1000)
+
+    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',
+                                         null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    image_main_origin = models.ImageField(_("تصویر اصلی"), null=True, blank=True, upload_to=IMAGE_FOLDER +
+                                          'ImageBase/Main/', height_field=None, width_field=None, max_length=None)
+    image_header_origin = models.ImageField(_("تصویر سربرگ"), null=True, blank=True, upload_to=IMAGE_FOLDER +
+                                            'ImageBase/Header/', height_field=None, width_field=None, max_length=None)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    creator=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.CASCADE)
+    def __str__(self):
+        return f'{self.page} {self.title}'
+    class Meta:
+        verbose_name = _("Image")
+        verbose_name_plural = _("تصاویر")
+    def get_download_url(self): 
+        if self.image_main_origin:
+            return reverse(APP_NAME+':image_download', kwargs={'pk': self.pk})
+        else:
+            return ''
+
+    def download_response(self):
+        #STATIC_ROOT2 = os.path.join(BASE_DIR, STATIC_ROOT)
+        file_path = str(self.image_main_origin.path)
+        # return JsonResponse({'download:':str(file_path)})
+        import os
+        from django.http import HttpResponse
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as fh:
+                response = HttpResponse(
+                    fh.read(), content_type="application/force-download")
+                response['Content-Disposition'] = 'inline; filename=' + \
+                    os.path.basename(file_path)
+                return response
+        from log.repo import LogRepo
+        LogRepo().add_log(title="Http404 core models", app_name=APP_NAME)
+        raise Http404
+
+
+
+    @property
+    def image(self):
+        if self.image_main_origin:
+            return MEDIA_URL+str(self.image_main_origin)
+
+    @property
+    def thumbnail(self):
+        return self.get_or_create_thumbnail()
+         
+
+    def get_or_create_thumbnail(self, *args, **kwargs):
+        if self.thumbnail_origin:
+            return MEDIA_URL+str(self.thumbnail_origin)
+        try:
+            if self.image_main_origin is None:
+                return f'{STATIC_URL}{self.app_name}/img/pages/thumbnail/{self.class_name}.png'
+        except:
+            return f'{STATIC_URL}{self.app_name}/img/pages/thumbnail/{self.class_name}.png'
+        # Opening the uploaded image
+
+        from PIL import Image as PilImage
+        from io import BytesIO
+        import sys
+        from django.core.files.uploadedfile import InMemoryUploadedFile
+        try:
+            image = PilImage.open(self.image_main_origin)
+        except:
+            return None
+        width11, height11 = image.size
+        ratio11 = float(height11)/float(width11)
+     
+
+        output = BytesIO()
+        from utility.repo import ParameterRepo,Parameter
+        THUMBNAIL_DIMENSION=150
+        parameter=Parameter.objects.filter(app_name=APP_NAME).filter(name=ParameterNameEnum.THUMBNAIL_DIMENSION).first()
+        if parameter is not None:
+
+            THUMBNAIL_DIMENSION =parameter.value
+         
+        # try:
+        #     a = THUMBNAIL_DIMENSION+100
+        # except:
+        #     THUMBNAIL_DIMENSION = 250
+        # Resize/modify the image
+        image = image.resize((THUMBNAIL_DIMENSION, int(ratio11*float(THUMBNAIL_DIMENSION))), PilImage.Resampling.LANCZOS)
+        try:
+        # after modifications, save it to the output
+            image.save(output, format='JPEG', quality=95)
+   
+            output.seek(0)
+
+            # change the imagefield value to be the newley modifed image value
+            image_name = f"{self.image_main_origin.name.split('.')[0]}.jpg"
+            image_path = IMAGE_FOLDER+'ImageBase/Thumbnail'
+            self.thumbnail_origin = InMemoryUploadedFile(output, 'ImageField', image_name, image_path, sys.getsizeof(output), None)
+        
+            self.save()
+            # return MEDIA_URL+str(self.image_main_origin)
+            return MEDIA_URL+str(self.thumbnail_origin)
+        except:
+            return self.image
+

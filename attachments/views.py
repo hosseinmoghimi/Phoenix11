@@ -6,6 +6,7 @@ from django.views import View
 from .forms import *
 from .serializer import CommentSerializer,LinkSerializer,DownloadSerializer
 from .apps import APP_NAME
+from django.http import Http404
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from utility.log import leolog
@@ -68,6 +69,18 @@ def PageDownloadsContext(request,page,profile,*args, **kwargs):
     context['downloads_s']=downloads_s  
     if profile is not None:
         context['add_download_form']=AddDownloadForm()
+    return context
+
+
+def PageImagesContext(request,page,profile,*args, **kwargs):
+    context={}
+    image_repo = ImageRepo(request=request) 
+    images=image_repo.list(page_id=page.id)
+    images_s=json.dumps(ImageSerializer(images,many=True).data)
+    context['images']=images  
+    context['images_s']=images_s  
+    if profile is not None:
+        context['add_image_form']=AddImageForm()
     return context
 
 class DownloadView(View):
@@ -160,4 +173,37 @@ class CommentsView(View):
         
       
 
+from .repo import ImageRepo
+from .serializer import ImageSerializer
        
+class ImagesView(View):
+    def get(self, request, *args, **kwargs): 
+        context=getContext(request=request)
+        images=ImageRepo(request=request).list(*args, **kwargs)
+        context['images']=images
+        images_s=json.dumps(ImageSerializer(images,many=True).data)
+        context['images_s']=images_s
+        return render(request,TEMPLATE_ROOT+'images.html',context)
+        
+      
+  
+class ImageView(View):
+    def get(self, request, *args, **kwargs):
+        me = ProfileRepo(request=request).me
+        image = ImageRepo(request=request).image(*args, **kwargs)
+        if image is None:
+            raise Http404
+        context=getContext(request=request)
+        context['image']=image
+        context[NO_FOOTER]=True
+        context[NO_NAVBAR]=True
+        context[WIDE_LAYOUT]=True 
+        return render(request,TEMPLATE_ROOT+"image.html",context)
+         
+       
+class ImageDownloadView(View):
+    def get(self, request, *args, **kwargs): 
+        image = ImageRepo(request=request).image(*args, **kwargs)
+        if image is None:
+            raise Http404
+        return image.download_response()

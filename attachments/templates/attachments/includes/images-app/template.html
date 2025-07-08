@@ -1,7 +1,7 @@
 {% load static %}
-<div id="accordion-page-images">
+<div id="accordion-images">
 
-    <div class="card" id="page-images-app">
+    <div class="card" id="images-app">
         <div class="card-header" id="headingpageimages">
             <h6 class="card-title text-center">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapsesepageimages"
@@ -17,7 +17,7 @@
         </div>
 
         <div id="collapsesepageimages" class="collapse"
-            aria-labelledby="headingpageimages" data-parent="#accordion-page-images">
+            aria-labelledby="headingpageimages" data-parent="#accordion-images">
             <div class="card-body">
                 <div class="row rtl">
                 
@@ -65,20 +65,20 @@
 
 
                 </div>
-                {% if add_page_image_form %}
+                {% if add_image_form %}
                 <p class="text-right">
 
-                    <button @click="show_add_page_image_form=true" v-if="!show_add_page_image_form"
+                    <button @click="show_add_image_form=true" v-if="!show_add_image_form"
                         class="btn btn-success mt-4">
                         افزودن تصویر
                     </button>
                 </p>
 
-                <form id="add-page-image-form" v-if="show_add_page_image_form" @submit.prevent="add_page_image()"
+                <form id="add-image-form" v-if="show_add_image_form" @submit.prevent="add_image()"
                     enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-9 text-right">
-                            <input required type="text" v-model="add_page_image_form_title" class="farsi form-control"
+                            <input required type="text" v-model="add_image_form_title" class="farsi form-control"
                                 placeholder="عنوان تصویر جدید">
 
 
@@ -96,7 +96,7 @@
 
                             <button class="farsi btn btn-primary btn-block" type="submit">تایید</button>
                         
-                             <button @click="show_add_page_image_form=false" class="farsi btn btn-secondary btn-block"
+                             <button @click="show_add_image_form=false" class="farsi btn btn-secondary btn-block"
                                 type="reset">انصراف</button>
 
 

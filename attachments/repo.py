@@ -1,6 +1,55 @@
 from core.repo import PageRepo,ProfileRepo,FAILED,SUCCEED
-from .models import Like,Comment,Link,Download
+from .models import Like,Comment,Link,Download,Image
 from .apps import APP_NAME
+
+
+class ImageRepo():
+
+    def __init__(self,request,*args, **kwargs):
+        self.objects=Image.objects
+        self.request=request
+    def list(self,*args, **kwargs):
+        objects=Image.objects
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        return objects.all()
+    def image(self,*args, **kwargs):
+        if 'pk' in kwargs and kwargs['pk'] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs and kwargs['id'] is not None:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'image_id' in kwargs and kwargs['image_id'] is not None:
+            return self.objects.filter(pk=kwargs['image_id']).first()
+    def add_image(self,*args, **kwargs):
+        result,message,image=FAILED,"",None
+        profile_me=ProfileRepo(request=self.request).me
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if profile_me is None:
+            return None
+        if page is None:
+            return None
+        if 'image' in kwargs:
+            image_text=kwargs['image']
+        if image_text is None:
+            return result,message,image
+        image=Image(creator_id=profile_me.id,page_id=page.id,image_main_origin=image_text)
+        image.save()
+        result=SUCCEED
+        message='کامنت با موفقیت اضافه شد.'
+        return result,message,image
+    
+    def delete_image(self,*args, **kwargs):
+        profile_me=ProfileRepo(request=self.request).me
+        if 'image_id' in kwargs:
+            image_id=kwargs['image_id']
+        # images=Image.objects.filter(profile_id=profile_me.id).filter(pk=image_id)
+        images=Image.objects.filter(pk=image_id)
+        images.delete()
+        from utility.log import leolog
+        result=SUCCEED
+        message="کامنت با موفقیت حذف گردید."
+        return result,message
+     
 
 class CommentRepo():
 
@@ -13,7 +62,7 @@ class CommentRepo():
             objects=objects.filter(page_id=kwargs['page_id'])
         return objects.all()
 
-    def add_page_comment(self,*args, **kwargs):
+    def add_comment(self,*args, **kwargs):
         result,message,comment=FAILED,"",None
         profile_me=ProfileRepo(request=self.request).me
         page=PageRepo(request=self.request).page(*args, **kwargs)

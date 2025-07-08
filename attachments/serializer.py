@@ -1,4 +1,4 @@
-from .models import Like,Comment,Link,Download
+from .models import Like,Comment,Link,Download,Image
 from core.serializer import ProfileSerializer,serializers,PageSerializer
 
 
@@ -24,6 +24,15 @@ class LinkSerializer(serializers.ModelSerializer):
     class Meta:
         model=Link
         fields=['id','page', 'url','priority','title','get_edit_url','get_delete_url']
+ 
+
+ 
+class ImageSerializer(serializers.ModelSerializer):
+    page=PageSerializer()
+    # profile=ProfileSerializer()
+    class Meta:
+        model=Image
+        fields=['id','page', 'thumbnail','get_absolute_url','image','persian_date_added','priority','title','get_edit_url','get_delete_url']
  
 
 class DownloadSerializer(serializers.ModelSerializer):
