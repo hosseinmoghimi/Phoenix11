@@ -10,29 +10,25 @@ class PersonRepo():
         self.objects=Person.objects
 
         
-        self.objects=None
-        if request.user.has_perm(APP_NAME+".view_person"):
-            self.objects=Person.objects
-        elif request.user.is_authenticated:
-            self.objects=Person.objects.filter(profile__user_id=request.user.id)
-                 
-        else:
-            self.objects=Person.objects.filter(pk=0)
+       
 
         # if profile is not None:
         #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
-        pure_code="876454453342236"
-        try:
-            pure_code=int(kwargs["search_for"]) 
-        except:
-            pass
+        from django.db.models import Q
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
-            objects=objects.filter(Q(full_name__contains=search_for) | Q(melli_code__contains=search_for) | Q(code=search_for))
+            objects=objects.filter(Q(first_name__contains=search_for) |Q(last_name__contains=search_for) | Q(melli_code__contains=search_for) )
         return objects.all()
-     
+    def change_image(self,person_id,image):
+        person=self.person(person_id=person_id)
+        if person is not None:
+            person.image_origin = image
+            person.save()
+            return SUCCEED
+        return FAILED
+    
     def person(self,*args, **kwargs):
         if "person_id" in kwargs and kwargs["person_id"] is not None:
             return self.objects.filter(pk=kwargs['person_id']).first()
@@ -77,11 +73,11 @@ class PersonRepo():
         categories=[]
         person_account_categories=[]
 
-        if 'profile_id' in kwargs:
-            if Person.objects.filter(profile_id=kwargs['profile_id']).first() is not None:
-                message="کد وارد شده تکراری است."
-                person=None
-                return result,message,person
+        # if 'profile_id' in kwargs:
+        #     if Person.objects.filter(profile_id=kwargs['profile_id']).first() is not None:
+        #         message="کد پروفایل وارد شده تکراری است."
+        #         person=None
+        #         return result,message,person
         if 'melli_code' in kwargs:
             melli_code=kwargs['melli_code']
 
@@ -97,6 +93,11 @@ class PersonRepo():
             person.type=kwargs["type"]
         if 'melli_code' in kwargs:
             person.melli_code=kwargs["melli_code"]
+        if 'title' in kwargs:
+            person.title=kwargs["title"]
+            
+        if 'profile_id' in kwargs:
+            person.profile_id=kwargs["profile_id"]
             
         if 'color' in kwargs:
             person.color=kwargs["color"]
@@ -203,9 +204,19 @@ class ProfileRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request 
         self.me=None
+        self.objects=Profile.objects
         if self.request.user.is_authenticated:
             self.me=Profile.objects.filter(user=request.user).first()
     def logout(self,*args, **kwargs):
         pass      
     def login(self,*args, **kwargs):
-        pass      
+        pass        
+    def profile(self,*args, **kwargs):
+        if "profile_id" in kwargs and kwargs["profile_id"] is not None:
+            return self.objects.filter(pk=kwargs['profile_id']).first()
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        if "code" in kwargs and kwargs["code"] is not None:
+            return self.objects.filter(code=kwargs['code']).first()

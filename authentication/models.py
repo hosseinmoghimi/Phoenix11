@@ -36,8 +36,9 @@ class Profile(models.Model,LinkHelper):
 class Person(models.Model,ImageHelper,LinkHelper):
     profile=models.ForeignKey("profile",null=True,blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
     prefix=models.CharField(_("پیشوند"),default=PersonPrefixEnum.MR,choices=PersonPrefixEnum.choices, max_length=50)
-    first_name=models.CharField(_("نام"), max_length=50)
-    last_name=models.CharField(_("نام خانوادگی"), max_length=50)
+    title=models.CharField(_("نام"),null=True,blank=True, max_length=50)
+    first_name=models.CharField(_("نام"),null=True,blank=True, max_length=50)
+    last_name=models.CharField(_("نام خانوادگی"),null=True,blank=True, max_length=50)
     mobile=models.CharField(_("شماره همراه"),null=True,blank=True, max_length=50)
     email=models.CharField(_("email"),null=True,blank=True, max_length=50)
     bio=models.CharField(_("بیو"),null=True,blank=True, max_length=50)
@@ -67,6 +68,14 @@ class Person(models.Model,ImageHelper,LinkHelper):
            
         if self.first_name:
             full_name+=self.first_name 
+
+            
+            
+        if len(full_name)>0:
+            full_name+=" "
+            
+        if self.title:
+            full_name+=self.title 
 
             
             

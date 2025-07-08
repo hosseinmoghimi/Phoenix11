@@ -41,8 +41,15 @@
               <tr v-for="person in persons">
                 
                 <td>
+
                   <a :href="person.get_absolute_url">
-                    <span v-text="person.full_name"></span>
+                    <div class="media">
+                      <img :src="person.image" width="32" class="rounded" alt="">
+                      <div class="media mr-2">
+                        <span v-text="person.full_name"></span>
+
+                      </div>
+                    </div>
                   </a>
 
                   

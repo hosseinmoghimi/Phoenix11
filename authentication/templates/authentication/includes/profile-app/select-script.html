@@ -1,0 +1,6 @@
+<script>
+    select_profile_by_id = function (profile_id) {
+        let payload2 = { csrfmiddlewaretoken: csrfmiddlewaretoken, profile_id: profile_id  }
+        return $.post("{% url 'authentication:select_profile' %}", payload2)
+    }
+</script>

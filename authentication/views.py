@@ -1,9 +1,9 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,reverse
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from .repo import ProfileRepo
 from django.views import View
 from .serializer import PersonSerializer
-from .repo import PersonRepo
+from .repo import PersonRepo,FAILED,SUCCEED
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
@@ -44,8 +44,24 @@ class IndexView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
 # Create your views here.
+class ChangePersonImageView(View):
+    def post(self,request,*args, **kwargs):
+        profile_id=0
+        if 'pk' in kwargs:
+            profile_id=kwargs['pk']
+        log=1
+        if request.method=='POST':
+            log=2
+            change_person_image_form=ChangePersonImageForm(request.POST,request.FILES)
+            if change_person_image_form.is_valid():
+                log=3              
+                person_id=change_person_image_form.cleaned_data['person_id']
+                image=request.FILES['image']
+                result=PersonRepo(request=request).change_image(person_id=person_id,
+                image=image,
+                )
+        return redirect(reverse(APP_NAME+":person",kwargs={'pk':person_id}))
 
- 
 class PersonsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -61,12 +77,12 @@ class PersonsView(View):
 class PersonView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
-
-        context['phoenix_apps']=phoenix_apps
+        person=PersonRepo(request=request).person(*args, **kwargs)
+        context['person']=person
+        person_s=json.dumps(PersonSerializer(person).data)
+        context['person_s']=person_s
+        if request.user.has_perm(APP_NAME+'.change_person'):
+            context['change_person_image_form']=ChangePersonImageForm()
         return render(request,TEMPLATE_ROOT+"person.html",context)
 # Create your views here.
 

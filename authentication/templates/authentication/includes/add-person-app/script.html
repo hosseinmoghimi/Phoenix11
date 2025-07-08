@@ -1,20 +1,23 @@
 {% include "accounting/includes/account-app/select-script.html" %}
+{% include "authentication/includes/profile-app/select-script.html" %}
+
 <script>
   let add_person_app = new Vue({
     el: "#add-person-app",
     data: {
     name: "", 
-    prefix:'',
+    prefix:'آقای',
+    title:'',
     first_name:'',
     last_name:'',
     mobile:'',
     address:'',
     bio:'',
     melli_code:'',
-    type:'',
-    type2:'',
+    type:'حقیقی',
+    type2:'حقیقی',
     email:'',
-    gender:'',
+    gender:'مرد',
     profile:{id:0},
     message:{show:false},
     waiting:false,
@@ -42,17 +45,18 @@
       to_price: function (vall) {
         return to_price(vall) + " {{CURRENCY}}";
       },
-      select_profile: function () {
-          console.log(add_person_app.account);
-          select_account_by_code(add_person_app.account_code).done((data) => {
-              add_person_app.account = data.account;
+      select_profile: function () { 
+          select_profile_by_id(profile_id=add_person_app.profile_id).done((data) => {
+            console.log(data)
+              add_person_app.profile = data.profile;
               if (data.result === "SUCCEED") {
-                  add_person_app.account = data.account;
+                  add_person_app.profile = data.profile;
               } else {
-                  add_person_app.account = {}
+                  add_person_app.profile = {}
               }
         });
       },
+       
       add_person: function () {
         add_person_app.waiting=true
         add_person_app.message.show=false
@@ -64,12 +68,14 @@
           prefix: this.prefix,
           address: this.address,
           type: this.type,
+          title: this.title,
           type2: this.type2,
           gender: this.gender,
           email: this.email,
           melli_code: this.melli_code,
           bio: this.bio,
           profile_id: this.profile.id,
+          profile:{},
         };
 
         console.log(payload);

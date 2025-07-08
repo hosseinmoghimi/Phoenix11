@@ -28,7 +28,6 @@
           </div>
         </div>
 
-        
         <div class="col-md-12">
           <div class="form-group">
             <label for="">ماهیت</label>
@@ -40,7 +39,6 @@
           </div>
         </div>
 
-        
         <div class="col-md-12">
           <div class="form-group">
             <label for="">نوع</label>
@@ -52,11 +50,12 @@
           </div>
         </div>
 
-        <div class="col-md-12">
+        <div class="col-md-6">
           <div class="form-group">
-            <label for="">نام</label>
+            <label for="">پروفایل</label>
             <input
-              v-model="first_name"
+              @input="select_profile()"
+              v-model="profile_id"
               required
               type="text"
               class="form-control"
@@ -64,12 +63,46 @@
           </div>
         </div>
 
+        <div class="col-md-6">
+          <div class="form-group">
+            <div class="media">
+              <img :src="profile.image" width="32" alt="">
+              <div class="media-body mr-2">
+                <span v-text="profile.full_name"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="">عنوان</label>
+            <input
+              v-model="title"
+              type="text"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="">نام</label>
+            <input
+              v-model="first_name"
+              type="text"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+
         <div class="col-md-12">
           <div class="form-group">
             <label for="">نام خانوادگی</label>
             <input
               v-model="last_name"
-              required
               type="text"
               class="form-control"
             />
@@ -81,7 +114,6 @@
             <label for="">آدرس</label>
             <input
               v-model="address"
-              required
               type="text"
               class="form-control"
             />
@@ -91,7 +123,7 @@
         <div class="col-md-12">
           <div class="form-group">
             <label for="">بیو</label>
-            <input v-model="bio" required type="text" class="form-control" />
+            <input v-model="bio"  type="text" class="form-control" />
           </div>
         </div>
 
@@ -100,7 +132,6 @@
             <label for="">کد ملی</label>
             <input
               v-model="melli_code"
-              required
               type="text"
               class="form-control"
             />
@@ -110,7 +141,7 @@
         <div class="col-md-12">
           <div class="form-group">
             <label for="">ایمیل</label>
-            <input v-model="email" required type="text" class="form-control" />
+            <input v-model="email"  type="text" class="form-control" />
           </div>
         </div>
 
@@ -128,9 +159,14 @@
             <i class="fa fa-plus"></i>
             افزودن
           </button>
-          <img src="{% static 'leo/img/loading' %}" width="64"  v-if="waiting"  alt="">
+          <img
+            src="{% static 'leo/img/loading' %}"
+            width="64"
+            v-if="waiting"
+            alt=""
+          />
         </div>
-        
+
         <div class="col-md-12 mt-2" v-if="message.show">
           <div :class="'alert alert-'+message.color">
             <div class="rtl text-right">
