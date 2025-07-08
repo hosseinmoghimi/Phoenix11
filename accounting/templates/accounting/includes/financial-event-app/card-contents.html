@@ -2,7 +2,7 @@
 {% load to_price %}
 <h5>
     <small class="text-muted"> مانده :</small>
-    {{financial_event.sum_total|to_price}} {{CURRENCY}}
+    {{financial_event.amount|to_price}} {{CURRENCY}}
 </h5>
 
 <small>
