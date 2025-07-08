@@ -31,6 +31,7 @@
             <thead>
                
               <th>نام آموزشگاه</th>
+              <th>حساب</th>
  
               <th>
 
@@ -42,6 +43,25 @@
                 <td>
                   <a :href="school.get_absolute_url">
                     <span v-text="school.name"></span>
+                  </a>
+
+                  
+
+ 
+                </td>
+
+                 <td>
+                  <a :href="school.account.get_absolute_url">
+                    <span v-text="school.account.name"></span>
+                    <div>
+
+                      <small class="text-muted" v-text="school.account.full_name"></small>
+                    </div>
+
+                     <div>
+
+                      <small class="text-muted" v-text="to_price(school.account.balance)"></small>
+                    </div>
                   </a>
 
                   

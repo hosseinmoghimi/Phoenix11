@@ -1,9 +1,8 @@
 from accounting.forms import AddProductForm,forms
 
 class AddSchoolForm(forms.Form):
-    food_item_id=forms.IntegerField(required=True)
-    unit_name=forms.CharField(max_length=50,required=True)
-    save=forms.BooleanField(required=False)
+    name=forms.CharField(max_length=50,required=True)
+    account_id=forms.IntegerField(required=True)
 
 class AddCourseForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)

@@ -52,27 +52,9 @@ class SchoolRepo():
         school=School()
         if 'name' in kwargs:
             school.name=kwargs["name"]
-        if 'parent_id' in kwargs:
-            if kwargs["parent_id"]>0:
-                school.parent_id=kwargs["parent_id"]
-        if 'color' in kwargs:
-            school.color=kwargs["color"]
-        if 'code' in kwargs:
-            school.code=kwargs["code"]
-        if 'priority' in kwargs:
-            school.priority=kwargs["priority"]
-        if 'type' in kwargs:
-            school.type=kwargs["type"]
-
-            
-        if 'parent_code' in kwargs:
-            parent_code= kwargs["parent_code"]
-            parent=Account.objects.filter(code=parent_code).first()
-            if parent is not None:
-                school.parent_id=parent.id
-
-        if 'nature' in kwargs:
-            school.nature=kwargs["nature"]
+        if 'account_id' in kwargs:
+            school.account_id=kwargs["account_id"]
+          
         (result,message,school)=school.save()
         return result,message,school
 

@@ -32,3 +32,46 @@ class AddSchoolApi(APIView):
         context['log']=log
         return JsonResponse(context)
   
+ 
+class AddCourseApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_course_form=AddCourseForm(request.POST)
+        if add_course_form.is_valid():
+            log=333
+            cd=add_course_form.cleaned_data
+            result,message,course=CourseRepo(request=request).add_course(**cd)
+            if course is not None:
+                context['course']=CourseSerializer(course).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+class AddCourseClassApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_course_class_form=AddCourseClassForm(request.POST)
+        if add_course_class_form.is_valid():
+            log=333
+            cd=add_course_class_form.cleaned_data
+            result,message,course_class=CourseClassRepo(request=request).add_course_class(**cd)
+            if course_class is not None:
+                context['course_class']=CourseClassSerializer(course_class).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
