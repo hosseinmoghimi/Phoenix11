@@ -231,6 +231,8 @@ def class_title(*args, **kwargs):
         class_title= "نقش"
     if class_name=="financialdocument":
         class_title= "سند مالی"
+    if class_name=="financialevent":
+        class_title= "رویداد مالی"
     return class_title
 class ParameterNameEnum(TextChoices):
     VISITOR_COUNTER="تعداد بازدید",_("تعداد بازدید")

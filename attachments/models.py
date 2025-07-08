@@ -182,7 +182,7 @@ class Download(Icon):
         verbose_name_plural = _("Downloads")
 
     def __str__(self):
-        return self.title
+        return f'{self.page} {self.title}'
 
 
     def get_qrcode_url(self):
@@ -208,6 +208,9 @@ class Link(Icon,LinkHelper):
                                 blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
     class_name='link'
     app_name=APP_NAME
+    def __str__(self):
+        return f'{self.page} {self.title}'
+
     class Meta:
         verbose_name = _("Link")
         verbose_name_plural = _("Links")

@@ -646,6 +646,7 @@ class PersonCategoryRepo():
             result,message,new_person_category=self.add_person_category(**person_category)
                 
         for person in persons:
+            from authentication.repo import PersonRepo
             result,message,new_person=PersonRepo(request=self.request).add_person(**person)
 
         return result,message       
@@ -1774,10 +1775,19 @@ class FinancialEventRepo():
             return self.objects.filter(pk=kwargs['event_id']).first() 
          
        
-
+    def delete_all(self,*args, **kwargs):
+        result,message=FAILED,""
+        if not self.request.user.has_perm(APP_NAME+".delete_financialevent"):
+            message="دسترسی غیر مجاز"
+            return result,message
+        financial_events=FinancialEvent.objects.all()
+        financial_events.delete()
+        result=SUCCEED
+        message='همه رویداد ها حذف شدند.'
+        return result,message
     def add_financial_event(self,*args,**kwargs):
         result,message,event=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".add_event"):
+        if not self.request.user.has_perm(APP_NAME+".add_financialevent"):
             message="دسترسی غیر مجاز"
             return result,message,event
 

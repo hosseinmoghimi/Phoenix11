@@ -14,7 +14,7 @@ from core.views import CoreContext
 from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo
 import json
 LAYOUT_PARENT='phoenix/layout.html'
-TEMPLATE_ROOT='core/'
+TEMPLATE_ROOT='attachments/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
@@ -114,3 +114,50 @@ class DownloadView(View):
         return message_view.response()
         
       
+class IndexView(View):
+    def get(self, request, *args, **kwargs): 
+        context=getContext(request=request)
+        return render(request,TEMPLATE_ROOT+'index.html',context)
+        
+      
+
+      
+      
+class LinksView(View):
+    def get(self, request, *args, **kwargs): 
+        context=getContext(request=request)
+        links=LinkRepo(request=request).list(*args, **kwargs)
+        context['links']=links
+        links_s=json.dumps(LinkSerializer(links,many=True).data)
+        context['links_s']=links_s
+        return render(request,TEMPLATE_ROOT+'links.html',context)
+        
+      
+
+       
+
+       
+class DownloadsView(View):
+    def get(self, request, *args, **kwargs): 
+        context=getContext(request=request)
+        downloads=DownloadRepo(request=request).list(*args, **kwargs)
+        context['downloads']=downloads
+        downloads_s=json.dumps(DownloadSerializer(downloads,many=True).data)
+        context['downloads_s']=downloads_s
+        return render(request,TEMPLATE_ROOT+'downloads.html',context)
+        
+      
+
+       
+class CommentsView(View):
+    def get(self, request, *args, **kwargs): 
+        context=getContext(request=request)
+        comments=CommentRepo(request=request).list(*args, **kwargs)
+        context['comments']=comments
+        comments_s=json.dumps(CommentSerializer(comments,many=True).data)
+        context['comments_s']=comments_s
+        return render(request,TEMPLATE_ROOT+'comments.html',context)
+        
+      
+
+       

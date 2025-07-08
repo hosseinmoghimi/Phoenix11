@@ -364,11 +364,13 @@ class DeleteALLAccountsApi(APIView):
         log=111
         context['result']=FAILED
         if request.method=='POST':
+            from authentication.repo import PersonRepo
+            (result2,message2)=PersonCategoryRepo(request=request).delete_all() 
+            (result3,message3)=PersonRepo(request=request).delete_all() 
             (result3,message3)=FinancialDocumentLineRepo(request=request).delete_all() 
             (result3,message3)=FinancialEventRepo(request=request).delete_all() 
             (result3,message3)=PersonAccountRepo(request=request).delete_all() 
             (result,message)=AccountRepo(request=request).delete_all_accounts() 
-            (result2,message2)=PersonCategoryRepo(request=request).delete_all() 
             (result2,message2)=BankRepo(request=request).delete_all() 
         context['message']=message
         context['result']=result

@@ -52,14 +52,14 @@ class PersonRepo():
                     pass
        
     def delete_all(self,*args,**kwargs):
-        
+        result,message=FAILED,''
         if not self.request.user.has_perm(APP_NAME+".delete_person"):
             message="دسترسی غیر مجاز"
-            return result,message,person
-        PersonCategory.objects.all().delete()
+            return result,message
+        # PersonCategory.objects.all().delete()
         Person.objects.all().delete()
         result=SUCCEED
-        message="همه حذف شدند."
+        message="همه اشخاص حذف شدند."
         return result,message
     
     def add_person(self,*args,**kwargs):
