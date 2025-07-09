@@ -499,7 +499,8 @@ class FinancialYearRepo():
         if "date" in kwargs and kwargs["date"] is not None:
             return self.objects.filter(start_date_lte=kwargs['date']).filter(end_date_gte=kwargs['date']).first() 
         
-   
+    def current_financial_year(self):
+        return self.objects.filter(in_progress=True).first()
    
     def add_financial_year(self,*args,**kwargs):
         result,message,financial_year,financial_years=FAILED,"",None,[]

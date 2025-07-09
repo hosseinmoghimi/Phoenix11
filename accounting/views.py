@@ -294,6 +294,17 @@ def AddInvoiceContext(request):
     return context
 
 
+def AddFinancialDocumentContext(request):
+    context={}
+    
+    if request.user.has_perm(APP_NAME+'.add_financialdocument'):
+        context['add_financial_document_form']=AddFinancialDocumentForm()
+        current_financial_year=FinancialYearRepo(request=request).current_financial_year()
+        context['current_financial_year_id']=current_financial_year.id
+        context['financial_year_statuses']=(i[0] for i in FinancialYearStatusEnum.choices)
+    return context
+
+
 def AddProductToCategoryContext(request,product,*args, **kwargs):
     context={}
 
@@ -540,6 +551,8 @@ class FinancialDocumentsView(View):
         context['financial_documents']=financial_documents
         financial_documents_s=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
         context['financial_documents_s']=financial_documents_s
+ 
+        context.update(AddFinancialDocumentContext(request=request))
         return render(request,TEMPLATE_ROOT+"financial-documents.html",context)
 
 
