@@ -221,13 +221,13 @@ class PersonAccount(Account):
         person_category=PersonCategory.objects.filter(id=self.person_category_id).first()
         if person_category is not None:
             self.parent=person_category.account
-        code=self.parent.code+str(fixed_length(1,person_category.code_length))
-        last=PersonAccount.objects.filter(person_category_id=self.person_category_id).last()
+        # code=self.parent.code+str(fixed_length(1,person_category.code_length))
+        # last=PersonAccount.objects.filter(person_category_id=self.person_category_id).last()
       
       
-        if last is not None:
-            code=str(int(last.code)+1) 
-        self.code=code
+        # if last is not None:
+        #     code=str(int(last.code)+1) 
+        # self.code=code
         self.name=f'{self.person} # {self.category}'
         super(PersonAccount,self).save()
         result=SUCCEED
