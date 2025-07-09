@@ -1,5 +1,5 @@
 from .models import Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit
-from .models import InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent
+from .models import InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,FinancialYear
 from .models import Invoice,Bank,BankAccount,PersonCategory,FinancialYear,PersonAccount
 from .apps import APP_NAME
 from .enums import *

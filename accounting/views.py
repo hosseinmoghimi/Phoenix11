@@ -15,6 +15,8 @@ from .repo import FinancialDocumentRepo,CategoryRepo
 from .repo import ProfileRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
 from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
+from .serializers import FinancialYearSerializer
+from .repo import FinancialYearRepo
 from utility.currency import to_price_colored
 import json 
 from core.views import MessageView
@@ -306,6 +308,10 @@ def AddProductToCategoryContext(request,product,*args, **kwargs):
     context['product_categories_s']=product_categories_s
     return context
 
+
+
+
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -416,6 +422,46 @@ class InvoiceToExcelView(View):
         report_work_book.work_book.save(response)
         report_work_book.work_book.close()
         return response
+
+
+class FinancialYearsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        financial_years=FinancialYearRepo(request=request).list(*args, **kwargs)
+        context['expand_financial_years']=True
+        context['financial_years']=financial_years
+        financial_years_s=json.dumps(FinancialYearSerializer(financial_years,many=True).data)
+        context['financial_years_s']=financial_years_s
+        if request.user.has_perm(APP_NAME+".add_financialyear"):
+            context['add_financial_year_form']=AddFinancialYearForm()
+            context['add_financial_year_form_statuses']=(i[0] for i in FinancialYearStatusEnum.choices)
+            context['default_status']=FinancialYearStatusEnum.DRAFT
+        return render(request,TEMPLATE_ROOT+"financial-years.html",context)
+
+
+class FinancialYearView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        financial_year=FinancialYearRepo(request=request).financial_year(*args, **kwargs)
+        context['WIDE_LAYOUT']=True
+        if financial_year is None:
+            from core.views import MessageView
+            mv=MessageView()
+            context={}
+            back_url = request.META.get('HTTP_REFERER')
+            context['back_url'] = back_url
+            context["title"]="سال مالی وجود ندارد."
+            context["body"]="چنین سال مالی وجود ندارد."
+            return mv.get(request=request,**context)
+
+        context['financial_year']=financial_year
+        
+        accounting_documents=AccountingDocumentRepo(request=request).list(financial_year_id=financial_year.id)
+        context['accounting_documents']=accounting_documents
+        accounting_documents_s=json.dumps(AccountingDocumentSerializer(accounting_documents,many=True).data)
+        context['accounting_documents_s']=accounting_documents_s
+
+        return render(request,TEMPLATE_ROOT+"financial-year.html",context)
 
 
 class TreeChartView(View):
@@ -860,6 +906,7 @@ class InvoicePrintView(View):
         context['invoice_s']=invoice_s
         context.update(InvoiceContext(request=request,invoice=invoice))
         return render(request,TEMPLATE_ROOT+"invoice-print.html",context)
+
 
 class CategoryView(View):
     def get(self,request,*args, **kwargs):

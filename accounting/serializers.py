@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Category,InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
-
+from .models import FinancialYear
 from .models import FinancialDocument
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -15,6 +15,12 @@ class InvoiceSerializer(serializers.ModelSerializer):
         model = Invoice
         fields = ['id','title','bedehkar' ,'bestankar','sum_total','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
  
+class FinancialYearSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = FinancialYear
+        fields = ['id','in_progress','name','status','persian_start_date','persian_end_date', 'get_absolute_url','get_edit_url','get_delete_url']
+
+
  
 
 class FinancialEventSerializer(serializers.ModelSerializer):
