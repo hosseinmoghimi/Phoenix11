@@ -55,6 +55,10 @@ urlpatterns = [
     path('category/<int:pk>/',login_required(views.CategoryView.as_view()),name="category"),
     path("add-category/",login_required(apis.AddCategoryApi.as_view()),name="add_category"),
 
+
+
+    path("add-product-specification/",login_required(apis.AddProductSpecificationApi.as_view()),name="add_product_specification"),
+
     
     path('brands/',login_required(views.CategoriesView.as_view()),name="brands"),
     path('brand/<int:pk>/',login_required(views.CategoryView.as_view()),name="brand"),

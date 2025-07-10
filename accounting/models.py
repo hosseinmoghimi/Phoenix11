@@ -629,7 +629,11 @@ class Category(models.Model,LinkHelper,ImageHelper):
         result=SUCCEED
         message='دسته بندی با موفقیت اضافه شد.'
         return result,message,category
+
+
 class Product(InvoiceLineItem):
+    brand=models.ForeignKey("brand",null=True,blank=True, verbose_name=_("brand"), on_delete=models.CASCADE)
+    model=models.CharField(_("model"),null=True,blank=True, max_length=50)
     barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=50)
     
     class_name="product"
@@ -655,6 +659,23 @@ class Product(InvoiceLineItem):
     def get_market_absolute_url(self):
         return reverse("market:product",kwargs={'pk':self.pk})
     
+
+  
+class ProductSpecification(models.Model,LinkHelper):
+    product=models.ForeignKey("product", verbose_name=_("product"), on_delete=models.CASCADE)
+    name=models.CharField(_("name"),max_length=50)
+    value=models.CharField(_("value"),max_length=50)
+
+    class_name="productspecification"
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("ProductSpecification")
+        verbose_name_plural = _("ProductSpecifications")
+
+    def __str__(self):
+        return f"{self.product} > {self.name} > {self.value}"
+ 
+
 
 class Service(InvoiceLineItem):
 

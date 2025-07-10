@@ -15,7 +15,7 @@ from .repo import FinancialDocumentRepo,CategoryRepo
 from .repo import ProfileRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
 from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
-from .serializers import FinancialYearSerializer
+from .serializers import FinancialYearSerializer,ProductSpecificationSerializer
 from .repo import FinancialYearRepo
 from utility.currency import to_price_colored
 import json 
@@ -672,7 +672,17 @@ class ProductView(View):
         context.update(ProductContext(request=request,product=product))
         context.update(AddProductToCategoryContext(request=request,product=product))
 
-        context['phoenix_apps']=phoenix_apps
+
+        product_specifications=product.productspecification_set.all()
+        product_specifications_s=json.dumps(ProductSpecificationSerializer(product_specifications,many=True).data)
+        context['product_specifications']=product_specifications
+        context['product_specifications_s']=product_specifications_s
+        if request.user.has_perm(APP_NAME+".add_productspecification"):
+            context["add_product_specification_form"]=AddProductSpecificationForm()
+            specification_names=['رنگ','وزن','اندازه','جرم','نوع',]
+            context['specification_names']=specification_names
+     
+
         return render(request,TEMPLATE_ROOT+"product.html",context)
     
 

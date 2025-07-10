@@ -10,8 +10,8 @@ from .serializers import  ServiceSerializer,FinancialDocumentSerializer,Financia
 from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
-from .repo import FinancialYearRepo
-from .serializers import FinancialYearSerializer
+from .repo import FinancialYearRepo,ProductSpecificationRepo
+from .serializers import FinancialYearSerializer,ProductSpecificationSerializer
  
 class AddProductToCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -33,6 +33,30 @@ class AddProductToCategoryApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+
+
+class AddProductSpecificationApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_product_specification_form=AddProductSpecificationForm(request.POST)
+            if add_product_specification_form.is_valid():
+                log=333
+                cd=add_product_specification_form.cleaned_data 
+                result,message,product_specification,deleted_id=ProductSpecificationRepo(request=request).add_product_specification(**cd)
+                if product_specification is not None:
+                    context['product_specification']=ProductSpecificationSerializer(product_specification).data
+                    context['deleted_id']=deleted_id
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
 
 
 

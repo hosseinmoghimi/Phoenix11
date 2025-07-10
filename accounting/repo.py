@@ -1,6 +1,6 @@
 from .models import Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit
 from .models import InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,FinancialYear
-from .models import Invoice,Bank,BankAccount,PersonCategory,FinancialYear,PersonAccount
+from .models import Invoice,Bank,BankAccount,PersonCategory,FinancialYear,PersonAccount,ProductSpecification
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo
@@ -651,6 +651,74 @@ class PersonCategoryRepo():
             result,message,new_person=PersonRepo(request=self.request).add_person(**person)
 
         return result,message       
+
+
+
+class ProductSpecificationRepo:
+    def __init__(self,request,*args, **kwargs):
+        self.request=request
+        self.me=None
+        # profile=ProfileRepo(request=request).me
+        
+        
+        self.objects=None
+        if request.user.has_perm(APP_NAME+".view_event"):
+            self.objects=ProductSpecification.objects
+        elif request.user.is_authenticated:
+            accs=[]
+            for person in Person.objects.filter(profile__user_id=request.user.id):
+
+                my_accounts=AccountRepo(request=request).my_accounts
+                for acc in my_accounts:
+                    accs.append(acc.id)
+            self.objects=Event.objects.filter(Q(bedehkar_id__in=accs)|Q(bestankar_id__in=accs))
+        else:
+            self.objects=Event.objects.filter(pk=0)
+
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for']) 
+        return objects.all()
+    def product_specification(self,*args, **kwargs):
+        if "product_specification_id" in kwargs:
+            return self.objects.filter(pk=kwargs['product_specification_id']).first() 
+        if "pk" in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first() 
+
+                     
+    def add_product_specification(self,*args, **kwargs):
+        product_specification,message,result,deleted_id=(None,"",FAILED,0)
+        # if not Permission(request=self.request).is_permitted(APP_NAME,OperationEnum.ADD,"productspecification"):
+        if not self.request.user.has_perm(APP_NAME+".add_account"):
+            message="دسترسی غیر مجاز"
+            return result,message,product_specification,deleted_id
+        # if len(Account.objects.filter(title=kwargs['title']))>0:
+        #     message="از قبل حسابی با همین عنوان ثبت شده است."
+        #     return product_specification,message,result
+        product_specification=ProductSpecification()
+        
+        if 'product_id' in kwargs:
+            product_specification.product_id=kwargs['product_id']
+        if 'name' in kwargs:
+            product_specification.name=kwargs['name']
+        if 'value' in kwargs:
+            product_specification.value=kwargs['value'] 
+        deleted=ProductSpecification.objects.filter(product_id=product_specification.product_id).filter(name=product_specification.name).first()
+        if deleted is not None:
+            deleted_id=deleted.id
+            deleted.delete()
+         
+        product_specification.save()
+        result=SUCCEED
+        message="ویژگی جدید با موفقیت اضافه گردید."
+         
+ 
+        return result,message,product_specification,deleted_id
+
+ 
 
 
 class ProductRepo():
