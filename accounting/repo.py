@@ -410,6 +410,12 @@ class PersonAccountRepo():
             message="دسترسی غیر مجاز"
             return result,message,person_account
         person_account=PersonAccount()
+        if 'color' in kwargs:
+            person_account.color=kwargs['color']
+        if 'name' in kwargs:
+            person_account.name=kwargs['name']
+        if 'code' in kwargs:
+            person_account.code=kwargs['code']
         if 'person' in kwargs:
             person_account.person=kwargs['person']
         if 'person_id' in kwargs:
@@ -563,11 +569,7 @@ class PersonCategoryRepo():
         #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
-        pure_code="876454453342236"
-        try:
-            pure_code=int(kwargs["search_for"]) 
-        except:
-            pass
+ 
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
 

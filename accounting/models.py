@@ -175,19 +175,7 @@ class Account(models.Model,LinkHelper):
             return self.name
         return self.parent.full_name+ACCOUNT_NAME_SEPERATOR+self.name
  
-class PersonAccountCategory(models.Model):
-    title=models.CharField(_("title"), max_length=50)
-
-    class_name="personaccountcategory"
-    app_name=APP_NAME
-
-    class Meta:
-        verbose_name = _("PersonAccountCategory")
-        verbose_name_plural = _("دسته بندی حساب های اشخاص")
-
-    def __str__(self):
-        return self.title
-
+ 
 
 class PersonAccount(Account):
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
@@ -231,7 +219,7 @@ class PersonAccount(Account):
         self.name=f'{self.person} # {self.category}'
         super(PersonAccount,self).save()
         result=SUCCEED
-        message="با موفقیت اضافه شد."
+        message="حساب شخص با موفقیت اضافه شد."
         person_account=self
         return result,message,person_account
 

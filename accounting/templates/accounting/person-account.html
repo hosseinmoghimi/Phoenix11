@@ -4,7 +4,7 @@
 {% block content %}
 <div class="row rtl farsi">
     <div class="col-md-4">
-        {% include "accounting/includes/account-app/card.html" %}
+        {% include "accounting/includes/person-account-app/card.html" %}
     </div>
 
     <div class="col-md-12">
@@ -26,16 +26,20 @@
     </div>
   
     {% endif %}
-
- 
-
+     
+    {% if add_person_account_form %}
+     
+    <div class="col-md-12">
+        {% include "accounting/includes/add-person-account-app/template.html" %}
+    </div>
+  
+    {% endif %}
 
 </div>
 {% endblock content %}
 
 
 {% block script %}
-
 {% include "accounting/includes/account-app/script.html" %}
 {% include "accounting/includes/accounts-app/script.html" %}
 {% include "accounting/includes/add-account-app/script.html" %}
@@ -44,5 +48,9 @@
 {% if add_financial_document_line_form %}
 {% include "accounting/includes/add-financial-document-line-app/script.html" %}
 {% endif %}
- 
+
+{% if add_person_account_form %}
+{% include "accounting/includes/add-person-account-app/script.html" %}
+{% endif %}
+
 {% endblock script %}

@@ -12,10 +12,10 @@ from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
 from .repo import FinancialDocumentRepo,CategoryRepo
-from .repo import ProfileRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
+from .repo import PersonCategoryRepo,ProfileRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
 from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
-from .serializers import FinancialYearSerializer,ProductSpecificationSerializer
+from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
 from .repo import FinancialYearRepo
 from utility.currency import to_price_colored
 import json 
@@ -36,9 +36,9 @@ def getContext(request,*args, **kwargs):
  
 def AddAccountContext(request,*args, **kwargs):
     context={}
-    account_natures=(i[0] for i in AccountNatureEnum.choices)
-    context['account_natures']=account_natures
     if request.user.has_perm(APP_NAME+".add_account"):
+        context['account_natures_for_add_account']=(i[0] for i in AccountNatureEnum.choices)
+        context['account_natures_for_add_person_account']=(f[0] for f in AccountNatureEnum.choices)
         context['add_account_form']=AddAccountForm()
     return context
 
@@ -131,7 +131,7 @@ def AccountContext(request,account,*args, **kwargs):
         context['expand_accounts']=True
     accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
     context['accounts_s']=accounts_s
-
+ 
     return context
 
 def InvoiceLineItemContext(request,invoice_line_item,*args, **kwargs):
@@ -274,13 +274,7 @@ def ServiceContext(request,service,*args, **kwargs):
     context["service"]=service
     return context
  
-def AddAccountContext(request,*args, **kwargs):
-    context={}
-    account_natures=(i[0] for i in AccountNatureEnum.choices)
-    context['account_natures']=account_natures
-    if request.user.has_perm(APP_NAME+".add_account"):
-        context['add_account_form']=AddAccountForm()
-    return context
+    
 
 
 def AddFinancialEventContext(request):
@@ -571,13 +565,14 @@ class FinancialDocumentLineView(View):
 
 class AccountsView(View):
     def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
+        context=getContext(request=request) 
+        
+        accounts=AccountRepo(request=request).list(*args, **kwargs)
 
-        context['phoenix_apps']=phoenix_apps
+        context['accounts']=accounts
+        accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
+        context['accounts_s']=accounts_s
+        context.update(AddAccountContext(request=request))
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
 
 
@@ -596,6 +591,7 @@ class AccountView(View):
  
         if request.user.has_perm(APP_NAME+".add_account"):
             context.update(AddAccountContext(request=request))
+         
 
         return render(request,TEMPLATE_ROOT+"account.html",context)
 
@@ -983,3 +979,37 @@ class CategoriesView(View):
 
 
 
+
+class PersonAccountsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+       
+        person_accounts=PersonAccountRepo(request=request).list(*args, **kwargs)
+
+        context['person_accounts']=person_accounts
+        person_accounts_s=json.dumps(PersonAccountSerializer(person_accounts,many=True).data)
+        context['person_accounts_s']=person_accounts_s
+
+        
+        if request.user.has_perm(APP_NAME+'.add_personaccount'):
+            context.update(AddAccountContext(request=request))
+            person_categories=PersonCategoryRepo(request=request).list()
+            context['person_categories']=person_categories
+            context['add_person_account_form']=AddPersonAccountForm()
+        return render(request,TEMPLATE_ROOT+"person-accounts.html",context)
+
+
+class PersonAccountView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        person_account=PersonAccountRepo(request=request).person_account(*args, **kwargs)
+
+
+        if person_account is None:
+            raise Http404
+        context.update(AccountContext(request=request,account=person_account))
+        
+        if request.user.has_perm(APP_NAME+".add_financialdocumentline"):
+            context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
+  
+        return render(request,TEMPLATE_ROOT+"person-account.html",context)

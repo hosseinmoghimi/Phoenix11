@@ -10,8 +10,8 @@ from .serializers import  ServiceSerializer,FinancialDocumentSerializer,Financia
 from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
-from .repo import FinancialYearRepo,ProductSpecificationRepo
-from .serializers import FinancialYearSerializer,ProductSpecificationSerializer
+from .repo import FinancialYearRepo,ProductSpecificationRepo,PersonAccountRepo
+from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
  
 class AddProductToCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -34,6 +34,27 @@ class AddProductToCategoryApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
+class AddPersonAccountApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_person_account_form=AddPersonAccountForm(request.POST)
+        if add_person_account_form.is_valid():
+            log=333
+            cd=add_person_account_form.cleaned_data
+            result,message,person_account=PersonAccountRepo(request=request).add_person_account(**cd)
+            if result==SUCCEED:
+                context['person_account']=PersonAccountSerializer(person_account,many=False).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
 
 class AddProductSpecificationApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -379,6 +400,30 @@ class SelectAccountApi(APIView):
                     result=SUCCEED
                     message="موفقیت آمیز"
                     context['account']=AccountSerializer(account).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+class SelectPersonAccountApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            select_person_account_form=SelectPersonAccountForm(request.POST)
+            if select_person_account_form.is_valid():
+                log=333
+                cd=select_person_account_form.cleaned_data
+                person_account=PersonAccountRepo(request=request).person_account(**cd)
+                if person_account is not None:
+                    result=SUCCEED
+                    message="موفقیت آمیز"
+                    context['person_account']=PersonAccountSerializer(person_account).data
         context['message']=message
         context['result']=result
         context['log']=log
