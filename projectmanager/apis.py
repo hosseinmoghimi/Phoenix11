@@ -4,11 +4,35 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import ProjectRepo
-from .serializers import ProjectSerializer
+from .repo import ProjectRepo,RemoteClientRepo
+from .serializers import ProjectSerializer,RemoteClientSerializer
 from django.http import JsonResponse
 from .forms import *
    
+ 
+class AddRemoteClientApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        message=""
+        result=FAILED
+        log=2
+        AddRemoteClientForm_=AddRemoteClientForm(request.POST)
+        is_valid=AddRemoteClientForm_.is_valid()
+        if not is_valid:
+            message='داده های فرم مجاز نیستند.'
+        if is_valid:
+            log=3  
+            cd=AddRemoteClientForm_.cleaned_data
+            result,message,remote_client=RemoteClientRepo(request=request).add_remote_client(**cd)
+            if remote_client is not None:
+                context['remote_client']=RemoteClientSerializer(remote_client).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
  
 class AddProjectApi(APIView):
     def post(self,request,*args, **kwargs):

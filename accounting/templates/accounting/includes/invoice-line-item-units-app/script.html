@@ -39,6 +39,7 @@
         let url = "{% url 'accounting:add_invoice_line_item_unit' %}";
         let posting = $.post(url, payload);
         posting.done((data) => {
+          console.log(data)
           if (data.result != "SUCCEED") {
             show_message(
               invoice_line_item_units_app,
@@ -49,17 +50,9 @@
             );
           }
           if (data.result === "SUCCEED") {
-            if (typeof invoice_line_item_units_app != "undefined") {
-              invoice_line_item_units_app.invoice_line_item_units.forEach(
-                (invoice_line_item_unit) => {
-                  if (data.invoice_line_item_unit.default)
-                    invoice_line_item_unit.default = false;
-                }
-              );
-              invoice_line_item_units_app.invoice_line_item_units=invoice_line_item_units_app.invoice_line_item_units.filter((invoice_line_item_unit) => invoice_line_item_unit.unit_name!=data.invoice_line_item_unit.unit_name )
-              invoice_line_item_units_app.invoice_line_item_units.push(
-                data.invoice_line_item_unit
-              );
+            if (typeof invoice_line_item_units_app != "undefined") { 
+              invoice_line_item_units_app.invoice_line_item_units=data.invoice_line_item_units
+            
             }
           }
         });

@@ -1,9 +1,17 @@
 from rest_framework import serializers
-from .models import Organization
-from accounting.serializers import FinancialEventSerializer,InvoiceLineSerializer
+from .models import OrganizationUnit,Employee
+from accounting.serializers import PersonSerializer,FinancialEventSerializer,InvoiceLineSerializer,AccountBriefSerializer
  
-class OrganizationSerializer(FinancialEventSerializer):
+class OrganizationUnitSerializer(FinancialEventSerializer):
+       account=AccountBriefSerializer()
        class Meta:
-        model = Organization
-        fields = ['id','title', 'get_absolute_url','get_edit_url','get_delete_url']
+        model = OrganizationUnit
+        fields = ['id','title','account', 'get_absolute_url','get_edit_url','get_delete_url']
+ 
+class EmployeeSerializer(FinancialEventSerializer):
+       organization_unit=OrganizationUnitSerializer()
+       person=PersonSerializer()
+       class Meta:
+        model = Employee
+        fields = ['id','person','job_title','organization_unit','get_absolute_url','get_edit_url','get_delete_url']
  

@@ -15,6 +15,8 @@ from .repo import FinancialDocumentRepo,CategoryRepo
 from .repo import ProfileRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
 from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
+from .serializers import FinancialYearSerializer,ProductSpecificationSerializer
+from .repo import FinancialYearRepo
 from utility.currency import to_price_colored
 import json 
 from core.views import MessageView
@@ -48,6 +50,8 @@ def AddInvoiceLineItemContext(request,*args, **kwargs):
 
 def AddProductContext(request,*args, **kwargs):
     context=AddInvoiceLineItemContext(request=request)
+    categories=CategoryRepo(request=request).list()
+    context['categories_for_add_product_app']=categories
     context['import_products_from_excel_form']=ImportProductsFromExcelForm()
     context['add_product_form']=AddProductForm()
     return context
@@ -292,6 +296,17 @@ def AddInvoiceContext(request):
     return context
 
 
+def AddFinancialDocumentContext(request):
+    context={}
+    
+    if request.user.has_perm(APP_NAME+'.add_financialdocument'):
+        context['add_financial_document_form']=AddFinancialDocumentForm()
+        current_financial_year=FinancialYearRepo(request=request).current_financial_year()
+        context['current_financial_year_id']=current_financial_year.id
+        context['financial_year_statuses']=(i[0] for i in FinancialYearStatusEnum.choices)
+    return context
+
+
 def AddProductToCategoryContext(request,product,*args, **kwargs):
     context={}
 
@@ -305,6 +320,10 @@ def AddProductToCategoryContext(request,product,*args, **kwargs):
     product_categories_s=json.dumps(CategorySerializer(product_categories,many=True).data)
     context['product_categories_s']=product_categories_s
     return context
+
+
+
+
 
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -418,6 +437,46 @@ class InvoiceToExcelView(View):
         return response
 
 
+class FinancialYearsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        financial_years=FinancialYearRepo(request=request).list(*args, **kwargs)
+        context['expand_financial_years']=True
+        context['financial_years']=financial_years
+        financial_years_s=json.dumps(FinancialYearSerializer(financial_years,many=True).data)
+        context['financial_years_s']=financial_years_s
+        if request.user.has_perm(APP_NAME+".add_financialyear"):
+            context['add_financial_year_form']=AddFinancialYearForm()
+            context['add_financial_year_form_statuses']=(i[0] for i in FinancialYearStatusEnum.choices)
+            context['default_status']=FinancialYearStatusEnum.DRAFT
+        return render(request,TEMPLATE_ROOT+"financial-years.html",context)
+
+
+class FinancialYearView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        financial_year=FinancialYearRepo(request=request).financial_year(*args, **kwargs)
+        context['WIDE_LAYOUT']=True
+        if financial_year is None:
+            from core.views import MessageView
+            mv=MessageView()
+            context={}
+            back_url = request.META.get('HTTP_REFERER')
+            context['back_url'] = back_url
+            context["title"]="سال مالی وجود ندارد."
+            context["body"]="چنین سال مالی وجود ندارد."
+            return mv.get(request=request,**context)
+
+        context['financial_year']=financial_year
+        
+        accounting_documents=AccountingDocumentRepo(request=request).list(financial_year_id=financial_year.id)
+        context['accounting_documents']=accounting_documents
+        accounting_documents_s=json.dumps(AccountingDocumentSerializer(accounting_documents,many=True).data)
+        context['accounting_documents_s']=accounting_documents_s
+
+        return render(request,TEMPLATE_ROOT+"financial-year.html",context)
+
+
 class TreeChartView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -494,6 +553,8 @@ class FinancialDocumentsView(View):
         context['financial_documents']=financial_documents
         financial_documents_s=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
         context['financial_documents_s']=financial_documents_s
+ 
+        context.update(AddFinancialDocumentContext(request=request))
         return render(request,TEMPLATE_ROOT+"financial-documents.html",context)
 
 
@@ -611,7 +672,17 @@ class ProductView(View):
         context.update(ProductContext(request=request,product=product))
         context.update(AddProductToCategoryContext(request=request,product=product))
 
-        context['phoenix_apps']=phoenix_apps
+
+        product_specifications=product.productspecification_set.all()
+        product_specifications_s=json.dumps(ProductSpecificationSerializer(product_specifications,many=True).data)
+        context['product_specifications']=product_specifications
+        context['product_specifications_s']=product_specifications_s
+        if request.user.has_perm(APP_NAME+".add_productspecification"):
+            context["add_product_specification_form"]=AddProductSpecificationForm()
+            specification_names=['رنگ','وزن','اندازه','جرم','نوع',]
+            context['specification_names']=specification_names
+     
+
         return render(request,TEMPLATE_ROOT+"product.html",context)
     
 
@@ -861,6 +932,7 @@ class InvoicePrintView(View):
         context.update(InvoiceContext(request=request,invoice=invoice))
         return render(request,TEMPLATE_ROOT+"invoice-print.html",context)
 
+
 class CategoryView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -868,15 +940,17 @@ class CategoryView(View):
         category=category_repo.category(*args, **kwargs)
         context['category']=category
         category_s=json.dumps(CategorySerializer(category,many=False).data)
-        context['category_s']=category_s
+        context['category_s']=category_s 
 
 
         if category is None:
             categories=category_repo.roots()
+            context['category_id']=0
             products=[]
         else:
             categories=category_repo.list(parent_id=category.id)
             products=category.products.all()
+            context['category_id']=category.id
             # leolog(all_childs_products=category.all_childs_products())
 
         context['categories']=categories

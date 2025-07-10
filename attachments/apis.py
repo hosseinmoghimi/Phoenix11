@@ -3,12 +3,39 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
 # from .repo import ContactMessageRepo, PageCommentRepo, PageLinkRepo, PagePermissionRepo, PageRepo, PageTagRepo,  ParameterRepo,PageDownloadRepo,PageImageRepo
-from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo
-from .serializer import  CommentSerializer,LinkSerializer,DownloadSerializer
+from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo,ImageRepo
+from .serializer import  CommentSerializer,LinkSerializer,DownloadSerializer,ImageSerializer
 from utility.constants import SUCCEED, FAILED
 from utility.utils import str_to_html
   
 
+
+class AddImageApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            add_page_download_form = AddImageForm(request.POST, request.FILES)
+            if add_page_download_form.is_valid():
+                log += 1
+                cd=add_page_download_form.cleaned_data
+                page_id = cd['page_id']
+                title = cd['title']
+                image = request.FILES['image']
+                
+                result,message,image = ImageRepo(request=request).add_image(
+                    page_id=page_id,
+                    title=title,
+                    image=image,
+                    )
+                if result==SUCCEED and image is not None:
+                    context['image'] = ImageSerializer(image).data
+                    context['result'] = SUCCEED
+        context['log'] = log
+        return JsonResponse(context)
+    
  
 class ToggleLikeApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -39,7 +66,7 @@ class AddCommentApi(APIView):
                 log+=1
                 page_id = add_page_comment_form.cleaned_data['page_id']
                 comment = add_page_comment_form.cleaned_data['comment']
-                (result,message,comment) = CommentRepo(request=request).add_page_comment(page_id=page_id,comment=comment)
+                (result,message,comment) = CommentRepo(request=request).add_comment(page_id=page_id,comment=comment)
                 if result==SUCCEED:
                     context['comment'] = CommentSerializer(comment).data
         context['result'] = result

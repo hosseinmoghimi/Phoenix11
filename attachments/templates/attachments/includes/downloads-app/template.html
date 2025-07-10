@@ -25,7 +25,17 @@
             <div class="card-body">
 
                 <div v-for="download in downloads" class="mb-3">
+                    {% if not page %}
+                    <a :href="download.page.get_absolute_url"  class="mt-3">
 
+                        <div class="media">
+                            <img :src="download.page.thumbnail" class="rounded" width="32" alt="">
+                            <div class="media-body mr-2">
+                                <h6 v-text="download.page.title"></h6>
+                            </div>
+                        </div>
+                    </a>
+                    {% endif %}
                     <h6>
                         <a class="mr-2" target="" :href="download.get_download_url">
                             <span v-html="download.get_icon_tag" class=" ml-2 text-success"></span>

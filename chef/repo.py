@@ -113,13 +113,13 @@ class FoodItemRepo():
         
         
     def add_food_item(self,*args,**kwargs):
-        result,message,food=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".add_food"):
+        result,message,food_item=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_fooditem"):
             message="دسترسی غیر مجاز"
-            return result,message,food
-
+            return result,message,food_item
+         
         food_item=FoodItem()
-        
+
         if 'barcode' in kwargs:
             food_item.barcode=kwargs["barcode"]
         if 'priority' in kwargs and kwargs['priority'] is not None:
@@ -127,15 +127,8 @@ class FoodItemRepo():
         if 'title' in kwargs:
             food_item.title=kwargs["title"]
 
-            
-        if 'parent_code' in kwargs:
-            parent_code= kwargs["parent_code"]
-            parent=Account.objects.filter(code=parent_code).first()
-            if parent is not None:
-                food_item.parent_id=parent.id
-
-        if 'nature' in kwargs:
-            food_item.nature=kwargs["nature"]
+          
+ 
         (result,message,food_item)=food_item.save()
 
         

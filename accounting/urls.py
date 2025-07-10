@@ -15,6 +15,12 @@ urlpatterns = [
     path("init_all_accounts/",login_required(apis.InitALLAccountsApi.as_view()),name="init_all_accounts"),
     path("delete_all_accounts/",login_required(apis.DeleteALLAccountsApi.as_view()),name="delete_all_accounts"),
     
+
+    
+    path("financial-year/<int:pk>/",login_required(views.FinancialYearView.as_view()),name="financialyear"),
+    path("financial-years/",login_required(views.FinancialYearsView.as_view()),name="financial_years"),
+    path("add-financial-year/",login_required(apis.AddFinancialYearApi.as_view()),name="add_financial_year"),
+    
     path('accounts/',login_required(views.AccountsView.as_view()),name="accounts"),
     path('account/<int:pk>/',login_required(views.AccountView.as_view()),name="account"),
     path("add-account/",login_required(apis.AddAccountApi.as_view()),name="add_account"),
@@ -48,6 +54,15 @@ urlpatterns = [
     path('categories/',login_required(views.CategoriesView.as_view()),name="categories"),
     path('category/<int:pk>/',login_required(views.CategoryView.as_view()),name="category"),
     path("add-category/",login_required(apis.AddCategoryApi.as_view()),name="add_category"),
+
+
+
+    path("add-product-specification/",login_required(apis.AddProductSpecificationApi.as_view()),name="add_product_specification"),
+
+    
+    path('brands/',login_required(views.CategoriesView.as_view()),name="brands"),
+    path('brand/<int:pk>/',login_required(views.CategoryView.as_view()),name="brand"),
+    path("add-brand/",login_required(apis.AddCategoryApi.as_view()),name="add_brand"),
     
     path('services/',login_required(views.ServicesView.as_view()),name="services"),
     path('service/<int:pk>/',login_required(views.ServiceView.as_view()),name="service"),

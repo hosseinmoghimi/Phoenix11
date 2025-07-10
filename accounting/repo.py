@@ -1,4 +1,6 @@
-from .models import Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit,InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,Invoice,Bank,BankAccount,PersonCategory,Person,FinancialYear,PersonAccount
+from .models import Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit
+from .models import InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,FinancialYear
+from .models import Invoice,Bank,BankAccount,PersonCategory,FinancialYear,PersonAccount,ProductSpecification
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo
@@ -81,8 +83,8 @@ class InvoiceLineItemUnitRepo:
         result=SUCCEED
         message="قیمت جدید با موفقیت اضافه گردید."
          
- 
-        return result,message,invoice_line_item_unit
+        invoice_line_item_units=InvoiceLineItemUnit.objects.filter(invoice_line_item_id=invoice_line_item_unit.invoice_line_item.id)
+        return result,message,invoice_line_item_units
 
 
 class InvoiceLineRepo:
@@ -497,7 +499,8 @@ class FinancialYearRepo():
         if "date" in kwargs and kwargs["date"] is not None:
             return self.objects.filter(start_date_lte=kwargs['date']).filter(end_date_gte=kwargs['date']).first() 
         
-   
+    def current_financial_year(self):
+        return self.objects.filter(in_progress=True).first()
    
     def add_financial_year(self,*args,**kwargs):
         result,message,financial_year,financial_years=FAILED,"",None,[]
@@ -644,9 +647,78 @@ class PersonCategoryRepo():
             result,message,new_person_category=self.add_person_category(**person_category)
                 
         for person in persons:
+            from authentication.repo import PersonRepo
             result,message,new_person=PersonRepo(request=self.request).add_person(**person)
 
         return result,message       
+
+
+
+class ProductSpecificationRepo:
+    def __init__(self,request,*args, **kwargs):
+        self.request=request
+        self.me=None
+        # profile=ProfileRepo(request=request).me
+        
+        
+        self.objects=None
+        if request.user.has_perm(APP_NAME+".view_event"):
+            self.objects=ProductSpecification.objects
+        elif request.user.is_authenticated:
+            accs=[]
+            for person in Person.objects.filter(profile__user_id=request.user.id):
+
+                my_accounts=AccountRepo(request=request).my_accounts
+                for acc in my_accounts:
+                    accs.append(acc.id)
+            self.objects=Event.objects.filter(Q(bedehkar_id__in=accs)|Q(bestankar_id__in=accs))
+        else:
+            self.objects=Event.objects.filter(pk=0)
+
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for']) 
+        return objects.all()
+    def product_specification(self,*args, **kwargs):
+        if "product_specification_id" in kwargs:
+            return self.objects.filter(pk=kwargs['product_specification_id']).first() 
+        if "pk" in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first() 
+
+                     
+    def add_product_specification(self,*args, **kwargs):
+        product_specification,message,result,deleted_id=(None,"",FAILED,0)
+        # if not Permission(request=self.request).is_permitted(APP_NAME,OperationEnum.ADD,"productspecification"):
+        if not self.request.user.has_perm(APP_NAME+".add_account"):
+            message="دسترسی غیر مجاز"
+            return result,message,product_specification,deleted_id
+        # if len(Account.objects.filter(title=kwargs['title']))>0:
+        #     message="از قبل حسابی با همین عنوان ثبت شده است."
+        #     return product_specification,message,result
+        product_specification=ProductSpecification()
+        
+        if 'product_id' in kwargs:
+            product_specification.product_id=kwargs['product_id']
+        if 'name' in kwargs:
+            product_specification.name=kwargs['name']
+        if 'value' in kwargs:
+            product_specification.value=kwargs['value'] 
+        deleted=ProductSpecification.objects.filter(product_id=product_specification.product_id).filter(name=product_specification.name).first()
+        if deleted is not None:
+            deleted_id=deleted.id
+            deleted.delete()
+         
+        product_specification.save()
+        result=SUCCEED
+        message="ویژگی جدید با موفقیت اضافه گردید."
+         
+ 
+        return result,message,product_specification,deleted_id
+
+ 
 
 
 class ProductRepo():
@@ -725,9 +797,9 @@ class ProductRepo():
                 return result,message,None
 
         (result,message,product)=product.save()
-        if 'unit_price' in kwargs:
-            if 'unit_name' in kwargs:
-                if 'coef' in kwargs:
+        if 'unit_price' in kwargs and kwargs['unit_price'] is not None:
+            if 'unit_name' in kwargs and kwargs['unit_name'] is not None:
+                if 'coef' in kwargs and kwargs['coef'] is not None:
                     ili_unit=InvoiceLineItemUnit()
                     ili_unit.unit_name=kwargs["unit_name"]
                     ili_unit.coef=kwargs["coef"]
@@ -739,12 +811,10 @@ class ProductRepo():
                  
 
         if 'category_id' in kwargs:
-            pass
-            # category_id=kwargs["category_id"]
-            # category=Category.objects.filter(pk=category_id).first()
-            # if category is not None:
-            #     category.products.add(product.id)
-        coef=1 
+            category_id=kwargs["category_id"]
+            category=Category.objects.filter(pk=category_id).first()
+            if category is not None:
+                category.products.add(product.id)
         return result,message,product
  
 
@@ -787,7 +857,11 @@ class ProductRepo():
                 old_product.save()
                 modified+=1
             else:
-                result,message,new_product=self.add_product(title=product["title"],barcode=product["barcode"],unit_name=product["unit_name"],unit_price=product["unit_price"] ,coef=1)
+                try:
+                    result,message,new_product=self.add_product(title=product["title"],barcode=product["barcode"],unit_name=product["unit_name"],unit_price=product["unit_price"] ,coef=1)
+                    products.append(new_product)
+                except:
+                    pass
                 # new_product.title=product["title"]
                 # new_product.barcode=product["barcode"]
                 # new_product.unit_name=product["unit_name"]
@@ -1596,7 +1670,9 @@ class FinancialDocumentLineRepo:
             return result,message,financial_document_line
 
 
-        financial_document_line.save()
+        result,message,financial_document_line=financial_document_line.save()
+        if result==FAILED:
+            return result,message,financial_document_line
         financial_document_line.account.normalize_total()
         result=SUCCEED
         message="با موفقیت اضافه گردید."
@@ -1772,10 +1848,19 @@ class FinancialEventRepo():
             return self.objects.filter(pk=kwargs['event_id']).first() 
          
        
-
+    def delete_all(self,*args, **kwargs):
+        result,message=FAILED,""
+        if not self.request.user.has_perm(APP_NAME+".delete_financialevent"):
+            message="دسترسی غیر مجاز"
+            return result,message
+        financial_events=FinancialEvent.objects.all()
+        financial_events.delete()
+        result=SUCCEED
+        message='همه رویداد ها حذف شدند.'
+        return result,message
     def add_financial_event(self,*args,**kwargs):
         result,message,event=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".add_event"):
+        if not self.request.user.has_perm(APP_NAME+".add_financialevent"):
             message="دسترسی غیر مجاز"
             return result,message,event
 
@@ -1811,198 +1896,6 @@ class FinancialEventRepo():
 
         (result,message,financial_event)=financial_event.save()
         return result,message,financial_event
- 
- 
-class PersonRepo():
-    def __init__(self,request,*args, **kwargs):
-        self.request=request
-        self.me=None
-        # profile=ProfileRepo(request=request).me
-        self.objects=Person.objects
-
-        
-        self.objects=None
-        if request.user.has_perm(APP_NAME+".view_person"):
-            self.objects=Person.objects
-        elif request.user.is_authenticated:
-            self.objects=Person.objects.filter(profile__user_id=request.user.id)
-                 
-        else:
-            self.objects=Person.objects.filter(pk=0)
-
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
-    def list(self,*args, **kwargs):
-        objects=self.objects
-        pure_code="876454453342236"
-        try:
-            pure_code=int(kwargs["search_for"]) 
-        except:
-            pass
-        if "search_for" in kwargs:
-            search_for=kwargs["search_for"]
-            objects=objects.filter(Q(full_name__contains=search_for) | Q(melli_code__contains=search_for) | Q(code=search_for))
-        return objects.all()
-     
-    def person(self,*args, **kwargs):
-        if "person_id" in kwargs and kwargs["person_id"] is not None:
-            return self.objects.filter(pk=kwargs['person_id']).first()
-        if "pk" in kwargs and kwargs["pk"] is not None:
-            return self.objects.filter(pk=kwargs['pk']).first() 
-        if "id" in kwargs and kwargs["id"] is not None:
-            return self.objects.filter(pk=kwargs['id']).first() 
-        if "code" in kwargs and kwargs["code"] is not None:
-            return self.objects.filter(code=kwargs['code']).first()
-             
-        if "account_code" in kwargs and kwargs["account_code"] is not None:
-            a= self.objects.filter(code=kwargs['account_code']).first() 
-            if a is not None:
-                return a
-            else:
-                try:
-                    a= self.objects.filter(pure_code=filter_number(kwargs['account_code'])).first() 
-                    if a is not None:
-                        return a
-                except:
-                    pass
-       
-    def delete_all(self,*args,**kwargs):
-        
-        if not self.request.user.has_perm(APP_NAME+".delete_person"):
-            message="دسترسی غیر مجاز"
-            return result,message,person
-        PersonCategory.objects.all().delete()
-        Person.objects.all().delete()
-        result=SUCCEED
-        message="همه حذف شدند."
-        return result,message
-    
-    def add_person(self,*args,**kwargs):
-        result,message,person=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".add_person"):
-            message="دسترسی غیر مجاز"
-            return result,message,person
-
-        person=Person()
-        person_category_id=0
-        categories=[]
-        person_account_categories=[]
-
-
-        if Person.objects.filter(code=kwargs['code']).first() is not None:
-            message="کد وارد شده تکراری است."
-            person=None
-            return result,message,person
-        if Person.objects.filter(melli_code=kwargs['melli_code']).first() is not None:
-            message="کد ملی وارد شده تکراری است."
-            person=None
-            return result,message,person
-
-  
-        if 'type2' in kwargs:
-            person.type2=kwargs["type2"]
-        if 'type' in kwargs:
-            person.type=kwargs["type"]
-        if 'melli_code' in kwargs:
-            person.melli_code=kwargs["melli_code"]
-            
-        if 'color' in kwargs:
-            person.color=kwargs["color"]
-        if 'first_name' in kwargs:
-            person.first_name=kwargs["first_name"]
-        if 'last_name' in kwargs:
-            person.last_name=kwargs["last_name"]
-        if 'bio' in kwargs:
-            person.bio=kwargs["bio"]
-        if 'email' in kwargs:
-            person.email=kwargs["email"]
-        if 'mobile' in kwargs:
-            person.mobile=kwargs["mobile"]
-        if 'prefix' in kwargs:
-            person.prefix=kwargs["prefix"]
-        if 'gender' in kwargs:
-            person.gender=kwargs["gender"]
-        if 'address' in kwargs:
-            person.address=kwargs["address"]  
-        if 'type' in kwargs:
-            person.type=kwargs["type"] 
-        if 'person_category_id' in kwargs and kwargs["person_category_id"] is not None:
-            person_category_id=kwargs["person_category_id"]
-            person_category=PersonCategory.objects.filter(pk=person_category_id).first()
-            if person_category is not None:
-                categories=[person_category.code]
-         
-            
-        if 'person_account_categories' in kwargs:
-            person_account_categories=kwargs["person_account_categories"]
-             
- 
-        (result,message,person)=person.save()
-        if result==FAILED:
-            return result,message,person
-        
-
-
-        for person_account_category in person_account_categories: 
-            person_category=PersonCategory.objects.filter(pk=person_account_category).first()
-            person_account=PersonAccount(person=person,person_category=person_category)
-            person_account.person=person
-            person_account.person_category=person_category 
-            person_account.save()
-            pass
- 
-        return result,message,person
-
-    def add_account_to_person(self,*args,**kwargs):
-        result,message,account,person,action=FAILED,"",None,None,None
-        if not self.request.user.has_perm(APP_NAME+".add_personaccount"):
-            message="دسترسی غیر مجاز"
-            return result,message,account,person,action
-            
-        person_account=PersonAccount()
-        
-        person_account.person_id=kwargs['person_id']
-        person_account.person_category_id=kwargs['person_category_id']
-
-        result,message,person_account=person_account.save()
-        if result==FAILED:
-            person_account=None
-            return result,message,person_account,None,"ALREADY_EXISTED"
-
-        action="ADDED"
-        result=SUCCEED
-        message=f"حساب مالی  {person_account.name} با موفقیت به شخص {person_account.person.full_name} اضافه شد."
-            
-        return result,message,person_account,person_account.person,action
-
-    def remove_account_from_person(self,*args,**kwargs):
-        result,message,person_account_id=FAILED,"",0
-        if not self.request.user.has_perm(APP_NAME+".add_personaccount"):
-            message="دسترسی غیر مجاز"
-            return result,message,person_account_id
-             
-        person_id=kwargs['person_id']
-        person_category_id=kwargs['person_category_id']
-
-        person_account=PersonAccount.objects.filter(person_id=person_id).filter(person_category_id=person_category_id).first()
-        if person_account is None:
-            result=FAILED
-            message="حساب مالی وجود ندارد."
-            return result,message,person_account_id
-
-        person_account_id=person_account.id
-        try:
-            person_account.delete()
-            person_account_=PersonAccount.objects.filter(id=person_account_id).first()
-            if person_account_ is None:
-                result=SUCCEED
-                message=f"حساب مالی  {person_account.name} با موفقیت از شخص {person_account.person.full_name} حذف شد."
-        except:
-            message="حذف نشد. "+"ابتدا رویداد های مالی مرتبط را حذف کنید."+"تا تراز فرد صفر شده و هیچ سندی با شخص در ارتباط نباشد."
-            return result,message,person_account_id
-
-        return result,message,person_account_id
-
  
 class CategoryRepo():
 

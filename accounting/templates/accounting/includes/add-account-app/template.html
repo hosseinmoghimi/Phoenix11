@@ -17,19 +17,19 @@
                 <form @submit.prevent="add_account()">
                     <div class="row rtl">
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="">کد {{account.code}}</label>
                                 <input type="text" required class="form-control" v-model="code">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="">نام</label>
                                 <input type="text" required class="form-control" v-model="name">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="">رنگ</label>
                                 <select name="" id="" class="form-control" v-model="color">
@@ -74,7 +74,7 @@
                         </div>
 
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="">ماهیت</label>
                                 <select name="" id="" class="form-control" v-model="nature">
@@ -87,7 +87,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="">اولویت</label>
                                 <input type="number" required class="form-control" v-model="priority">

@@ -3,13 +3,15 @@ from utility.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
-from .repo import CategoryRepo,PersonRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
+from .repo import CategoryRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
 from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo
 from utility.log import leolog
 from .serializers import  ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
+from .repo import FinancialYearRepo,ProductSpecificationRepo
+from .serializers import FinancialYearSerializer,ProductSpecificationSerializer
  
 class AddProductToCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -31,6 +33,30 @@ class AddProductToCategoryApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+
+
+class AddProductSpecificationApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_product_specification_form=AddProductSpecificationForm(request.POST)
+            if add_product_specification_form.is_valid():
+                log=333
+                cd=add_product_specification_form.cleaned_data 
+                result,message,product_specification,deleted_id=ProductSpecificationRepo(request=request).add_product_specification(**cd)
+                if product_specification is not None:
+                    context['product_specification']=ProductSpecificationSerializer(product_specification).data
+                    context['deleted_id']=deleted_id
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
 
 
 
@@ -158,9 +184,9 @@ class AddInvoiceLineItemUnitApi(APIView):
             if add_invoice_line_item_unit_form.is_valid():
                 log=333
                 cd=add_invoice_line_item_unit_form.cleaned_data 
-                result,message,invoice_line_item_unit=InvoiceLineItemUnitRepo(request=request).add_invoice_line_item_unit(**cd)
-                if invoice_line_item_unit is not None:
-                    context['invoice_line_item_unit']=InvoiceLineItemUnitSerializer(invoice_line_item_unit).data
+                result,message,invoice_line_item_units=InvoiceLineItemUnitRepo(request=request).add_invoice_line_item_unit(**cd)
+                if invoice_line_item_units is not None:
+                    context['invoice_line_item_units']=InvoiceLineItemUnitSerializer(invoice_line_item_units,many=True).data
         context['message']=message
         context['result']=result
         context['log']=log
@@ -260,6 +286,31 @@ class AddInvoiceLineApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+
+
+ 
+class AddFinancialYearApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        add_financial_year_form=AddFinancialYearForm(request.POST)
+        if add_financial_year_form.is_valid():
+            cd=add_financial_year_form.cleaned_data
+            (result,message,financial_year,financial_years)=FinancialYearRepo(request=request).add_financial_year(**cd) 
+            if result==SUCCEED:
+                context["financial_years"]=FinancialYearSerializer(financial_years,many=True).data
+                context["financial_year"]=FinancialYearSerializer(financial_year).data
+            # (result2,message2)=PersonRepo(request=request).initial_default_persons() 
+        context['message']=message
+        context['result']=result
+        # context['message2']=message2
+        # context['result2']=result2
+        context['log']=log
+        return JsonResponse(context)
+
 
 
 class SelectFinancialEventApi(APIView):
@@ -363,12 +414,13 @@ class DeleteALLAccountsApi(APIView):
         log=111
         context['result']=FAILED
         if request.method=='POST':
-            (result3,message3)=AccountingDocumentLineRepo(request=request).delete_all() 
-            (result3,message3)=FinancialEventRepo(request=request).delete_all() 
+            from authentication.repo import PersonRepo
+            (result2,message2)=PersonCategoryRepo(request=request).delete_all() 
             (result3,message3)=PersonRepo(request=request).delete_all() 
+            (result3,message3)=FinancialDocumentLineRepo(request=request).delete_all() 
+            (result3,message3)=FinancialEventRepo(request=request).delete_all() 
             (result3,message3)=PersonAccountRepo(request=request).delete_all() 
             (result,message)=AccountRepo(request=request).delete_all_accounts() 
-            (result2,message2)=PersonCategoryRepo(request=request).delete_all() 
             (result2,message2)=BankRepo(request=request).delete_all() 
         context['message']=message
         context['result']=result

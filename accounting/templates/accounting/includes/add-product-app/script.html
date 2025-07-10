@@ -6,6 +6,7 @@
             unit_name: "عدد",
             title: "",
             barcode: "",
+            category_id:0,
             coef:1,
             show_form: false,
             message: { show: false },
@@ -15,6 +16,7 @@
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     title: this.title,
+                    category_id: this.category_id,
                     unit_name: this.unit_name,
                     coef: this.coef,
                     barcode: this.barcode,

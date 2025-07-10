@@ -10,6 +10,15 @@ class AddPageCommentForm(forms.Form):
 class DeletePageCommentForm(forms.Form):
     comment_id=forms.IntegerField(required=True)
  
+class DeleteImageForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    image_id=forms.IntegerField(required=True)
+
+
+class AddImageForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    title=forms.CharField(max_length=100, required=True)
+
 class AddLinkForm(forms.Form):
     page_id=forms.IntegerField(required=True)
     url=forms.CharField(max_length=5000,required=True)

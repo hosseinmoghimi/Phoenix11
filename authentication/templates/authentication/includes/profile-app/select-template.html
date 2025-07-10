@@ -1,0 +1,14 @@
+<div id="select-profile-app" class="text-right">
+<input placeholder="شناسه پروفایل" type="number" v-model="profile_id" class="form-control" @input="select_profile">
+<div v-if="profile.id">
+    <div class="media my-3">
+        <img class="rounded" :src="profile.image" width="64" alt="">
+        <div class="media-body mr-2">
+            <a :href="profile.get_absolute_url">
+
+                <span v-text="profile.full_name"></span>
+            </a>
+        </div>
+    </div>
+</div>
+</div>

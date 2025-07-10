@@ -6,6 +6,7 @@ from utility.qrcode import generate_qrcode
 from utility.repo import ParameterRepo
 from utility.enums import *
 from .constants import *
+from utility.utils import fixed_length
 from utility.constants import FAILED,SUCCEED
 from utility.currency import to_price_colored,to_price,CURRENCY
 from .enums import *
@@ -173,77 +174,7 @@ class Account(models.Model,LinkHelper):
         if self.parent is None:
             return self.name
         return self.parent.full_name+ACCOUNT_NAME_SEPERATOR+self.name
-
-
-class Person(models.Model):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.PROTECT)
-    code=models.CharField(_("code"), max_length=50)
-    prefix=models.CharField(_("پیشوند"),default=PersonPrefixEnum.MR,choices=PersonPrefixEnum.choices, max_length=50)
-    first_name=models.CharField(_("نام"), max_length=50)
-    last_name=models.CharField(_("نام خانوادگی"), max_length=50)
-    mobile=models.CharField(_("شماره همراه"),null=True,blank=True, max_length=50)
-    email=models.CharField(_("email"),null=True,blank=True, max_length=50)
-    bio=models.CharField(_("بیو"),null=True,blank=True, max_length=50)
-    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=50)
-    full_name=models.CharField(_("full_name"),null=True,blank=True, max_length=150)
-    image_origin=models.ImageField(_("تصویر"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/", height_field=None, width_field=None, max_length=None)
-    gender=models.CharField(_("جنسیت"),choices=GenderEnum.choices,default=GenderEnum.MALE, max_length=50)
-    type2=models.CharField(_("نوع"),choices=PersonType2Enum.choices,default=PersonType2Enum.HAGHIGHI, max_length=50)
-    type=models.CharField(_("ماهیت"),choices=PersonTypeEnum.choices,default=PersonTypeEnum.FREE, max_length=50)
-    melli_code=models.CharField(_("کد ملی"), max_length=10)
-
-
-
-    class Meta:
-        verbose_name = _("Person")
-        verbose_name_plural = _("اشخاص")
-
-   
-    @property
-    def full_name_(self):
-        full_name=""
-        if self.prefix:
-            full_name=self.prefix
-            
-        if len(full_name)>0:
-            full_name+=" "
-           
-        if self.first_name:
-            full_name+=self.first_name 
-
-            
-            
-        if len(full_name)>0:
-            full_name+=" "
-           
-        if self.last_name:
-            full_name+=self.last_name 
-
-        return full_name
-
-
-
-    def __str__(self):
-        return self.full_name
-
-   
-
-    def save(self,*args, **kwargs):
-        result,message,person=FAILED,"",None
-        # others=Person.objects.exclude(pk=self.pk)
-        # if others.filter(code=self.code).first() is not None:
-        #     message="کد تکراری می باشد."
-        #     return result,message,person
-        # self.
-        # 
-        self.full_name=self.full_name_
-        super(Person,self).save()
-        result=SUCCEED
-        message=" با موفقیت اضافه گردید."
-        person=self
-        return result,message,person    
-
-
+ 
 class PersonAccountCategory(models.Model):
     title=models.CharField(_("title"), max_length=50)
 
@@ -259,7 +190,7 @@ class PersonAccountCategory(models.Model):
 
 
 class PersonAccount(Account):
-    person=models.ForeignKey("person", verbose_name=_("person"), on_delete=models.PROTECT)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
     person_category=models.ForeignKey("personcategory", verbose_name=_("person_category"), on_delete=models.PROTECT)
     
     
@@ -290,13 +221,13 @@ class PersonAccount(Account):
         person_category=PersonCategory.objects.filter(id=self.person_category_id).first()
         if person_category is not None:
             self.parent=person_category.account
-        code=self.parent.code+fixed_length(1,person_category.code_length)
-        last=PersonAccount.objects.filter(person_category_id=self.person_category_id).last()
+        # code=self.parent.code+str(fixed_length(1,person_category.code_length))
+        # last=PersonAccount.objects.filter(person_category_id=self.person_category_id).last()
       
       
-        if last is not None:
-            code=str(int(last.code)+1) 
-        self.code=code
+        # if last is not None:
+        #     code=str(int(last.code)+1) 
+        # self.code=code
         self.name=f'{self.person} # {self.category}'
         super(PersonAccount,self).save()
         result=SUCCEED
@@ -364,6 +295,23 @@ class FinancialDocument(models.Model,LinkHelper):
         self.save()
                  
 
+
+class Brand(models.Model,LinkHelper):
+    name=models.CharField(_("name"),max_length=100)
+
+    class_name="brand"
+    app_name=APP_NAME
+
+
+    class Meta:
+        verbose_name = _("Brand")
+        verbose_name_plural = _("Brands")
+
+    def __str__(self):
+        return self.name
+ 
+
+
 class FinancialDocumentLine(models.Model,LinkHelper):
     financial_document=models.ForeignKey("financialdocument", verbose_name=_("accountingdocument"), on_delete=models.CASCADE)
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
@@ -375,6 +323,9 @@ class FinancialDocumentLine(models.Model,LinkHelper):
     bedehkar=models.IntegerField(_("بدهکار"),default=0)
     bestankar=models.IntegerField(_("بستانکار"),default=0)
     balance=models.IntegerField(_("بالانس"),default=0)
+    @property
+    def amount(self):
+        return self.bestankar+self.bedehkar
     @property
     def persian_date_time(self):
         a= PersianCalendar().from_gregorian(self.date_time)    
@@ -399,14 +350,27 @@ class FinancialDocumentLine(models.Model,LinkHelper):
         #     return result,message,financial_document
 
         if not self.bedehkar==0 and not self.bestankar==0:
-            return
+            message='مبلغ بدهکار و بستانکار صفر وارد شده است.'
+            return result,message,None
         if self.account.nature==AccountNatureEnum.ONLY_BEDEHKAR and self.bestankar>0:
-            return
+            message='ماهیت حساب فقط بدهکار است.'
+            return result,message,None
         if self.account.nature==AccountNatureEnum.ONLY_BESTANKAR and self.bedehkar>0:
-            return
+            message='ماهیت حساب فقط بستانکار است.'
+            return result,message,None
+        
+        if self.financial_event_id ==0:
+            message='رویداد مالی انتخاب نشده است.'
+            return result,message,None
+        if self.financial_document_id is None or self.financial_document_id==0:
+            message='سند مالی انتخاب نشده است.'
+            return result,message,None
         super(FinancialDocumentLine,self).save()
         self.financial_document.normalize()
         self.account.normalize_total()
+        result=SUCCEED
+        message='سطر سند مالی با موفقیت اضافه شد.'
+        return result,message,financial_document_line
     @property
     def rest(self):
         return 0
@@ -573,9 +537,15 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     
     def save(self):
         invoice_line_item_units=InvoiceLineItemUnit.objects.filter(invoice_line_item_id=self.invoice_line_item.id)
-        invoice_line_item_units1=invoice_line_item_units.filter(unit_name=self.unit_name)
-
-        invoice_line_item_units1.delete()
+        invoice_line_item_units_with_this_unit=invoice_line_item_units.filter(unit_name=self.unit_name)
+        for invoice_line_item_unit in invoice_line_item_units_with_this_unit:
+            if invoice_line_item_unit.unit_price==0:
+                invoice_line_item_unit.delete()
+            else:
+                if self.default is True:
+                    invoice_line_item_unit.default=False
+                    super(InvoiceLineItemUnit,invoice_line_item_unit).save()
+        # invoice_line_item_units_with_this_unit.delete()
         # self.id=0
         Now=timezone.now()
         self.date_added=Now
@@ -659,7 +629,11 @@ class Category(models.Model,LinkHelper,ImageHelper):
         result=SUCCEED
         message='دسته بندی با موفقیت اضافه شد.'
         return result,message,category
+
+
 class Product(InvoiceLineItem):
+    brand=models.ForeignKey("brand",null=True,blank=True, verbose_name=_("brand"), on_delete=models.CASCADE)
+    model=models.CharField(_("model"),null=True,blank=True, max_length=50)
     barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=50)
     
     class_name="product"
@@ -685,6 +659,23 @@ class Product(InvoiceLineItem):
     def get_market_absolute_url(self):
         return reverse("market:product",kwargs={'pk':self.pk})
     
+
+  
+class ProductSpecification(models.Model,LinkHelper):
+    product=models.ForeignKey("product", verbose_name=_("product"), on_delete=models.CASCADE)
+    name=models.CharField(_("name"),max_length=50)
+    value=models.CharField(_("value"),max_length=50)
+
+    class_name="productspecification"
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("ProductSpecification")
+        verbose_name_plural = _("ProductSpecifications")
+
+    def __str__(self):
+        return f"{self.product} > {self.name} > {self.value}"
+ 
+
 
 class Service(InvoiceLineItem):
 
@@ -789,7 +780,7 @@ class Bank(models.Model,LinkHelper):
 
 
 class BankAccount(Account,LinkHelper):
-    person=models.ForeignKey("person", verbose_name=_("person"), on_delete=models.PROTECT)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
     bank=models.ForeignKey("bank", verbose_name=_("bank"), on_delete=models.PROTECT)
     title=models.CharField(_("title"),max_length=50)
     card_no=models.CharField(_("card_no"),max_length=20)

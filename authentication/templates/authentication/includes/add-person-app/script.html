@@ -1,0 +1,101 @@
+{% include "accounting/includes/account-app/select-script.html" %}
+{% include "authentication/includes/profile-app/select-script.html" %}
+
+<script>
+  let add_person_app = new Vue({
+    el: "#add-person-app",
+    data: {
+    name: "", 
+    prefix:'آقای',
+    title:'',
+    first_name:'',
+    last_name:'',
+    mobile:'',
+    address:'',
+    bio:'',
+    melli_code:'',
+    type:'حقیقی',
+    type2:'حقیقی',
+    email:'',
+    gender:'مرد',
+    profile:{id:0},
+    profile_id:0,
+    message:{show:false},
+    waiting:false,
+    },
+
+    components: {
+      DatePicker: VuePersianDatetimePicker,
+    },
+    methods: {
+      to_price_colored: function (vall) {
+        let colorr = "primary";
+        if (vall > 0) {
+          colorr = "success";
+        }
+
+        if (vall < 0) {
+          colorr = "danger";
+        }
+
+        return `<span class="text-${colorr}">${to_price(
+          vall
+        )} {{CURRENCY}}</span>`;
+      },
+
+      to_price: function (vall) {
+        return to_price(vall) + " {{CURRENCY}}";
+      },
+      select_profile: function () { 
+          select_profile_by_id(profile_id=add_person_app.profile_id).done((data) => {
+            console.log(data)
+              add_person_app.profile = data.profile;
+              if (data.result === "SUCCEED") {
+                  add_person_app.profile = data.profile;
+              } else {
+                  add_person_app.profile = {}
+              }
+        });
+      },
+       
+      add_person: function () {
+        add_person_app.waiting=true
+        add_person_app.message.show=false
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          first_name: this.first_name,
+          last_name: this.last_name,
+          mobile: this.mobile,
+          prefix: this.prefix,
+          address: this.address,
+          type: this.type,
+          title: this.title,
+          type2: this.type2,
+          gender: this.gender,
+          email: this.email,
+          melli_code: this.melli_code,
+          bio: this.bio,
+          profile_id: this.profile.id,
+          profile:{},
+        };
+
+        console.log(payload);
+        let url = "{% url 'authentication:add_person' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          add_person_app.waiting=false
+
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            if (typeof persons_app != "undefined") {
+              persons_app.persons.push(data.person);
+              show_message(add_person_app,"موفق",data.message,'success',10000)
+            }
+          }else{
+            show_message(add_person_app,"خطا",data.message,'danger',10000)
+          }
+        });
+      },
+    },
+  });
+</script>

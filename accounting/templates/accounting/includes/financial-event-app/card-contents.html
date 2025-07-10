@@ -1,0 +1,44 @@
+{% include 'core/includes/page-app/card-contents.html' %}
+{% load to_price %}
+<h5>
+    <small class="text-muted"> مانده :</small>
+    {{financial_event.amount|to_price}} {{CURRENCY}}
+</h5>
+
+<small>
+    بدهکار :
+</small>
+<div>
+
+    <a href="{{financial_event.bedehkar.get_absolute_url}}">
+        <div class="media">
+            <img src="{{financial_event.bedehkar.logo}}" width="48" alt="">
+            <div class="media-body mr-2">
+                <span>
+                    {{financial_event.bedehkar.name}}
+                </span>
+            </div>
+        </div>
+    </a>
+</div>
+
+
+
+
+
+<small>
+    بستانکار :
+</small>
+<div>
+
+    <a href="{{financial_event.bestankar.get_absolute_url}}">
+        <div class="media">
+            <img src="{{financial_event.bestankar.logo}}" width="48" alt="">
+            <div class="media-body mr-2">
+                <span>
+                    {{financial_event.bestankar.name}}
+                </span>
+            </div>
+        </div>
+    </a>
+</div>

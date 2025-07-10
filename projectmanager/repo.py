@@ -1,4 +1,4 @@
-from .models import Project 
+from .models import Project,RemoteClient
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo 
@@ -95,5 +95,63 @@ class ProjectRepo():
         
         (result,message,project)=project.save()
         return result,message,project
+
+ 
+class RemoteClientRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=RemoteClient.objects.all().order_by("-id")
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def remote_client(self, *args, **kwargs):
+        pk=0
+        if 'remote_client_id' in kwargs:
+            pk=kwargs['remote_client_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+           
+            objects = objects.filter(Q(name__contains=search_for)|Q(description__contains=search_for)|Q(local_ip__contains=search_for)|Q(remote_ip__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home'])) 
+         
+
+        return objects.all() 
+
+    def add_remote_client(self,*args, **kwargs):
+        result,message,remote_client=None,FAILED,""
+        if not self.user.has_perm(APP_NAME+'.add_remoteclient'):
+            message="شما مجوز لازم را برای افزودن سیستم کلاینت ندارید."
+            return result,message,remote_client
+        project_id=kwargs['project_id']
+        a=kwargs.pop("project_id")
+        remote_client=RemoteClient(*args, **kwargs)
+        if remote_client.brand_id==0 or remote_client.brand_id is None:
+            remote_client.brand=None
+        remote_client.save()
+        project=Project.objects.filter(pk=project_id).first()
+        if project is not None:
+            project.remote_clients.add(remote_client)
+            result=SUCCEED
+            message="با موفقیت اضافه شد."
+        else:
+            message="پروژه مرتبط یافت نشد."
+
+        return result,message,remote_client
 
  

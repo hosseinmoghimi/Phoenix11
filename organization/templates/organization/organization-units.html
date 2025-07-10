@@ -1,0 +1,27 @@
+
+{% extends "organization/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="row rtl farsi">
+    {% if add_organization_unit_form %}
+      <div class="col-md-12">
+          {% include "organization/includes/add-organization-unit-app/template.html" %}
+
+      </div>
+    {% endif %}
+    <div class="col-md-12">
+
+        
+        {% include "organization/includes/organization-units-app/template.html" %}
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "organization/includes/organization-units-app/script.html" %}
+{% if add_organization_unit_form %}
+{% include "organization/includes/add-organization-unit-app/script.html" %}
+{% endif %}
+{% endblock script %}

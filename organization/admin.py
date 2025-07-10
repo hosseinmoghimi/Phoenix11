@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Organization
+from .models import OrganizationUnit,Employee
 
-admin.site.register(Organization)
+admin.site.register(OrganizationUnit)
 # Register your models here.
+
+admin.site.register(Employee)

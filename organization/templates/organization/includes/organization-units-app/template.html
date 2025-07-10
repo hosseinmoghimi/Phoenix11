@@ -1,0 +1,82 @@
+<div id="accordion-organization-units" class="rtl text-right farsi">
+  <div class="card" id="organization-units-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-organization-units"
+          aria-expanded="true"
+          aria-controls="collapse-organization-units"
+        >
+          سازمان ها
+          <span v-if="organization_units.length>0">
+            <small class="text-danger mx-2">
+              <span v-text="organization_units.length"></span>
+            </small>
+          </span>
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-organization-units"
+      class="collapse {% if expand_organization_units %} show {% endif %}"
+      aria-labelledby="heading-organization-units"
+      data-parent="#accordion-organization-units"
+    >
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <th>تاریخ</th>
+              <th>نام سازمان</th>
+
+              <th>حساب</th>
+              <th></th>
+            </thead>
+            <tbody>
+              <tr v-for="organization_unit in organization_units">
+                <td></td>
+
+                <td>
+                  <a :href="organization_unit.get_absolute_url">
+                    <span v-text="organization_unit.title"></span>
+                  </a>
+
+                  <div></div>
+                </td>
+                <td>
+                   <div v-for="account in [organization_unit.account]">
+                    {% include "accounting/includes/account-app/media.html" %}
+                   </div>
+                </td>
+
+                <td>
+                  <a
+                    target="_blank"
+                    :href="organization_unit.get_edit_url"
+                    title="ویرایش"
+                    class="text-warning mx-2"
+                  >
+                    <i class="fa fa-edit text-warning"> </i>
+                    ویرایش
+                  </a>
+                  <a
+                    target="_blank"
+                    :href="organization_unit.get_delete_url"
+                    title="حذف"
+                    class="text-danger mx-2"
+                  >
+                    <i class="fa fa-trash text-danger"> </i>
+                    حذف
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

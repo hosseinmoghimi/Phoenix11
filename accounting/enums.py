@@ -3,9 +3,6 @@ from utility.enums import UnitNameEnum
  
 from django.db.models import TextChoices
 
-class PersonType2Enum(TextChoices):
-    HAGHIGHI='حقیقی',_('حقیقی')
-    HOGHUGHI='حقوقی',_('حقوقی')
 class RequestStatusEnum(TextChoices):
     INITIAL='درخواست اولیه',_('درخواست اولیه')
     DENIED="رد شده",_("رد شده")
@@ -72,14 +69,6 @@ class EventStatusEnum(TextChoices):
     FINISHED="تایید نهایی شده",_("تایید نهایی شده")
     PASSED="پاس شده",_("پاس شده")
     FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
-
-
-
-class PersonTypeEnum(TextChoices):
-    CUSTOMER="مشتری",_("مشتری")
-    HOGHUGHI="حقوقی",_("حقوقی")
-    PERSONNEL="پرسنل",_("پرسنل")
-    FREE="بدون کنترل",_("بدون کنترل")
 
 
  

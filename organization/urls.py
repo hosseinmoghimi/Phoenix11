@@ -7,8 +7,16 @@ urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),  
 
-    path('organization/add/',login_required(apis.AddOrganizationApi.as_view()),name="add_organization"),  
-    path('organizations/',login_required(views.OrganizationsView.as_view()),name="organizations"),  
-    path('organization/<int:pk>/',login_required(views.OrganizationView.as_view()),name="organization"),  
+    path('organization_unit/add/',login_required(apis.AddOrganizationUnitApi.as_view()),name="add_organization_unit"),  
+    path('organization_units/',login_required(views.OrganizationUnitsView.as_view()),name="organization_units"),  
+    path('organization_unit/<int:pk>/',login_required(views.OrganizationUnitView.as_view()),name="organizationunit"), 
+
+    path('select-organization/',login_required(apis.SelectOrganizationUnitApi.as_view()),name="select_organization"),  
+    path('select-employee/',login_required(apis.SelectEmployeeApi.as_view()),name="select_employee"),  
+
+     
+    path('employee/add/',login_required(apis.AddEmployeeApi.as_view()),name="add_employee"),  
+    path('employees/',login_required(views.EmployeesView.as_view()),name="employees"),  
+    path('employee/<int:pk>/',login_required(views.EmployeeView.as_view()),name="employee"), 
    
 ]

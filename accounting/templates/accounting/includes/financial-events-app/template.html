@@ -89,13 +89,63 @@
 
                                 <td>
 
-                                  
+
+                                     <div class="media">
+                                        <a :href="financial_event.bedehkar.get_absolute_url">
+                                            <img :src="financial_event.bedehkar.logo" class="rounded" width="32" alt="">
+                                        </a>
+                                        <div class="media-body mr-3">
+                                            <div>
+
+                                                <a :href="financial_event.bedehkar.get_absolute_url">
+                                                    <span v-text="financial_event.bedehkar.name "></span>
+                                                </a>
+                                            </div>
+                                            <div>
+
+                                                <a :href="financial_event.bedehkar.get_absolute_url">
+                                                    <small class="text-muted"
+                                                        v-text="financial_event.bedehkar.full_title"></small>
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <small class="text-muted">
+                                                    <span v-text="financial_event.bedehkar.class_title"></span>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
 
 
                                 </td>
                                 <td>
 
-                                   
+                                    <div class="media">
+                                        <a :href="financial_event.bestankar.get_absolute_url">
+                                            <img :src="financial_event.bestankar.logo" class="rounded" width="32" alt="">
+                                        </a>
+                                        <div class="media-body mr-3">
+                                            <div>
+
+                                                <a :href="financial_event.bestankar.get_absolute_url">
+                                                    <span v-text="financial_event.bestankar.name "></span>
+                                                </a>
+                                            </div>
+                                            <div>
+
+                                                <a :href="financial_event.bestankar.get_absolute_url">
+                                                    <small class="text-muted"
+                                                        v-text="financial_event.bestankar.full_title"></small>
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <small class="text-muted">
+                                                    <span v-text="financial_event.bestankar.class_title"></span>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
                                     
 
 
@@ -103,7 +153,7 @@
 
                                 <td>
 
-                                    <span v-text="to_price(financial_event.balance)">
+                                    <span v-text="to_price(financial_event.amount)">
 
                                     </span>
 

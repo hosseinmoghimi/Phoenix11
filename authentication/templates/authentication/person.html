@@ -1,0 +1,14 @@
+{% extends "authentication/layout.html" %} {% load static %} {% block content %}
+<div class="row rtl farsi">
+  <div class="col-md-6">
+    {% include "authentication/includes/person-app/card.html" %}
+  </div>
+
+  {% if change_person_image_form %}
+
+  <div class="col-md-4">
+    {% include "authentication/includes/person-app/change-image.html" %}
+  </div>
+  {% endif %}
+</div>
+{% endblock content %} {% block script %} {% endblock script %}

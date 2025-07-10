@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from .models import Category,InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
-
-from .models import FinancialDocument
-
+from .models import FinancialDocument,ProductSpecification,FinancialYear
+from authentication.serializer import PersonSerializer
 class AccountSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
@@ -13,9 +12,16 @@ class InvoiceSerializer(serializers.ModelSerializer):
        bestankar=AccountSerializer()
        class Meta:
         model = Invoice
-        fields = ['id','title','bedehkar' ,'bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','bedehkar' ,'bestankar','sum_total','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
  
+class FinancialYearSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = FinancialYear
+        fields = ['id','in_progress','name','status','persian_start_date','persian_end_date', 'get_absolute_url','get_edit_url','get_delete_url']
+
+
  
+
 
 class FinancialEventSerializer(serializers.ModelSerializer):
        bedehkar=AccountSerializer()
@@ -90,4 +96,12 @@ class FinancialDocumentLineSerializer(serializers.ModelSerializer):
        account=AccountSerializer()
        class Meta:
         model = FinancialDocumentLine
-        fields = ['id','account','financial_document','title','persian_date_time','balance','bedehkar','bestankar','financial_event', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','account','financial_document','amount','title','persian_date_time','balance','bedehkar','bestankar','financial_event', 'get_absolute_url','get_edit_url','get_delete_url']
+
+class ProductSpecificationSerializer(serializers.ModelSerializer):
+    product=ProductSerializer()
+    class Meta:
+        model = ProductSpecification
+        fields = ['id','name','value','product', 'get_edit_url','get_delete_url']
+
+ 
