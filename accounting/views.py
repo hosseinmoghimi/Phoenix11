@@ -50,6 +50,8 @@ def AddInvoiceLineItemContext(request,*args, **kwargs):
 
 def AddProductContext(request,*args, **kwargs):
     context=AddInvoiceLineItemContext(request=request)
+    categories=CategoryRepo(request=request).list()
+    context['categories_for_add_product_app']=categories
     context['import_products_from_excel_form']=ImportProductsFromExcelForm()
     context['add_product_form']=AddProductForm()
     return context
@@ -929,6 +931,7 @@ class CategoryView(View):
         context['category']=category
         category_s=json.dumps(CategorySerializer(category,many=False).data)
         context['category_s']=category_s
+        context['category_id']=category.id
 
 
         if category is None:

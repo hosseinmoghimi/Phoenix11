@@ -2,8 +2,8 @@ from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from django.views import View
 from .forms import *
-from .serializers import ProjectSerializer
-from .repo import ProjectRepo
+from .serializers import ProjectSerializer,RemoteClientSerializer
+from .repo import ProjectRepo,RemoteClientRepo
 from organization.views import OrganizationRepo,OrganizationSerializer
 from .apps import APP_NAME
 from core.views import CoreContext,PageContext,MessageView
@@ -63,6 +63,15 @@ class ProjectView(View):
         if request.user.has_perm(APP_NAME+".add_invoice"):
             context.update(AddInvoiceContext(request=request))
 
+
+
+        
+        remote_clients = project.remote_clients.all()
+        context['remote_clients'] = remote_clients
+        remote_clients_s = json.dumps(RemoteClientSerializer(remote_clients, many=True).data)
+        context['remote_clients_s'] = remote_clients_s
+        if request.user.has_perm(APP_NAME+".add_remoteclient"):
+            context['add_remote_client_form'] = AddRemoteClientForm()
         return render(request,TEMPLATE_ROOT+"project.html",context)
 # Create your views here. 
 
@@ -83,3 +92,30 @@ class ProjectsView(View):
             context['organizations_s']=organizations_s
         return render(request,TEMPLATE_ROOT+"projects.html",context)
 # Create your views here. 
+
+
+
+class RemoteClientsView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        context['WIDE_LAYOUT'] = True
+        if context is None:
+            return notPersmissionView(request=request)
+        remote_clients = RemoteClientRepo(request=request).list()
+        context['remote_clients'] = remote_clients
+        remote_clients_s = json.dumps(RemoteClientSerializer(remote_clients, many=True).data)
+        context['remote_clients_s'] = remote_clients_s
+        context['expand_remote_clients']=True
+        # if request.user.has_perm(APP_NAME+".add_material"):
+            # context['add_material_form']=AddMaterialForm()
+        return render(request, TEMPLATE_ROOT+"remote-clients.html", context)
+
+
+class RemoteClientView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        
+        remote_client = RemoteClientRepo(request=request).remote_client(*args, **kwargs)
+        context['remote_client'] = remote_client
+        return render(request, TEMPLATE_ROOT+"remote-client.html", context)
+

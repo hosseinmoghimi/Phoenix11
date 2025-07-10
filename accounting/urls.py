@@ -54,6 +54,11 @@ urlpatterns = [
     path('categories/',login_required(views.CategoriesView.as_view()),name="categories"),
     path('category/<int:pk>/',login_required(views.CategoryView.as_view()),name="category"),
     path("add-category/",login_required(apis.AddCategoryApi.as_view()),name="add_category"),
+
+    
+    path('brands/',login_required(views.CategoriesView.as_view()),name="brands"),
+    path('brand/<int:pk>/',login_required(views.CategoryView.as_view()),name="brand"),
+    path("add-brand/",login_required(apis.AddCategoryApi.as_view()),name="add_brand"),
     
     path('services/',login_required(views.ServicesView.as_view()),name="services"),
     path('service/<int:pk>/',login_required(views.ServiceView.as_view()),name="service"),

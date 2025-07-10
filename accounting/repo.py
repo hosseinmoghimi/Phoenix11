@@ -729,9 +729,9 @@ class ProductRepo():
                 return result,message,None
 
         (result,message,product)=product.save()
-        if 'unit_price' in kwargs:
-            if 'unit_name' in kwargs:
-                if 'coef' in kwargs:
+        if 'unit_price' in kwargs and kwargs['unit_price'] is not None:
+            if 'unit_name' in kwargs and kwargs['unit_name'] is not None:
+                if 'coef' in kwargs and kwargs['coef'] is not None:
                     ili_unit=InvoiceLineItemUnit()
                     ili_unit.unit_name=kwargs["unit_name"]
                     ili_unit.coef=kwargs["coef"]
@@ -743,12 +743,10 @@ class ProductRepo():
                  
 
         if 'category_id' in kwargs:
-            pass
-            # category_id=kwargs["category_id"]
-            # category=Category.objects.filter(pk=category_id).first()
-            # if category is not None:
-            #     category.products.add(product.id)
-        coef=1 
+            category_id=kwargs["category_id"]
+            category=Category.objects.filter(pk=category_id).first()
+            if category is not None:
+                category.products.add(product.id)
         return result,message,product
  
 

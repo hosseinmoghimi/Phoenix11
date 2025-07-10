@@ -295,6 +295,23 @@ class FinancialDocument(models.Model,LinkHelper):
         self.save()
                  
 
+
+class Brand(models.Model,LinkHelper):
+    name=models.CharField(_("name"),max_length=100)
+
+    class_name="brand"
+    app_name=APP_NAME
+
+
+    class Meta:
+        verbose_name = _("Brand")
+        verbose_name_plural = _("Brands")
+
+    def __str__(self):
+        return self.name
+ 
+
+
 class FinancialDocumentLine(models.Model,LinkHelper):
     financial_document=models.ForeignKey("financialdocument", verbose_name=_("accountingdocument"), on_delete=models.CASCADE)
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
