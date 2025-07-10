@@ -1,7 +1,7 @@
 # Phoenix11
 
 
-Version 1.0.0
+Version 0.0.2
 
 
 server_settings.py
