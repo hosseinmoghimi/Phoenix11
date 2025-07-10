@@ -2,8 +2,8 @@ from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from django.views import View
 from .forms import *
-from .serializers import OrganizationUnitSerializer
-from .repo import OrganizationUnitRepo
+from .serializers import OrganizationUnitSerializer,EmployeeSerializer
+from .repo import OrganizationUnitRepo,EmployeeRepo
 from .apps import APP_NAME
 from core.views import CoreContext,PageContext
 from utility.calendar import PersianCalendar
@@ -66,6 +66,36 @@ class OrganizationUnitsView(View):
         if request.user.has_perm(APP_NAME+".add_organization_unit"):
             context['add_organization_unit_form']=AddOrganizationUnitForm
         return render(request,TEMPLATE_ROOT+"organization-units.html",context)
+# Create your views here. 
+
+  
+class EmployeeView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        phoenix_apps=context["phoenix_apps"]
+        phoenix_apps=phoenix_apps
+        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
+
+        return render(request,TEMPLATE_ROOT+"employee.html",context)
+# Create your views here. 
+
+  
+  
+class EmployeesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        employees = EmployeeRepo(request=request).list(*args, **kwargs)
+
+        context['employees']=employees
+        employees_s=json.dumps(EmployeeSerializer(employees,many=True).data)
+        context['employees_s']=employees_s
+        if request.user.has_perm(APP_NAME+".add_employee"):
+            context['add_employee_form']=AddEmployeeForm
+            organization_units=OrganizationUnitRepo(request=request).list()
+            context['organization_units_for_add_employee_form']=organization_units
+        return render(request,TEMPLATE_ROOT+"employees.html",context)
 # Create your views here. 
 
   

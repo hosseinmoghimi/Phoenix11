@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Category,InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
 from .models import FinancialDocument,ProductSpecification,FinancialYear
-
+from authentication.serializer import PersonSerializer
 class AccountSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account

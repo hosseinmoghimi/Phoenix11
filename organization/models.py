@@ -42,3 +42,9 @@ class Employee(models.Model,LinkHelper,DateTimeHelper):
         return f"{self.person}  {self.job_title}  {self.organization_unit}"
  
  
+    def save(self):
+        (result,message,employee)=FAILED,'',self
+        super(Employee,self).save()
+        result=SUCCEED
+        message='کارمند جدید با موفقیت اضافه شد.'
+        return (result,message,employee)
