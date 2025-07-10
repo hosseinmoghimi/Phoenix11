@@ -11,3 +11,11 @@ class AddEmployeeForm(forms.Form):
     person_id=forms.IntegerField(required=True)
     
  
+class SelectOrganizationUnitForm(forms.Form):
+    organization_unit_id=forms.IntegerField(required=True)
+    
+ 
+class SelectEmployeeForm(forms.Form):
+    employee_id=forms.IntegerField(required=True)
+    
+ 

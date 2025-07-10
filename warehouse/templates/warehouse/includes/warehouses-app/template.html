@@ -32,6 +32,7 @@
                
               <th>نام انبار</th>
               <th>حساب</th>
+              <th>واحد سازمانی</th>
  
               <th>
 
@@ -63,6 +64,24 @@
                       <small class="text-muted" v-text="to_price(warehouse.account.balance)"></small>
                     </div>
                   </a>
+
+                   <td>
+                
+
+
+                     <td>
+                  <a :href="warehouse.organization_unit.get_absolute_url" v-if="warehouse.organization_unit">
+                    <span v-text="warehouse.organization_unit.title"></span>
+                    <div>
+
+                      <small class="text-muted" v-text="warehouse.organization_unit.full_name"></small>
+                    </div>
+
+                   
+                  </a>
+
+                   <td>
+                
 
                   
 

@@ -1,3 +1,4 @@
+{% include "organization/includes/organization-unit-app/select-script.html" %}
 {% include "accounting/includes/account-app/select-script.html" %}
 <script>
   let add_warehouse_app = new Vue({
@@ -6,6 +7,7 @@
     name: "", 
     account_code:'0',
     account:{},
+    organization_unit:{},
     },
 
     components: {
@@ -30,6 +32,19 @@
       to_price: function (vall) {
         return to_price(vall) + " {{CURRENCY}}";
       },
+      select_organization_unit: function () {
+        let organization_unit_id=add_warehouse_app.organization_unit.id
+          console.log(add_warehouse_app.organization_unit);
+          select_organization_unit_by_id(add_warehouse_app.organization_unit.id).done((data) => {
+          console.log(data);
+          add_warehouse_app.organization_unit = data.organization_unit;
+              if (data.result === "SUCCEED") {
+                  add_warehouse_app.organization_unit = data.organization_unit;
+              } else {
+                  add_warehouse_app.organization_unit = {id:organization_unit_id}
+              }
+        });
+      },
       select_account: function () {
           console.log(add_warehouse_app.account);
           select_account_by_code(add_warehouse_app.account_code).done((data) => {
@@ -46,6 +61,7 @@
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           name: this.name,
           account_id: this.account.id,
+          organization_unit_id: this.organization_unit.id,
         };
 
         console.log(payload);

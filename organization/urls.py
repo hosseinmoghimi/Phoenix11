@@ -11,6 +11,8 @@ urlpatterns = [
     path('organization_units/',login_required(views.OrganizationUnitsView.as_view()),name="organization_units"),  
     path('organization_unit/<int:pk>/',login_required(views.OrganizationUnitView.as_view()),name="organizationunit"), 
 
+    path('select-organization/',login_required(apis.SelectOrganizationUnitApi.as_view()),name="select_organization"),  
+    path('select-employee/',login_required(apis.SelectEmployeeApi.as_view()),name="select_employee"),  
 
      
     path('employee/add/',login_required(apis.AddEmployeeApi.as_view()),name="add_employee"),  

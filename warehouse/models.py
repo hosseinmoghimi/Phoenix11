@@ -6,9 +6,12 @@ from accounting.models import Product,InvoiceLine,Invoice,CorePage
 from .enums import *
 from utility.enums import *
 from projectmanager.models import Request
+
+
 class WareHouse(models.Model,LinkHelper):
     name=models.CharField(_("نام"), max_length=50)
-    account=models.ForeignKey("accounting.account", verbose_name=_("account"),null=True,blank=True, on_delete=models.CASCADE)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"),null=True,blank=True, on_delete=models.PROTECT)
+    organization_unit=models.ForeignKey("organization.organizationunit", verbose_name=_("organization_unit"),null=True,blank=True, on_delete=models.PROTECT)
 
     app_name=APP_NAME
     class_name="warehouse"

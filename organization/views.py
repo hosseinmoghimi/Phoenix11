@@ -43,11 +43,15 @@ class IndexView(View):
   
 class OrganizationUnitView(View):
     def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
+        context=getContext(request=request) 
+        organization_unit=OrganizationUnitRepo(request=request).organization_unit(*args, **kwargs)
+        context['organization_unit']=organization_unit
+
+        employees = organization_unit.employee_set.all()
+
+        context['employees']=employees
+        employees_s=json.dumps(EmployeeSerializer(employees,many=True).data)
+        context['employees_s']=employees_s
 
         return render(request,TEMPLATE_ROOT+"organization-unit.html",context)
 # Create your views here. 

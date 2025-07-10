@@ -52,3 +52,60 @@ class AddOrganizationUnitApi(APIView):
         context['log']=log
         return JsonResponse(context)
  
+
+
+
+ 
+ 
+class SelectOrganizationUnitApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            select_organization_unit_form=SelectOrganizationUnitForm(request.POST)
+            if select_organization_unit_form.is_valid():
+                log=333
+                cd=select_organization_unit_form.cleaned_data
+                organization_unit=OrganizationUnitRepo(request=request).organization_unit(**cd)
+                if organization_unit is not None:
+                    result=SUCCEED
+                    message="موفقیت آمیز"
+                    context['organization_unit']=OrganizationUnitSerializer(organization_unit).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+ 
+
+ 
+class SelectEmployeeApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            select_employee_form=SelectEmployeeForm(request.POST)
+            if select_employee_form.is_valid():
+                log=333
+                cd=select_employee_form.cleaned_data
+                employee=EmployeeRepo(request=request).employee(**cd)
+                if employee is not None:
+                    result=SUCCEED
+                    message="موفقیت آمیز"
+                    context['employee']=EmployeeSerializer(employee).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+ 

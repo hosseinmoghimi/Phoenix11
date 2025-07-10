@@ -8,6 +8,7 @@ from .apps import APP_NAME
 from core.views import CoreContext
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
+from organization.views import OrganizationUnitRepo,OrganizationUnitSerializer
 import json
 from utility.enums import UnitNameEnum
 from utility.log import leolog
@@ -49,6 +50,11 @@ class WareHousesView(View):
         context["warehouses_s"]=warehouses_s
         if request.user.has_perm(APP_NAME+'.add_warehouse'):
             context['add_warehouse_form']=AddWareHouseForm()
+            organization_units = OrganizationUnitRepo(request=request).list(*args, **kwargs)
+
+            context['organization_units']=organization_units
+            organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+            context['organization_units_s']=organization_units_s
         return render(request,TEMPLATE_ROOT+"warehouses.html",context)
 # Create your views here. 
    
