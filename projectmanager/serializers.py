@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from .models import Project,RemoteClient
 from accounting.serializers import FinancialEventSerializer,InvoiceLineSerializer
-from organization.serializers import OrganizationSerializer
+from organization.serializers import OrganizationUnitSerializer
 class ProjectSerializer(FinancialEventSerializer):
-       contractor=OrganizationSerializer()
-       employer=OrganizationSerializer()
+       contractor=OrganizationUnitSerializer()
+       employer=OrganizationUnitSerializer()
        class Meta:
         model = Project
         fields = ['id','title','thumbnail','employer','contractor', 'get_absolute_url','get_edit_url','get_delete_url']

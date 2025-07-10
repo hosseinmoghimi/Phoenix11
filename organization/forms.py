@@ -1,7 +1,7 @@
 from accounting.forms import AddProductForm,forms
  
-class AddOrganizationForm(forms.Form):
+class AddOrganizationUnitForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)
-    event_datetime=forms.CharField(max_length=50,required=False)
+    account_id=forms.IntegerField(required=True)
     
  

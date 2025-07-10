@@ -38,6 +38,20 @@ class UnitNameEnum(TextChoices):
     SABAD="سبد",_("سبد")
     RAS="راس",_("راس")
     BOTTLE="بطری",_("بطری")
+
+
+class OperatingSystemNameEnum(TextChoices):
+    WIN_SERVER_2012='Windows Server 2012',_('Windows Server 2012')
+    WIN_SERVER_2018='Windows Server 2018',_('Windows Server 2018')
+    WIN_SERVER_2020='Windows Server 2020',_('Windows Server 2020')
+    WIN_SERVER_2022='Windows Server 2022',_('Windows Server 2022')
+    WIN_SERVER_2024='Windows Server 2024',_('Windows Server 2024')
+    LINUX='Linux',_('Linux')
+    LINUX_UBUNTU='Linux Ubuntu',_('Linux Ubuntu')
+    LINUX_UBUNTU_24='Linux Ubuntu 2024',_('Linux Ubuntu 2024')
+    ANDROID='ANDROID',_('ANDROID')
+    IOS='IOS',_('IOS')
+    Ltr='ltr',_('ltr')
   
 class TextDirectionEnum(TextChoices):
     Rtl='rtl',_('rtl')

@@ -27,7 +27,11 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="">سیستم عامل</label>
-                    <input type="text" class="form-control" v-model="os">
+                    <select name="" id="" class="form-control" v-model="os">
+                        {% for os in operating_systems %}
+                        <option value="{{os}}">{{os}}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
             <div class="col-md-12">

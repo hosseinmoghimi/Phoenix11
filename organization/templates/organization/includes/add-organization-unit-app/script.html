@@ -1,0 +1,71 @@
+{% include "accounting/includes/account-app/select-script.html" %}
+<script>
+  let add_organization_unit_app = new Vue({
+    el: "#add-organization-unit-app",
+    data: {
+    title: "",
+    account_code:"0",
+    account:{id:"0"},
+    event_date: current_date,
+    event_time: "00:00:00",
+    event_datetime: current_datetime,
+    },
+    components: {
+      DatePicker: VuePersianDatetimePicker,
+    },
+    methods: {
+      
+      select_account: function () {
+          select_account_by_code(add_organization_unit_app.account_code).done((data) => {
+              add_organization_unit_app.account = data.account;
+              if (data.result === "SUCCEED") {
+                  add_organization_unit_app.account = data.account;
+              } else {
+                  add_organization_unit_app.account = {}
+              }
+        });
+      },
+      
+
+      to_price_colored: function (vall) {
+        let colorr = "primary";
+        if (vall > 0) {
+          colorr = "success";
+        }
+
+        if (vall < 0) {
+          colorr = "danger";
+        }
+
+        return `<span class="text-${colorr}">${to_price(
+          vall
+        )} {{CURRENCY}}</span>`;
+      },
+
+      to_price: function (vall) {
+        return to_price(vall) + " {{CURRENCY}}";
+      },
+     
+      add_organization_unit: function () {
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          title: this.title,
+          account_id: this.account.id,
+          event_datetime: this.event_date+" "+this.event_time,
+        };
+
+        console.log(payload);
+        let url = "{% url 'organization:add_organization_unit' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            if (typeof organization_units_app != "undefined") {
+              organization_units_app.organization_units.push(data.organization_unit);
+            }
+          }
+        });
+      },
+    },
+  });
+</script>

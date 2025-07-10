@@ -940,16 +940,17 @@ class CategoryView(View):
         category=category_repo.category(*args, **kwargs)
         context['category']=category
         category_s=json.dumps(CategorySerializer(category,many=False).data)
-        context['category_s']=category_s
-        context['category_id']=category.id
+        context['category_s']=category_s 
 
 
         if category is None:
             categories=category_repo.roots()
+            context['category_id']=0
             products=[]
         else:
             categories=category_repo.list(parent_id=category.id)
             products=category.products.all()
+            context['category_id']=category.id
             # leolog(all_childs_products=category.all_childs_products())
 
         context['categories']=categories

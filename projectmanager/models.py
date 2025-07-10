@@ -6,8 +6,8 @@ from .apps import APP_NAME
 from accounting.models import InvoiceLine,Invoice
 # Create your models here.
 class Project(Event,LinkHelper): 
-    employer=models.ForeignKey("organization.organization", verbose_name=_("employer"),related_name="project_employed", on_delete=models.CASCADE)
-    contractor=models.ForeignKey("organization.organization", verbose_name=_("contractor"),related_name="project_contracted", on_delete=models.CASCADE)
+    employer=models.ForeignKey("organization.organizationunit", verbose_name=_("employer"),related_name="project_employed", on_delete=models.CASCADE)
+    contractor=models.ForeignKey("organization.organizationunit", verbose_name=_("contractor"),related_name="project_contracted", on_delete=models.CASCADE)
     type=models.CharField(_("تایپ"),max_length=50,choices=ProjectTypeEnum.choices,default=ProjectTypeEnum.TYPE_A)
     percentage_completed=models.IntegerField(_("درصد پیشرفت"),default=0)
     weight=models.IntegerField(_("وزن پروژه"),default=0)
@@ -30,6 +30,8 @@ class Project(Event,LinkHelper):
     
 
 class Request(InvoiceLine):
+    ware_house=models.ForeignKey("warehouse.warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
+
     
 
     class Meta:
