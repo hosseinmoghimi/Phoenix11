@@ -13,7 +13,7 @@ DEBUG = False
 DEBUG = True
 VUE_VERSION_3=False
 VUE_VERSION_2=True
-DATABASE_NAME='phoenix11_20250527'
+DATABASE_NAME='phoenix11_20250705'
 
 ALLOWED_HOSTS = ['*']
 
@@ -37,8 +37,13 @@ INSTALLED_APPS = [
     'accounting',
     'authentication',
     'processmanagement',
+    'organization',
+    'attachments',
+    'projectmanager',
     'log',
     'chef',
+    'school',
+    'warehouse',
 ]
  
 
