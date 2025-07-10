@@ -424,9 +424,9 @@ class PersonAccountRepo():
             person_account.person_category=kwargs['person_category']
         if 'person_category_id' in kwargs:
             person_account.person_category_id=kwargs['person_category_id']
-        person_account.save()
-        result=SUCCEED
-        message="با موفقیت حساب فرد ایجاد شد."
+        result,message,person_account=person_account.save()
+        # result=SUCCEED
+        # message="با موفقیت حساب فرد ایجاد شد."
         return result,message,person_account
 
     def person_account(self,*args, **kwargs):
