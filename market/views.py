@@ -7,7 +7,7 @@ from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
-from accounting.views import AddCategoryForm,CategoryRepo,CategorySerializer,AddProductForm,AddProductContext
+from accounting.views import CategoryRepo
 import json
 from django.views import View
 from core.views import CoreContext,leolog
@@ -21,7 +21,7 @@ NO_NAVBAR="NO_NAVBAR"
         
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
-    context[WIDE_LAYOUT]=True 
+    context[WIDE_LAYOUT]=False 
  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
@@ -61,6 +61,8 @@ class CategoryView(View):
         category_repo=CategoryRepo(request=request)
         category=category_repo.category(*args, **kwargs)
         context['category']=category
+        leolog(category=category)
+        from .serializers import CategorySerializer
         category_s=json.dumps(CategorySerializer(category,many=False).data)
         context['category_s']=category_s 
 
@@ -83,24 +85,10 @@ class CategoryView(View):
         context['products']=products
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
-
-        if request.user.has_perm(APP_NAME+'.add_category'):
-            context['add_category_form']=AddCategoryForm()
-        if request.user.has_perm(APP_NAME+'.add_product'):
-            context.update(AddProductContext(request=request))
+ 
         return render(request,TEMPLATE_ROOT+"category.html",context)
 
-
-class CategoriesView(View):
-    def get(self,request,*args, **kwargs):
-        return CategoryView().get(request=request,pk=0)
-        context=getContext(request=request)
-        categories=CategoryRepo(request=request).list(*args, **kwargs)
-        context['categories']=categories
-        categories_s=json.dumps(CategorySerializer(categories,many=True).data)
-        context['categories_s']=categories_s
-        return render(request,TEMPLATE_ROOT+"categories.html",context)
-
+ 
 
     
 class ProductView(View):

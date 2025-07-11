@@ -52,10 +52,9 @@ def AddInvoiceLineItemContext(request,*args, **kwargs):
 def AddProductContext(request,*args, **kwargs):
     context=AddInvoiceLineItemContext(request=request)
     categories=CategoryRepo(request=request).list()
-    context['categories']=categories
-    categories_s=json.dumps(CategorySerializer(categories,many=True).data)
-    context['categories_s']=categories_s
     context['categories_for_add_product_app']=categories
+    categories_s=json.dumps(CategorySerializer(categories,many=True).data)
+    context['categories_for_add_product_app_s']=categories_s
     context['import_products_from_excel_form']=ImportProductsFromExcelForm()
     context['add_product_form']=AddProductForm()
     return context

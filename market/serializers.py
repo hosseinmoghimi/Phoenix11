@@ -1,6 +1,6 @@
 from core.serializer import serializers
 from .models import Shop,Menu,Supplier,Customer,CartItem,Shipper,Desk,DeskCustomer
-from accounting.serializers import Product,AccountBriefSerializer
+from accounting.serializers import Category,Product,AccountBriefSerializer
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,6 +10,11 @@ class ProductSerializer(serializers.ModelSerializer):
 
  
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Category
+        fields=['id', 'title','thumbnail','get_market_absolute_url',  'get_edit_url','get_delete_url']
+ 
 class SupplierSerializer(serializers.ModelSerializer):
     account=AccountBriefSerializer()
     class Meta:
