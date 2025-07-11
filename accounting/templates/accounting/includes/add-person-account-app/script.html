@@ -1,0 +1,56 @@
+
+<script>
+    // const colors_for_add_account_app = JSON.parse("{a{colors_s|escapejs}}")
+</script>
+<script>
+    let add_person_account_app = new Vue({
+        el: "#add-person-account-app",
+        data: {
+            name: "",
+            person_category_id:0,
+            code: "",
+            person:{},
+            priority: 100,
+            type: "",
+            nature: "بدون کنترل",
+            color: 'success',
+            // colors: colors_for_add_account_app,
+            message: { show: false }
+        },
+        methods: {
+            add_person_account: function () {
+                const url = "{% url 'accounting:add_person_account'  %}"
+                const payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    priority: parseInt(this.priority),
+                    parent_id:0,
+                    name: this.name,
+                    person_id: parseInt(this.person.id),
+                    person_category_id: parseInt(this.person_category_id),
+                    code: "{{person_account.code}}"+this.code,
+                    color: this.color,
+                    // type: this.type,
+                    nature: this.nature,
+
+                }
+                leolog(payload)
+                $.post(url, payload).done(data => {
+                    leolog(data)
+                    if (data.result === "SUCCEED") {
+                        show_message(add_person_account_app, "موفقیت آمیز", data.message, "success", 10000)
+                        if (typeof person_accounts_app != "undefined") {
+
+                            person_accounts_app.person_accounts.push(data.person_account)
+                        }
+                    }
+
+                    if (data.result != "SUCCEED") {
+                        show_message(add_person_account_app, "خطا", data.message, "danger", 10000)
+
+                    }
+
+                })
+            },
+        }
+    })
+</script>

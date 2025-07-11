@@ -1,0 +1,95 @@
+<div id="accordion-person-accounts" class="rtl text-right farsi">
+    <div class="card" id="person-accounts-app">
+        <div class="card-header">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-person-accounts" aria-expanded="true"
+                    aria-controls="collapse-person-accounts">
+                    حساب های اشخاص
+                    <span v-if="person_accounts.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="person_accounts.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapse-person-accounts" class="collapse " aria-labelledby="heading-person-accounts"
+            data-parent="#accordion-person-accounts">
+
+
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                کد
+                            </th>
+                            <th>
+                                نام حساب
+                            </th>
+                            
+                            <th>
+                                نام شخص
+                            </th>
+                            <th>
+                                مانده
+                            </th>
+                            <th>
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="person_account in person_accounts">
+                                <td>
+                                    <a :href="person_account.get_absolute_url">
+                                        <span :class="'text-'+person_account.color" v-text="person_account.code"></span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a :href="person_account.get_absolute_url">
+                                        <span :class="'text-'+person_account.color" v-text="person_account.name"></span>
+                                        <span :class="'badge badge-'+person_account.color" v-text="person_account.type"></span>
+                                    </a>
+
+                                </td>
+
+                                 <td>
+                                    <a :href="person_account.person.get_absolute_url">
+                                        <span   v-text="person_account.person.full_name"></span>
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <span v-html="to_price(person_account.balance)"></span>
+                                    <small class="text-muted mr-1">
+
+                                        {{CURRENCY}}
+                                    </small>
+                                </td>
+                                <td>
+                                    <a target="_blank" :href="person_account.get_edit_url" title="ویرایش"
+                                        class=" text-warning mx-2">
+                                        <i class="fa fa-edit text-warning">
+                                        </i>
+                                        ویرایش
+                                    </a>
+                                    <a target="_blank" :href="person_account.get_delete_url" title="حذف"
+                                        class=" text-danger mx-2">
+                                        <i class="fa fa-trash text-danger">
+                                        </i>
+                                        حذف
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>

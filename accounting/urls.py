@@ -21,11 +21,19 @@ urlpatterns = [
     path("financial-years/",login_required(views.FinancialYearsView.as_view()),name="financial_years"),
     path("add-financial-year/",login_required(apis.AddFinancialYearApi.as_view()),name="add_financial_year"),
     
+    path('person-accounts/',login_required(views.PersonAccountsView.as_view()),name="person_accounts"),
+    path('person-account/<int:pk>/',login_required(views.PersonAccountView.as_view()),name="personaccount"),
+    path("add-person-account/",login_required(apis.AddPersonAccountApi.as_view()),name="add_person_account"),
+    path("select-person-account/",login_required(apis.SelectPersonAccountApi.as_view()),name="select_person_account"),
+    
+    
+    
+    
     path('accounts/',login_required(views.AccountsView.as_view()),name="accounts"),
     path('account/<int:pk>/',login_required(views.AccountView.as_view()),name="account"),
     path("add-account/",login_required(apis.AddAccountApi.as_view()),name="add_account"),
-    path('selection/',login_required(views.SelectionView.as_view()),name="selection"),
     path("select-account/",login_required(apis.SelectAccountApi.as_view()),name="select_account"),
+    path('selection/',login_required(views.SelectionView.as_view()),name="selection"),
     path("set-account-priority/",login_required(apis.SetAccountPriorityApi.as_view()),name="set_account_priority"),
     path("set_account_parent/",login_required(apis.SetAccountParentApi.as_view()),name="set_account_parent"),
 

@@ -18,7 +18,11 @@ class AddAccountForm(forms.Form):
     color=forms.CharField( max_length=100, required=False)
     nature=forms.CharField( max_length=100, required=False)
 
-
+class AddPersonAccountForm(AddAccountForm):
+    person_id=forms.IntegerField(required=True)
+    person_category_id=forms.IntegerField(required=True)
+    
+    
 class AddInvoiceLineItemUnitForm(forms.Form):
     invoice_line_item_id=forms.IntegerField(required=True)
     unit_name=forms.CharField(max_length=100, required=True)
@@ -224,6 +228,14 @@ class SearchInvoiceLineItemForm(forms.Form):
     title=forms.CharField(max_length=100, required=False)
     barcode=forms.CharField(max_length=100, required=False)
     code=forms.CharField(max_length=100, required=False)
+
+class SelectPersonAccountForm(forms.Form):
+    pk=forms.IntegerField(required=False)
+    person_account_id=forms.IntegerField(required=False)
+    id=forms.IntegerField(required=False)
+    code=forms.CharField(max_length=100, required=False)
+    title=forms.CharField(max_length=100, required=False)
+
 
 
 class SelectAccountForm(forms.Form):

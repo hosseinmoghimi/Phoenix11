@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Category,FinancialYear,FinancialDocumentLine,FinancialDocument,PersonAccount
-from .models import PersonAccountCategory,Account,FinancialEvent,InvoiceLineItemUnit,InvoiceLineItem 
+from .models import Account,FinancialEvent,InvoiceLineItemUnit,InvoiceLineItem 
 from .models import Service,Product,Invoice,InvoiceLine,Bank,BankAccount,PersonCategory,Brand
 from .models import ProductSpecification
 
@@ -20,7 +20,6 @@ admin.site.register(InvoiceLine)
 admin.site.register(InvoiceLineItem)
 admin.site.register(InvoiceLineItemUnit)
 admin.site.register(PersonAccount)
-admin.site.register(PersonAccountCategory)
 admin.site.register(PersonCategory)
 admin.site.register(Product)
 admin.site.register(Service)

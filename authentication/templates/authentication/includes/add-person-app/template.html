@@ -1,181 +1,162 @@
-<div class="card" id="add-person-app">
-  {% load static %}
-  <div class="card-header">
-    <h4>افزودن شخص</h4>
-  </div>
-  <div class="card-body">
-    <form @submit.prevent="add_person()">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">جنسیت</label>
-            <select v-model="gender" required type="text" class="form-control">
-              {% for gender in genders %}
-              <option value="{{gender}}">{{gender}}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
+<div id="accordion-add-person" class="rtl text-right farsi">
 
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">پیشوند</label>
-            <select v-model="prefix" required type="text" class="form-control">
-              {% for prefix in prefixes %}
-              <option value="{{prefix}}">{{prefix}}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
+  <div class="card" id="add-person-app">
+    {% load static %}
+    <div class="card-header">
+      <h5 class="text-center">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-person" aria-expanded="true"
+          aria-controls="collapse-add-person">
+          افزودن شخص جدید
+           
+        </button>
+      </h5>
+    </div>
+    <div id="collapse-add-person" class="collapse "
+      aria-labelledby="heading-add-person" data-parent="#accordion-add-person">
+      <div class="card-body">
+        <form @submit.prevent="add_person()">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">جنسیت</label>
+                <select v-model="gender" required type="text" class="form-control">
+                  {% for gender in genders %}
+                  <option value="{{gender}}">{{gender}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
 
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">ماهیت</label>
-            <select v-model="type" required type="text" class="form-control">
-              {% for type in types %}
-              <option value="{{type}}">{{type}}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">پیشوند</label>
+                <select v-model="prefix" required type="text" class="form-control">
+                  {% for prefix in prefixes %}
+                  <option value="{{prefix}}">{{prefix}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
 
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">نوع</label>
-            <select v-model="type2" required type="text" class="form-control">
-              {% for type2 in types2 %}
-              <option value="{{type2}}">{{type2}}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">ماهیت</label>
+                <select v-model="type" required type="text" class="form-control">
+                  {% for type in types %}
+                  <option value="{{type}}">{{type}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
 
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="">پروفایل</label>
-            <input
-              @input="select_profile()"
-              v-model="profile_id"
-              required
-              type="text"
-              class="form-control"
-            />
-          </div>
-        </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">نوع</label>
+                <select v-model="type2" required type="text" class="form-control">
+                  {% for type2 in types2 %}
+                  <option value="{{type2}}">{{type2}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
 
-        <div class="col-md-6">
-          <div class="form-group">
-            <div class="media">
-              <img :src="profile.image" width="32" alt="">
-              <div class="media-body mr-2">
-                <span v-text="profile.full_name"></span>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">پروفایل</label>
+                <input @input="select_profile()" v-model="profile_id" required type="text" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="media">
+                  <img :src="profile.image" width="32" alt="">
+                  <div class="media-body mr-2">
+                    <span v-text="profile.full_name"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">عنوان</label>
+                <input v-model="title" type="text" class="form-control" />
+              </div>
+            </div>
+
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">نام</label>
+                <input v-model="first_name" type="text" class="form-control" />
+              </div>
+            </div>
+
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">نام خانوادگی</label>
+                <input v-model="last_name" type="text" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">آدرس</label>
+                <input v-model="address" type="text" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">بیو</label>
+                <input v-model="bio" type="text" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">کد ملی</label>
+                <input v-model="melli_code" type="text" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">ایمیل</label>
+                <input v-model="email" type="text" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">موبایل</label>
+                <input v-model="mobile" type="text" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4"></div>
+
+            <div class="col-md-12">
+              <button class="btn btn-success" v-if="!waiting" type="submit">
+                <i class="fa fa-plus"></i>
+                افزودن
+              </button>
+              <img src="{% static 'leo/img/loading' %}" width="64" v-if="waiting" alt="" />
+            </div>
+
+            <div class="col-md-12 mt-2" v-if="message.show">
+              <div :class="'alert alert-'+message.color">
+                <div class="rtl text-right">
+                  <h5 v-html="message.title"></h5>
+                  <span v-html="message.body"></span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">عنوان</label>
-            <input
-              v-model="title"
-              type="text"
-              class="form-control"
-            />
-          </div>
-        </div>
-
-        
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">نام</label>
-            <input
-              v-model="first_name"
-              type="text"
-              class="form-control"
-            />
-          </div>
-        </div>
-
-
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">نام خانوادگی</label>
-            <input
-              v-model="last_name"
-              type="text"
-              class="form-control"
-            />
-          </div>
-        </div>
-
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">آدرس</label>
-            <input
-              v-model="address"
-              type="text"
-              class="form-control"
-            />
-          </div>
-        </div>
-
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">بیو</label>
-            <input v-model="bio"  type="text" class="form-control" />
-          </div>
-        </div>
-
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">کد ملی</label>
-            <input
-              v-model="melli_code"
-              type="text"
-              class="form-control"
-            />
-          </div>
-        </div>
-
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">ایمیل</label>
-            <input v-model="email"  type="text" class="form-control" />
-          </div>
-        </div>
-
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="">موبایل</label>
-            <input v-model="mobile" type="text" class="form-control" />
-          </div>
-        </div>
-
-        <div class="col-md-4"></div>
-
-        <div class="col-md-12">
-          <button class="btn btn-success" v-if="!waiting" type="submit">
-            <i class="fa fa-plus"></i>
-            افزودن
-          </button>
-          <img
-            src="{% static 'leo/img/loading' %}"
-            width="64"
-            v-if="waiting"
-            alt=""
-          />
-        </div>
-
-        <div class="col-md-12 mt-2" v-if="message.show">
-          <div :class="'alert alert-'+message.color">
-            <div class="rtl text-right">
-              <h5 v-html="message.title"></h5>
-              <span v-html="message.body"></span>
-            </div>
-          </div>
-        </div>
+        </form>
       </div>
-    </form>
+    </div>
   </div>
 </div>

@@ -1,20 +1,18 @@
-<div id="accordion-add-account">
-    <div class="card" id="add-account-app">
-        <div class="card-header" id="heading-add-account">
+<div id="accordion-add-person-account">
+    <div class="card" id="add-person-account-app">
+        <div class="card-header" id="heading-add-person-account">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-account"
-                    aria-expanded="true" aria-controls="collapse-add-account">
-                    افزودن
-                    حساب
-
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-person-account"
+                    aria-expanded="true" aria-controls="collapse-add-person-account">
+                    افزودن حساب شخص
                 </button>
             </h5>
         </div>
-        <div id="collapse-add-account" class="collapse " aria-labelledby="heading-add-account"
-            data-parent="#accordion-add-account">
+        <div id="collapse-add-person-account" class="collapse " aria-labelledby="heading-add-person-account"
+            data-parent="#accordion-add-person-account">
 
             <div class="card-body">
-                <form @submit.prevent="add_account()">
+                <form @submit.prevent="add_person_account()">
                     <div class="row rtl">
 
                         <div class="col-md-3">
@@ -27,6 +25,13 @@
                             <div class="form-group">
                                 <label for="">نام</label>
                                 <input type="text" required class="form-control" v-model="name">
+                            </div>
+                        </div>
+
+                         <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="">شناسه شخص </label>
+                                <input type="number" required class="form-control" v-model="person.id">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -78,9 +83,22 @@
                             <div class="form-group">
                                 <label for="">ماهیت</label>
                                 <select name="" id="" class="form-control" v-model="nature">
-                                    {% for nature in account_natures_for_add_account %}
+                                    {% for nature in account_natures_for_add_person_account %}
                                     <option value="{{nature}}">
                                         {{nature}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="">دسته بندی</label>
+                                <select name="" id="" class="form-control" v-model="person_category_id">
+                                    {% for person_category in person_categories %}
+                                    <option value="{{person_category.id}}">
+                                        {{person_category.title}}
                                     </option>
                                     {% endfor %}
                                 </select>
