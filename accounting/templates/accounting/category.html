@@ -3,12 +3,16 @@
 
 
 
-
-{% if category.parent %}
+ 
 <div class="text-center rtl">
+  
+  {% if category.parent %}
+  
   {{category.parent.get_breadcrumb_link|safe}}
+  {% else %}
+  <a href="{% url 'accounting:category' pk=0 %}">خانه</a>
+  {% endif %}
 </div>
-{% endif %}
 
 <h4 class="text-center rtl">
     {{category.title}}

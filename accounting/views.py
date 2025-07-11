@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from utility.log import leolog
+from .constants import EXCEL_PRODUCTS_DATA_START_ROW,EXCEL_SERVICES_DATA_START_ROW
 
 from django.http import Http404,HttpResponse
 from django.views import View
@@ -29,7 +30,7 @@ NO_NAVBAR="NO_NAVBAR"
 
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
-    context['WIDE_LAYOUT']=True
+    context['WIDE_LAYOUT']=False
  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
@@ -352,15 +353,38 @@ class SearchView(View):
         log=1
         context=getContext(request=request) 
         search_form=SearchForm(request.POST)
+        WAS_FOUND=False
+        search_for=''   
         if search_form.is_valid():
             log=2
             search_for=search_form.cleaned_data['search_for']
-            accounts=AccountRepo(request=request).list(search_for=search_for)
             result=SUCCEED
 
-            context['accounts']=accounts
-            context['accounts_s']=json.dumps(AccountSerializer(accounts,many=True).data)
+            accounts=AccountRepo(request=request).list(search_for=search_for)
+            if len(accounts)>0:
+                context['accounts']=accounts
+                context['accounts_s']=json.dumps(AccountSerializer(accounts,many=True).data)
+                WAS_FOUND=True
 
+
+                
+
+            products=ProductRepo(request=request).list(search_for=search_for)
+            if len(products)>0:
+                context['products']=products
+                context['products_s']=json.dumps(ProductSerializer(products,many=True).data)
+                WAS_FOUND=True
+
+                
+
+            categories=CategoryRepo(request=request).list(search_for=search_for)
+            if len(categories)>0:
+                context['categories']=categories
+                context['categories_s']=json.dumps(CategorySerializer(categories,many=True).data)
+                WAS_FOUND=True
+
+        context['WAS_FOUND']=WAS_FOUND
+        context['search_for']=search_for
         context['message']=message
         context['log']=log
         context['result']=result
@@ -767,7 +791,9 @@ class ExportProductsToExcelView(View):
             
         # )
         
-        start_row=3
+        start_row=EXCEL_PRODUCTS_DATA_START_ROW
+        if start_row>2:
+            start_row-=1
         report_work_book.add_sheet(
             data=lines,
             start_row=start_row,
@@ -828,7 +854,9 @@ class ExportServicesToExcelView(View):
             
         # )
         
-        start_row=3
+        start_row=EXCEL_SERVICES_DATA_START_ROW
+        if start_row>2:
+            start_row-=1
         report_work_book.add_sheet(
             data=lines,
             start_row=start_row,

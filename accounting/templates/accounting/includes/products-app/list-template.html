@@ -1,94 +1,103 @@
-<div class="card" id="products-app">
-    <div class="card-header">
-        <h4>
-            کالا ها
+<div id="accordion-products" class="rtl text-right farsi">
 
-            <small>(
-                <span v-text="products.length"></span>
-                )</small>
-        </h4>
-    </div>
-    <div class="card-body rtl">
-        <div class="my-2">
-            <input type="text" class="form-control" v-model="search_for" @input="filter()">
+    <div class="card" id="products-app">
+        <div class="card-header">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-products"
+                    aria-expanded="true" aria-controls="collapse-products">
+                    کالا ها
+                    <span v-if="products.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="products.length"></span>
+                        </small>
+                    </span>
+
+                </button>
+            </h5>
         </div>
-        <div class="my-2 ">
-            <a target="_blank" href="{% url 'accounting:export_products_to_excel' %}" class="btn btn-info rtl">
-                
-                <i class="fa fa-file-excel-o" aria-hidden="true"></i>
-                دانلود فایل اکسل</a>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <th>
-                        نام
-                    </th>
+
+        <div id="collapse-products" class="collapse " aria-labelledby="heading-products"
+            data-parent="#accordion-products">
+
+            <div class="card-body rtl">
+                <div class="my-2">
+                    <input type="text" class="form-control" v-model="search_for" @input="filter()">
+                </div>
+              
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                نام
+                            </th>
 
 
-                    <th>
-                        بارکد
-                    </th>
+                            <th>
+                                بارکد
+                            </th>
 
 
 
-                    <th>
-                        قیمت
-                    </th>
+                            <th>
+                                قیمت
+                            </th>
 
 
-                    <th>
+                            <th>
 
-                    </th>
-                </thead>
-                <tbody>
-                    <tr v-for="product in products">
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="product in products">
 
-                        <td>
-                            <a :href="product.get_absolute_url">
-                                <div class="media">
-                                    <img :src="product.thumbnail" width="48" class="rounded" alt="">
-                                    <div class="media-body mr-2">
-                                        <h5 v-text="product.title"></h5>
-                                        
-                                    </div>
-                                </div>
+                                <td>
+                                    <a :href="product.get_absolute_url">
+                                        <div class="media">
+                                            <img :src="product.thumbnail" width="48" class="rounded" alt="">
+                                            <div class="media-body mr-2">
+                                                <h5 v-text="product.title"></h5>
 
-                            </a>
+                                            </div>
+                                        </div>
 
-                        </td>
-                        <td>
-                            <a :href="product.get_absolute_url">
-                                <span :class="'text-'+product.color" v-text="product.barcode"></span>
-                            </a>
-                        </td>
+                                    </a>
 
-                        <td>
-                            <h6>
-                                هر
-                                <span v-text="product.unit_name"> </span>
-                                <span v-text="to_price(product.unit_price)"> </span>
-                                {{CURRENCY}}
-                            </h6>
-                        </td>
+                                </td>
+                                <td>
+                                    <a :href="product.get_absolute_url">
+                                        <span :class="'text-'+product.color" v-text="product.barcode"></span>
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <h6>
+                                        هر
+                                        <span v-text="product.unit_name"> </span>
+                                        <span v-text="to_price(product.unit_price)"> </span>
+                                        {{CURRENCY}}
+                                    </h6>
+                                </td>
 
 
-                        <td>
-                            {% if perms.accounting.change_product %}
-                            <a :href="product.get_edit_url" class="my-2 text-warning mx-2" title="ویرایش"
-                                target="_blank">
-                                <i class="fa fa-edit text-warning"></i>
-                            </a>
-                            {% endif %}
-                            {% if perms.accounting.delete_product %}
-                            <a :href="product.get_delete_url" class="my-2 text-danger mx-2" title="حذف" target="_blank">
-                                <i class="fa fa-trash text-danger"></i>
-                            </a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                                <td>
+                                    {% if perms.accounting.change_product %}
+                                    <a :href="product.get_edit_url" class="my-2 text-warning mx-2" title="ویرایش"
+                                        target="_blank">
+                                        <i class="fa fa-edit text-warning"></i>
+                                    </a>
+                                    {% endif %}
+                                    {% if perms.accounting.delete_product %}
+                                    <a :href="product.get_delete_url" class="my-2 text-danger mx-2" title="حذف"
+                                        target="_blank">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -1,7 +1,7 @@
 <script>
     let url_import_products_from_excel = "{% url 'accounting:import_products_from_excel' %}"
     let import_products_from_excel_app = new Vue({
-        el: "#load-products-from-excel-app",
+        el: "#import-products-from-excel-app",
         data: {
             waiting: false,
             new_download_file: '',
@@ -33,10 +33,7 @@
                             if (data.result === 'SUCCEED') { 
                                 show_message(import_products_from_excel_app,"موفقیت آمیز",data.message,"success",10000)   
                                 if(typeof products_app != "undefined"){
-                                    data.products.forEach(product => {
-                                        products_app.products.push(product)
-                                        
-                                    });
+                                        products_app.products=(data.products)
                                 }
                             }
                             if (data.result != 'SUCCEED') { 
