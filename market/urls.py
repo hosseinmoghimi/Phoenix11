@@ -14,6 +14,8 @@ urlpatterns = [
     path('desk-customer/<int:pk>/',login_required(views.ProductView.as_view()),name="deskcustomer"),
     path('shop/<int:pk>/',login_required(views.ProductView.as_view()),name="shop"),
 
+    path('category/<int:pk>/',login_required(views.CategoryView.as_view()),name="category"),
+    path('categories/',login_required(views.CategoriesView.as_view()),name="categories"),
     
     path('menus/',login_required(views.MenusView.as_view()),name="menus"),
     path('menu/<int:pk>/',login_required(views.MenuView.as_view()),name="menu"),

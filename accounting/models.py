@@ -647,7 +647,7 @@ class Product(InvoiceLineItem):
     def get_market_absolute_url(self):
         return reverse("market:product",kwargs={'pk':self.pk})
     
-
+    
   
 class ProductSpecification(models.Model,LinkHelper):
     product=models.ForeignKey("product", verbose_name=_("product"), on_delete=models.CASCADE)

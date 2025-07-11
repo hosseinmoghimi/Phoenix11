@@ -45,7 +45,6 @@ class ImageRepo():
         # images=Image.objects.filter(profile_id=profile_me.id).filter(pk=image_id)
         images=Image.objects.filter(pk=image_id)
         images.delete()
-        from utility.log import leolog
         result=SUCCEED
         message="کامنت با موفقیت حذف گردید."
         return result,message
@@ -115,9 +114,8 @@ class LikeRepo():
         return (my_like,likes_count)
     
 
-    def my_like(self,*args, **kwargs):
+    def my_like(self,page,*args, **kwargs):
         profile_me=ProfileRepo(request=self.request).me
-        page=PageRepo(request=self.request).page(*args, **kwargs)
         if profile_me is None:
             return None
         if page is None:

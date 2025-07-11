@@ -1,44 +1,53 @@
-<div class="row rtl" id="products-app">
-
-    <div v-for="product in products" class="col-lg-2 col-md-3 col-4">
-        <div class="text-center">
-            <a :href="product.get_absolute_url">
-
-                <img :src="product.thumbnail" width="64" alt="">
-            </a>
-        </div>
-        <a :href="product.get_absolute_url">
-            <h6 v-text="product.title" class="text-center">
-
-            </h6>
-        </a>
-    </div>
-    {% if add_product_form %}
+<div id="products-app">
 
 
-    <div class="col-md-12 pt-4">
-        <form @submit.prevent="add_product()">
-            <div class="row">
-                <div class="col">
+    <div class="my-2">
+        <input type="text" class="form-control" v-model="search_for" @input="filter()">
+    </div> 
+    <div class="row rtl">
 
-                    <input placeholder="کالای جدید" class="form-control d-inline" required type="text" v-model="title">
-                </div>
+        <div class="col-lg-3 col-md-4 col-6" v-for="product in products">
+            <div class="card mb-3">
+                <div class="card-body  text-center">
 
-                <div class="col-12">
-                    <div v-if="message.show" class="my-2 rtl text-right">
-                        <div :class="'alert alert-'+message.color">
-                            <h5 v-text="message.title">
+                    <a :href="product.get_market_absolute_url">
+                        <img :src="product.thumbnail" width="128" class="rounded" alt="">
+                        <div>
+                            <h5 class=" text-center" v-text="product.title"></h5>
 
-                            </h5>
-                            <div v-html="message.body">
 
-                            </div>
                         </div>
+
+                    </a>
+                    <h6 class=" text-center">
+                        هر
+                        <span v-text="product.unit_name"> </span>
+                        <span v-text="to_price(product.unit_price)"> </span>
+                        {{CURRENCY}}
+                    </h6>
+                    <div class="text-center">
+
+                        {% if perms.accounting.change_product %}
+                        <a :href="product.get_edit_url" class="my-2 text-warning mx-2" title="ویرایش" target="_blank">
+                            <i class="fa fa-edit text-warning"></i>
+                        </a>
+                        {% endif %}
+                        {% if perms.accounting.delete_product %}
+                        <a :href="product.get_delete_url" class="my-2 text-danger mx-2" title="حذف" target="_blank">
+                            <i class="fa fa-trash text-danger"></i>
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
-            </div>
-        </form>
-    </div>
-    {% endif %}
 
+            </div>
+
+
+
+
+
+        </div>
+
+
+    </div>
 </div>

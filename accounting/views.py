@@ -52,6 +52,9 @@ def AddInvoiceLineItemContext(request,*args, **kwargs):
 def AddProductContext(request,*args, **kwargs):
     context=AddInvoiceLineItemContext(request=request)
     categories=CategoryRepo(request=request).list()
+    context['categories']=categories
+    categories_s=json.dumps(CategorySerializer(categories,many=True).data)
+    context['categories_s']=categories_s
     context['categories_for_add_product_app']=categories
     context['import_products_from_excel_form']=ImportProductsFromExcelForm()
     context['add_product_form']=AddProductForm()
@@ -212,20 +215,8 @@ def ProductContext(request,product,*args, **kwargs):
     base_price=product.base_price
     context['base_price']=base_price
 
-
+ 
     
-    product_specifications=product.productspecification_set.all().order_by('priority')
-    product_specifications_s=json.dumps(ProductSpecificationSerializer(product_specifications,many=True).data)
-    context['product_specifications']=product_specifications
-    context['product_specifications_s']=product_specifications_s
-    if request.user.has_perm(APP_NAME+".add_productspecification"):
-        context["add_product_specification_form"]=AddProductSpecificationForm()
-        specification_names=['رنگ','وزن','اندازه','جرم','نوع',]
-        context['specification_names']=specification_names
-     
-
-
-     
     if request.user.has_perm(APP_NAME+".change_product"):
         context['add_product_to_category_form']=AddProductToCategoryForm()
         categories=CategoryRepo(request=request).list()
@@ -699,7 +690,7 @@ class ProductView(View):
         context['product_specifications_s']=product_specifications_s
         if request.user.has_perm(APP_NAME+".add_productspecification"):
             context["add_product_specification_form"]=AddProductSpecificationForm()
-            specification_names=['رنگ','وزن','اندازه','جرم','نوع',]
+            specification_names=['رنگ','وزن','اندازه','جرم','نوع','حجم',]
             context['specification_names']=specification_names
      
 
