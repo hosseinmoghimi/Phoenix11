@@ -10,3 +10,10 @@ class SetPageThumbnailHeaderForm(forms.Form):
 class SearchForm(forms.Form):
     search_for=forms.CharField(max_length=50,required=False)
     app_name=forms.CharField(max_length=50,required=False)
+    
+class AddRelatedPageForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    related_page_id=forms.IntegerField(required=True)
+    bidirectional=forms.BooleanField(required=False)
+    add_or_remove=forms.BooleanField(required=False)
+
