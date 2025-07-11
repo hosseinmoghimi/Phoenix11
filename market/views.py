@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from accounting.repo import ProductRepo
-from accounting.serializers import ProductSerializer
-from .serializers import MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
-from .repo import MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo
+from .serializers import ProductSerializer,MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
+from .repo import MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
+from accounting.views import CategoryRepo
 import json
 from django.views import View
 from core.views import CoreContext,leolog
@@ -21,7 +21,7 @@ NO_NAVBAR="NO_NAVBAR"
         
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
-    context[WIDE_LAYOUT]=True 
+    context[WIDE_LAYOUT]=False 
  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
@@ -55,15 +55,52 @@ class ProductsView(View):
     
     
 
+class CategoryView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        category_repo=CategoryRepo(request=request)
+        category=category_repo.category(*args, **kwargs)
+        context['category']=category
+        leolog(category=category)
+        from .serializers import CategorySerializer
+        category_s=json.dumps(CategorySerializer(category,many=False).data)
+        context['category_s']=category_s 
+
+
+        if category is None:
+            categories=category_repo.roots()
+            context['category_id']=0
+            products=[]
+        else:
+            categories=category_repo.list(parent_id=category.id)
+            products=category.products.all()
+            context['category_id']=category.id
+            # leolog(all_childs_products=category.all_childs_products())
+
+        context['categories']=categories
+        categories_s=json.dumps(CategorySerializer(categories,many=True).data)
+        context['categories_s']=categories_s
+
+
+        context['products']=products
+        products_s=json.dumps(ProductSerializer(products,many=True).data)
+        context['products_s']=products_s
+ 
+        return render(request,TEMPLATE_ROOT+"category.html",context)
+
+ 
+
     
 class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        product =ProductRepo(request=request).list(*args, **kwargs)
+        product =ProductRepo(request=request).product(*args, **kwargs)
         context['product']=product
-        product_s=json.dumps(ProductSerializer(product,many=True).data)
-        context['product_s']=product_s
+        from accounting.views import ProductContext
+        context.update(ProductContext(request=request,product=product))
         context[WIDE_LAYOUT]=True
+        primary_shop=ShopRepo(request=request).primary_shop(product=product)
+        context['primary_shop']=primary_shop
         return render(request,TEMPLATE_ROOT+"product.html",context) 
     
 

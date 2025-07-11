@@ -1,27 +1,37 @@
 from core.serializer import serializers
 from .models import Shop,Menu,Supplier,Customer,CartItem,Shipper,Desk,DeskCustomer
-from accounting.serializers import Product,AccountBriefSerializer
+from accounting.serializers import Category,Product,AccountBriefSerializer
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model=Product
-        fields=['id', 'title','thumbnail', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields=['id', 'title','thumbnail','get_market_absolute_url',  'get_edit_url','get_delete_url']
  
 
  
-class ShopSerializer(serializers.ModelSerializer):
-    product=ProductSerializer()
+
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model=Shop
-        fields=['id','unit_price','product','unit_name','quantity','available','persian_start_date', 'get_absolute_url','get_edit_url','get_delete_url']
+        model=Category
+        fields=['id', 'title','thumbnail','get_market_absolute_url',  'get_edit_url','get_delete_url']
  
-
-
 class SupplierSerializer(serializers.ModelSerializer):
     account=AccountBriefSerializer()
     class Meta:
         model=Supplier
         fields=['id','account', 'get_absolute_url', 'get_edit_url','get_delete_url']
+ 
+ 
+
+
+ 
+class ShopSerializer(serializers.ModelSerializer):
+    product=ProductSerializer()
+    supplier=SupplierSerializer()
+    product=ProductSerializer()
+    class Meta:
+        model=Shop
+        fields=['id','supplier','unit_price','product','unit_name','quantity','available','persian_start_date', 'get_absolute_url','get_edit_url','get_delete_url']
  
 
 class CustomerSerializer(serializers.ModelSerializer):

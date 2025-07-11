@@ -11,7 +11,7 @@ from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from utility.log import leolog
 from django.utils import timezone
-from core.views import CoreContext
+from core.views import CoreContext,PageBriefSerializer,AddRelatedPageForm
 from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo
 import json
 LAYOUT_PARENT='phoenix/layout.html'
@@ -70,6 +70,18 @@ def PageDownloadsContext(request,page,profile,*args, **kwargs):
     if profile is not None:
         context['add_download_form']=AddDownloadForm()
     return context
+
+
+def PageRelatedContext(request,page,*args, **kwargs):
+    context={}
+    related_pages = page.related_pages.all()
+    
+    context['related_pages_s'] = json.dumps(PageBriefSerializer(related_pages, many=True).data)
+    if request.user.has_perm(APP_NAME,'change_page'):
+        context['add_related_page_form'] = AddRelatedPageForm()
+
+    return context
+
 
 
 def PageImagesContext(request,page,profile,*args, **kwargs):

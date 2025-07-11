@@ -35,6 +35,10 @@
 
   </div>
 
+  <div class="col-md-12">
+    {% include "core/includes/page-related-app/template.html" %}
+  </div>
+
 </div>
 {% endblock content %}
 {% block script %}
@@ -42,4 +46,5 @@
 {% include "accounting/includes/add-product-to-category-app/script.html" %}
     {% include "accounting/includes/product-specifications-app/script.html" %}
 {% include "accounting/includes/invoice-line-item-units-app/script.html" %}
+
 {% endblock script %}

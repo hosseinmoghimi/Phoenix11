@@ -12,7 +12,7 @@ from utility.log import leolog
 from django.utils import timezone
 import json
 from .repo import PageRepo,FAILED,SUCCEED
-from .serializer import PageSerializer
+from .serializer import PageSerializer,PageBriefSerializer
 
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='core/'
@@ -78,13 +78,14 @@ def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
     me_profile=ProfileRepo(request=request).me
-    from attachments.views import PageImagesContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
+    from attachments.views import PageImagesContext,PageRelatedContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
 
     context.update(PageLikesContext(request=request,page=page,profile=me_profile))
     context.update(PageCommentsContext(request=request,page=page,profile=me_profile))
     context.update(PageLinksContext(request=request,page=page,profile=me_profile))
     context.update(PageDownloadsContext(request=request,page=page,profile=me_profile))
     context.update(PageImagesContext(request=request,page=page,profile=me_profile))
+    context.update(PageRelatedContext(request=request,page=page))
     return context
 
 
