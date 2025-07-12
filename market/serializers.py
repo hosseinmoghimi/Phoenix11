@@ -5,7 +5,7 @@ from accounting.serializers import Category,Product,AccountBriefSerializer
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model=Product
-        fields=['id', 'title','thumbnail','get_market_absolute_url',  'get_edit_url','get_delete_url']
+        fields=['id', 'title','unit_name','unit_price','thumbnail','get_market_absolute_url',  'get_edit_url','get_delete_url']
  
 
  

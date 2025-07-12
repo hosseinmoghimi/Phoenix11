@@ -76,6 +76,7 @@ def PageRelatedContext(request,page,*args, **kwargs):
     context={}
     related_pages = page.related_pages.all()
     
+    context['related_pages'] = related_pages
     context['related_pages_s'] = json.dumps(PageBriefSerializer(related_pages, many=True).data)
     if request.user.has_perm(APP_NAME,'change_page'):
         context['add_related_page_form'] = AddRelatedPageForm()
