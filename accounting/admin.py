@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Category,FinancialYear,FinancialDocumentLine,FinancialDocument,PersonAccount
 from .models import Account,FinancialEvent,InvoiceLineItemUnit,InvoiceLineItem 
 from .models import Service,Product,Invoice,InvoiceLine,Bank,BankAccount,PersonCategory,Brand
-from .models import ProductSpecification
+from .models import ProductSpecification,Asset
 
 
 admin.site.register(ProductSpecification)
@@ -23,3 +23,4 @@ admin.site.register(PersonAccount)
 admin.site.register(PersonCategory)
 admin.site.register(Product)
 admin.site.register(Service)
+admin.site.register(Asset)

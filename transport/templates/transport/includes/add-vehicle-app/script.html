@@ -1,0 +1,37 @@
+{% include "accounting/includes/account-app/select-script.html" %}
+<script>
+  let add_vehicle_app = new Vue({
+    el: "#add-vehicle-app",
+    data: {
+    title: "",
+    }, 
+    methods: {
+      
+      
+
+      to_price: function (vall) {
+        return to_price(vall) + " {{CURRENCY}}";
+      },
+
+     
+      add_vehicle: function () {
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          title: this.title,
+        };
+
+        console.log(payload);
+        let url = "{% url 'transport:add_vehicle' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            if (typeof vehicles_app != "undefined") {
+              vehicles_app.vehicles.push(data.vehicle);
+            }
+          }
+        });
+      },
+    },
+  });
+</script>

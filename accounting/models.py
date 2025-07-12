@@ -787,4 +787,23 @@ class BankAccount(Account,LinkHelper):
 
     def save(self):
         return super(BankAccount,self).save()
+ 
+ 
+class Asset(CorePage):
 
+    def __str__(self):
+        pass
+
+    class Meta:
+        verbose_name = 'Asset'
+        verbose_name_plural = 'Assets'
+
+    def save(self):
+        if self.class_name is None or self.class_name=="":
+            self.class_name="asset"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        super(Asset,self).save()
+        result,message,asset=SUCCEED,"دارایی با موفقیت افزوده شد.",self
+        return result,message,asset
+  
