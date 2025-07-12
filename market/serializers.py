@@ -32,7 +32,7 @@ class ShopSerializer(serializers.ModelSerializer):
     product=ProductSerializer()
     class Meta:
         model=Shop
-        fields=['id','supplier','level','discount_percentage','unit_price','product','unit_name','quantity','available','persian_start_date', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields=['id','supplier','level','discount_percentage','unit_price','product','unit_name','quantity','available','persian_start_date','persian_end_date', 'get_absolute_url','get_edit_url','get_delete_url']
  
 
 class CustomerSerializer(serializers.ModelSerializer):

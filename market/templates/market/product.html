@@ -30,7 +30,7 @@
     </div>
 
     {% if shops %}
-    <div>
+    <div class="col-md-6">
         {% include 'market/includes/product-app/shops.html' %}
 
 
@@ -62,6 +62,10 @@
 
 
 
+{% if shops %}
+   {% include 'market/includes/shops-app/script.html' %} 
+{% endif %}
+    
 
 
 

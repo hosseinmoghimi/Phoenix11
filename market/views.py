@@ -138,6 +138,13 @@ class ProductView(View):
         context[WIDE_LAYOUT]=True
         primary_shop=ShopRepo(request=request).primary_shop(product=product)
         context['primary_shop']=primary_shop
+
+        
+        shops=ShopRepo(request=request).list(product_id=product.id)
+        shops_s=json.dumps(ShopSerializer(shops,many=True).data)
+        context['shops']=shops
+        context['shops_s']=shops_s
+
         return render(request,TEMPLATE_ROOT+"product.html",context) 
     
 
