@@ -2,7 +2,7 @@ from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from accounting.repo import ProductRepo
 from .serializers import ProductSerializer,MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
-from .repo import MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo
+from .repo import MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo,CustomerRepo,ShipperRepo
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
@@ -13,7 +13,7 @@ from .enums import *
 from django.views import View
 from core.views import CoreContext,leolog
 from authentication.views import PersonRepo,PersonSerializer,AddPersonContext
-
+from utility.enums import PersonPrefixEnum
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='market/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -28,30 +28,35 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 
-
+def AddMarketPersonContext(request):
+    context={}
+    context['customer_levels']=(i[0] for i in ShopLevelEnum.choices)
+    context=AddPersonContext(request=request)
+    context['person_prefixs_for_add_supplier_app']=(i[0] for i in PersonPrefixEnum.choices)
+    persons=PersonRepo(request=request).list()
+    context['persons']=persons
+    context['customer_levels']=(i[0] for i in ShopLevelEnum.choices)
+ 
+    return context
 def AddSupplierContext(request,*args, **kwargs):
     if not request.user.has_perm(APP_NAME+".add_supplier"):
-        return {}
-    context=AddPersonContext(request=request)
-    context['customer_levels']=(i[0] for i in ShopLevelEnum.choices)
+        return context
+    context=AddMarketPersonContext(request=request)
   
-    persons=PersonRepo(request=request).list()
     ids=(SupplierRepo(request=request).list().values('person_id'))
+    persons=context['persons']
     persons=persons.exclude(id__in=ids)
     persons_s_for_add_supplier_app=json.dumps(PersonSerializer(persons,many=True).data)
     context['persons_s_for_add_supplier_app']=persons_s_for_add_supplier_app
     context['add_supplier_form']=AddSupplierForm()
     return context
 
-def AddCustomerContext(request,*args, **kwargs):
-    from accounting.views import PersonRepo,PersonSerializer,AddPersonContext
+def AddCustomerContext(request,*args, **kwargs): 
     if not request.user.has_perm(APP_NAME+".add_customer"):
         return {}
-    context=AddPersonContext(request=request)
-    context['customer_levels']=(i[0] for i in ShopLevelEnum.choices)
- 
-    from authentication.views import ProfileRepo,ProfileSerializer
-    persons=PersonRepo(request=request).list()
+    
+    context=AddMarketPersonContext(request=request) 
+    persons=context['persons']
     ids=(CustomerRepo(request=request).list().values('person_id'))
     persons=persons.exclude(id__in=ids)
     persons_s_for_add_customer_app=json.dumps(PersonSerializer(persons,many=True).data)

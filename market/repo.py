@@ -367,6 +367,82 @@ class CustomerRepo():
 
         return result,message,customer
  
+
+
+class ShipperRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.request=request
+        self.me=None
+        self.objects=Shipper.objects
+        profile=ProfileRepo(request=request).me
+        if profile is not None:
+            self.me=self.objects.filter(person__profile_id=profile.id).first()
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        pure_code="876454453342236"
+        try:
+            pure_code=int(kwargs["search_for"]) 
+        except:
+            pass
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(pure_code=pure_code ) )
+        return objects.all()
+     
+    def shipper(self,*args, **kwargs):
+        if "shipper_id" in kwargs and kwargs["shipper_id"] is not None:
+            return self.objects.filter(pk=kwargs['shipper_id']).first()
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        if "code" in kwargs and kwargs["code"] is not None:
+            return self.objects.filter(code=kwargs['code']).first()
+             
+        if "account_code" in kwargs and kwargs["account_code"] is not None:
+            a= self.objects.filter(code=kwargs['account_code']).first() 
+            if a is not None:
+                return a
+            else:
+                try:
+                    a= self.objects.filter(pure_code=filter_number(kwargs['account_code'])).first() 
+                    if a is not None:
+                        return a
+                except:
+                    pass
+        
+        
+    def add_shipper(self,*args,**kwargs):
+        result,message,shipper=FAILED,"",None
+        me_supplier=SupplierRepo(request=self.request).me
+        if not self.request.user.has_perm(APP_NAME+".add_shipper") :
+            message="دسترسی غیر مجاز"
+            return result,message,shipper
+        # if len(Product.objects.filter(product_id=kwargs["product_id"]).filter(unit_name=kwargs["unit_name"]).filter(level=kwargs["level"]).filter(supplier_id=kwargs["supplier_id"]))>0:
+        #     message="نام تکراری برای کالای جدید"
+        #     return result,message,shipper
+        
+
+        shipper=Shipper() 
+        from accounting.repo import PersonRepo
+        if kwargs['person_id']==0:
+            result22,message22,person=PersonRepo(request=self.request).add_person(**kwargs)
+ 
+            if result22==SUCCEED:
+                shipper.person=person
+        elif 'person_id' in kwargs and kwargs['person_id'] is not None and kwargs['person_id']>0:
+            shipper.person_id=kwargs["person_id"]
+        if 'level' in kwargs:
+            shipper.level=kwargs["level"]
+    
+        if 'code' in kwargs:
+            shipper.code=kwargs["code"]
+             
+        (result,message,shipper)=shipper.save() 
+
+        return result,message,shipper
+ 
  
 
 class CartItemRepo():

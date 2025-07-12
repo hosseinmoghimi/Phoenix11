@@ -21,6 +21,14 @@
                         فروشنده
                     </th>
                     <th>
+                        شخص
+                    </th>
+                    
+                    <th>
+                        حساب
+                    </th>
+                    
+                    <th>
                         سطح
                     </th>
 
@@ -30,6 +38,16 @@
                         <td>
                             <a :href="supplier.get_absolute_url"><span v-text="supplier.full_name"></span></a>
                         </td>
+
+                        <td>
+                            <a :href="supplier.person.get_absolute_url"><span v-text="supplier.person.full_name"></span></a>
+                        </td>
+
+                        <td>
+                            <a :href="supplier.account.get_absolute_url"><span v-text="supplier.account.name"></span></a>
+                        </td>
+
+
 
                         <td>
                              <span v-text="supplier.level"></span> 
