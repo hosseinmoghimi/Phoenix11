@@ -201,6 +201,7 @@ class SupplierView(View):
         context['supplier']=supplier
         context['supplier_s']=supplier_s
         context['person']=supplier.person
+        context['account']=supplier.account
 
         
         shops=ShopRepo(request=request).list(supplier_id=supplier.id)

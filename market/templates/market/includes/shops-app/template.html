@@ -61,7 +61,7 @@
                     <tr v-for="shop in shops">
                         {% if not product %}
                         <td>
-                            <a :href="shop.product.get_absolute_url"><span v-text="shop.product.title"></span></a>
+                            <a :href="shop.product.get_market_absolute_url"><span v-text="shop.product.title"></span></a>
                         </td>
                         {% endif %}
                         {% if not supplier %}

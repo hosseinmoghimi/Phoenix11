@@ -70,6 +70,7 @@ class Shipper(MarketPerson):
 class Shop(models.Model,LinkHelper,DateTimeHelper):
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
     product=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.CASCADE)
+    level=models.CharField(_("level"),choices=ShopLevelEnum.choices,default=ShopLevelEnum.END_USER, max_length=50)
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices, max_length=50)
     unit_price=models.IntegerField(_("قیمت واحد"))
     discount_percentage=models.IntegerField(_("درصد تخفیف"),default=0)
