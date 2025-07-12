@@ -1,0 +1,116 @@
+<div class="card" id="cart-items-app">
+    <div class="card-body">
+        <div class="table-responsive">
+
+            <table class="table rtl table-rstriped">
+                <thead>
+                    {% if not product %}
+                    <th>
+                        کالا
+                    </th>
+                    {% endif %}
+                    {% if not customer %}
+                    <th>
+                        مشتری
+                    </th>
+                    {% endif %}
+                    {% if not supplier %}
+                    <th>
+                        فروشنده
+                    </th>
+                    {% endif %}
+                    <th>
+                        تعداد
+                    </th>
+                    <th>
+                        قیمت
+                    </th>
+                    <th>
+                        تاریخ
+                    </th>
+                </thead>
+                <tbody>
+                    <tr v-for="cart_item in cart_items">
+                        {% if not product %}
+
+                        <td>
+                            <a :href="cart_item.shop.product.get_absolute_url">
+
+                                <span v-text="cart_item.shop.product.title">
+                                </span>
+                            </a>
+                        </td>
+                        {% endif %}
+                        {% if not customer %}
+
+                        <td>
+                            <a :href="cart_item.customer.get_absolute_url">
+
+                                <span v-text="cart_item.customer.title">
+                                </span>
+                            </a>
+                        </td>
+                        {% endif %}
+
+                        {% if not supplier %}
+                        <td>
+                            <a :href="cart_item.shop.supplier.get_absolute_url">
+
+                                <span v-text="cart_item.shop.supplier.title">
+                                </span>
+                            </a>
+                        </td>
+                        {% endif %}
+
+
+
+                        <td>
+
+                            <span v-text="cart_item.quantity">
+                            </span>
+
+                            <span v-text="cart_item.shop.unit_name">
+                            </span>
+                        </td>
+
+                        <td>
+
+
+
+                            <span v-text="to_price(cart_item.shop.unit_price)">
+                            </span>
+                        </td>
+
+
+                        <td>
+
+                            <span v-text="cart_item.persian_date_added">
+                            </span>
+
+
+                        </td>
+                        <td>
+
+
+                            {% if perms.market.change_cartitem %}
+                            <a target="_blank" :href="cart_item.get_edit_url" title="ویرایش">
+                                <i class="fa fa-edit text-warning"></i>
+                            </a>
+                            {% endif %}
+
+                            {% if perms.market.delete_cartitem %}
+                            <a target="_blank" :href="cart_item.get_delete_url" title="حذف">
+                                <i class="fa fa-trash text-danger"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <th></th>
+                </tfoot>
+
+            </table>
+        </div>
+    </div>
+</div>

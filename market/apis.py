@@ -4,9 +4,10 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import MenuRepo,ShopRepo
+from .repo import MenuRepo,ShopRepo,SupplierRepo,CustomerRepo
 from .serializers import MenuSerializer,ShopSerializer,SupplierSerializer,CustomerSerializer
 from django.http import JsonResponse
+from .enums import *
 from .forms import *
    
 
@@ -54,3 +55,56 @@ class AddShopApi(APIView):
         context['log']=log
         return JsonResponse(context)
   
+
+  
+class AddCustomerApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_customer_form=AddCustomerForm(request.POST)
+            if add_customer_form.is_valid():
+                log=333
+                cd=add_customer_form.cleaned_data
+                result,message,customer=CustomerRepo(request=request).add_customer(**cd)
+                if result==SUCCEED:
+                    context['customer']=CustomerSerializer(customer).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+class AddSupplierApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_supplier_form=AddSupplierForm(request.POST)            
+            if add_supplier_form.is_valid():
+                log=333
+                cd=add_supplier_form.cleaned_data
+                result,message,supplier=SupplierRepo(request=request).add_supplier(**cd)
+                if result==SUCCEED:
+                    context['supplier']=SupplierSerializer(supplier).data
+            else:    
+                add_supplier_form=AddSupplierByPersonForm(request.POST)
+                if add_supplier_form.is_valid():
+                    log=333
+                    cd=add_supplier_form.cleaned_data
+                    result,message,supplier=SupplierRepo(request=request).add_supplier(**cd)
+                    if result==SUCCEED:
+                        context['supplier']=SupplierSerializer(supplier).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+

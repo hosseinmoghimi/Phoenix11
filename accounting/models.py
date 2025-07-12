@@ -27,7 +27,7 @@ class Account(models.Model,LinkHelper):
     parent=models.ForeignKey("account", verbose_name=_("parent"),null=True,blank=True, on_delete=models.CASCADE)
     name=models.CharField(_("name"), max_length=50)
     color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
-    code=models.CharField(_("code"), max_length=50)
+    code=models.CharField(_("code"),null=True,blank=True, max_length=50)
     type=models.CharField(_("نوع"),choices=AccountTypeEnum.choices, max_length=50)
     nature=models.CharField(_("ماهیت"),choices=AccountNatureEnum.choices,default=AccountNatureEnum.FREE, max_length=50)
     description=models.CharField(_("description"),null=True,blank=True, max_length=500)
@@ -197,7 +197,17 @@ class PersonAccount(Account):
 
     def __str__(self):
         return self.name
- 
+    def generate_code(self,*args, **kwargs):
+        code='00' 
+        is_available=True
+        counter=0
+        while is_available:
+            counter+=1
+            code=fixed_length(self.person_category.code_length,str(counter))
+            acc=Account.objects.filter(code=self.person_category.account.code+code).first()
+            if acc is None:
+                is_available=False
+        return self.person_category.account.code+code
     def save(self):
         result,message,person_account=FAILED,"",None
         
@@ -209,15 +219,11 @@ class PersonAccount(Account):
         person_category=PersonCategory.objects.filter(id=self.person_category_id).first()
         if person_category is not None:
             self.parent=person_category.account
-        # code=self.parent.code+str(fixed_length(1,person_category.code_length))
-        # last=PersonAccount.objects.filter(person_category_id=self.person_category_id).last()
-      
-      
-        # if last is not None:
-        #     code=str(int(last.code)+1) 
-        # self.code=code
+        if self.code is None or self.code==0 or self.code=='':
+            self.code=self.generate_code()
+        
         self.name=f'{self.person} # {self.category}'
-        super(PersonAccount,self).save()
+        result,message,account=super(PersonAccount,self).save()
         result=SUCCEED
         message="حساب شخص با موفقیت اضافه شد."
         person_account=self
@@ -414,7 +420,7 @@ class FinancialYear(models.Model,LinkHelper,DateTimeHelper):
 
 
 class PersonCategory(models.Model,LinkHelper):
-    title=models.CharField(_("title"), max_length=50)
+    title=models.CharField(_("title"),choices=PersonCategoryEnum.choices,default=PersonCategoryEnum.DEFAULT, max_length=50)
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
     code_length=models.IntegerField(_("code_length"),default=5)
     
@@ -787,4 +793,23 @@ class BankAccount(Account,LinkHelper):
 
     def save(self):
         return super(BankAccount,self).save()
+ 
 
+class Asset(CorePage):
+
+    def __str__(self):
+        pass
+
+    class Meta:
+        verbose_name = 'Asset'
+        verbose_name_plural = 'Assets'
+
+    def save(self):
+        if self.class_name is None or self.class_name=="":
+            self.class_name="asset"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        super(Asset,self).save()
+        result,message,asset=SUCCEED,"دارایی با موفقیت افزوده شد.",self
+        return result,message,asset
+  

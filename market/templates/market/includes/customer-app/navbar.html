@@ -1,0 +1,30 @@
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-right" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+      aria-haspopup="true" aria-expanded="false">
+
+      {{me_customer.person.full_name}}
+
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+      <a class="dropdown-item" style="text-align: center;" href="{{me_customer.get_absolute_url}}">
+        <img src="{{me_profile.image}}" class="rounded-circle" width="128" alt="">
+      </a>
+
+      <a class="dropdown-item" style="text-align: center;" href="{{me_customer.get_absolute_url}}">
+       خریدار
+      </a>
+
+
+      <a class="dropdown-item" style="text-align: center;" href="{{me_customer.get_absolute_url}}">
+        {{me_customer.full_name}}
+
+      </a>
+      <a class="dropdown-item" style="text-align: center;" href="{% url 'market:cart' customer_id=me_customer.id %}">
+        {% load to_price %}
+        {{me_customer.total_in_cart|to_price}}  در سبد خرید شما
+      </a>
+      {% include "market/includes/cart-items-app/navbar-template.html" %}
+
+     
+    </div>
+  </li>

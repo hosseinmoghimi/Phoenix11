@@ -2,7 +2,7 @@ from django.db import models
 from django.shortcuts import reverse
 from phoenix.server_settings import ADMIN_URL
 from utility.enums import AppNameEnum
-from utility.utils import LinkHelper
+from utility.models import LinkHelper
 from .apps import APP_NAME
 from django.utils.translation import gettext as _
 # from django.conf import settings

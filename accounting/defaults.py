@@ -310,18 +310,20 @@ def default_accounts():
 
     
 def default_persons():
+    from accounting.enums import PersonCategoryEnum
     person_categories=[
-        {"code":"100","title":"کارکنان","account_code":"5010101"},
-        {"code":"200","title":"سهام داران","account_code":"501010102"},
-        {"code":"300","title":"تامین کنندگان","account_code":"30401"},
-        {"code":"400","title":"پیمانکاران","account_code":"703"},
-        {"code":"500","title":"مشتریان","account_code":"702"},
-        {"code":"600","title":"مراکز هزینه","account_code":"701"},
+        {"code":"100","title":PersonCategoryEnum.PERSONNEL,"account_code":"5010101"},
+        {"code":"200","title":PersonCategoryEnum.CONTRACTOR,"account_code":"501010102"},
+        {"code":"300","title":PersonCategoryEnum.CUSTOMER,"account_code":"30401"},
+        {"code":"400","title":PersonCategoryEnum.SUPPLIER,"account_code":"703"},
+        {"code":"500","title":PersonCategoryEnum.EMPLOYER,"account_code":"702"},
+        {"code":"600","title":PersonCategoryEnum.COST,"account_code":"701"},
+        {"code":"600","title":PersonCategoryEnum.DEFAULT,"account_code":"801"},
     ]
     persons=[
         {"code":"10001","first_name":"حسین","last_name":"مقیمی","melli_code":"076983545","categories":["100","200"]},
         {"code":"10002","first_name":"داوود","last_name":"قانع","melli_code":"076983543","categories":["100","200"]},
-        {"code":"10003","first_name":"ابراهیم","last_name":"محمدی","melli_code":"076983541","categories":["400"]},
+        {"code":"10003","first_name":"ابراهیم","last_name":"محمدی","melli_code":"076983541","categories":["400","600"]},
     ]
     return person_categories,persons
 

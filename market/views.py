@@ -2,16 +2,18 @@ from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from accounting.repo import ProductRepo
 from .serializers import ProductSerializer,MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
-from .repo import MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo
+from .repo import MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo,CustomerRepo,ShipperRepo
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from accounting.views import CategoryRepo
 import json
+from .enums import *
 from django.views import View
 from core.views import CoreContext,leolog
-
+from authentication.views import PersonRepo,PersonSerializer,AddPersonContext
+from utility.enums import PersonPrefixEnum
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='market/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -26,6 +28,41 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 
+def AddMarketPersonContext(request):
+    context={}
+    context['customer_levels']=(i[0] for i in ShopLevelEnum.choices)
+    context=AddPersonContext(request=request)
+    context['person_prefixs_for_add_supplier_app']=(i[0] for i in PersonPrefixEnum.choices)
+    persons=PersonRepo(request=request).list()
+    context['persons']=persons
+    context['customer_levels']=(i[0] for i in ShopLevelEnum.choices)
+ 
+    return context
+def AddSupplierContext(request,*args, **kwargs):
+    if not request.user.has_perm(APP_NAME+".add_supplier"):
+        return context
+    context=AddMarketPersonContext(request=request)
+  
+    ids=(SupplierRepo(request=request).list().values('person_id'))
+    persons=context['persons']
+    persons=persons.exclude(id__in=ids)
+    persons_s_for_add_supplier_app=json.dumps(PersonSerializer(persons,many=True).data)
+    context['persons_s_for_add_supplier_app']=persons_s_for_add_supplier_app
+    context['add_supplier_form']=AddSupplierForm()
+    return context
+
+def AddCustomerContext(request,*args, **kwargs): 
+    if not request.user.has_perm(APP_NAME+".add_customer"):
+        return {}
+    
+    context=AddMarketPersonContext(request=request) 
+    persons=context['persons']
+    ids=(CustomerRepo(request=request).list().values('person_id'))
+    persons=persons.exclude(id__in=ids)
+    persons_s_for_add_customer_app=json.dumps(PersonSerializer(persons,many=True).data)
+    context['persons_s_for_add_customer_app']=persons_s_for_add_customer_app
+    context['add_customer_form']=AddCustomerForm()
+    return context
 
  
 class IndexView(View):
@@ -101,6 +138,13 @@ class ProductView(View):
         context[WIDE_LAYOUT]=True
         primary_shop=ShopRepo(request=request).primary_shop(product=product)
         context['primary_shop']=primary_shop
+
+        
+        shops=ShopRepo(request=request).list(product_id=product.id)
+        shops_s=json.dumps(ShopSerializer(shops,many=True).data)
+        context['shops']=shops
+        context['shops_s']=shops_s
+
         return render(request,TEMPLATE_ROOT+"product.html",context) 
     
 
@@ -140,6 +184,41 @@ class MenuView(View):
         return render(request,TEMPLATE_ROOT+"menu.html",context) 
     
     
+
+    
+
+class SuppliersView(View):
+    def get(self,request,*args,**kwargs):
+        context=getContext(request=request)
+        suppliers=SupplierRepo(request=request).list(*args,**kwargs)
+        suppliers_s=json.dumps(SupplierSerializer(suppliers,many=True).data)
+        context['suppliers']=suppliers
+        context['suppliers_s']=suppliers_s
+        
+        if request.user.has_perm(APP_NAME+".add_supplier"):
+            context.update(AddSupplierContext(request=request))
+        return render(request,TEMPLATE_ROOT+"suppliers.html",context) 
+
+        
+class SupplierView(View):
+    def get(self,request,*args,**kwargs):
+        context=getContext(request=request)
+        supplier=SupplierRepo(request=request).supplier(*args,**kwargs)
+        supplier_s=json.dumps(SupplierSerializer(supplier,many=False).data)
+        context['supplier']=supplier
+        context['supplier_s']=supplier_s
+        context['person']=supplier.person
+        context['account']=supplier.account
+
+        
+        shops=ShopRepo(request=request).list(supplier_id=supplier.id)
+        shops_s=json.dumps(ShopSerializer(shops,many=True).data)
+        context['shops']=shops
+        context['shops_s']=shops_s
+
+        return render(request,TEMPLATE_ROOT+"supplier.html",context) 
+
+       
 
     
 class DeskView(View):

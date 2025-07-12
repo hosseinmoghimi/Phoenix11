@@ -416,7 +416,9 @@ class PersonAccountRepo():
         if 'name' in kwargs:
             person_account.name=kwargs['name']
         if 'code' in kwargs:
-            person_account.code=kwargs['code']
+            code=kwargs['code']
+            person_account.code=code
+
         if 'person' in kwargs:
             person_account.person=kwargs['person']
         if 'person_id' in kwargs:
@@ -1982,7 +1984,6 @@ class CategoryRepo():
         if not self.request.user.has_perm(APP_NAME+".add_category"):
             message="دسترسی غیر مجاز"
             return result,message,category
-        leolog(kwargs=kwargs)
         category=Category()
         if 'title' in kwargs:
             category.title=kwargs["title"]

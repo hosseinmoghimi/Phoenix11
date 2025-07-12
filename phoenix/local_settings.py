@@ -1,4 +1,7 @@
 
+
+
+
 from pathlib import Path
 from . import server_settings
 import os
@@ -13,7 +16,7 @@ DEBUG = False
 DEBUG = True
 VUE_VERSION_3=False
 VUE_VERSION_2=True
-DATABASE_NAME='phoenix11_20250705'
+DATABASE_NAME='phoenix11_20250712'
 
 ALLOWED_HOSTS = ['*']
 
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
     'attachments',
     'projectmanager',
     'log',
+    'transport',
     'chef',
     'school',
     'warehouse',
@@ -62,8 +66,8 @@ LANGUAGE_CODE = 'en-us'
 
 
 SITE_URL="/"
-PUBLIC_ROOT="d:\\public_html\\phoenix11\\"
-PRIVATE_ROOT="d:\\private_html\\phoenix11\\"
+PUBLIC_ROOT="f:\\public_html\\phoenix11\\"
+PRIVATE_ROOT="f:\\private_html\\phoenix11\\"
 
 QRCODE_URL =SITE_URL+"qrcode/"
 STATIC_URL =SITE_URL+"static/"
@@ -77,6 +81,4 @@ MEDIA_URL =SITE_URL+"media/"
 MEDIA_ROOT =os.path.join(PUBLIC_ROOT,"media")
 
 ADMIN_URL=SITE_URL+"admin/"
-FULL_SITE_URL='http://127.0.0.1:8011/'
-
-
+FULL_SITE_URL='http://127.0.0.1:8000/'

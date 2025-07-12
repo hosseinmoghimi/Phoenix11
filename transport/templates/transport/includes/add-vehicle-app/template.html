@@ -1,0 +1,48 @@
+<div id="accordion-add-vehicle" class="rtl text-right farsi">
+  <div class="card" id="add-vehicle-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-add-vehicle"
+          aria-expanded="true"
+          aria-controls="collapse-add-vehicle"
+        >
+          افزودن وسیله نقلیه
+          
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-add-vehicle"
+      class="collapse  "
+      aria-labelledby="heading-add-vehicle"
+      data-parent="#accordion-add-vehicle"
+    >
+      <div class="card-body">
+        <form @submit.prevent="add_vehicle()">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">عنوان</label>
+                <input required v-model="title" type="text" class="form-control" />
+              </div>
+            </div>
+ 
+  
+ 
+
+            <div class="col-md-12">
+              <button class="btn btn-success" type="submit">
+                <i class="fa fa-plus"></i>
+                افزودن
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

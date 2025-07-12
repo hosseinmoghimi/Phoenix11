@@ -1,0 +1,61 @@
+<div id="suppliers-app" class="card">
+    <div class="card-header">
+        <h5 class="text-center">
+           فروشنده ها
+        </h5>
+    </div>
+    <div class="card-body">
+        <div v-if="suppliers.length==0" class="table-responsive">
+            <h6>
+                فروشنده ای ثبت نشده است.
+            </h6>
+        </div>
+        <div v-if="suppliers.length>0" class="table-responsive">
+
+
+            <table class="table">
+                <thead>
+                     
+
+                    <th>
+                        فروشنده
+                    </th>
+                    <th>
+                        شخص
+                    </th>
+                    
+                    <th>
+                        حساب
+                    </th>
+                    
+                    <th>
+                        سطح
+                    </th>
+
+                </thead>
+                <tbody>
+                    <tr v-for="supplier in suppliers">
+                        <td>
+                            <a :href="supplier.get_absolute_url"><span v-text="supplier.full_name"></span></a>
+                        </td>
+
+                        <td>
+                            <a :href="supplier.person.get_absolute_url"><span v-text="supplier.person.full_name"></span></a>
+                        </td>
+
+                        <td>
+                            <a :href="supplier.account.get_absolute_url"><span v-text="supplier.account.name"></span></a>
+                        </td>
+
+
+
+                        <td>
+                             <span v-text="supplier.level"></span> 
+                        </td>
+                      
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

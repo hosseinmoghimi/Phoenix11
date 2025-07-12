@@ -1,0 +1,66 @@
+{% extends "market/layout.html" %}
+{% block content %}
+<div class="row rtl farsi">
+    <div class="col-md-12">
+        <h6 class="text-center">
+            سبد خرید
+        </h6>
+
+        <h6 class="text-center">
+            مشتری :
+            <a href="{{customer.get_absolute_url}}">
+                {{customer.title}}
+            </a>
+
+        </h6>
+    </div>
+
+    <div class="col-md-12 ">
+        {% include "market/includes/cart-items-app/template.html" %}
+    </div>
+    {% if checkout_cart_form %}
+    <div class="col-md-12">
+        <div class="card" id="checkout-cart-app">
+            <div class="card-body">
+                <button @click="checkout_cart({{customer.id}})" class="btn btn-info">checkout</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+</div>
+{% endblock content %}
+
+{% block script %}
+{% if checkout_cart_form %}
+
+<script>
+
+
+    let checkout_cart_app = new Vue({
+        el: "#checkout-cart-app",
+        data: {
+
+        },
+        methods: {
+            checkout_cart: function (customer_id) {
+                let payload = {
+                    customer_id: customer_id,
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                }
+                console.log(payload)
+                let url = "{% url 'market:checkout_cart' %}"
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                })
+            }
+        }
+    })
+
+</script>
+{% endif %}
+
+{% include "market/includes/cart-items-app/script.html" %}
+
+{% endblock script %}

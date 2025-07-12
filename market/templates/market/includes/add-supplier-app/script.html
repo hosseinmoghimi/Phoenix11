@@ -1,0 +1,78 @@
+<script>
+    let persons_for_add_supplier_app = JSON.parse("{{persons_s_for_add_supplier_app|escapejs}}")
+
+    let supplier_category_id = 0
+</script>
+
+<script>
+    let add_supplier_app = new Vue({
+        el: "#add-supplier-app",
+        data: {
+            code: "",
+            prefix: "",
+            first_name: "",
+            level:"",
+            last_name: "",
+            address: "",
+            mobile: "",
+            level: "",
+            email: "",
+            person_id: 0,
+            persons: persons_for_add_supplier_app,
+            bio: "",
+            waiting: false,
+            message: { show: false },
+            show_form: false, 
+            type: "",
+
+        },
+        methods: {
+
+            to_price: vall => to_price(vall),
+            
+          
+            add_supplier: function () {
+
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    code:this.code,
+                    supplier_account_categories: JSON.stringify(this.supplier_account_categories),
+                    person_id: this.person_id,
+                    level: this.level,
+                }
+
+                if (this.person_id != 0) {
+                    payload.person_id= this.person_id
+                }
+                if (this.person_id == 0) {
+                    payload.first_name= this.first_name
+                    payload.last_name= this.last_name
+                    payload.address= this.address
+                    payload.mobile= this.mobile
+                    payload.prefix= this.prefix
+                    payload.bio= this.bio
+                    payload.type= this.type
+                    payload.email= this.email
+                }
+
+                leolog(payload)
+                let url = "{% url 'market:add_supplier' %}"
+                $.post(url, payload).done(data => {
+                    leolog(data)
+                    if (data.result === "SUCCEED") {
+                        if (typeof suppliers_app != "undefined") {
+                            suppliers_app.suppliers.push(data.supplier)
+                        }
+                        show_message(add_supplier_app, "موفقیت آمیز", data.message, "success", 10000)
+                        add_supplier_app.persons=add_supplier_app.persons.filter(person=>person.id!=data.supplier.person.id)
+                    }
+                    else {
+                        show_message(add_supplier_app, "خطا", data.message, "danger", 10000)
+
+                    }
+
+                })
+            },
+        },
+    })
+</script>

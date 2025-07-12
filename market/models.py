@@ -2,13 +2,13 @@ from django.db import models
 from utility.models import _,LinkHelper,DateTimeHelper
 from accounting.models import UnitNameEnum,CorePage,FAILED,SUCCEED
 from .apps import APP_NAME
-
+from .enums import *
 
 
 
 class MarketPerson(models.Model,LinkHelper):
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.SET_NULL)
+    person=models.ForeignKey("authentication.person",verbose_name=_("person"), on_delete=models.PROTECT)
 
     app_name=APP_NAME
     class Meta:
@@ -16,24 +16,45 @@ class MarketPerson(models.Model,LinkHelper):
         verbose_name_plural = _("MarketPersons")
 
     def __str__(self):
-        return f'{self.account} # {self.profile.full_name}'
-
+        return f'{self.account} # {self.person.full_name}'
+    
+    def full_name(self):
+        return self.person.full_name
 
 class Customer(MarketPerson):
+
+    level=models.CharField(_("level"),choices=ShopLevelEnum.choices,default=ShopLevelEnum.END_USER, max_length=50)
+
     class_name="customer"
     class Meta:
         verbose_name = _("Customer")
         verbose_name_plural = _("Customers")
  
  
+    def save(self,*args, **kwargs):
+        result,message,customer=FAILED,'',self
+        super(Customer,self).save()
+        return result,message,customer
+    
+     
+    
 class Supplier(MarketPerson):
+    level=models.CharField(_("level"),choices=ShopLevelEnum.choices,default=ShopLevelEnum.END_USER, max_length=50)
 
     class_name="supplier"
     class Meta:
         verbose_name = _("Supplier")
         verbose_name_plural = _("Suppliers")
  
- 
+    def save(self,*args, **kwargs):
+        result,message,supplier=FAILED,'',self
+
+        super(Supplier,self).save()
+        result=SUCCEED
+        message='فروشنده اضافه شد.'
+        return result,message,supplier
+
+
 class Shipper(MarketPerson):
     class_name="shipper"
 
@@ -42,9 +63,14 @@ class Shipper(MarketPerson):
         verbose_name_plural = _("Shippers")
  
  
+    def save(self,*args, **kwargs):
+        result,message,shipper=FAILED,'',self
+        super(Shipper,self).save()
+        return result,message,shipper
 class Shop(models.Model,LinkHelper,DateTimeHelper):
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
     product=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.CASCADE)
+    level=models.CharField(_("level"),choices=ShopLevelEnum.choices,default=ShopLevelEnum.END_USER, max_length=50)
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices, max_length=50)
     unit_price=models.IntegerField(_("قیمت واحد"))
     discount_percentage=models.IntegerField(_("درصد تخفیف"),default=0)
