@@ -25,4 +25,9 @@ urlpatterns = [
     path('add-to-cart/ ',login_required(apis.AddMenuApi.as_view()),name="add_to_cart"),
 
 
+    
+    path("add-supplier/",login_required(apis.AddSupplierApi.as_view()),name="add_supplier"),
+    path("suppliers/",login_required(views.SuppliersView.as_view()),name="suppliers"),
+    path("supplier/<int:pk>/",(views.SupplierView.as_view()),name="supplier"),
+
 ]

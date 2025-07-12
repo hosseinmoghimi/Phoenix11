@@ -1,7 +1,18 @@
 from django.utils.translation import gettext as _
 from utility.enums import UnitNameEnum
- 
+from .enums import *
 from django.db.models import TextChoices
+
+
+class PersonCategoryEnum(TextChoices):
+    DEFAULT='پیش فرض',_('پیش فرض')
+    CUSTOMER='مشتری',_('مشتری')
+    SUPPLIER='فروشنده',_('فروشنده')
+    PERSONNEL='پرسنل',_('پرسنل')
+    SAHAMDAR='سهامدار',_('سهامدار')
+    CONTRACTOR='پیمانکار',_('پیمانکار')
+    EMPLOYER='کارفرما',_('کارفرما')
+    COST='هزینه',_('هزینه')
 
 class RequestStatusEnum(TextChoices):
     INITIAL='درخواست اولیه',_('درخواست اولیه')
@@ -73,13 +84,4 @@ class EventStatusEnum(TextChoices):
 
  
 
-
-class PersonAccountCategoryEnum(TextChoices):
-    DEFAULT="پیش فرض",_("پیش فرض")
-    EMPLOYER="کارکنان",_("کارکنان")
-    SAHAM_DAR="سهام داران",_("سهام داران")
-    PROVIDER="تامین کنندگان",_("تامین کنندگان")
-    CONTRACTOR="پیمانکاران",_("پیمانکاران")
-    CUSTOMER="مشتریان",_("مشتریان")
-    COST="مراکز هزینه",_("مراکز هزینه")
  

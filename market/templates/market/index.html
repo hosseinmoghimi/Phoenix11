@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 <div class="row rtl farsi">
-    
+
 
     <div class="col-6 col-md-3 col-lg-2 text-center my-3">
         <a href="{% url 'market:index' %}">
@@ -14,8 +14,8 @@
         </a>
     </div>
 
-    
-     <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
         <a href="{% url 'market:products' %}">
             <img src="{% static 'market/img/logo.png' %}" width="64em" class="mb-2" alt="">
             <h6 class="text-center">
@@ -25,8 +25,8 @@
         </a>
     </div>
 
-    
-     <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
         <a href="{% url 'market:menus' %}">
             <img src="{% static 'market/img/logo.png' %}" width="64em" class="mb-2" alt="">
             <h6 class="text-center">
@@ -36,18 +36,38 @@
         </a>
     </div>
 
-    
-     <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
         <a href="{% url 'market:category' pk=0 %}">
             <img src="{% static 'market/img/logo.png' %}" width="64em" class="mb-2" alt="">
             <h6 class="text-center">
-دیکو
-                </h6>
+                دیکو
+            </h6>
         </a>
     </div>
 
     
-     <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'market:category' pk=0 %}">
+            <img src="{% static 'market/img/logo.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                دیکو
+            </h6>
+        </a>
+    </div>
+
+    
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'market:suppliers' %}">
+            <img src="{% static 'market/img/logo.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                فروشنده ها
+            </h6>
+        </a>
+    </div>
+
+
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
         <a href="{% url 'market:desks' %}">
             <img src="{% static 'market/img/logo.png' %}" width="64em" class="mb-2" alt="">
             <h6 class="text-center">

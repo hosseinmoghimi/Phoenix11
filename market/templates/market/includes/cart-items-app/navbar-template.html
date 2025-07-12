@@ -1,0 +1,19 @@
+<div id="cart-items-navbar-app">
+    <div v-for="cart_item in cart_items">
+       
+        <a class="dropdown-item text-right"  :href="cart_item.shop.product.get_absolute_url">
+            <span v-text="cart_item.quantity">
+
+            </span>
+            <span v-text="cart_item.shop.unit_name">
+    
+            </span>
+
+            <span class="text-primary" v-text="cart_item.shop.product.title">
+
+            </span> 
+            
+
+        </a>
+    </div>
+</div>

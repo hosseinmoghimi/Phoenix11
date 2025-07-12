@@ -19,7 +19,7 @@ class SupplierSerializer(serializers.ModelSerializer):
     account=AccountBriefSerializer()
     class Meta:
         model=Supplier
-        fields=['id','account', 'get_absolute_url', 'get_edit_url','get_delete_url']
+        fields=['id','account','full_name','level', 'get_absolute_url', 'get_edit_url','get_delete_url']
  
  
 

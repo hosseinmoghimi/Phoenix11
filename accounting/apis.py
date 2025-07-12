@@ -526,9 +526,7 @@ class AddCategoryApi(APIView):
         context['result']=FAILED 
         log=222
         add_category_form=AddCategoryForm(request.POST)
-        leolog(asdasd=200)
         if add_category_form.is_valid():
-            leolog(asdasd=300)
             log=333
             cd=add_category_form.cleaned_data
             result,message,category=CategoryRepo(request=request).add_category(**cd)

@@ -28,8 +28,17 @@
 
 
     </div>
+
+    {% if shops %}
+    <div>
+        {% include 'market/includes/product-app/shops.html' %}
+
+
+    </div>
+    {% endif %}
+
     {% if related_pages %}
-        <div class="col-md-12">
+    <div class="col-md-12">
         <h5 class="text-right mt-3">
             محصولات مشابه
         </h5>
@@ -37,7 +46,7 @@
 
     </div>
     {% endif %}
-  
+
     <div class="col-md-12">
         {% include "accounting/includes/product-app/card.html" %}
 
