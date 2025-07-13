@@ -186,7 +186,7 @@ class AccountRepo():
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
             codeee=str(filter_number(search_for))
-            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
+            objects=objects.filter(Q(title__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
@@ -223,19 +223,7 @@ class AccountRepo():
                         return a
                 except:
                     pass
-          
-    def set_priority(self,*args, **kwargs):
-        result,message,priority=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".change_account"):
-            return result,message,account_tags
-        priority=kwargs['priority']
-        account_id=kwargs['account_id']
-        account=Account.objects.filter(pk=account_id).first()
-        if account is not None:
-            account.priority=priority
-            account.save()
-        result=SUCCEED
-        return result,message,priority
+       
 
            
     def set_account_parent(self,*args, **kwargs):
@@ -244,8 +232,9 @@ class AccountRepo():
         parent=None
         parent_code=kwargs["parent_code"]
         parent=self.account(account_code=parent_code)
-        account.parent=parent
+        account.parent_id=parent.id
         account.save()
+        leolog(account=account,parent=parent)
         result=SUCCEED
         message="با موفقیت تغییر یافت"
         return result,message,account,parent
@@ -271,7 +260,7 @@ class AccountRepo():
             parent_account=None
             if 'parent_code' in account:
                 parent_account=Account.objects.filter(code=account["parent_code"]).first()
-            new_account=Account(name=account["name"],color=account["color"],code=account['code'],priority=account['priority'],parent=parent_account)
+            new_account=Account(title=account["name"],color=account["color"],code=account['code'],priority=account['priority'],parent=parent_account)
             # new_account=Account(parent=parent_account,**kwargs)
             new_account.save()
             # account_group_counter+=1
@@ -328,24 +317,6 @@ class AccountRepo():
 
         return result,message
     
-    def set_priority(self,*args, **kwargs):
-        result,message,priority=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".change_account"):
-            return result,message,account_tags
-        priority=kwargs['priority']
-        account_id=kwargs['account_id']
-        
-         
-
-        account=Account.objects.filter(pk=account_id).first()
-        if account is not None:
-            account.priority=priority
-            account.save()
-
-        result=SUCCEED
-
-        return result,message,priority
-
     def add_account(self,*args,**kwargs):
         result,message,account=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_account"):

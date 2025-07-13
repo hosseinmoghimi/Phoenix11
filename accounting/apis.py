@@ -147,28 +147,6 @@ class AddAccountApi(APIView):
         return JsonResponse(context)
 
 
-class SetAccountPriorityApi(APIView):
-    def post(self,request,*args, **kwargs):
-        context={}
-        result=FAILED
-        message=""
-        log=111
-        context['result']=FAILED
-        if request.method=='POST':
-            log=222
-            set_account_priority_form=SetAccountPriorityForm(request.POST)
-            if set_account_priority_form.is_valid():
-                log=333
-                cd=set_account_priority_form.cleaned_data
-                priority,message,result=AccountRepo(request=request).set_priority(**cd)
-                if priority is not None:
-                    context['priority']=priority
-        context['message']=message
-        context['result']=result
-        context['log']=log
-        return JsonResponse(context)
-
-
 class SetAccountParentApi(APIView): 
     def post(self,request,*args, **kwargs):
         context={}
@@ -331,6 +309,32 @@ class AddFinancialYearApi(APIView):
         # context['result2']=result2
         context['log']=log
         return JsonResponse(context)
+
+
+
+ 
+class SetAccountParentApi(APIView): 
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        action=None
+        log=111
+        context['result']=FAILED
+        set_parent_code_form=SetParentCodeForm(request.POST)
+        if set_parent_code_form.is_valid():
+            log=2222
+            cd=set_parent_code_form.cleaned_data
+            (result,message,account,parent)=AccountRepo(request=request).set_account_parent(**cd) 
+            if result==SUCCEED:
+                log=333 
+                context["parent"]=AccountSerializer(parent,many=False).data 
+                context["account"]=AccountSerializer(account,many=False).data 
+        context['message']=message
+        context['result']=result 
+        context['log']=log
+        return JsonResponse(context)
+
 
 
 

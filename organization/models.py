@@ -5,8 +5,11 @@ from .apps import APP_NAME
 from utility.models import DateTimeHelper
 # Create your models here.
 class OrganizationUnit(Page,LinkHelper):
-    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
-    
+    account_code=models.CharField(  _("account"), max_length=50)
+    @property
+    def account(self):
+        from accounting.models import Account
+        return Account.objects.filter(code=self.account_code)
 
     class Meta:
         verbose_name = _("OrganizationUnit")

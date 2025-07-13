@@ -85,7 +85,7 @@ def AccountsContext(request):
 
 def AccountContext(request,account,*args, **kwargs):
 
-    context={} 
+    context=PageContext(request=request,page=account)
     if account is None:
         return None 
 
@@ -128,7 +128,7 @@ def AccountContext(request,account,*args, **kwargs):
 
 
 
-    accounts =account.account_set.all()
+    accounts =AccountRepo(request=request).list(parent_id=account.id)
     context['accounts']=accounts
     if len(accounts)>0:
         context['expand_accounts']=True

@@ -40,7 +40,6 @@ urlpatterns = [
     path("add-account/",login_required(apis.AddAccountApi.as_view()),name="add_account"),
     path("select-account/",login_required(apis.SelectAccountApi.as_view()),name="select_account"),
     path('selection/',login_required(views.SelectionView.as_view()),name="selection"),
-    path("set-account-priority/",login_required(apis.SetAccountPriorityApi.as_view()),name="set_account_priority"),
     path("set_account_parent/",login_required(apis.SetAccountParentApi.as_view()),name="set_account_parent"),
 
     path('financial-documents/',login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
@@ -97,6 +96,8 @@ urlpatterns = [
     path("select-financial-event/",login_required(apis.SelectFinancialEventApi.as_view()),name="select_financial_event"),
     
     
+    path("set_account_parent/",login_required(apis.SetAccountParentApi.as_view()),name="set_account_parent"),
+
 
 
    
