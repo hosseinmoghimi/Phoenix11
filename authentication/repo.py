@@ -97,8 +97,8 @@ class PersonRepo():
             person.title=kwargs["title"]
             
         if 'profile_id' in kwargs and kwargs['profile_id']>0:
-            person.profile_id=kwargs["profile_id"]
-            
+            profile=ProfileRepo(request=self.request).profile(profile_id=kwargs['profile_id'])
+            person.profile=profile
         if 'color' in kwargs:
             person.color=kwargs["color"]
         if 'first_name' in kwargs:
@@ -119,30 +119,13 @@ class PersonRepo():
             person.address=kwargs["address"]  
         if 'type' in kwargs:
             person.type=kwargs["type"] 
-        if 'person_category_id' in kwargs and kwargs["person_category_id"] is not None:
-            person_category_id=kwargs["person_category_id"]
-            person_category=PersonCategory.objects.filter(pk=person_category_id).first()
-            if person_category is not None:
-                categories=[person_category.code]
          
-            
-        if 'person_account_categories' in kwargs:
-            person_account_categories=kwargs["person_account_categories"]
-             
- 
+          
         (result,message,person)=person.save()
         if result==FAILED:
             return result,message,person
         
 
-
-        for person_account_category in person_account_categories: 
-            person_category=PersonCategory.objects.filter(pk=person_account_category).first()
-            person_account=PersonAccount(person=person,person_category=person_category)
-            person_account.person=person
-            person_account.person_category=person_category 
-            person_account.save()
-            pass
  
         return result,message,person
 
