@@ -10,7 +10,7 @@
   <small class="text-muted">{{page.class_title}}</small>
 </div>
 <div>{% include "attachments/includes/page-like-app/template.html" %}</div>
-<div>
+<div class="my-3">
   <form
     action="https://www.google.com/search"
     method="get"
@@ -19,15 +19,15 @@
   >
     <input name="q" type="hidden" value="{{page.title}}" />
     <button type="submit" class="btn btn-link p-0">
-      <img src="{% static 'icons/google.png' %}" width="32" alt="" />
+      <img src="{% static 'img/icons/google.png' %}" width="32" alt="" />
 
       جستجوی گوگل
     </button>
   </form>
 </div>
 
-{% if perms.core.change_page %}
 <div>
+{% if perms.core.change_page %}
   <a
     href="{{page.get_edit_url}}"
     class="my-2 text-warning mx-2"
@@ -36,10 +36,9 @@
   >
     <i class="fa fa-edit text-warning"></i>
     ویرایش
-  </a>
-</div>
+  </a> 
 {% endif %} {% if perms.core.delete_page %}
-<div>
+ 
   <a
     href="{{page.get_delete_url}}"
     class="my-2 text-danger mx-2"
@@ -49,5 +48,5 @@
     <i class="fa fa-trash text-danger"></i>
     حذف
   </a>
+  {% endif %}
 </div>
-{% endif %}
