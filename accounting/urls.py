@@ -43,7 +43,7 @@ urlpatterns = [
     path("set-account-priority/",login_required(apis.SetAccountPriorityApi.as_view()),name="set_account_priority"),
     path("set_account_parent/",login_required(apis.SetAccountParentApi.as_view()),name="set_account_parent"),
 
-    path('financialdocuments/',login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
+    path('financial-documents/',login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
     path('financial-document/<int:pk>/',login_required(views.FinancialDocumentView.as_view()),name="financialdocument"),
     path("select-financial-document/",login_required(apis.SelectFinancialDocumentApi.as_view()),name="select_financial_document"),
     
