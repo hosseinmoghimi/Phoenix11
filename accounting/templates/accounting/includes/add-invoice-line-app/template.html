@@ -46,6 +46,10 @@
             </div>
           </div>
         </div>
+        <div>
+          <a target="_blank" class="mx-2" href="{% url 'accounting:products' %}">همه کالاها</a>
+          <a target="_blank" class="mx-2" href="{% url 'accounting:services' %}">همه خدمات</a>
+        </div>
         <form @submit.prevent="add_invoice_line()">
           <div class="row">
 
