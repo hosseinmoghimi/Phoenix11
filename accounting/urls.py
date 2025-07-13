@@ -21,6 +21,9 @@ urlpatterns = [
     path("financial-years/",login_required(views.FinancialYearsView.as_view()),name="financial_years"),
     path("add-financial-year/",login_required(apis.AddFinancialYearApi.as_view()),name="add_financial_year"),
     
+    path('person-category/<int:pk>/',login_required(views.PersonCategoryView.as_view()),name="personcategory"),
+    path('person-categories/',login_required(views.PersonCategoriesView.as_view()),name="person_categories"),
+
     path('person-accounts/',login_required(views.PersonAccountsView.as_view()),name="person_accounts"),
     path('person-account/<int:pk>/',login_required(views.PersonAccountView.as_view()),name="personaccount"),
     path("add-person-account/",login_required(apis.AddPersonAccountApi.as_view()),name="add_person_account"),

@@ -224,9 +224,10 @@ class PersonAccount(Account):
         
         self.name=f'{self.person} # {self.category}'
         result,message,account=super(PersonAccount,self).save()
-        result=SUCCEED
-        message="حساب شخص با موفقیت اضافه شد."
-        person_account=self
+        if account.id is not None:
+            result=SUCCEED
+            message="حساب شخص با موفقیت اضافه شد."
+            person_account=self
         return result,message,person_account
 
 

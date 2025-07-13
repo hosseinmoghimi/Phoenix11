@@ -1,5 +1,5 @@
 from core.repo import PageRepo,ProfileRepo,FAILED,SUCCEED
-from .models import Like,Comment,Link,Download,Image
+from .models import Like,Comment,Link,Download,Image,Location,Area
 from .apps import APP_NAME
 
 
@@ -201,3 +201,120 @@ class DownloadRepo():
         return result,message,download
 
 
+class LocationRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.profile=ProfileRepo(*args, **kwargs).me
+        self.objects = Location.objects
+    def list(self,*args, **kwargs):
+        objects= self.objects
+        if 'location_id' in kwargs:
+            objects=objects.filter(location_id=kwargs['location_id'])
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])
+        return objects.all()
+    
+    
+    def add_page_location(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_location"):
+            return None
+        location=LocationRepo(request=self.request).location(*args, **kwargs)
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if page is None:
+            return
+        if location is None:
+            return
+        page.locations.add(location.id)
+        return location
+
+
+
+    def location(self, *args, **kwargs):
+        if 'location_id' in kwargs:
+            return self.objects.filter(pk=kwargs['location_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()
+            
+
+    def add_location(self,*args, **kwargs):
+        result,message,location=FAILED,'',self
+        if not self.user.has_perm(APP_NAME+".add_location"):
+            return result,message,None
+        location=Location()
+        if 'location' in kwargs:
+            location1=kwargs['location']
+        if 'title' in kwargs:
+            location.title=kwargs['title']
+        if 'location' in kwargs:
+            location.location=kwargs['location']
+        if 'page_id' in kwargs:
+            location.page_id=kwargs['page_id']
+        if 'latitude' in kwargs:
+            location.latitude=kwargs['latitude']
+        if 'longitude' in kwargs:
+            location.longitude=kwargs['longitude']
+        location.creator=self.profile
+        (result,message,location)=location.save()
+        return result,message,location
+    
+    def search(self,search_for):
+        objects = self.objects.filter(title__contains=search_for)
+        return objects 
+
+    
+        
+class AreaRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.profile=ProfileRepo(*args, **kwargs).me
+        self.objects = Area.objects
+    def list(self,*args, **kwargs):
+        objects= self.objects
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        if 'location_id' in kwargs:
+            objects=objects.filter(location_id=kwargs['location_id'])
+        if 'search_for' in kwargs:
+            objects=objects.filter(location__title__contains=kwargs['search_for'])
+        return objects.all()
+    def add_area(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_area"):
+            return None
+        area=Area()
+        if 'code' in kwargs:
+            area.code=kwargs['code']
+        if 'title' in kwargs:
+            area.title=kwargs['title']
+        if 'color' in kwargs:
+            area.color=kwargs['color']
+        if 'area' in kwargs:
+            area.area=kwargs['area']
+        area.save()
+         
+        return area
+
+    def area(self, *args, **kwargs):
+        if 'area_id' in kwargs:
+            return self.objects.filter(pk=kwargs['area_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()

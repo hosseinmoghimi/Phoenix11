@@ -21,6 +21,10 @@
       <div class="col-md-6">
         {% include "attachments/includes/downloads-app/template.html" %}
       </div>
+
+       <div class="col-md-6">
+        {% include "attachments/includes/locations-app/template.html" %}
+      </div>
     </div>
   </div>
 
@@ -32,6 +36,9 @@
 
   <div class="col-md-12 ">
     {% include "accounting/includes/invoices-app/template.html" %}
+  </div>
+  <div class="col-md-12 ">
+    {% include "core/includes/page-related-app/template.html" %}
   </div>
 
   <div class="col-md-12">
@@ -55,4 +62,5 @@
 
 {% include "accounting/includes/invoices-app/script.html" %}
 {% include "core/includes/page-app/script.html" %}
+
 {% endblock script %}

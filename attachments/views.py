@@ -14,6 +14,12 @@ from django.utils import timezone
 from core.views import CoreContext,PageBriefSerializer,AddRelatedPageForm
 from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo
 import json
+
+
+from .repo import ImageRepo,LocationRepo,AreaRepo
+from .serializer import ImageSerializer,LocationSerializer,AreaSerializer
+       
+
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='attachments/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -95,6 +101,23 @@ def PageImagesContext(request,page,profile,*args, **kwargs):
     if profile is not None:
         context['add_image_form']=AddImageForm()
     return context
+
+
+def PageLocationsContext(request,page,*args, **kwargs):
+    context={}
+    location_repo = LocationRepo(request=request) 
+    locations=page.locations.all()
+    locations_s=json.dumps(LocationSerializer(locations,many=True).data)
+    context['locations']=locations  
+    context['locations_s']=locations_s  
+
+    if request.user.has_perm(APP_NAME+'.add_location'):
+        all_locations=location_repo.list()
+        context['all_locations']=all_locations  
+        context['add_page_location_form']=AddPageLocationForm()  
+        context['add_location_form']=AddLocationForm()
+    return context
+
 
 class DownloadView(View):
     def get(self, request, *args, **kwargs): 
@@ -186,9 +209,6 @@ class CommentsView(View):
         
       
 
-from .repo import ImageRepo
-from .serializer import ImageSerializer
-       
 class ImagesView(View):
     def get(self, request, *args, **kwargs): 
         context=getContext(request=request)
@@ -220,3 +240,61 @@ class ImageDownloadView(View):
         if image is None:
             raise Http404
         return image.download_response()
+
+
+
+class LocationView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        location = LocationRepo(request=request).location(*args, **kwargs)
+        context['location'] = location
+        context['location_s'] = json.dumps(LocationSerializer(location).data)
+
+        return render(request, TEMPLATE_ROOT+"location.html", context)
+  
+
+class AreaView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        area = AreaRepo(request=request).area(*args, **kwargs)
+        context['area'] = area
+        for installed_app in context['installed_apps']:
+            if installed_app['name']=='market':
+                from market.repo import SupplierRepo,CustomerRepo
+                from market.serializers import SupplierSerializer,CustomerSerializer
+              
+                suppliers=SupplierRepo(request=request).list(region_id=area.id)
+                context['suppliers'] = suppliers
+                suppliers_s=json.dumps(SupplierSerializer(suppliers,many=True).data)
+                context['suppliers_s']=suppliers_s
+
+                
+                customers=CustomerRepo(request=request).list(region_id=area.id)
+                context['customers'] = customers
+                customers_s=json.dumps(CustomerSerializer(customers,many=True).data)
+                context['customers_s']=customers_s
+        context['area_s'] = json.dumps(AreaSerializer(area).data)
+        return render(request, TEMPLATE_ROOT+"area.html", context)
+
+
+class AreasView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        areas = AreaRepo(request=request).list(*args, **kwargs)
+        context['areas'] = areas
+        context['areas_s'] = json.dumps(AreaSerializer(areas,many=True).data)
+        if request.user.has_perm(APP_NAME+".add_area"):
+            context['add_area_form']=AddAreaForm()
+            context['colors']=(color[0] for color in ColorEnum.choices)
+        return render(request, TEMPLATE_ROOT+"areas.html", context)
+
+
+class LocationsView(View):  
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        locations = LocationRepo(request=request).list(*args, **kwargs)
+        context['locations'] = locations
+        context['locations_s'] = json.dumps(LocationSerializer(locations,many=True).data)
+        if request.user.has_perm(APP_NAME+".add_location"):
+            context['add_location_form']=AddLocationForm()
+        return render(request, TEMPLATE_ROOT+"locations.html", context)

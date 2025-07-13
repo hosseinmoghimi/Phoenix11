@@ -1,6 +1,12 @@
 from django.utils.translation import gettext as _
 from django.db.models import TextChoices
  
+ 
+ 
+class WeightUnitEnum(TextChoices):
+    KILO_GRAM="کیلوگرم",_("کیلوگرم")
+    GRAM="گرم",_("گرم")
+    TON="تن",_("تن")
 
 class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")

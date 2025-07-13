@@ -430,6 +430,7 @@ class PersonAccountRepo():
         result,message,person_account=person_account.save()
         # result=SUCCEED
         # message="با موفقیت حساب فرد ایجاد شد."
+        
         return result,message,person_account
 
     def person_account(self,*args, **kwargs):
@@ -466,6 +467,56 @@ class PersonAccountRepo():
         return result,message
      
 
+    def add_account_to_person(self,*args,**kwargs):
+        result,message,account,person,action=FAILED,"",None,None,None
+        if not self.request.user.has_perm(APP_NAME+".add_personaccount"):
+            message="دسترسی غیر مجاز"
+            return result,message,account,person,action
+        person_account=PersonAccount()
+        
+        person_account.person_id=kwargs['person_id']
+        person_account.person_category_id=kwargs['person_category_id']
+
+        result,message,person_account=person_account.save()
+        if result==FAILED:
+            person_account=None
+            return result,message,person_account,None,"ALREADY_EXISTED"
+
+        action="ADDED"
+        result=SUCCEED
+        message=f"حساب مالی  {person_account.name} با موفقیت به شخص {person_account.person.full_name} اضافه شد."
+            
+        return result,message,person_account,person_account.person,action
+
+    def remove_account_from_person(self,*args,**kwargs):
+        result,message,person_account_id=FAILED,"",0
+        if not self.request.user.has_perm(APP_NAME+".add_personaccount"):
+            message="دسترسی غیر مجاز"
+            return result,message,person_account_id
+             
+        person_id=kwargs['person_id']
+        person_category_id=kwargs['person_category_id']
+
+        person_account=PersonAccount.objects.filter(person_id=person_id).filter(person_category_id=person_category_id).first()
+        if person_account is None:
+            result=FAILED
+            message="حساب مالی وجود ندارد."
+            return result,message,person_account_id
+
+        person_account_id=person_account.id
+        try:
+            person_account.delete()
+            person_account_=PersonAccount.objects.filter(id=person_account_id).first()
+            if person_account_ is None:
+                result=SUCCEED
+                message=f"حساب مالی  {person_account.name} با موفقیت از شخص {person_account.person.full_name} حذف شد."
+        except:
+            message="حذف نشد. "+"ابتدا رویداد های مالی مرتبط را حذف کنید."+"تا تراز فرد صفر شده و هیچ سندی با شخص در ارتباط نباشد."
+            return result,message,person_account_id
+
+        return result,message,person_account_id
+
+ 
 class FinancialYearRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request

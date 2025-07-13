@@ -1021,7 +1021,7 @@ class PersonAccountView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         person_account=PersonAccountRepo(request=request).person_account(*args, **kwargs)
-
+        context['person_account']=person_account
 
         if person_account is None:
             raise Http404
@@ -1031,3 +1031,32 @@ class PersonAccountView(View):
             context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
   
         return render(request,TEMPLATE_ROOT+"person-account.html",context)
+
+class PersonCategoryView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        person_category=PersonAccountRepo(request=request).person_category(*args, **kwargs)
+        context['person_category']=person_category
+ 
+        
+        if request.user.has_perm(APP_NAME+".add_financialdocumentline"):
+            context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
+  
+        return render(request,TEMPLATE_ROOT+"person-category.html",context)
+
+
+
+class PersonCategoriesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        person_category=PersonAccountRepo(request=request).person_category(*args, **kwargs)
+        context['person_category']=person_category
+
+        if person_category is None:
+            raise Http404
+        context.update(AccountContext(request=request,account=person_category))
+        
+        if request.user.has_perm(APP_NAME+".add_financialdocumentline"):
+            context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
+  
+        return render(request,TEMPLATE_ROOT+"person-categories.html",context)

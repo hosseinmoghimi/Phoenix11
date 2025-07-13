@@ -78,7 +78,7 @@ def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
     me_profile=ProfileRepo(request=request).me
-    from attachments.views import PageImagesContext,PageRelatedContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
+    from attachments.views import PageLocationsContext,PageImagesContext,PageRelatedContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
 
     context.update(PageLikesContext(request=request,page=page,profile=me_profile))
     context.update(PageCommentsContext(request=request,page=page,profile=me_profile))
@@ -86,6 +86,7 @@ def PageContext(request,page,*args, **kwargs):
     context.update(PageDownloadsContext(request=request,page=page,profile=me_profile))
     context.update(PageImagesContext(request=request,page=page,profile=me_profile))
     context.update(PageRelatedContext(request=request,page=page))
+    context.update(PageLocationsContext(request=request,page=page))
     return context
 
 

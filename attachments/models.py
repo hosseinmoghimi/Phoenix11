@@ -355,3 +355,76 @@ class Image(models.Model,LinkHelper,DateTimeHelper):
         except:
             return self.image
 
+
+
+
+class Location(models.Model,LinkHelper):
+    title = models.CharField(
+        _("عنوان نقطه"), max_length=100)
+    location = models.CharField(_("لوکیشن"), max_length=1000)
+    latitude=models.CharField(_("latitude"),null=True,blank=True, max_length=50)
+    longitude=models.CharField(_("longitude"),null=True,blank=True, max_length=50)
+
+
+    creator = models.ForeignKey("authentication.profile", null=True,blank=True,related_name="maplocation_set", verbose_name=_("profile"), on_delete=models.CASCADE)
+    date_added = models.DateTimeField(
+        _("date_added"), auto_now=False, auto_now_add=True)
+    class_name = "location"
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("لوکیشن")
+        verbose_name_plural = _("لوکیشن ها")
+
+    def __str__(self):
+        return f'{self.title}'
+
+    
+    def save(self, *args, **kwargs):
+        (result,message,location)=FAILED,'',None
+        if self.location is not None:
+            self.location = self.location.replace('width="600"', 'width="100%"')
+            self.location = self.location.replace('height="450"', 'height="400"')
+        super(Location, self).save(*args, **kwargs)
+        if self.id is not None:
+            location=self
+            result=SUCCEED
+            message='موقعیت با موفقیت اضافه شد.'
+        return result,message,location
+ 
+
+ 
+    def get_link_to_map(self):
+        return f'https://www.google.com/maps/search/?api=1&query={self.latitude},{self.longitude}'
+    def get_link_to_map_tag(self):
+        return f"""
+            <a title="نمایش روی نقشه" target="_blank" href="{self.get_link_to_map()}">
+                <span class="material-icons">
+                    location_on
+                    </span>
+                
+            </a>
+        """
+ 
+class Area(models.Model,LinkHelper):
+    page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
+    title=models.CharField(_("title"), max_length=50)
+    code=models.CharField(_("code"), max_length=50)
+    area = models.CharField(_("area"),blank=True,null=True, max_length=1000)
+    color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
+    app_name=APP_NAME
+    class_name="area"
+    class Meta:
+        verbose_name = _("Area")
+        verbose_name_plural = _("Areas")
+
+    def __str__(self):
+        return self.title
+
+
+    def save(self, *args, **kwargs):
+        if self.area is not None:
+            self.area = self.area.replace('width="600"', 'width="100%"')
+            self.area = self.area.replace('height="450"', 'height="400"')
+        super(Area, self).save(*args, **kwargs)
+
+ 

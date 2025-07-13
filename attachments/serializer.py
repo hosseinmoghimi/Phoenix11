@@ -1,6 +1,21 @@
 from .models import Like,Comment,Link,Download,Image
 from core.serializer import ProfileSerializer,serializers,PageSerializer
+from .models import Area, Location
 
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Location
+        fields=['id','title','longitude','location','latitude','title','get_absolute_url']
+
+
+         
+class AreaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Area
+        fields=['id','code','color','area','title','get_absolute_url']
+
+
+          
 
 class LikeSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()

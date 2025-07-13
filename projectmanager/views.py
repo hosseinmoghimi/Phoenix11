@@ -64,8 +64,7 @@ class ProjectView(View):
         if request.user.has_perm(APP_NAME+".add_invoice"):
             context.update(AddInvoiceContext(request=request))
 
-
-
+ 
         
         remote_clients = project.remote_clients.all()
         context['remote_clients'] = remote_clients

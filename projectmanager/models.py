@@ -11,8 +11,8 @@ class Project(Event,LinkHelper):
     type=models.CharField(_("تایپ"),max_length=50,choices=ProjectTypeEnum.choices,default=ProjectTypeEnum.TYPE_A)
     percentage_completed=models.IntegerField(_("درصد پیشرفت"),default=0)
     weight=models.IntegerField(_("وزن پروژه"),default=0)
-    invoices=models.ManyToManyField("accounting.invoice", verbose_name=_("invoices"))
-    remote_clients=models.ManyToManyField("remoteclient", verbose_name=_("remote_clients"))
+    invoices=models.ManyToManyField("accounting.invoice", blank=True, verbose_name=_("invoices"))
+    remote_clients=models.ManyToManyField("remoteclient", blank=True,verbose_name=_("remote_clients"))
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")

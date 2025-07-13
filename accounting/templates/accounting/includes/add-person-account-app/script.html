@@ -5,8 +5,7 @@
 <script>
     let add_person_account_app = new Vue({
         el: "#add-person-account-app",
-        data: {
-            name: "",
+        data: { 
             person_category_id:0,
             code: "",
             person:{},
@@ -23,8 +22,7 @@
                 const payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     priority: parseInt(this.priority),
-                    parent_id:0,
-                    name: this.name,
+                    parent_id:0, 
                     person_id: parseInt(this.person.id),
                     person_category_id: parseInt(this.person_category_id),
                     code: "{{person_account.code}}"+this.code,
