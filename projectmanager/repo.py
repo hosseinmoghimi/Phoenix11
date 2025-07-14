@@ -97,6 +97,49 @@ class ProjectRepo():
         return result,message,project
 
  
+
+
+    def edit_project(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".change_project"):
+            return None
+        project=self.project(*args, **kwargs)
+        if project is not None:
+            if 'percentage_completed' in kwargs:
+                project.percentage_completed=kwargs['percentage_completed']
+            if 'start_datetime' in kwargs:
+                project.start_datetime=kwargs['start_datetime']
+            if 'end_datetime' in kwargs:
+                project.end_datetime=kwargs['end_datetime']
+            if 'status' in kwargs:
+                project.status=kwargs['status']
+            if 'contractor_id' in kwargs:
+                project.contractor_id=kwargs['contractor_id']
+            if 'percentage_completed' in kwargs:
+                project.percentage_completed=kwargs['percentage_completed']
+            if 'weight' in kwargs:
+                project.weight=kwargs['weight']
+            if 'parent_id' in kwargs:
+                parent_id=kwargs['parent_id']
+                if parent_id<1:
+                    project.parent=None
+                elif parent_id>0 and len(Project.objects.filter(pk=parent_id))==1 and not parent_id==project.pk:
+                    project.parent_id=parent_id
+            if 'employer_id' in kwargs:
+                project.employer_id=kwargs['employer_id']
+            if 'title' in kwargs:
+                project.title=kwargs['title']
+            if 'weight' in kwargs:
+                project.weight=kwargs['weight']
+                pass
+            if 'priority' in kwargs:
+                project.priority=kwargs['priority']
+                pass
+            if 'archive' in kwargs:
+                project.archive=kwargs['archive']
+            project.save()
+            return project
+
+
 class RemoteClientRepo():
     def __init__(self, *args, **kwargs):
         self.request = None

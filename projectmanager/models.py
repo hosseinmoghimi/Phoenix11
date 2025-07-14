@@ -1,11 +1,19 @@
 from django.db import models
-from core.models import Event,LinkHelper,FAILED,SUCCEED
+from core.models import Event,LinkHelper,FAILED,SUCCEED,DateTimeHelper
+from utility.models import DateHelper
 from .enums import *
+from tinymce.models import HTMLField
 from django.utils.translation import gettext as _
 from .apps import APP_NAME
 from accounting.models import InvoiceLine,Invoice
+from django.core.files.storage import FileSystemStorage
+
+from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT
+IMAGE_FOLDER = "images/"
+upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
+
 # Create your models here.
-class Project(Event,LinkHelper): 
+class Project(Event,LinkHelper,DateHelper): 
     employer=models.ForeignKey("organization.organizationunit", verbose_name=_("employer"),related_name="project_employed", on_delete=models.CASCADE)
     contractor=models.ForeignKey("organization.organizationunit", verbose_name=_("contractor"),related_name="project_contracted", on_delete=models.CASCADE)
     type=models.CharField(_("تایپ"),max_length=50,choices=ProjectTypeEnum.choices,default=ProjectTypeEnum.TYPE_A)
@@ -60,7 +68,41 @@ class ServiceRequest(Request):
     def save(self):
         super(ServiceRequest,self).save()
 
+
+
+
+class Ticket(models.Model,DateTimeHelper,LinkHelper):
+    parent=models.ForeignKey("ticket",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
+    title=models.CharField(_("title"),max_length=500)
+    description=HTMLField(_("description"),max_length=5000,blank=True,null=True)
+    profile=models.ForeignKey("authentication.profile",null=True,blank=True, verbose_name=_("پروفایل"), on_delete=models.PROTECT)
+    project=models.ForeignKey("project",null=True,blank=True, verbose_name=_("پروژه"), on_delete=models.CASCADE)
+    datetime_added=models.DateTimeField(_("date added"),auto_now=False,auto_now_add=True)
+    type=models.CharField(_("تایپ"),max_length=50,choices=TicketTypeEnum.choices)
+    status=models.CharField(_("وضعیت"),max_length=50,choices=TicketStatusEnum.choices,default=TicketStatusEnum.STARTED)
+    file = models.FileField(_("فایل ضمیمه"), null=True, blank=True,upload_to=APP_NAME+'/ticket-files', storage=upload_storage, max_length=100)
+    class_name="ticket"
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("Ticket")
+        verbose_name_plural = _("Tickets")
+
+    def __str__(self):
+        return self.title
+    def status_color(self):
+        color="primary"
+        if self.status==TicketStatusEnum.FINISHED:
+            color="secondary"
+        if self.status==TicketStatusEnum.IN_PROGRESS:
+            color="info"
+        if self.status==TicketStatusEnum.STARTED:
+            color="danger" 
+        return color
  
+    def save(self,*args, **kwargs):
+        return super(Ticket,self).save()
+
+
  
 
 class RemoteClient(models.Model,LinkHelper):

@@ -565,7 +565,6 @@ class FinancialDocumentsView(View):
         financial_documents_s=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
         context['financial_documents_s']=financial_documents_s
         current_financial_year=FinancialYearRepo(request=request).current_financial_year()
-        leolog(current_financial_year=current_financial_year)
         if current_financial_year is None:
             title='ابتدا سال مالی جاری را ایجاد کنید.'
             mv=MessageView(title=title)

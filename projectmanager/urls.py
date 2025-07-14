@@ -10,6 +10,8 @@ urlpatterns = [
     path('project/add/',login_required(apis.AddProjectApi.as_view()),name="add_project"),  
     path('projects/',login_required(views.ProjectsView.as_view()),name="projects"),  
     path('project/<int:pk>/',login_required(views.ProjectView.as_view()),name="project"),  
+    path('project/',login_required(views.ProjectView.as_view()),name="project_null"),  
+    path('edit-project/',login_required(apis.EditProjectApi.as_view()),name="edit_project"),  
 
 
     path('remote_client/add/',login_required(apis.AddRemoteClientApi.as_view()),name="add_remote_client"),  

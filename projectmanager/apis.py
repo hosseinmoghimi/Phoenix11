@@ -9,6 +9,27 @@ from .serializers import ProjectSerializer,RemoteClientSerializer
 from django.http import JsonResponse
 from .forms import *
    
+class EditProjectApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            edit_project_form=EditProjectForm(request.POST)
+            if edit_project_form.is_valid():
+                cd=edit_project_form.cleaned_data 
+                
+                cd['start_datetime']=PersianCalendar().to_gregorian(cd['start_datetime'])
+                cd['end_datetime']=PersianCalendar().to_gregorian(cd['end_datetime'])
+                project=ProjectRepo(request=request).edit_project(**cd)
+                if project is not None: 
+                    context['project']=ProjectSerializer(project).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+        
+ 
  
 class AddRemoteClientApi(APIView):
     def post(self,request,*args, **kwargs):

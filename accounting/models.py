@@ -406,7 +406,7 @@ class FinancialYear(models.Model,LinkHelper,DateTimeHelper):
         verbose_name = _("FinancialYear")
         verbose_name_plural = _("FinancialYears")
     def __str__(self):
-        return self.name
+        return self.name+' #' if self.in_progress else ''
 
     def save(self):
         result,message,financial_year=FAILED,"",self
