@@ -324,8 +324,8 @@ class AccountRepo():
             return result,message,account
 
         account=Account()
-        if 'name' in kwargs:
-            account.name=kwargs["name"]
+        if 'title' in kwargs:
+            account.title=kwargs["title"]
         if 'parent_id' in kwargs:
             if kwargs["parent_id"]>0:
                 account.parent_id=kwargs["parent_id"]
