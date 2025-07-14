@@ -52,8 +52,8 @@ class OrganizationUnitRepo():
         organization_unit=OrganizationUnit()
         if 'name' in kwargs:
             organization_unit.name=kwargs["name"]
-        if 'parent_id' in kwargs:
-            if kwargs["parent_id"]>0:
+        if 'parent_id' in kwargs :
+            if kwargs["parent_id"] is not None and kwargs["parent_id"]>0:
                 organization_unit.parent_id=kwargs["parent_id"]
         if 'account_id' in kwargs:
             organization_unit.my_account_id=kwargs["account_id"]
