@@ -57,6 +57,10 @@ class OrganizationUnitRepo():
                 organization_unit.parent_id=kwargs["parent_id"]
         if 'account_id' in kwargs:
             organization_unit.account_id=kwargs["account_id"]
+            from accounting.models import Account
+            account=Account.objects.filter(id=kwargs['account_id']).first()
+            if account is not None:
+                organization_unit.account_code=account.code
         if 'bestankar_id' in kwargs:
             organization_unit.bestankar_id=kwargs["bestankar_id"]
         if 'code' in kwargs:

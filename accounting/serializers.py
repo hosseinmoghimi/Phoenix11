@@ -76,7 +76,7 @@ class InvoiceLineItemUnitSerializer(serializers.ModelSerializer):
 class AccountBriefSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
-        fields = ['id','parent_id','full_name','logo','name','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','parent_id','full_name','logo','title','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
 
 class FinancialDocumentSerializer(serializers.ModelSerializer):
        class Meta:
