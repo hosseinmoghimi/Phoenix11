@@ -231,8 +231,11 @@ class AccountRepo():
         account=self.account(*args,**kwargs)
         parent=None
         parent_code=kwargs["parent_code"]
-        parent=self.account(account_code=parent_code)
-        account.parent_id=parent.id
+        if parent_code=='0':
+            account.parent=None
+        else:    
+            parent=self.account(account_code=parent_code)
+            account.parent_id=parent.id
         account.save()
         leolog(account=account,parent=parent)
         result=SUCCEED
