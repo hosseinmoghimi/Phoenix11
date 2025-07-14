@@ -22,20 +22,24 @@ class ImageRepo():
             return self.objects.filter(pk=kwargs['image_id']).first()
     def add_image(self,*args, **kwargs):
         result,message,image=FAILED,"",None
+        title=''
         profile_me=ProfileRepo(request=self.request).me
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if profile_me is None:
             return None
         if page is None:
             return None
+        if 'title' in kwargs:
+            title=kwargs['title']
+
         if 'image' in kwargs:
             image_text=kwargs['image']
         if image_text is None:
             return result,message,image
-        image=Image(creator_id=profile_me.id,page_id=page.id,image_main_origin=image_text)
+        image=Image(creator_id=profile_me.id,page_id=page.id,image_main_origin=image_text,title=title)
         image.save()
         result=SUCCEED
-        message='کامنت با موفقیت اضافه شد.'
+        message='تصویر با موفقیت اضافه شد.'
         return result,message,image
     
     def delete_image(self,*args, **kwargs):

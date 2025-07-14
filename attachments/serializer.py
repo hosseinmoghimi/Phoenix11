@@ -47,7 +47,7 @@ class ImageSerializer(serializers.ModelSerializer):
     # profile=ProfileSerializer()
     class Meta:
         model=Image
-        fields=['id','page', 'thumbnail','get_absolute_url','image','persian_date_added','priority','title','get_edit_url','get_delete_url']
+        fields=['id','page','title', 'thumbnail','get_absolute_url','image','persian_date_added','priority','title','get_edit_url','get_delete_url']
  
 
 class DownloadSerializer(serializers.ModelSerializer):
