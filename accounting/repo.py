@@ -384,8 +384,8 @@ class PersonAccountRepo():
         person_account=PersonAccount()
         if 'color' in kwargs:
             person_account.color=kwargs['color']
-        if 'name' in kwargs:
-            person_account.name=kwargs['name']
+        if 'title' in kwargs:
+            person_account.title=kwargs['title']
         if 'code' in kwargs:
             code=kwargs['code']
             person_account.code=code

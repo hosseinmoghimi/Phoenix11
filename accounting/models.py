@@ -228,7 +228,7 @@ class PersonAccount(Account):
         if self.code is None or self.code==0 or self.code=='':
             self.code=self.generate_code()
         
-        self.name=f'{self.person} # {self.category}'
+        self.title=f'{self.person} # {self.category}'
         result,message,account=super(PersonAccount,self).save()
         if account.id is not None:
             result=SUCCEED

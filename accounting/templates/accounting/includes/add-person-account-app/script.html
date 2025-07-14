@@ -2,12 +2,12 @@
 <script>
     // const colors_for_add_account_app = JSON.parse("{a{colors_s|escapejs}}")
 </script>
+{% include 'authentication/includes/person-app/select-script.html' %}
 <script>
     let add_person_account_app = new Vue({
         el: "#add-person-account-app",
         data: { 
             person_category_id:0,
-            code: "",
             person:{},
             priority: 100,
             type: "",
@@ -17,6 +17,19 @@
             message: { show: false }
         },
         methods: {
+            select_person:function(){
+                select_person_by_id(this.person.id).done(data => {
+                    if (data.result === "SUCCEED") {
+                        leolog(data.account)
+                        add_person_account_app.person = data.person
+                    }
+
+                    if (data.result === "FAILED") {
+
+                        add_person_account_app.person.full_name=''
+                    }
+                })
+            },
             add_person_account: function () {
                 const url = "{% url 'accounting:add_person_account'  %}"
                 const payload = {
@@ -25,7 +38,6 @@
                     parent_id:0, 
                     person_id: parseInt(this.person.id),
                     person_category_id: parseInt(this.person_category_id),
-                    code: "{{person_account.code}}"+this.code,
                     color: this.color,
                     // type: this.type,
                     nature: this.nature,

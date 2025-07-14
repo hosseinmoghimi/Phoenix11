@@ -13,7 +13,7 @@ class AddAccountForm(forms.Form):
     parent_code=forms.IntegerField( required=False)
     parent_id=forms.IntegerField( required=False)
     priority=forms.IntegerField( required=False)
-    name=forms.CharField( max_length=100, required=False)
+    title=forms.CharField( max_length=100, required=False)
     code=forms.CharField( max_length=100, required=False)
     color=forms.CharField( max_length=100, required=False)
     nature=forms.CharField( max_length=100, required=False)

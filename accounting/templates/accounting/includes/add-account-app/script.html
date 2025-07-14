@@ -6,7 +6,7 @@
     let add_account_app = new Vue({
         el: "#add-account-app",
         data: {
-            name: "",
+            title: "",
             code: "",
             priority: 100,
             type: "",
@@ -22,7 +22,7 @@
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     priority: parseInt(this.priority),
                     parent_id: (account_id),
-                    name: this.name,
+                    title: this.title,
                     code: "{{account.code}}"+this.code,
                     color: this.color,
                     // type: this.type,
