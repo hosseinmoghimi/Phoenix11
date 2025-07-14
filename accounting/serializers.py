@@ -6,7 +6,7 @@ from authentication.serializer import PersonSerializer
 class AccountSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
-        fields = ['id','name','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','name','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
 
 class InvoiceSerializer(serializers.ModelSerializer):
        bedehkar=AccountSerializer()
