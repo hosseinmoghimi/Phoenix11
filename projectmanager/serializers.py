@@ -10,7 +10,6 @@ class ProjectSerializer(FinancialEventSerializer):
         fields = ['id','percentage_completed','title','thumbnail','persian_start_datetime','persian_end_datetime','employer','contractor', 'get_absolute_url','get_edit_url','get_delete_url']
  
 
-
   
 
 class RemoteClientSerializer(serializers.ModelSerializer):

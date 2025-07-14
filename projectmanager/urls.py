@@ -13,6 +13,7 @@ urlpatterns = [
     path('project/',login_required(views.ProjectView.as_view()),name="project_null"),  
     path('edit-project/',login_required(apis.EditProjectApi.as_view()),name="edit_project"),  
 
+    path('add-project-invoice/',login_required(apis.AddProjectInvoiceApi.as_view()),name="add_project_invoice"),
 
     path('remote_client/add/',login_required(apis.AddRemoteClientApi.as_view()),name="add_remote_client"),  
     path('remoteclients/',login_required(views.RemoteClientsView.as_view()),name="remoteclients"),  

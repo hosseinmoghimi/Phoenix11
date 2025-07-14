@@ -1,4 +1,4 @@
-from accounting.forms import AddProductForm,forms
+from accounting.forms import AddProductForm,forms,AddInvoiceForm
  
 class AddProjectForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)
@@ -25,6 +25,8 @@ class EditProjectForm(forms.Form):
     status=forms.CharField(max_length=50, required=False)
     archive=forms.BooleanField(required=False)
         
+class AddProjectInvoiceForm(AddInvoiceForm):
+    project_id=forms.IntegerField(required=True)
  
 class AddRemoteClientForm(forms.Form):
     project_id=forms.IntegerField(required=True) 

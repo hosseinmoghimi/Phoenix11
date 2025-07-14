@@ -97,6 +97,45 @@ class ProjectRepo():
         return result,message,project
 
  
+    def add_invoice(self,*args,**kwargs):
+        result,message,invoice=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_invoice"):
+            message="دسترسی غیر مجاز"
+            return result,message,invoice
+        from accounting.models import Invoice
+        invoice=Invoice()
+        if 'title' in kwargs:
+            invoice.title=kwargs["title"]
+        if 'parent_id' in kwargs:
+            if kwargs["parent_id"]>0:
+                invoice.parent_id=kwargs["parent_id"]
+        if 'color' in kwargs:
+            invoice.color=kwargs["color"]
+        if 'code' in kwargs:
+            invoice.code=kwargs["code"]
+        if 'priority' in kwargs:
+            invoice.priority=kwargs["priority"]
+        if 'bedehkar_id' in kwargs:
+            invoice.bedehkar_id=kwargs["bedehkar_id"]
+        if 'bestankar_id' in kwargs:
+            invoice.bestankar_id=kwargs["bestankar_id"]
+        if 'event_datetime' in kwargs:
+            
+            year=kwargs['event_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
+            invoice.event_datetime=kwargs["event_datetime"]
+
+        if 'type' in kwargs:
+            invoice.type=kwargs["type"]
+
+        project=self.project(id=kwargs['project_id']) 
+        (result,message,invoice)=invoice.save()
+        if project is not None:
+            project.invoices.add(invoice.id)  
+        return result,message,invoice
+
+
 
 
     def edit_project(self,*args, **kwargs):
