@@ -1602,7 +1602,7 @@ class FinancialDocumentLineRepo:
             financial_document_line.financial_event_id=kwargs['financial_event_id']
         if 'financial_document_id' in kwargs:
             financial_document_id=kwargs['financial_document_id']
-            if financial_document_id==0 and 'financial_document_title' in kwargs:
+            if int(financial_document_id)==0 and 'financial_document_title' in kwargs:
                 result,message,financial_document=FinancialDocumentRepo(request=self.request).add_financial_document(title=kwargs['financial_document_title'])
                 financial_document_id=financial_document.id
             financial_document_line.financial_document_id=financial_document_id
@@ -1651,7 +1651,7 @@ class FinancialDocumentLineRepo:
         result,message,financial_document_line=financial_document_line.save()
         if result==FAILED:
             return result,message,financial_document_line
-        financial_document_line.account.normalize_total()
+        # financial_document_line.account.normalize_total()
         result=SUCCEED
         message="با موفقیت اضافه گردید."
          

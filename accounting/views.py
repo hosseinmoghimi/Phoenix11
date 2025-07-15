@@ -89,7 +89,7 @@ def AccountContext(request,account,*args, **kwargs):
     if account is None:
         return None 
 
-        
+    context.update(AddFinancialDocumentLineContext(request=request,account=account))       
     person_account=PersonAccountRepo(request=request).person_account(pk=account.pk)
     if person_account is not None:
         context.update(PersonContext(request=request,person=person_account.person))
@@ -100,7 +100,7 @@ def AccountContext(request,account,*args, **kwargs):
         context['bank_account']=bank_account
         account=bank_account
     context['account']=account
-    account.normalize_total()
+    # account.normalize_total()
     account_s=json.dumps(AccountSerializer(account).data)
     context['account_s']=account_s
 
@@ -158,11 +158,23 @@ def InvoiceLineItemContext(request,invoice_line_item,*args, **kwargs):
 
 def AddInvoiceLineItemUnitsContext(request,invoice_line_item,*args, **kwargs):
     context={}
-   
     if request.user.has_perm(APP_NAME+".add_invoicelineitemunit"):
         context["add_invoice_line_item_unit_form"]=AddInvoiceLineItemUnitForm()
         context['unit_names']=(i[0] for i in UnitNameEnum.choices)
         context['base_price']=0
+    return context
+
+
+def AddFinancialDocumentLineContext(request,*args, **kwargs):
+    context={}
+    if request.user.has_perm(APP_NAME+'.add_financialdocumentline'):
+        context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
+    # if 'financial_event' in kwargs:
+    #     context['financial_event']='financial_event'
+    # if 'financial_document' in kwargs:
+    #     context['financial_document']='financial_document'
+    # if 'event' in kwargs:
+    #     context['event']='event'
     return context
 
 def FinancialEventContext(request,financial_event):
@@ -175,8 +187,7 @@ def FinancialEventContext(request,financial_event):
     context['financial_event_s']=financial_event_s
 
     if request.user.has_perm(APP_NAME+'add_financialdocumentline'):
-        context['add_event_financial_document_line_form']=AddEventFinancialDocumentLineForm()
-        context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
+        context.update(AddFinancialDocumentLineContext(request=request,financial_event=financial_event))
     
     financial_document_lines=FinancialDocumentLineRepo(request=request).list(financial_event_id=financial_event.id).order_by('-bedehkar')
     financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
@@ -480,10 +491,10 @@ class FinancialYearView(View):
 
         context['financial_year']=financial_year
         
-        accounting_documents=AccountingDocumentRepo(request=request).list(financial_year_id=financial_year.id)
-        context['accounting_documents']=accounting_documents
-        accounting_documents_s=json.dumps(AccountingDocumentSerializer(accounting_documents,many=True).data)
-        context['accounting_documents_s']=accounting_documents_s
+        financial_documents=FinancialDocumentRepo(request=request).list(financial_year_id=financial_year.id)
+        context['financial_documents']=financial_documents
+        financial_documents_s=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
+        context['financial_documents_s']=financial_documents_s
 
         return render(request,TEMPLATE_ROOT+"financial-year.html",context)
 
@@ -533,7 +544,6 @@ class TreeListView(View):
         context[WIDE_LAYOUT]=True
         return render(request,TEMPLATE_ROOT+"tree-list.html",context) 
 
-
 class FinancialDocumentView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -550,8 +560,7 @@ class FinancialDocumentView(View):
         context['financial_document_lines_s']=financial_document_lines_s
 
         if request.user.has_perm(APP_NAME+'.add_financialdocumentline'):
-            context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
-
+            context.update(AddFinancialDocumentLineContext(request=request,financial_document=financial_document))
              
 
         return render(request,TEMPLATE_ROOT+"financial-document.html",context)
@@ -606,10 +615,6 @@ class AccountView(View):
         if account is None:
             raise Http404
         context.update(AccountContext(request=request,account=account))
-        
-        if request.user.has_perm(APP_NAME+".add_financialdocumentline"):
-            context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
- 
         if request.user.has_perm(APP_NAME+".add_account"):
             context.update(AddAccountContext(request=request))
          
@@ -1033,10 +1038,7 @@ class PersonAccountView(View):
         if person_account is None:
             raise Http404
         context.update(AccountContext(request=request,account=person_account))
-        
-        if request.user.has_perm(APP_NAME+".add_financialdocumentline"):
-            context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
-  
+         
         return render(request,TEMPLATE_ROOT+"person-account.html",context)
 
 class PersonCategoryView(View):
@@ -1044,11 +1046,6 @@ class PersonCategoryView(View):
         context=getContext(request=request)
         person_category=PersonAccountRepo(request=request).person_category(*args, **kwargs)
         context['person_category']=person_category
- 
-        
-        if request.user.has_perm(APP_NAME+".add_financialdocumentline"):
-            context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
-  
         return render(request,TEMPLATE_ROOT+"person-category.html",context)
 
 
@@ -1058,12 +1055,4 @@ class PersonCategoriesView(View):
         context=getContext(request=request)
         person_category=PersonAccountRepo(request=request).person_category(*args, **kwargs)
         context['person_category']=person_category
-
-        if person_category is None:
-            raise Http404
-        context.update(AccountContext(request=request,account=person_category))
-        
-        if request.user.has_perm(APP_NAME+".add_financialdocumentline"):
-            context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
-  
         return render(request,TEMPLATE_ROOT+"person-categories.html",context)

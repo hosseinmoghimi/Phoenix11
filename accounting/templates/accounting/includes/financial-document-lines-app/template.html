@@ -61,10 +61,8 @@
                 {% if not financial_document %}
                 <th>سند</th>
                 {% endif %}
-                {% if not account %}
 
                 <th>حساب</th>
-                {% endif %}
 
                 <th>تاریخ</th>
 
@@ -108,7 +106,6 @@
                     </a>
                   </td>
                   {% endif %} 
-                  {% if not account %}
 
                   <td>
                     <a :href="financial_document_line.account.get_absolute_url">
@@ -136,7 +133,6 @@
                       </div>
                     </a>
                   </td>
-                  {% endif %}
 
                   <td>
                     <span
@@ -206,8 +202,17 @@
               <tfoot>
                 <th></th>
                 <th
-                  colspan="{% if not financial_event and not account and not financial_document %}6{% else %}5{% endif %}"
+                  colspan="5"
                 >
+                {% if financial_event %}
+                  <th></th>
+                {% endif %}
+
+                
+                {% if financial_document %}
+                  <th></th>
+                {% endif %}
+
                   <div class="text-left farsi">جمع</div>
                 </th>
                 <th>

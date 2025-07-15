@@ -2,12 +2,6 @@
 from django import forms
 from utility.forms import SearchForm
 
-class AddFinancialDocumentLineForm(forms.Form):
-    account_id=forms.IntegerField( required=False)
-    bestankar=forms.IntegerField( required=False)
-    bedehkar=forms.IntegerField( required=False)
-    bestankar=forms.IntegerField( required=False)
-
 
 class AddAccountForm(forms.Form):
     parent_code=forms.IntegerField( required=False)

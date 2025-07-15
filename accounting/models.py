@@ -134,13 +134,13 @@ class Account(CorePage,LinkHelper):
         
         
 
-    def normalize_total(self):
+    def normalize(self):
         # print(self.full_title)
         bedehkar=0
         bestankar=0
         balance=0
         for financial_document_line in FinancialDocumentLine.objects.filter(account_id=self.pk): 
-            # basic_account.normalize_total()
+            # basic_account.normalize()
             bedehkar+=financial_document_line.bedehkar
             bestankar+=financial_document_line.bestankar
         childs=self.childs
@@ -156,7 +156,7 @@ class Account(CorePage,LinkHelper):
         if self.parent is not None:
             parent=Account.objects.filter(id=self.parent.id).first()
             if parent is not None:
-                parent.normalize_total()
+                parent.normalize()
     @property
     def logo(self):
         if not self.logo_origin :
@@ -335,6 +335,13 @@ class FinancialDocumentLine(models.Model,LinkHelper):
                     <small class="text-muted mr-1">{a[11:]}</small>
 
                 """
+    def delete(self,*args, **kwargs): 
+        account=self.account
+        financial_document=self.financial_document
+        super().delete(*args, **kwargs)
+        financial_document.normalize()
+        account.normalize()
+
     def save(self):
 
         
@@ -368,7 +375,7 @@ class FinancialDocumentLine(models.Model,LinkHelper):
             return result,message,None
         super(FinancialDocumentLine,self).save()
         self.financial_document.normalize()
-        self.account.normalize_total()
+        self.account.normalize()
         result=SUCCEED
         message='سطر سند مالی با موفقیت اضافه شد.'
         return result,message,financial_document_line

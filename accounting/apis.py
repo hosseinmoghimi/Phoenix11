@@ -118,7 +118,10 @@ class AddFinancialDocumentLineApi(APIView):
             cd=add_financial_document_line_form.cleaned_data
             result,message,financial_document_line=FinancialDocumentLineRepo(request=request).add_financial_document_line(**cd)
             if financial_document_line is not None:
+
                 context['financial_document_line']=FinancialDocumentLineSerializer(financial_document_line).data
+                if cd['financial_document_id']==0:
+                 context['financial_document']=FinancialDocumentSerializer(financial_document_line.financial_document).data
         context['message']=message
         context['result']=result
         context['log']=log

@@ -68,7 +68,10 @@ let account_for_add_financial_document_line_app={code:'0'}
                 let posting = $.post(url, payload)
                 posting.done(data => {
                     if (data.result === "SUCCEED") {
-                        add_financial_document_line_app.financial_document=data.financial_document_line
+                        if(add_financial_document_line_app.financial_document.id==0){
+
+                            add_financial_document_line_app.financial_document=data.financial_document
+                        }
                         if (typeof financial_document_lines_app != "undefined") {
                             financial_document_lines_app.add_financial_document_line(data.financial_document_line)
                         }
