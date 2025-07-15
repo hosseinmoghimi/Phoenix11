@@ -2,13 +2,13 @@ from django.db import models
 from django.shortcuts import reverse
 from phoenix.server_settings import ADMIN_URL
 from utility.enums import AppNameEnum
-from utility.models import LinkHelper
+from utility.models import LinkHelper,DateTimeHelper
 from .apps import APP_NAME
 from django.utils.translation import gettext as _
 # from django.conf import settings
 # Create your models here.
 
-class Log(models.Model):
+class Log(models.Model,DateTimeHelper):
     title=models.CharField(_("title"), max_length=500)
     # user=models.ForeignKey(settings.AUTH_USER_MODEL,null=True,blank=True ,verbose_name=_("user"), on_delete=models.SET_NULL)
     profile=models.ForeignKey("authentication.profile",null=True,blank=True ,related_name="logs",verbose_name=_("profile"), on_delete=models.SET_NULL)

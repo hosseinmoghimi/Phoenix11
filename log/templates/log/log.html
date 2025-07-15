@@ -4,7 +4,9 @@
 {% block content %}
 <div>
   <div class="card">
-    <div class="card-body">
+    <div class="card-body rtl">
+
+
       <h4 class="text-center">
         {{log.title}}
       </h4>
@@ -18,6 +20,27 @@
             class="fa fa-trash text-danger"></i></a>
         {% endif %}
       </div>
+
+      <h6>
+        {{log.persian_date_added}}
+      </h6>
+
+
+      <div class="text-right my-3">
+        <a href="{{log.profile.get_absolute_url}}">
+          <div class="media">
+            <img src="{{profile.image}}" class="rounded-circle" width="48" alt="">
+            <div class="media-body mr-2">
+              <h6>
+                {{log.profile.full_name}}
+
+              </h6>
+            </div>
+          </div>
+
+        </a>
+      </div>
+
       {% if log.url %}
 
       <div class="ltr text-left">
@@ -25,7 +48,9 @@
 
       </div>
       {% endif %}
-      <div>
+
+
+      <div class="text-right alert alert-info">
         {{log.description}}
       </div>
 
