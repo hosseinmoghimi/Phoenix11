@@ -29,6 +29,11 @@ urlpatterns = [
     path('image/download/<int:pk>/',views.ImageDownloadView.as_view(),name="image_download"),
     path('images/',views.ImagesView.as_view(),name="images"),
 
+    path('tag/<int:pk>/',views.TagView.as_view(),name='tag'),
+    path('tags/',views.TagsView.as_view(),name='tags'),
+    path('add_tag/',apis.AddTagApi.as_view(),name='add_tag'),
+
+    
     path('location/<int:pk>/',views.LocationView.as_view(),name='location'),
     path('locations/',views.LocationsView.as_view(),name='locations'),
     path('add_location/',apis.AddLocationApi.as_view(),name='add_location'),

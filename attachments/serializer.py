@@ -1,4 +1,4 @@
-from .models import Like,Comment,Link,Download,Image
+from .models import Like,Comment,Link,Download,Image, Tag
 from core.serializer import ProfileSerializer,serializers,PageSerializer
 from .models import Area, Location
 
@@ -33,6 +33,11 @@ class CommentSerializer(serializers.ModelSerializer):
         fields=['id','page', 'profile','comment','persian_datetime_added']
  
 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Tag
+        fields=['id' , 'title','get_absolute_url']
+ 
 class LinkSerializer(serializers.ModelSerializer):
     page=PageSerializer()
     # profile=ProfileSerializer()

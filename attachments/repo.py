@@ -1,5 +1,5 @@
 from core.repo import PageRepo,ProfileRepo,FAILED,SUCCEED
-from .models import Like,Comment,Link,Download,Image,Location,Area
+from .models import Like,Comment,Link,Download,Image,Location,Area, Tag
 from .apps import APP_NAME
 
 
@@ -95,6 +95,57 @@ class CommentRepo():
         message="کامنت با موفقیت حذف گردید."
         return result,message
      
+class TagRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.objects=Tag.objects
+        self.request=request
+    def tag(self,*args, **kwargs):
+        if 'title' in kwargs:
+            return Tag.objects.filter(title=kwargs['title']).first()
+        if 'tag_id' in kwargs:
+            return Tag.objects.filter(pk=kwargs['tag_id']).first()
+        if 'pk' in kwargs:
+            return Tag.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return Tag.objects.filter(pk=kwargs['id']).first()
+        
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'page_id' in kwargs:
+            page_id=kwargs['page_id']
+            page=PageRepo(request=self.request).page(page_id=page_id)
+            if page is not None:
+                return page.tag_set.all()
+            objects=objects.filter(page_id=page_id)
+        return objects.all()
+    def add_tag(self,*args, **kwargs):
+        result,message,tags=FAILED,'',[]
+
+        title=kwargs['title']
+        page_id=kwargs['page_id']
+
+
+        tag=self.tag(title=title)
+        page=PageRepo(request=self.request).page(page_id=page_id)
+        if tag is None:
+            tag=Tag(title=title)
+            tag.save()
+
+        if page is None:
+            message='صفحه پیدا نشد.'
+            return result,message,tags 
+
+        pages=tag.pages.all()
+        if page in pages:
+            tag.pages.remove(page)
+        else:
+            tag.pages.add(page.id)
+        tag.save()
+        result=SUCCEED
+        message='تگ با موفقیت اضافه شد.'
+        tags=page.tag_set.all()
+        return result,message,tags 
+
 class LikeRepo():
     def __init__(self,request,*args, **kwargs):
         self.objects=Like.objects

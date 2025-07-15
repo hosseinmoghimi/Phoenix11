@@ -78,15 +78,16 @@ def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
     me_profile=ProfileRepo(request=request).me
-    from attachments.views import PageLocationsContext,PageImagesContext,PageRelatedContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
+    from attachments.views import PageTagsContext,PageLocationsContext,PageImagesContext,PageRelatedContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
 
     context.update(PageLikesContext(request=request,page=page,profile=me_profile))
     context.update(PageCommentsContext(request=request,page=page,profile=me_profile))
     context.update(PageLinksContext(request=request,page=page,profile=me_profile))
     context.update(PageDownloadsContext(request=request,page=page,profile=me_profile))
     context.update(PageImagesContext(request=request,page=page,profile=me_profile))
-    context.update(PageRelatedContext(request=request,page=page))
-    context.update(PageLocationsContext(request=request,page=page))
+    context.update(PageRelatedContext(request=request,page=page,profile=me_profile))
+    context.update(PageLocationsContext(request=request,page=page,profile=me_profile))
+    context.update(PageTagsContext(request=request,page=page,profile=me_profile))
     return context
 
 

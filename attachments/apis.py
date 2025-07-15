@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
 # from .repo import ContactMessageRepo, PageCommentRepo, PageLinkRepo, PagePermissionRepo, PageRepo, PageTagRepo,  ParameterRepo,PageDownloadRepo,PageImageRepo
-from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo,ImageRepo
-from .serializer import  CommentSerializer,LinkSerializer,DownloadSerializer,ImageSerializer
+from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo,ImageRepo, TagRepo
+from .serializer import  CommentSerializer,LinkSerializer,DownloadSerializer,ImageSerializer, TagSerializer
 from utility.constants import SUCCEED, FAILED
 from utility.utils import str_to_html
 from .views import AreaRepo,AreaSerializer,LocationRepo,LocationSerializer
@@ -143,6 +143,27 @@ class AddCommentApi(APIView):
                 (result,message,comment) = CommentRepo(request=request).add_comment(page_id=page_id,comment=comment)
                 if result==SUCCEED:
                     context['comment'] = CommentSerializer(comment).data
+        context['result'] = result
+        context['message'] = message
+        context['log']=log
+        return JsonResponse(context)
+    
+         
+class AddTagApi(APIView):
+    def post(self,request,*args, **kwargs):
+        result,message,comment=FAILED,"",None
+        context={}
+        log=1
+        if request.method=='POST':
+            log+=1
+            add_tag_form=AddTagForm(request.POST)
+            if add_tag_form.is_valid():
+                log+=1
+                page_id = add_tag_form.cleaned_data['page_id']
+                title = add_tag_form.cleaned_data['title']
+                (result,message,tags) = TagRepo(request=request).add_tag(page_id=page_id,title=title)
+                if result==SUCCEED:
+                    context['tags'] = TagSerializer(tags,many=True).data
         context['result'] = result
         context['message'] = message
         context['log']=log

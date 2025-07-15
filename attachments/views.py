@@ -12,12 +12,12 @@ from utility.calendar import PersianCalendar
 from utility.log import leolog
 from django.utils import timezone
 from core.views import CoreContext,PageBriefSerializer,AddRelatedPageForm
-from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo
+from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo, TagRepo
 import json
 
 
 from .repo import ImageRepo,LocationRepo,AreaRepo
-from .serializer import ImageSerializer,LocationSerializer,AreaSerializer
+from .serializer import ImageSerializer,LocationSerializer,AreaSerializer,TagSerializer
        
 
 LAYOUT_PARENT='phoenix/layout.html'
@@ -51,8 +51,9 @@ def PageCommentsContext(request,page,profile,*args, **kwargs):
     context['comments']=comments  
     context['comments_s']=comments_s  
     if profile is not None:
-        context['add_comment_form']=AddPageCommentForm()
-        context['delete_comment_form']=DeletePageCommentForm()
+        if request.user.has_perm(APP_NAME+'.add_comment'):
+            context['add_comment_form']=AddPageCommentForm()
+            context['delete_comment_form']=DeletePageCommentForm()
     return context
  
 def PageLinksContext(request,page,profile,*args, **kwargs):
@@ -63,7 +64,8 @@ def PageLinksContext(request,page,profile,*args, **kwargs):
     context['links']=links  
     context['links_s']=links_s  
     if profile is not None:
-        context['add_link_form']=AddLinkForm()
+        if profile.user.has_perm(APP_NAME+'.add_link'):
+            context['add_link_form']=AddLinkForm()
     return context
 
 def PageDownloadsContext(request,page,profile,*args, **kwargs):
@@ -74,7 +76,21 @@ def PageDownloadsContext(request,page,profile,*args, **kwargs):
     context['downloads']=downloads  
     context['downloads_s']=downloads_s  
     if profile is not None:
-        context['add_download_form']=AddDownloadForm()
+        if profile.user.has_perm(APP_NAME+'.add_download'):
+            context['add_download_form']=AddDownloadForm()
+    return context
+
+
+def PageTagsContext(request,page,profile,*args, **kwargs):
+    context={}
+    tag_repo = TagRepo(request=request) 
+    tags=tag_repo.list(page_id=page.id)
+    tags_s=json.dumps(TagSerializer(tags,many=True).data)
+    context['tags']=tags  
+    context['tags_s']=tags_s  
+    if profile is not None:
+        if profile.user.has_perm(APP_NAME+'.add_tag'):
+            context['add_tag_form']=AddTagForm()
     return context
 
 
@@ -170,6 +186,38 @@ class IndexView(View):
         
       
 
+
+class TagView(View):
+    def get(self, request, *args, **kwargs):
+        me = ProfileRepo(request=request).me
+        tag = TagRepo(request=request).tag(*args, **kwargs)
+        if tag is None:
+            raise Http404
+        context=getContext(request=request)
+        context['tag']=tag
+        page_tags=tag.pages.all()
+        context['page_tags']=page_tags
+        pages=tag.pages.all()
+        pages_s=json.dumps(PageBriefSerializer(pages,many=True).data)
+        context['pages']=pages
+        context['pages_s']=pages_s
+        context['expand_pages']=True
+
+        return render(request,TEMPLATE_ROOT+"tag.html",context)
+       
+       
+
+class TagsView(View):
+    def get(self, request, *args, **kwargs):
+        me = ProfileRepo(request=request).me
+        tags = TagRepo(request=request).list(*args, **kwargs)
+        tags_s=json.dumps(TagSerializer(tags,many=True).data)
+        context=getContext(request=request)
+        context['tags']=tags
+        context['tags_s']=tags_s
+
+        return render(request,TEMPLATE_ROOT+"tags.html",context)
+       
       
       
 class LinksView(View):

@@ -357,6 +357,20 @@ class Image(models.Model,LinkHelper,DateTimeHelper):
 
 
 
+class Tag(models.Model,LinkHelper):
+    title=models.CharField(_("title"), max_length=50)  
+    pages=models.ManyToManyField("core.page",blank=True, verbose_name=_("pages"))
+    class_name='tag'
+    app_name=APP_NAME
+    
+
+    class Meta:
+        verbose_name = _("Tag")
+        verbose_name_plural = _("Tags")
+
+    def __str__(self):
+        return self.title 
+    
 
 class Location(models.Model,LinkHelper):
     title = models.CharField(
