@@ -1,5 +1,6 @@
 from .models import Profile,Person,FAILED,SUCCEED,APP_NAME
-
+from django.contrib.auth import login, logout, authenticate
+from utility.log import leolog
 
  
 class PersonRepo():
@@ -139,10 +140,35 @@ class ProfileRepo():
         self.objects=Profile.objects
         if self.request.user.is_authenticated:
             self.me=Profile.objects.filter(user=request.user).first()
+    
     def logout(self,*args, **kwargs):
-        pass        
+        if 'request' in kwargs:
+            logout(request=kwargs['request'])
+        else:
+            logout(request=self.request)
     def login(self,*args, **kwargs):
-        pass        
+        request=self.request
+        from log.repo import LogRepo
+        logout(request=request)
+        if 'user' in kwargs:
+            user=kwargs['user']
+            if user is not None:
+                login(request,user)
+                if user.is_authenticated:
+                    return (request,user)
+        if 'username' in kwargs and 'password' in kwargs:
+            user=authenticate(request=request,username=kwargs['username'],password=kwargs['password'])
+            if user is not None:
+                login(request,user)
+                if user.is_authenticated:
+                    profile=Profile.objects.filter(user=user).first()
+                    description='لاگین با موفقیت انجام شد.'
+                    title='لاگین'
+                    LogRepo(request=self.request).add_log(title=title,profile=profile,app_name=APP_NAME,description=description)
+                    return (request,user)
+        LogRepo(request=self.request).add_log(title="try to login",app_name=APP_NAME,description="try to login username:"+kwargs['username']+" , password : "+kwargs['password'])
+    
+            
     def profile(self,*args, **kwargs):
         if "profile_id" in kwargs and kwargs["profile_id"] is not None:
             return self.objects.filter(pk=kwargs['profile_id']).first()
