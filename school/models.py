@@ -40,19 +40,21 @@ class CourseClass(models.Model,LinkHelper):
 
  
 class Course(CorePage,LinkHelper):
-    name=models.CharField(_("نام"), max_length=50)
-     
  
     class Meta:
         verbose_name = _("Course")
         verbose_name_plural = _("Courses")
  
-  
+    
     def save(self):
+        (result,message,course)=FAILED,'',self
         if self.class_name is None or self.class_name=="":
             self.class_name='course'
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         super(Course,self).save()
+        result=SUCCEED
+        message='واحد درسی با موفقیت اضافه شد.'
+        return (result,message,course)
  
   

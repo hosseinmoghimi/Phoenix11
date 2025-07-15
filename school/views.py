@@ -75,7 +75,8 @@ class CoursesView(View):
         context["courses"]=courses
         courses_s=json.dumps(CourseSerializer(courses,many=True).data)
         context["courses_s"]=courses_s
-
+        if request.user.has_perm(APP_NAME+'.add_course'):
+            context['add_course_form']=AddCourseForm()
         return render(request,TEMPLATE_ROOT+"courses.html",context)
 # Create your views here. 
    

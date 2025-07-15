@@ -3,7 +3,7 @@
 {% load static %}
 {% block content %}
 <div class="row rtl farsi">
-    {% if add_school_form %}
+    {% if add_course_form %}
       <div class="col-md-12">
           {% include "school/includes/add-course-app/template.html" %}
 
@@ -21,7 +21,7 @@
 
 {% block script %}
 {% include "school/includes/courses-app/script.html" %}
-{% if add_school_form %}
+{% if add_course_form %}
 {% include "school/includes/add-course-app/script.html" %}
 {% endif %}
 {% endblock script %}
