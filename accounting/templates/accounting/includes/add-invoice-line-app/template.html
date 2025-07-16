@@ -23,11 +23,11 @@
 
             </div>
           </div>
-          
-        <div  class="col-md-12">
-          <a target="_blank" class="mx-2" href="{% url 'accounting:products' %}">همه کالاها</a>
-          <a target="_blank" class="mx-2" href="{% url 'accounting:services' %}">همه خدمات</a>
-        </div>
+
+          <div class="col-md-12">
+            <a target="_blank" class="mx-2" href="{% url 'accounting:products' %}">همه کالاها</a>
+            <a target="_blank" class="mx-2" href="{% url 'accounting:services' %}">همه خدمات</a>
+          </div>
 
           <div class="col-md-12">
             <div class="table-responsive">
@@ -60,7 +60,7 @@
                       </a>
 
                     </td>
-                   
+
                   </tr>
                 </tbody>
               </table>
@@ -69,17 +69,20 @@
               <button class="btn btn-success my-2" @click="more()" v-if="search_for">
                 بیشتر
               </button>
-              
+
             </div>
 
-            
+
             <div class="col-md-12 " v-if="invoice_line_items.length>=list_length">
-            
+
               <button class="btn btn-danger my-2" @click="less()" v-if="list_length>6">
                 کمتر
               </button>
             </div>
-             
+            <div class="col-md-4 my-1" v-for="invoice_line_item_unit in invoice_line_item_units">
+              <button class="btn btn-success"  @click="select_invoice_line_item_unit(invoice_line_item_unit)"
+                v-text="' هر '+ invoice_line_item_unit.unit_name +' ' +to_price(invoice_line_item_unit.unit_price)+' {{CURRENCY}}'"></button>
+            </div>
 
           </div>
         </div>
@@ -89,7 +92,7 @@
 
             <div class="col-md-12">
               <div class="form-group">
-                <label for="">آیتم</label> 
+                <label for="">آیتم</label>
                 <select disabled v-model="invoice_line_item_id" class="form-control">
                   <option :value="invoice_line_item.id" v-for="invoice_line_item in invoice_line_items"
                     v-text=" invoice_line_item.title">
@@ -200,7 +203,7 @@
 
                     </li>
 
-                     <li class="text-right rtl" v-if="!quantity>0">
+                    <li class="text-right rtl" v-if="!quantity>0">
                       تعداد را وارد کنید.
 
                     </li>

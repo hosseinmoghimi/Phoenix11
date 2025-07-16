@@ -42,6 +42,9 @@ class InvoiceLineItemUnitRepo:
         objects=self.objects
         if "search_for" in kwargs:
             objects=objects.filter(title__contains=kwargs['search_for']) 
+            
+        if "invoice_line_item_id" in kwargs:
+            objects=objects.filter(invoice_line_item_id=kwargs['invoice_line_item_id']) 
         return objects.all()
     def product_unit(self,*args, **kwargs):
         if "product_unit_id" in kwargs:

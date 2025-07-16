@@ -6,7 +6,7 @@ from utility.calendar import PersianCalendar
 from .repo import CategoryRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
 from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo
 from utility.log import leolog
-from .serializers import  ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
+from .serializers import  InvoiceLineItemUnitBriefSerializer, ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
@@ -338,6 +338,28 @@ class SetAccountParentApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
+
+class GetInvoiceLineItemUnitsApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            get_invoice_line_item_units_form=GetInvoiceLineItemUnitsForm(request.POST)
+            if get_invoice_line_item_units_form.is_valid():
+                log=333
+                cd=get_invoice_line_item_units_form.cleaned_data 
+                invoice_line_item_units=InvoiceLineItemUnitRepo(request=request).list(**cd)
+                if invoice_line_item_units is not None:
+                    context['invoice_line_item_units']=InvoiceLineItemUnitBriefSerializer(invoice_line_item_units,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
 
 
 

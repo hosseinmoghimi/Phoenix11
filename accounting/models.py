@@ -22,7 +22,11 @@ from django.utils import timezone
 from utility.log import leolog
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 IMAGE_FOLDER = "images/"
-
+try:
+    from accounting.settings_on_server import DELETE_OLD_ITEM_UNIT
+except:
+    DELETE_OLD_ITEM_UNIT=True
+    
 class Account(CorePage,LinkHelper):
     code=models.CharField(_("code"),null=True,blank=True, max_length=50)
     type=models.CharField(_("نوع"),choices=AccountTypeEnum.choices, max_length=50)
@@ -553,10 +557,10 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
                 if self.default is True:
                     invoice_line_item_unit.default=False
                     super(InvoiceLineItemUnit,invoice_line_item_unit).save()
-        # invoice_line_item_units_with_this_unit.delete()
-        # self.id=0
-        Now=timezone.now()
-        self.date_added=Now
+        if DELETE_OLD_ITEM_UNIT:
+            invoice_line_item_units_with_this_unit.delete()
+        # Now=timezone.now()
+        # self.date_added=Now
         if self.default is True:
             other_invoice_line_item_units=invoice_line_item_units.filter(default=True)
             for other_invoice_line_item_unit in other_invoice_line_item_units:

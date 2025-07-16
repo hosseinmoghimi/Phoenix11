@@ -30,6 +30,7 @@ urlpatterns = [
     path("select-person-account/",login_required(apis.SelectPersonAccountApi.as_view()),name="select_person_account"),
     
     
+    path("get-invoice-line-item-units/",login_required(apis.GetInvoiceLineItemUnitsApi.as_view()),name="get_invoice_line_item_units"),
     
     
     

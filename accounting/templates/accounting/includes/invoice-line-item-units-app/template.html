@@ -57,11 +57,11 @@
               <th>کالا</th>
               {% endif %}
 
-              <th>نام واحد</th>
               <th>پیشفرض</th>
+              <th>نام واحد</th>
               <th>قیمت واحد</th>
-              <th>ضریب</th>
               <th>تاریخ</th>
+              <th>ضریب</th>
               <th></th>
             </thead>
             <tbody>
@@ -92,21 +92,28 @@
 
                 
                 <td>
-                  <span v-text="(invoice_line_item_unit.unit_name)"> </span>
-
-                 
-                </td>
-
-                <td>
                   <span v-if="invoice_line_item_unit.default">
                     <i class="fa fa-check"></i>
                   </span>
                   <span v-if="!invoice_line_item_unit.default"> </span>
                 </td>
+                <td>
+                  <span v-text="(invoice_line_item_unit.unit_name)"> </span>
+
+                 
+                </td>
+
 
                 <td>
-                  <span v-text="to_price(invoice_line_item_unit.unit_price)"> </span>
-                  {{CURRENCY}}
+                  <h5>
+
+                    <span v-text="to_price(invoice_line_item_unit.unit_price)"> </span>
+                    {{CURRENCY}}
+                  </h5>
+                </td>
+                
+                <td>
+                  <span v-text="invoice_line_item_unit.persian_date_added"> </span>
                 </td>
                 <td>
                   <span v-text="invoice_line_item_unit.coef"> </span>
@@ -115,9 +122,6 @@
                     v-text="to_price(invoice_line_item_unit.unit_price/invoice_line_item_unit.coef)"
                   >
                   </span>
-                </td>
-                <td>
-                  <span v-text="invoice_line_item_unit.persian_date_added"> </span>
                 </td>
                 <td>
                   {% if perms.accounting.change_productprice %}

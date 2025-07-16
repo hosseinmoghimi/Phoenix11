@@ -8,6 +8,7 @@
       invoice_line_item_id: 0,
       invoice_line_items: invoice_line_items_for_add_invoice_line_items_app,
       invoice_line_item_units: [],
+      // invoice_line_item_unit:{id:0,unit_name:'عدد',unit_price:0,coef:1},
       unit_price: 0,
       default11: false,
       coef: 1,
@@ -23,8 +24,13 @@
       show_add_btn: true,
     },
     methods: {
+      select_invoice_line_item_unit: function (invoice_line_item_unit) {
+        add_invoice_line_app.unit_price = invoice_line_item_unit.unit_price
+        add_invoice_line_app.unit_name = invoice_line_item_unit.unit_name
+        add_invoice_line_app.coef = invoice_line_item_unit.coef
+      },
       more: function () {
-        add_invoice_line_app.list_length +=6;
+        add_invoice_line_app.list_length += 6;
         add_invoice_line_app.filter(add_invoice_line_app.list_length);
       },
       less: function () {
@@ -37,9 +43,19 @@
         add_invoice_line_app.unit_price = invoice_line_item.unit_price
         add_invoice_line_app.invoice_line_items = [invoice_line_item]
         add_invoice_line_app.buffer_items = [invoice_line_item]
+        let url = "{% url 'accounting:get_invoice_line_item_units' %}"
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          invoice_line_item_id: invoice_line_item.id
+        }
+        $.post(url, payload).done(data => {
+          console.log(data)
+          console.log(data.invoice_line_item_units)
+          add_invoice_line_app.invoice_line_item_units = data.invoice_line_item_units
+        })
       },
-      filter: function (count=6) {
-        add_invoice_line_app.list_length=count
+      filter: function (count = 6) {
+        add_invoice_line_app.list_length = count
         // if (add_invoice_line_app.search_for.length < 1) return;
         let search_for = add_invoice_line_app.search_for.toUpperCase();
         add_invoice_line_app.invoice_line_items =
@@ -54,7 +70,7 @@
             return false;
           });
         if (add_invoice_line_app.invoice_line_items.length == 0) {
-          add_invoice_line_app.buffer_items =[]
+          add_invoice_line_app.buffer_items = []
         }
         if (add_invoice_line_app.invoice_line_items.length > 0) {
           add_invoice_line_app.buffer_items =
