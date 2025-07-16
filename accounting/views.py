@@ -164,7 +164,6 @@ def AddInvoiceLineItemUnitsContext(request,invoice_line_item,*args, **kwargs):
         context['base_price']=0
     return context
 
-
 def AddFinancialDocumentLineContext(request,*args, **kwargs):
     context={}
     if request.user.has_perm(APP_NAME+'.add_financialdocumentline'):
@@ -275,22 +274,17 @@ def ServiceContext(request,service,*args, **kwargs):
     context.update(InvoiceLineItemContext(request=request,invoice_line_item=service))
     context["service"]=service
     return context
- 
-    
-
 
 def AddFinancialEventContext(request):
     context={}
     context['add_financial_event_form']=AddFinancialEventForm()
     return context
 
-
 def AddInvoiceContext(request):
     context=AddFinancialEventContext(request=request)
 
     context['add_invoice_form']=AddInvoiceForm()
     return context
-
 
 def AddFinancialDocumentContext(request):
     context={}
@@ -304,7 +298,6 @@ def AddFinancialDocumentContext(request):
         context['current_financial_year_id']=current_financial_year.id
         context['financial_year_statuses']=(i[0] for i in FinancialYearStatusEnum.choices)
     return context
-
 
 def AddProductToCategoryContext(request,product,*args, **kwargs):
     context={}
@@ -575,8 +568,22 @@ class FinancialDocumentsView(View):
         context['financial_documents_s']=financial_documents_s
         current_financial_year=FinancialYearRepo(request=request).current_financial_year()
         if current_financial_year is None:
+            from attachments.models import Link,reverse
             title='ابتدا سال مالی جاری را ایجاد کنید.'
-            mv=MessageView(title=title)
+            
+            color1='success'
+            title1='سال های مالی'
+            url1=reverse('accounting:financial_years')
+            # link1={'color':color1,'url':url1,'title':title1}
+            link1=Link(title=title1,url=url1,color='success')
+
+            color2='danger'
+            title2='اسناد مالی'
+            url2=reverse('accounting:financial_documents')
+            # link2={'color':color2,'url':url2,'title':title2}
+            link2=Link(title=title2,url=url2,color='danger')
+            links=[link1,link2]
+            mv=MessageView(title=title,links=links)
             return mv.get(request=request)
         context.update(AddFinancialDocumentContext(request=request))
         return render(request,TEMPLATE_ROOT+"financial-documents.html",context)
@@ -928,6 +935,7 @@ class InvoicesView(View):
 class InvoiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
+        context['WIDE_LAYOUT']=True
         invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
         context['invoice']=invoice
         invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)

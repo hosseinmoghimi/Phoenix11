@@ -138,6 +138,8 @@ class TagRepo():
         pages=tag.pages.all()
         if page in pages:
             tag.pages.remove(page)
+            if len(tag.pages.all())==0:
+                tag.delete()
         else:
             tag.pages.add(page.id)
         tag.save()

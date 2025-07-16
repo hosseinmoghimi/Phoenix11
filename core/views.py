@@ -150,9 +150,12 @@ class IndexView(View):
 # Create your views here.
 
 class MessageView(View):
-    def __init__(self,*args,**kwargs): 
+    def __init__(self,*args,**kwargs):
+        self.links =[]
         self.message ={}
         self.back_url =""
+        if 'links' in kwargs:
+            self.links=kwargs['links']
         if 'title' in kwargs:
             self.message['title']=kwargs['title']
         if 'body' in kwargs:
@@ -167,7 +170,7 @@ class MessageView(View):
 
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        back_url = request.META.get('HTTP_REFERER')
+        self.back_url = request.META.get('HTTP_REFERER') 
         if 'title' in kwargs:
             self.message['title']=kwargs['title']
         if 'body' in kwargs:
@@ -181,6 +184,7 @@ class MessageView(View):
         
         context['message']=self.message     
         context['back_url']=self.back_url     
+        context['links']=self.links   
         return render(request,TEMPLATE_ROOT+"message.html",context)
 # Create your views here.
     def response(self,request,*args,**kwargs):
