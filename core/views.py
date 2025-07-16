@@ -3,6 +3,7 @@ from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_UR
 from authentication.repo import ProfileRepo
 from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
+from .enums import *
 from .forms import *
 from .repo import PageRepo
 from .apps import APP_NAME
@@ -51,9 +52,8 @@ def CoreContext(request,*args, **kwargs):
     context['current_time']=current_time
 
     context['phoenix_apps']=phoenix_apps
-    
-    # parameter_repo=ParameterRepo(request=request,app_name=app_name)
-    # context['farsi_font_name']=parameter_repo.parameter(name="نام فونت فارسی",default="Vazir").value
+    parameter_repo=ParameterRepo(request=request,app_name=app_name)
+    context['farsi_font_name']=parameter_repo.parameter(name=PARAMETER_NAME_ENUM.FARSI_FONT,default="Tanha").value
     # app_has_background=parameter_repo.parameter(name=ParameterNameEnum.HAS_APP_BACKGROUND,default=False).boolean_value
     # app_background_image=PictureRepo(request=request,app_name=app_name).picture(name=PictureNameEnum.APP_BACKGROUND_IMAGE)
     # if app_has_background:

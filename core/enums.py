@@ -5,6 +5,9 @@ from utility.enums import UnitNameEnum
  
 from django.db.models import TextChoices
 
+class PARAMETER_NAME_ENUM(TextChoices):
+    FARSI_FONT='نام فونت فارسی',_('نام فونت فارسی')
+    
 class EventStatusEnum(TextChoices):
     DRAFT="پیش نویس",_("پیش نویس")
     IN_PROGRESS="در جریان",_("در جریان")
