@@ -98,7 +98,6 @@ class CategoryView(View):
         category_repo=CategoryRepo(request=request)
         category=category_repo.category(*args, **kwargs)
         context['category']=category
-        leolog(category=category)
         from .serializers import CategorySerializer
         category_s=json.dumps(CategorySerializer(category,many=False).data)
         context['category_s']=category_s 

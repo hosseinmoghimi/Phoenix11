@@ -240,7 +240,6 @@ class AccountRepo():
             parent=self.account(account_code=parent_code)
             account.parent_id=parent.id
         account.save()
-        leolog(account=account,parent=parent)
         result=SUCCEED
         message="با موفقیت تغییر یافت"
         return result,message,account,parent
