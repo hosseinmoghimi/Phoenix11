@@ -24,12 +24,12 @@
     },
     methods: {
       more: function () {
-        add_invoice_line_app.list_length = 1000;
-        add_invoice_line_app.filter();
+        add_invoice_line_app.list_length +=6;
+        add_invoice_line_app.filter(add_invoice_line_app.list_length);
       },
       less: function () {
-        add_invoice_line_app.list_length = 6;
-        add_invoice_line_app.filter();
+        add_invoice_line_app.list_length -= 6;
+        add_invoice_line_app.filter(add_invoice_line_app.list_length);
       },
       select_item: function (invoice_line_item) {
         add_invoice_line_app.invoice_line_item_id = invoice_line_item.id
@@ -38,8 +38,9 @@
         add_invoice_line_app.invoice_line_items = [invoice_line_item]
         add_invoice_line_app.buffer_items = [invoice_line_item]
       },
-      filter: function () {
-        if (add_invoice_line_app.search_for.length < 1) return;
+      filter: function (count=6) {
+        add_invoice_line_app.list_length=count
+        // if (add_invoice_line_app.search_for.length < 1) return;
         let search_for = add_invoice_line_app.search_for.toUpperCase();
         add_invoice_line_app.invoice_line_items =
           invoice_line_items_for_add_invoice_line_items_app.filter(function (
@@ -53,6 +54,7 @@
             return false;
           });
         if (add_invoice_line_app.invoice_line_items.length == 0) {
+          add_invoice_line_app.buffer_items =[]
         }
         if (add_invoice_line_app.invoice_line_items.length > 0) {
           add_invoice_line_app.buffer_items =
