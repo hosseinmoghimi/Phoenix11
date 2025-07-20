@@ -56,11 +56,15 @@
                                             <img :src="product.thumbnail" width="48" class="rounded" alt="">
                                             <div class="media-body mr-2">
                                                 <h5 v-text="product.title"></h5>
-
+                                                <h6 v-if="product.model"> 
+                                                    <span v-text="product.model"></span>
+                                                </h6>
                                             </div>
                                         </div>
 
                                     </a>
+                                      
+                                  
 
                                 </td>
                                 <td>

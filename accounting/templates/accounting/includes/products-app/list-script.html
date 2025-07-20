@@ -9,11 +9,15 @@
         methods: {
             filter: () => {
                 let search_for = (products_app.search_for).toUpperCase()
-                console.log(search_for)
                 products_app.products = products_for_products_app.filter(function (product) {
                     let title=(product.title).toUpperCase()
                     
                     if(title.indexOf(search_for) > -1){
+                        return true
+                    }
+                        let model=product.model
+                        
+                    if( model !=null && model.indexOf(search_for) > -1){
                         return true
                     }
                     return false

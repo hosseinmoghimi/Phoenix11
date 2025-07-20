@@ -1,6 +1,7 @@
 from .models import Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit
 from .models import InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,FinancialYear
 from .models import Invoice,Bank,BankAccount,PersonCategory,FinancialYear,PersonAccount,ProductSpecification
+from .models import Brand
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo
@@ -818,6 +819,14 @@ class ProductRepo():
 
         if 'title' in kwargs:
             product.title=kwargs["title"]
+
+            
+        if 'brand_id' in kwargs:
+            product.brand_id=kwargs["brand_id"]
+
+            
+        if 'model' in kwargs:
+            product.model=kwargs["model"]
          
         if 'barcode' in kwargs and kwargs["barcode"] is not None and not kwargs["barcode"]=="":
             product.barcode=kwargs["barcode"]
@@ -1215,6 +1224,99 @@ class FinancialDocumentRepo():
                     {modified} محصول ویرایش شد. """
 
         return result,message,financial_documents
+
+
+
+class BrandRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.request=request
+        self.me=None
+        # profile=ProfileRepo(request=request).me
+        self.objects=Brand.objects
+       
+
+        # if profile is not None:
+        #     self.me=self.objects.filter(profile=profile).first()
+    def list(self,*args, **kwargs):
+        objects=self.objects
+  
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(full_name__contains=search_for) | Q(melli_code__contains=search_for) | Q(code=search_for))
+        return objects.all()
+     
+    def brand(self,*args, **kwargs):
+        if "brand_id" in kwargs and kwargs["brand_id"] is not None:
+            return self.objects.filter(pk=kwargs['brand_id']).first()
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        if "code" in kwargs and kwargs["code"] is not None:
+            return self.objects.filter(code=kwargs['code']).first()
+    
+    def initial_default_brands(self,*args, **kwargs):
+      
+        brands_counter=0 
+
+        result=SUCCEED
+        message=""  
+        if not self.request.user.has_perm(APP_NAME+".add_brand"):
+            message="دسترسی غیر مجاز"
+            result=FAILED
+            return message,result
+        for brand in default_brands():
+            new_brand=Brand(name=brand["name"])
+            # new_account=Account(parent=parent_account,**kwargs)
+            new_brand.save()
+            brands_counter+=1
+
+        message=f"{brands_counter} بانک با موفقیت اضافه شد."
+        return result,message
+
+        
+    def delete_all(self,*args, **kwargs):
+      
+        brands_counter=0 
+
+        result=SUCCEED
+        message=""  
+        if not self.request.user.has_perm(APP_NAME+".delete_brand"):
+            message="دسترسی غیر مجاز"
+            result=FAILED
+            return message,result
+        for brand in Brand.objects.all():
+            brand.delete()
+            brands_counter+=1
+
+        message=f"<p>{brands_counter} بانک با موفقیت حذف شد.</p>"
+        return result,message
+    
+    
+    def add_brand(self,*args,**kwargs):
+        result,message,brand=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_brand"):
+            message="دسترسی غیر مجاز"
+            return result,message,brand
+
+        brand=Brand() 
+
+ 
+
+        if Brand.objects.filter(name=kwargs['name']).first() is not None:
+            message="نام وارد شده تکراری است."
+            brand=None
+            return result,message,brand
+
+  
+        if 'name' in kwargs:
+            brand.name=kwargs["name"] 
+        brand.save()       
+        message="بانک جدید با موفقیت اضافه شد."
+        result=SUCCEED
+        return result,message,brand
+
+ 
 
 
 class BankRepo():

@@ -12,9 +12,9 @@ from phoenix.server_apps import phoenix_apps
 from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
-from .repo import FinancialDocumentRepo,CategoryRepo
+from .repo import FinancialDocumentRepo,CategoryRepo,BrandRepo
 from .repo import PersonCategoryRepo,ProfileRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
-from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer
+from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer,BrandSerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
 from .repo import FinancialYearRepo
@@ -51,6 +51,8 @@ def AddInvoiceLineItemContext(request,*args, **kwargs):
 
 def AddProductContext(request,*args, **kwargs):
     context=AddInvoiceLineItemContext(request=request)
+    brands=BrandRepo(request=request).list()
+    context['brands_for_add_product_app']=brands
     categories=CategoryRepo(request=request).list()
     context['categories_for_add_product_app']=categories
     categories_s=json.dumps(CategorySerializer(categories,many=True).data)
@@ -1009,13 +1011,7 @@ class CategoryView(View):
 class CategoriesView(View):
     def get(self,request,*args, **kwargs):
         return CategoryView().get(request=request,pk=0)
-        context=getContext(request=request)
-        categories=CategoryRepo(request=request).list(*args, **kwargs)
-        context['categories']=categories
-        categories_s=json.dumps(CategorySerializer(categories,many=True).data)
-        context['categories_s']=categories_s
-        return render(request,TEMPLATE_ROOT+"categories.html",context)
-
+      
 
 
 
@@ -1065,3 +1061,35 @@ class PersonCategoriesView(View):
         person_category=PersonAccountRepo(request=request).person_category(*args, **kwargs)
         context['person_category']=person_category
         return render(request,TEMPLATE_ROOT+"person-categories.html",context)
+
+
+
+    
+class BrandView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        brand=BrandRepo(request=request).brand(*args, **kwargs)
+        if brand is None:
+            raise Http404
+        
+        context['brand']=brand
+        products=brand.product_set.all()
+        products_s=json.dumps(ProductSerializer(products,many=True).data)
+        context['products']=products
+        context['products_s']=products_s
+
+        return render(request,TEMPLATE_ROOT+"brand.html",context)   
+
+
+class BrandsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        brands=BrandRepo(request=request).list(*args, **kwargs)
+        brands_s=json.dumps(BrandSerializer(brands,many=True).data)
+        context['brands']=brands
+        context['brands_s']=brands_s
+        if request.user.has_perm(APP_NAME+'.add_brand'):
+            context.update(AddServiceContext(request=request))
+        return render(request,TEMPLATE_ROOT+"brands.html",context)
+
+

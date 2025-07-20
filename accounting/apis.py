@@ -3,11 +3,11 @@ from utility.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
-from .repo import CategoryRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
+from .repo import CategoryRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo,BrandRepo
 from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo
 from utility.log import leolog
 from .serializers import  InvoiceLineItemUnitBriefSerializer, ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
-from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
+from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer,BrandSerializer
 from django.http import JsonResponse
 from .forms import *
 from .repo import FinancialYearRepo,ProductSpecificationRepo,PersonAccountRepo
@@ -502,6 +502,31 @@ class DeleteALLAccountsApi(APIView):
         return JsonResponse(context)
 
 
+class AddBrandApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_brand_form=AddBrandForm(request.POST)
+        if add_brand_form.is_valid():
+            log=333
+            cd=add_brand_form.cleaned_data
+            result,message,brand=BrandRepo(request=request).add_brand(**cd)
+            if brand is not None:
+                context['brand']=BrandSerializer(brand).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+ 
+
+ 
+
 class AddProductApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -524,6 +549,7 @@ class AddProductApi(APIView):
         return JsonResponse(context)
 
  
+
 class AddServiceApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
