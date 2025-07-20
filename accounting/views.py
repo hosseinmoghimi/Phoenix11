@@ -24,13 +24,13 @@ from core.views import MessageView
 from .models import UnitNameEnum
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='accounting/'
-WIDE_LAYOUT="WIDE_LAYOUT"
+WIDE_LAYOUT=False
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
 
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
-    context['WIDE_LAYOUT']=False
+    context['WIDE_LAYOUT']=WIDE_LAYOUT
  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
@@ -959,7 +959,8 @@ class InvoicePrintView(View):
         context['invoice']=invoice
         context['NOT_REPONSIVE']=True
         context['NOT_NAVBAR']=True
-        context['WIDE_LAYOUT']=True
+        context['WIDE_LAYOUT']=False
+        context['title']=invoice.title
         context['NOT_FOOTER']=True
         invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)
         context['invoice_s']=invoice_s

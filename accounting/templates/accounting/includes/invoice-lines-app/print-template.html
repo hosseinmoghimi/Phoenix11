@@ -139,7 +139,7 @@
 
               <td  >
                 <div class="text-right"> 
-                <span class="text-success" v-text="to_price(sum_discounts())"></span>
+                <span class="text-success" v-if="sum_discounts()>0" v-text="to_price(sum_discounts())"></span>
 
                 </div>
               </td>
@@ -192,19 +192,7 @@
               </td>
             </tr>
             {% endif %}
-            <!-- <tr >
-              <td colspan="5">
-                <div class="text-left">
-                  قابل پرداخت : {{invoice.amount|to_horuf}} {{CURRENCY}}
-                </div>
-              </td>
-
-              <td class="bordered filled farsi text-right">
-                <span class="farsi text-right">
-                  {{invoice.amount|to_price}}
-                </span>
-              </td>
-            </tr> -->
+           
 
             {% endif %}
           </tbody>
