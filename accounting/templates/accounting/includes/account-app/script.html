@@ -1,9 +1,10 @@
+{% include "accounting/includes/set-account-parent-app/script.html" %}
+
 <script>
     let account_id=parseInt("{{account.id}}")
     const account_color="{{account.color}}"
 
 </script>
-{% include "accounting/includes/account-priority-app/script.html" %}
 <script>
     let account_code_app=new Vue({
         el:"#account-code-app",

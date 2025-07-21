@@ -13,6 +13,7 @@ import json
 from utility.enums import UnitNameEnum
 from utility.log import leolog
 from accounting.views import ProductContext,PageContext,AddInvoiceContext,InvoiceSerializer
+from .enums import *
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='projectmanager/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -28,7 +29,15 @@ def getContext(request,*args, **kwargs):
 def ProjectContext(request,project,*args, **kwargs):
     context=PageContext(request=request,page=project)
     context['project']=project
+    project_s=json.dumps(ProjectSerializer(project).data)
+    context['project_s']=project_s
     context['WIDE_LAYOUT']=True
+    if request.user.has_perm(APP_NAME+'.change_project'):
+        context['edit_project_form']=EditProjectForm()
+        all_organization_units=OrganizationUnitRepo(request=request).list()
+        context['all_organization_units']=all_organization_units
+        
+        context['project_status_enum'] = (i[0] for i in ProjectStatusEnum.choices)
     return context
 
 
@@ -64,8 +73,7 @@ class ProjectView(View):
         if request.user.has_perm(APP_NAME+".add_invoice"):
             context.update(AddInvoiceContext(request=request))
 
-
-
+ 
         
         remote_clients = project.remote_clients.all()
         context['remote_clients'] = remote_clients

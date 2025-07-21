@@ -97,6 +97,88 @@ class ProjectRepo():
         return result,message,project
 
  
+    def add_invoice(self,*args,**kwargs):
+        result,message,invoice=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_invoice"):
+            message="دسترسی غیر مجاز"
+            return result,message,invoice
+        from accounting.models import Invoice
+        invoice=Invoice()
+        if 'title' in kwargs:
+            invoice.title=kwargs["title"]
+        if 'parent_id' in kwargs:
+            if kwargs["parent_id"]>0:
+                invoice.parent_id=kwargs["parent_id"]
+        if 'color' in kwargs:
+            invoice.color=kwargs["color"]
+        if 'code' in kwargs:
+            invoice.code=kwargs["code"]
+        if 'priority' in kwargs:
+            invoice.priority=kwargs["priority"]
+        if 'bedehkar_id' in kwargs:
+            invoice.bedehkar_id=kwargs["bedehkar_id"]
+        if 'bestankar_id' in kwargs:
+            invoice.bestankar_id=kwargs["bestankar_id"]
+        if 'event_datetime' in kwargs:
+            
+            year=kwargs['event_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
+            invoice.event_datetime=kwargs["event_datetime"]
+
+        if 'type' in kwargs:
+            invoice.type=kwargs["type"]
+
+        project=self.project(id=kwargs['project_id']) 
+        (result,message,invoice)=invoice.save()
+        if project is not None:
+            project.invoices.add(invoice.id)  
+        return result,message,invoice
+
+
+
+
+    def edit_project(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".change_project"):
+            return None
+        project=self.project(*args, **kwargs)
+        if project is not None:
+            if 'percentage_completed' in kwargs:
+                project.percentage_completed=kwargs['percentage_completed']
+            if 'start_datetime' in kwargs:
+                project.start_datetime=kwargs['start_datetime']
+            if 'end_datetime' in kwargs:
+                project.end_datetime=kwargs['end_datetime']
+            if 'status' in kwargs:
+                project.status=kwargs['status']
+            if 'contractor_id' in kwargs:
+                project.contractor_id=kwargs['contractor_id']
+            if 'percentage_completed' in kwargs:
+                project.percentage_completed=kwargs['percentage_completed']
+            if 'weight' in kwargs:
+                project.weight=kwargs['weight']
+            if 'parent_id' in kwargs:
+                parent_id=kwargs['parent_id']
+                if parent_id<1:
+                    project.parent=None
+                elif parent_id>0 and len(Project.objects.filter(pk=parent_id))==1 and not parent_id==project.pk:
+                    project.parent_id=parent_id
+            if 'employer_id' in kwargs:
+                project.employer_id=kwargs['employer_id']
+            if 'title' in kwargs:
+                project.title=kwargs['title']
+            if 'weight' in kwargs:
+                project.weight=kwargs['weight']
+                pass
+            if 'priority' in kwargs:
+                project.priority=kwargs['priority']
+                pass
+            if 'archive' in kwargs:
+                project.archive=kwargs['archive']
+            project.save()
+            return project
+
+
 class RemoteClientRepo():
     def __init__(self, *args, **kwargs):
         self.request = None

@@ -1,5 +1,5 @@
 from core.repo import PageRepo,ProfileRepo,FAILED,SUCCEED
-from .models import Like,Comment,Link,Download,Image
+from .models import Like,Comment,Link,Download,Image,Location,Area, Tag
 from .apps import APP_NAME
 
 
@@ -22,20 +22,24 @@ class ImageRepo():
             return self.objects.filter(pk=kwargs['image_id']).first()
     def add_image(self,*args, **kwargs):
         result,message,image=FAILED,"",None
+        title=''
         profile_me=ProfileRepo(request=self.request).me
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if profile_me is None:
             return None
         if page is None:
             return None
+        if 'title' in kwargs:
+            title=kwargs['title']
+
         if 'image' in kwargs:
             image_text=kwargs['image']
         if image_text is None:
             return result,message,image
-        image=Image(creator_id=profile_me.id,page_id=page.id,image_main_origin=image_text)
+        image=Image(creator_id=profile_me.id,page_id=page.id,image_main_origin=image_text,title=title)
         image.save()
         result=SUCCEED
-        message='کامنت با موفقیت اضافه شد.'
+        message='تصویر با موفقیت اضافه شد.'
         return result,message,image
     
     def delete_image(self,*args, **kwargs):
@@ -91,6 +95,59 @@ class CommentRepo():
         message="کامنت با موفقیت حذف گردید."
         return result,message
      
+class TagRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.objects=Tag.objects
+        self.request=request
+    def tag(self,*args, **kwargs):
+        if 'title' in kwargs:
+            return Tag.objects.filter(title=kwargs['title']).first()
+        if 'tag_id' in kwargs:
+            return Tag.objects.filter(pk=kwargs['tag_id']).first()
+        if 'pk' in kwargs:
+            return Tag.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return Tag.objects.filter(pk=kwargs['id']).first()
+        
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'page_id' in kwargs:
+            page_id=kwargs['page_id']
+            page=PageRepo(request=self.request).page(page_id=page_id)
+            if page is not None:
+                return page.tag_set.all()
+            objects=objects.filter(page_id=page_id)
+        return objects.all()
+    def add_tag(self,*args, **kwargs):
+        result,message,tags=FAILED,'',[]
+
+        title=kwargs['title']
+        page_id=kwargs['page_id']
+
+
+        tag=self.tag(title=title)
+        page=PageRepo(request=self.request).page(page_id=page_id)
+        if tag is None:
+            tag=Tag(title=title)
+            tag.save()
+
+        if page is None:
+            message='صفحه پیدا نشد.'
+            return result,message,tags 
+
+        pages=tag.pages.all()
+        if page in pages:
+            tag.pages.remove(page)
+            if len(tag.pages.all())==0:
+                tag.delete()
+        else:
+            tag.pages.add(page.id)
+        tag.save()
+        result=SUCCEED
+        message='تگ با موفقیت اضافه شد.'
+        tags=page.tag_set.all()
+        return result,message,tags 
+
 class LikeRepo():
     def __init__(self,request,*args, **kwargs):
         self.objects=Like.objects
@@ -201,3 +258,120 @@ class DownloadRepo():
         return result,message,download
 
 
+class LocationRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.profile=ProfileRepo(*args, **kwargs).me
+        self.objects = Location.objects
+    def list(self,*args, **kwargs):
+        objects= self.objects
+        if 'location_id' in kwargs:
+            objects=objects.filter(location_id=kwargs['location_id'])
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])
+        return objects.all()
+    
+    
+    def add_page_location(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_location"):
+            return None
+        location=LocationRepo(request=self.request).location(*args, **kwargs)
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if page is None:
+            return
+        if location is None:
+            return
+        page.locations.add(location.id)
+        return location
+
+
+
+    def location(self, *args, **kwargs):
+        if 'location_id' in kwargs:
+            return self.objects.filter(pk=kwargs['location_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()
+            
+
+    def add_location(self,*args, **kwargs):
+        result,message,location=FAILED,'',self
+        if not self.user.has_perm(APP_NAME+".add_location"):
+            return result,message,None
+        location=Location()
+        if 'location' in kwargs:
+            location1=kwargs['location']
+        if 'title' in kwargs:
+            location.title=kwargs['title']
+        if 'location' in kwargs:
+            location.location=kwargs['location']
+        if 'page_id' in kwargs:
+            location.page_id=kwargs['page_id']
+        if 'latitude' in kwargs:
+            location.latitude=kwargs['latitude']
+        if 'longitude' in kwargs:
+            location.longitude=kwargs['longitude']
+        location.creator=self.profile
+        (result,message,location)=location.save()
+        return result,message,location
+    
+    def search(self,search_for):
+        objects = self.objects.filter(title__contains=search_for)
+        return objects 
+
+    
+        
+class AreaRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.profile=ProfileRepo(*args, **kwargs).me
+        self.objects = Area.objects
+    def list(self,*args, **kwargs):
+        objects= self.objects
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        if 'location_id' in kwargs:
+            objects=objects.filter(location_id=kwargs['location_id'])
+        if 'search_for' in kwargs:
+            objects=objects.filter(location__title__contains=kwargs['search_for'])
+        return objects.all()
+    def add_area(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_area"):
+            return None
+        area=Area()
+        if 'code' in kwargs:
+            area.code=kwargs['code']
+        if 'title' in kwargs:
+            area.title=kwargs['title']
+        if 'color' in kwargs:
+            area.color=kwargs['color']
+        if 'area' in kwargs:
+            area.area=kwargs['area']
+        area.save()
+         
+        return area
+
+    def area(self, *args, **kwargs):
+        if 'area_id' in kwargs:
+            return self.objects.filter(pk=kwargs['area_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()

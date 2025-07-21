@@ -17,3 +17,7 @@ class AddRelatedPageForm(forms.Form):
     bidirectional=forms.BooleanField(required=False)
     add_or_remove=forms.BooleanField(required=False)
 
+
+class SetPagePriorityForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    priority=forms.IntegerField(required=True)

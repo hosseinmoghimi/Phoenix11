@@ -10,10 +10,10 @@ urlpatterns = [
     path('profile/<int:pk>/',login_required(views.IndexView.as_view()),name="profile"),
     path('select-profile/',login_required(apis.SelectProfileApi.as_view()),name="select_profile"),
     path('settings/',login_required(views.IndexView.as_view()),name="settings"),
-    path('login/',login_required(views.LoginView.as_view()),name="login"),
+    path('login/',(views.LoginView.as_view()),name="login"),
     path('change-password/',login_required(views.ChangePasswordView.as_view()),name="change_password"),
     path('register/',login_required(views.IndexView.as_view()),name="register"),
-    path('logout/',login_required(views.IndexView.as_view()),name="logout"),
+    path('logout/',login_required(views.LogoutView.as_view()),name="logout"),
 
 
     path('change-person-image/',login_required(views.ChangePersonImageView.as_view()),name="change_person_image"),

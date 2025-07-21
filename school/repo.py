@@ -96,8 +96,8 @@ class CourseRepo():
             return result,message,course
 
         course=Course()
-        if 'name' in kwargs:
-            course.name=kwargs["name"]
+        if 'title' in kwargs:
+            course.title=kwargs["title"]
         if 'parent_id' in kwargs:
             if kwargs["parent_id"]>0:
                 course.parent_id=kwargs["parent_id"]

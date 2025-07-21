@@ -1,8 +1,8 @@
 <script>
-    let account_priority_app = new Vue({
-        el: "#account-priority-app",
+    let page_priority_app = new Vue({
+        el: "#page-priority-app",
         data: {
-            priority: parseInt("{{account.priority}}"),
+            priority: parseInt("{{page.priority}}"),
         },
         methods: {
             increase_priority: function () {
@@ -10,9 +10,9 @@
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     priority: this.priority,
-                    account_id: parseInt("{{account.id}}"),
+                    page_id: parseInt("{{page.id}}"),
                 }
-                let posting = $.post("{% url 'accounting:set_account_priority' %}", payload)
+                let posting = $.post("{% url 'core:set_page_priority' %}", payload)
                 posting.done(data => {
                     // console.log(data)
                 })
@@ -22,9 +22,9 @@
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     priority: this.priority,
-                    account_id: parseInt("{{account.id}}"),
+                    page_id: parseInt("{{page.id}}"),
                 }
-                let posting = $.post("{% url 'accounting:set_account_priority' %}", payload)
+                let posting = $.post("{% url 'core:set_page_priority' %}", payload)
                 posting.done(data => {
                     leolog(data)
                 })

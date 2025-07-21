@@ -54,7 +54,7 @@
     <div class="card-body">
         {% if account.parent %}
         <div>
-            {{account.parent.get_breadcrumb_link|safe}}
+            {{account.parent_account.get_breadcrumb_link|safe}}
         </div>
         {% endif %}
         <div class="mt-2" id="account-code-app">
@@ -122,7 +122,7 @@
             {{account.nature}}
         </div>
         <div class="my-3">
-            {% include "accounting/includes/account-priority-app/template.html" %}
+            {% include "core/includes/page-priority-app/template.html" %}
         </div>
     </div>
 </div>

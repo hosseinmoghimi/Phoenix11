@@ -6,7 +6,7 @@ from utility.calendar import PersianCalendar
 from .repo import CategoryRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo
 from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo
 from utility.log import leolog
-from .serializers import  ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
+from .serializers import  InvoiceLineItemUnitBriefSerializer, ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer
 from django.http import JsonResponse
 from .forms import *
@@ -118,7 +118,10 @@ class AddFinancialDocumentLineApi(APIView):
             cd=add_financial_document_line_form.cleaned_data
             result,message,financial_document_line=FinancialDocumentLineRepo(request=request).add_financial_document_line(**cd)
             if financial_document_line is not None:
+
                 context['financial_document_line']=FinancialDocumentLineSerializer(financial_document_line).data
+                if cd['financial_document_id']==0:
+                 context['financial_document']=FinancialDocumentSerializer(financial_document_line.financial_document).data
         context['message']=message
         context['result']=result
         context['log']=log
@@ -143,28 +146,6 @@ class AddAccountApi(APIView):
         context['result']=result
         # context['message2']=message2
         # context['result2']=result2
-        context['log']=log
-        return JsonResponse(context)
-
-
-class SetAccountPriorityApi(APIView):
-    def post(self,request,*args, **kwargs):
-        context={}
-        result=FAILED
-        message=""
-        log=111
-        context['result']=FAILED
-        if request.method=='POST':
-            log=222
-            set_account_priority_form=SetAccountPriorityForm(request.POST)
-            if set_account_priority_form.is_valid():
-                log=333
-                cd=set_account_priority_form.cleaned_data
-                priority,message,result=AccountRepo(request=request).set_priority(**cd)
-                if priority is not None:
-                    context['priority']=priority
-        context['message']=message
-        context['result']=result
         context['log']=log
         return JsonResponse(context)
 
@@ -329,6 +310,54 @@ class AddFinancialYearApi(APIView):
         context['result']=result
         # context['message2']=message2
         # context['result2']=result2
+        context['log']=log
+        return JsonResponse(context)
+
+
+
+ 
+class SetAccountParentApi(APIView): 
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        action=None
+        log=111
+        context['result']=FAILED
+        set_parent_code_form=SetParentCodeForm(request.POST)
+        if set_parent_code_form.is_valid():
+            log=2222
+            cd=set_parent_code_form.cleaned_data
+            (result,message,account,parent)=AccountRepo(request=request).set_account_parent(**cd) 
+            if result==SUCCEED:
+                log=333 
+                context["parent"]=AccountSerializer(parent,many=False).data 
+                context["account"]=AccountSerializer(account,many=False).data 
+        context['message']=message
+        context['result']=result 
+        context['log']=log
+        return JsonResponse(context)
+
+
+
+class GetInvoiceLineItemUnitsApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            get_invoice_line_item_units_form=GetInvoiceLineItemUnitsForm(request.POST)
+            if get_invoice_line_item_units_form.is_valid():
+                log=333
+                cd=get_invoice_line_item_units_form.cleaned_data 
+                invoice_line_item_units=InvoiceLineItemUnitRepo(request=request).list(**cd)
+                if invoice_line_item_units is not None:
+                    context['invoice_line_item_units']=InvoiceLineItemUnitBriefSerializer(invoice_line_item_units,many=True).data
+        context['message']=message
+        context['result']=result
         context['log']=log
         return JsonResponse(context)
 

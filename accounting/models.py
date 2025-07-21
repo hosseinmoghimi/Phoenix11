@@ -22,22 +22,23 @@ from django.utils import timezone
 from utility.log import leolog
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 IMAGE_FOLDER = "images/"
-
-class Account(models.Model,LinkHelper):
-    parent=models.ForeignKey("account", verbose_name=_("parent"),null=True,blank=True, on_delete=models.CASCADE)
-    name=models.CharField(_("name"), max_length=50)
-    color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
+try:
+    from accounting.settings_on_server import DELETE_OLD_ITEM_UNIT
+except:
+    DELETE_OLD_ITEM_UNIT=True
+    
+class Account(CorePage,LinkHelper):
     code=models.CharField(_("code"),null=True,blank=True, max_length=50)
     type=models.CharField(_("نوع"),choices=AccountTypeEnum.choices, max_length=50)
     nature=models.CharField(_("ماهیت"),choices=AccountNatureEnum.choices,default=AccountNatureEnum.FREE, max_length=50)
-    description=models.CharField(_("description"),null=True,blank=True, max_length=500)
     logo_origin=models.ImageField(_("logo"),blank=True,null=True, upload_to=IMAGE_FOLDER+"account", height_field=None, width_field=None, max_length=None)
     level=models.IntegerField(_("level"))
-    priority=models.IntegerField(_("priority"),default=100)
     bedehkar=models.IntegerField(_("bedehkar"),default=0)
     bestankar=models.IntegerField(_("bestankar"),default=0)
     balance=models.IntegerField("balance",default=0)
-    
+    @property
+    def name(self):
+        return self.title    
     
     class_name='account'
     app_name=APP_NAME
@@ -60,24 +61,31 @@ class Account(models.Model,LinkHelper):
     def all_childs(self): 
         return Account.objects.filter(pk__in=self.all_sub_accounts_id())
          
-
+    @property
+    def parent_account(self):
+        return Account.objects.filter(id=self.parent.id).first()
     def get_breadcrumb_link(self):
         if self.parent is None:
             return  self.get_link() 
         # return self.parent.get_breadcrumb_link()+f"""<span class="my-2">{ACCOUNT_NAME_SEPERATOR}</span>"""+self.get_link()
-        return f"""<div>{self.parent.get_breadcrumb_link()}</div><div>{self.get_link()}</div>"""
+        
+        return f"""<div>{self.parent_account.get_breadcrumb_link()}</div><div>{self.get_link()}</div>"""
         # return f"""<span>{self.parent.get_breadcrumb_link()}</span>{ACCOUNT_NAME_SEPERATOR}<span>{self.get_link()}</span>"""
 
     def save(self): 
-        
+        if self.app_name is None or self.app_name=='':
+            self.app_name=APP_NAME
+        if self.class_name is None or self.class_name=='':
+            self.class_name='account'
+
         if self.parent is None:
             self.level=0
         else:
-            self.level=self.parent.level+1
+            self.level=self.parent_account.level+1
     
         result=SUCCEED
         message="موفقیت آمیز"
-        if NO_DUPLICATED_ACCOUNT_NAME and len(Account.objects.filter(name=self.name).exclude(pk=self.pk))>0:
+        if NO_DUPLICATED_ACCOUNT_NAME and len(Account.objects.filter(title=self.title).exclude(pk=self.pk))>0:
             result=FAILED
             message="نام تکراری"
         if NO_DUPLICATED_ACCOUNT_CODE and len(Account.objects.filter(code=self.code).exclude(pk=self.pk))>0:
@@ -97,7 +105,7 @@ class Account(models.Model,LinkHelper):
                 result=FAILED
                 return result,message,None
         if NO_DUPLICATED_ACCOUNT_NAME:
-            dup=Account.objects.filter(name=self.name).exclude(pk=self.pk).first()
+            dup=Account.objects.filter(title=self.title).exclude(pk=self.pk).first()
             if dup is not None:
                 message="نام حساب تکراری است."
                 result=FAILED
@@ -130,13 +138,13 @@ class Account(models.Model,LinkHelper):
         
         
 
-    def normalize_total(self):
+    def normalize(self):
         # print(self.full_title)
         bedehkar=0
         bestankar=0
         balance=0
         for financial_document_line in FinancialDocumentLine.objects.filter(account_id=self.pk): 
-            # basic_account.normalize_total()
+            # basic_account.normalize()
             bedehkar+=financial_document_line.bedehkar
             bestankar+=financial_document_line.bestankar
         childs=self.childs
@@ -150,7 +158,9 @@ class Account(models.Model,LinkHelper):
         self.balance=balance
         self.save() 
         if self.parent is not None:
-            self.parent.normalize_total()
+            parent=Account.objects.filter(id=self.parent.id).first()
+            if parent is not None:
+                parent.normalize()
     @property
     def logo(self):
         if not self.logo_origin :
@@ -222,11 +232,12 @@ class PersonAccount(Account):
         if self.code is None or self.code==0 or self.code=='':
             self.code=self.generate_code()
         
-        self.name=f'{self.person} # {self.category}'
+        self.title=f'{self.person} # {self.category}'
         result,message,account=super(PersonAccount,self).save()
-        result=SUCCEED
-        message="حساب شخص با موفقیت اضافه شد."
-        person_account=self
+        if account.id is not None:
+            result=SUCCEED
+            message="حساب شخص با موفقیت اضافه شد."
+            person_account=self
         return result,message,person_account
 
 
@@ -328,6 +339,13 @@ class FinancialDocumentLine(models.Model,LinkHelper):
                     <small class="text-muted mr-1">{a[11:]}</small>
 
                 """
+    def delete(self,*args, **kwargs): 
+        account=self.account
+        financial_document=self.financial_document
+        super().delete(*args, **kwargs)
+        financial_document.normalize()
+        account.normalize()
+
     def save(self):
 
         
@@ -361,7 +379,7 @@ class FinancialDocumentLine(models.Model,LinkHelper):
             return result,message,None
         super(FinancialDocumentLine,self).save()
         self.financial_document.normalize()
-        self.account.normalize_total()
+        self.account.normalize()
         result=SUCCEED
         message='سطر سند مالی با موفقیت اضافه شد.'
         return result,message,financial_document_line
@@ -399,7 +417,7 @@ class FinancialYear(models.Model,LinkHelper,DateTimeHelper):
         verbose_name = _("FinancialYear")
         verbose_name_plural = _("FinancialYears")
     def __str__(self):
-        return self.name
+        return self.name+' #' if self.in_progress else ''
 
     def save(self):
         result,message,financial_year=FAILED,"",self
@@ -539,10 +557,10 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
                 if self.default is True:
                     invoice_line_item_unit.default=False
                     super(InvoiceLineItemUnit,invoice_line_item_unit).save()
-        # invoice_line_item_units_with_this_unit.delete()
-        # self.id=0
-        Now=timezone.now()
-        self.date_added=Now
+        if DELETE_OLD_ITEM_UNIT:
+            invoice_line_item_units_with_this_unit.delete()
+        # Now=timezone.now()
+        # self.date_added=Now
         if self.default is True:
             other_invoice_line_item_units=invoice_line_item_units.filter(default=True)
             for other_invoice_line_item_unit in other_invoice_line_item_units:
@@ -776,7 +794,6 @@ class Bank(models.Model,LinkHelper):
 class BankAccount(Account,LinkHelper):
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
     bank=models.ForeignKey("bank", verbose_name=_("bank"), on_delete=models.PROTECT)
-    title=models.CharField(_("title"),max_length=50)
     card_no=models.CharField(_("card_no"),max_length=20)
     shaba_no=models.CharField(_("shaba_no"),max_length=20)
     account_no=models.CharField(_("account_no"),max_length=20)

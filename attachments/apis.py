@@ -3,12 +3,86 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
 # from .repo import ContactMessageRepo, PageCommentRepo, PageLinkRepo, PagePermissionRepo, PageRepo, PageTagRepo,  ParameterRepo,PageDownloadRepo,PageImageRepo
-from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo,ImageRepo
-from .serializer import  CommentSerializer,LinkSerializer,DownloadSerializer,ImageSerializer
+from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo,ImageRepo, TagRepo
+from .serializer import  CommentSerializer,LinkSerializer,DownloadSerializer,ImageSerializer, TagSerializer
 from utility.constants import SUCCEED, FAILED
 from utility.utils import str_to_html
-  
+from .views import AreaRepo,AreaSerializer,LocationRepo,LocationSerializer
+ 
+class AddLocationApi(APIView):
+    def post(self,request,*args, **kwargs):
+        log=1
+        if request.method=='POST':
+            log=2
+            add_location_form=AddLocationForm(request.POST)
+            if add_location_form.is_valid():
+                log=3
+                location=add_location_form.cleaned_data['location']
+                title=add_location_form.cleaned_data['title']
+                page_id=add_location_form.cleaned_data['page_id']
+                result,message,location=LocationRepo(request=request).add_location(location=location,title=title,page_id=page_id)
+                
+                if location is not None:
+                    log=4
+                    location_s=LocationSerializer(location).data
+                    return JsonResponse({'result':SUCCEED,'location':location_s})
+        return JsonResponse({'result':FAILED,'log':log})
+    
 
+class AddAreaApi(APIView):
+    def post(self,request):
+        context={'result':FAILED}
+        log=1
+        user=request.user
+        if request.method=='POST':
+            log=2
+            add_area_form=AddAreaForm(request.POST)
+            if add_area_form.is_valid():
+                log=3
+                
+                title=add_area_form.cleaned_data['title']
+                code=add_area_form.cleaned_data['code']
+                area=add_area_form.cleaned_data['area']
+                color=add_area_form.cleaned_data['color']
+              
+                area=AreaRepo(request=request).add_area(
+                    title=title,
+                    code=code,
+                    color=color,
+                    area=area,
+                )
+                
+                if area is not None:
+                    log=4
+                    context['area']=AreaSerializer(area).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+    
+    
+class AddPageLocationApi(APIView):
+    def post(self,request,*args, **kwargs):
+        log=1
+        context={}
+        message='پاراکتر های ورودی معتبر نمی باشند.'
+        result=FAILED
+        if request.method=='POST':
+            log=2
+            add_location_form=AddPageLocationForm(request.POST)
+            if add_location_form.is_valid():
+                log=3 
+                cd=add_location_form.cleaned_data
+                location=LocationRepo(request=request).add_page_location(**cd)
+                if location is not None:
+                    log=4
+                    result=SUCCEED
+                    location=LocationSerializer(location).data
+                    context['location']=location
+        context['log']=log
+        context['result']=result
+        context['message']=message
+        return JsonResponse(context)
+     
 
 class AddImageApi(APIView):
     def post(self, request, *args, **kwargs):
@@ -69,6 +143,27 @@ class AddCommentApi(APIView):
                 (result,message,comment) = CommentRepo(request=request).add_comment(page_id=page_id,comment=comment)
                 if result==SUCCEED:
                     context['comment'] = CommentSerializer(comment).data
+        context['result'] = result
+        context['message'] = message
+        context['log']=log
+        return JsonResponse(context)
+    
+         
+class AddTagApi(APIView):
+    def post(self,request,*args, **kwargs):
+        result,message,comment=FAILED,"",None
+        context={}
+        log=1
+        if request.method=='POST':
+            log+=1
+            add_tag_form=AddTagForm(request.POST)
+            if add_tag_form.is_valid():
+                log+=1
+                page_id = add_tag_form.cleaned_data['page_id']
+                title = add_tag_form.cleaned_data['title']
+                (result,message,tags) = TagRepo(request=request).add_tag(page_id=page_id,title=title)
+                if result==SUCCEED:
+                    context['tags'] = TagSerializer(tags,many=True).data
         context['result'] = result
         context['message'] = message
         context['log']=log

@@ -6,7 +6,7 @@ from authentication.serializer import PersonSerializer
 class AccountSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
-        fields = ['id','name','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','name','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
 
 class InvoiceSerializer(serializers.ModelSerializer):
        bedehkar=AccountSerializer()
@@ -72,11 +72,16 @@ class InvoiceLineItemUnitSerializer(serializers.ModelSerializer):
         model = InvoiceLineItemUnit
         fields = ['id','unit_name','default','unit_price','coef','invoice_line_item','persian_date_added', 'get_edit_url','get_delete_url']
  
+class InvoiceLineItemUnitBriefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InvoiceLineItemUnit
+        fields = ['id','unit_name','default','unit_price','coef','persian_date_added', 'get_edit_url','get_delete_url']
+ 
   
 class AccountBriefSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
-        fields = ['id','parent_id','full_name','logo','name','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','parent_id','full_name','logo','title','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
 
 class FinancialDocumentSerializer(serializers.ModelSerializer):
        class Meta:

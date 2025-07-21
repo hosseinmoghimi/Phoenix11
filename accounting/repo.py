@@ -42,6 +42,9 @@ class InvoiceLineItemUnitRepo:
         objects=self.objects
         if "search_for" in kwargs:
             objects=objects.filter(title__contains=kwargs['search_for']) 
+            
+        if "invoice_line_item_id" in kwargs:
+            objects=objects.filter(invoice_line_item_id=kwargs['invoice_line_item_id']) 
         return objects.all()
     def product_unit(self,*args, **kwargs):
         if "product_unit_id" in kwargs:
@@ -186,7 +189,7 @@ class AccountRepo():
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
             codeee=str(filter_number(search_for))
-            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
+            objects=objects.filter(Q(title__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
@@ -223,19 +226,7 @@ class AccountRepo():
                         return a
                 except:
                     pass
-          
-    def set_priority(self,*args, **kwargs):
-        result,message,priority=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".change_account"):
-            return result,message,account_tags
-        priority=kwargs['priority']
-        account_id=kwargs['account_id']
-        account=Account.objects.filter(pk=account_id).first()
-        if account is not None:
-            account.priority=priority
-            account.save()
-        result=SUCCEED
-        return result,message,priority
+       
 
            
     def set_account_parent(self,*args, **kwargs):
@@ -243,8 +234,11 @@ class AccountRepo():
         account=self.account(*args,**kwargs)
         parent=None
         parent_code=kwargs["parent_code"]
-        parent=self.account(account_code=parent_code)
-        account.parent=parent
+        if parent_code=='0':
+            account.parent=None
+        else:    
+            parent=self.account(account_code=parent_code)
+            account.parent_id=parent.id
         account.save()
         result=SUCCEED
         message="با موفقیت تغییر یافت"
@@ -271,7 +265,7 @@ class AccountRepo():
             parent_account=None
             if 'parent_code' in account:
                 parent_account=Account.objects.filter(code=account["parent_code"]).first()
-            new_account=Account(name=account["name"],color=account["color"],code=account['code'],priority=account['priority'],parent=parent_account)
+            new_account=Account(title=account["name"],color=account["color"],code=account['code'],priority=account['priority'],parent=parent_account)
             # new_account=Account(parent=parent_account,**kwargs)
             new_account.save()
             # account_group_counter+=1
@@ -328,24 +322,6 @@ class AccountRepo():
 
         return result,message
     
-    def set_priority(self,*args, **kwargs):
-        result,message,priority=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".change_account"):
-            return result,message,account_tags
-        priority=kwargs['priority']
-        account_id=kwargs['account_id']
-        
-         
-
-        account=Account.objects.filter(pk=account_id).first()
-        if account is not None:
-            account.priority=priority
-            account.save()
-
-        result=SUCCEED
-
-        return result,message,priority
-
     def add_account(self,*args,**kwargs):
         result,message,account=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_account"):
@@ -353,8 +329,8 @@ class AccountRepo():
             return result,message,account
 
         account=Account()
-        if 'name' in kwargs:
-            account.name=kwargs["name"]
+        if 'title' in kwargs:
+            account.title=kwargs["title"]
         if 'parent_id' in kwargs:
             if kwargs["parent_id"]>0:
                 account.parent_id=kwargs["parent_id"]
@@ -413,8 +389,8 @@ class PersonAccountRepo():
         person_account=PersonAccount()
         if 'color' in kwargs:
             person_account.color=kwargs['color']
-        if 'name' in kwargs:
-            person_account.name=kwargs['name']
+        if 'title' in kwargs:
+            person_account.title=kwargs['title']
         if 'code' in kwargs:
             code=kwargs['code']
             person_account.code=code
@@ -430,6 +406,7 @@ class PersonAccountRepo():
         result,message,person_account=person_account.save()
         # result=SUCCEED
         # message="با موفقیت حساب فرد ایجاد شد."
+        
         return result,message,person_account
 
     def person_account(self,*args, **kwargs):
@@ -466,6 +443,56 @@ class PersonAccountRepo():
         return result,message
      
 
+    def add_account_to_person(self,*args,**kwargs):
+        result,message,account,person,action=FAILED,"",None,None,None
+        if not self.request.user.has_perm(APP_NAME+".add_personaccount"):
+            message="دسترسی غیر مجاز"
+            return result,message,account,person,action
+        person_account=PersonAccount()
+        
+        person_account.person_id=kwargs['person_id']
+        person_account.person_category_id=kwargs['person_category_id']
+
+        result,message,person_account=person_account.save()
+        if result==FAILED:
+            person_account=None
+            return result,message,person_account,None,"ALREADY_EXISTED"
+
+        action="ADDED"
+        result=SUCCEED
+        message=f"حساب مالی  {person_account.name} با موفقیت به شخص {person_account.person.full_name} اضافه شد."
+            
+        return result,message,person_account,person_account.person,action
+
+    def remove_account_from_person(self,*args,**kwargs):
+        result,message,person_account_id=FAILED,"",0
+        if not self.request.user.has_perm(APP_NAME+".add_personaccount"):
+            message="دسترسی غیر مجاز"
+            return result,message,person_account_id
+             
+        person_id=kwargs['person_id']
+        person_category_id=kwargs['person_category_id']
+
+        person_account=PersonAccount.objects.filter(person_id=person_id).filter(person_category_id=person_category_id).first()
+        if person_account is None:
+            result=FAILED
+            message="حساب مالی وجود ندارد."
+            return result,message,person_account_id
+
+        person_account_id=person_account.id
+        try:
+            person_account.delete()
+            person_account_=PersonAccount.objects.filter(id=person_account_id).first()
+            if person_account_ is None:
+                result=SUCCEED
+                message=f"حساب مالی  {person_account.name} با موفقیت از شخص {person_account.person.full_name} حذف شد."
+        except:
+            message="حذف نشد. "+"ابتدا رویداد های مالی مرتبط را حذف کنید."+"تا تراز فرد صفر شده و هیچ سندی با شخص در ارتباط نباشد."
+            return result,message,person_account_id
+
+        return result,message,person_account_id
+
+ 
 class FinancialYearRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
@@ -1577,7 +1604,7 @@ class FinancialDocumentLineRepo:
             financial_document_line.financial_event_id=kwargs['financial_event_id']
         if 'financial_document_id' in kwargs:
             financial_document_id=kwargs['financial_document_id']
-            if financial_document_id==0 and 'financial_document_title' in kwargs:
+            if int(financial_document_id)==0 and 'financial_document_title' in kwargs:
                 result,message,financial_document=FinancialDocumentRepo(request=self.request).add_financial_document(title=kwargs['financial_document_title'])
                 financial_document_id=financial_document.id
             financial_document_line.financial_document_id=financial_document_id
@@ -1626,7 +1653,7 @@ class FinancialDocumentLineRepo:
         result,message,financial_document_line=financial_document_line.save()
         if result==FAILED:
             return result,message,financial_document_line
-        financial_document_line.account.normalize_total()
+        # financial_document_line.account.normalize_total()
         result=SUCCEED
         message="با موفقیت اضافه گردید."
          

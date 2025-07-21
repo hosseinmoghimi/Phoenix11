@@ -315,7 +315,7 @@ def default_persons():
         {"code":"100","title":PersonCategoryEnum.PERSONNEL,"account_code":"5010101"},
         {"code":"200","title":PersonCategoryEnum.CONTRACTOR,"account_code":"501010102"},
         {"code":"300","title":PersonCategoryEnum.CUSTOMER,"account_code":"30401"},
-        {"code":"400","title":PersonCategoryEnum.SUPPLIER,"account_code":"703"},
+        {"code":"400","title":PersonCategoryEnum.SUPPLIER,"account_code":"10302"},
         {"code":"500","title":PersonCategoryEnum.EMPLOYER,"account_code":"702"},
         {"code":"600","title":PersonCategoryEnum.COST,"account_code":"701"},
         {"code":"600","title":PersonCategoryEnum.DEFAULT,"account_code":"801"},

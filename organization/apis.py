@@ -45,7 +45,7 @@ class AddOrganizationUnitApi(APIView):
             log=333
             cd=add_organization_unit_form.cleaned_data
             result,message,organization_unit=OrganizationUnitRepo(request=request).add_organization_unit(**cd)
-            if organization_unit is not None:
+            if result==SUCCEED:
                 context['organization_unit']=OrganizationUnitSerializer(organization_unit).data
         context['message']=message
         context['result']=result

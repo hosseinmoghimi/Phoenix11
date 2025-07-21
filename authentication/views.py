@@ -5,10 +5,11 @@ from django.views import View
 from .serializer import PersonSerializer
 from .repo import PersonRepo,FAILED,SUCCEED
 from .forms import *
+from django.http import HttpResponseRedirect
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
-from core.views import CoreContext,ParameterRepo,PictureRepo
+from core.views import CoreContext,ParameterRepo,PictureRepo,leolog
 import json
 
 LAYOUT_PARENT='phoenix/layout.html'
@@ -33,6 +34,8 @@ def AddPersonContext(request,*args, **kwargs):
     context['types2']=(i[0] for i in PersonType2Enum.choices)
 
     return context
+
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -43,7 +46,8 @@ class IndexView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
-# Create your views here.
+
+
 class ChangePersonImageView(View):
     def post(self,request,*args, **kwargs):
         profile_id=0
@@ -62,6 +66,8 @@ class ChangePersonImageView(View):
                 )
         return redirect(reverse(APP_NAME+":person",kwargs={'pk':person_id}))
 
+
+
 class PersonsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -74,6 +80,8 @@ class PersonsView(View):
             context['add_person_form']=AddPersonForm()
             context.update(AddPersonContext(request=request))
         return render(request,TEMPLATE_ROOT+"persons.html",context)
+
+
 class PersonView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -84,7 +92,6 @@ class PersonView(View):
         if request.user.has_perm(APP_NAME+'.change_person'):
             context['change_person_image_form']=ChangePersonImageForm()
         return render(request,TEMPLATE_ROOT+"person.html",context)
-# Create your views here.
 
 class LoginView(View):
     def get(self,request,*args, **kwargs): 
@@ -108,14 +115,34 @@ class LoginView(View):
             build_absolute_uri=build_absolute_uri.replace("http:","https:")
             return redirect(build_absolute_uri)
         return render(request,TEMPLATE_ROOT+"login.html",context)
+     
     def post(self,request,*args, **kwargs):
-        context=getContext(request=request) 
-        return render(request,TEMPLATE_ROOT+"login.html",context)
-# Create your views here.
+        next=SITE_URL
+
+        messages=[]
+        login_form=LoginForm(request.POST)
+        if login_form.is_valid():
+            username=login_form.cleaned_data['username']
+            password=login_form.cleaned_data['password']
+            if 'next' in login_form.cleaned_data:
+                next=login_form.cleaned_data['next']
+            
+            a=ProfileRepo(request=request).login(request=request,username=username,password=password)
+            if a is not None:
+                (request,user)=a
+                return HttpResponseRedirect(next)
+            messages.append("نام کاربری و کلمه عبور صحیح نمی باشد.")
+        return self.get(request=request,messages=messages)
+            
 
 class ChangePasswordView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request) 
            
         return render(request,TEMPLATE_ROOT+"login.html",context)
-# Create your views here.
+
+class LogoutView(View):
+    def get(self,request,*args, **kwargs):
+        ProfileRepo(request=request).logout(request)
+        message='شما با موفقیت از سیستم خارج شدید.'
+        return LoginView().get(request=request,messages=[message])

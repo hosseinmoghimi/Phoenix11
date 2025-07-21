@@ -1,5 +1,6 @@
 from .models import Profile,Person,FAILED,SUCCEED,APP_NAME
-
+from django.contrib.auth import login, logout, authenticate
+from utility.log import leolog
 
  
 class PersonRepo():
@@ -96,9 +97,9 @@ class PersonRepo():
         if 'title' in kwargs:
             person.title=kwargs["title"]
             
-        if 'profile_id' in kwargs:
-            person.profile_id=kwargs["profile_id"]
-            
+        if 'profile_id' in kwargs and kwargs['profile_id']>0:
+            profile=ProfileRepo(request=self.request).profile(profile_id=kwargs['profile_id'])
+            person.profile=profile
         if 'color' in kwargs:
             person.color=kwargs["color"]
         if 'first_name' in kwargs:
@@ -119,84 +120,16 @@ class PersonRepo():
             person.address=kwargs["address"]  
         if 'type' in kwargs:
             person.type=kwargs["type"] 
-        if 'person_category_id' in kwargs and kwargs["person_category_id"] is not None:
-            person_category_id=kwargs["person_category_id"]
-            person_category=PersonCategory.objects.filter(pk=person_category_id).first()
-            if person_category is not None:
-                categories=[person_category.code]
          
-            
-        if 'person_account_categories' in kwargs:
-            person_account_categories=kwargs["person_account_categories"]
-             
- 
+          
         (result,message,person)=person.save()
         if result==FAILED:
             return result,message,person
         
 
-
-        for person_account_category in person_account_categories: 
-            person_category=PersonCategory.objects.filter(pk=person_account_category).first()
-            person_account=PersonAccount(person=person,person_category=person_category)
-            person_account.person=person
-            person_account.person_category=person_category 
-            person_account.save()
-            pass
  
         return result,message,person
 
-    def add_account_to_person(self,*args,**kwargs):
-        result,message,account,person,action=FAILED,"",None,None,None
-        if not self.request.user.has_perm(APP_NAME+".add_personaccount"):
-            message="دسترسی غیر مجاز"
-            return result,message,account,person,action
-            
-        person_account=PersonAccount()
-        
-        person_account.person_id=kwargs['person_id']
-        person_account.person_category_id=kwargs['person_category_id']
-
-        result,message,person_account=person_account.save()
-        if result==FAILED:
-            person_account=None
-            return result,message,person_account,None,"ALREADY_EXISTED"
-
-        action="ADDED"
-        result=SUCCEED
-        message=f"حساب مالی  {person_account.name} با موفقیت به شخص {person_account.person.full_name} اضافه شد."
-            
-        return result,message,person_account,person_account.person,action
-
-    def remove_account_from_person(self,*args,**kwargs):
-        result,message,person_account_id=FAILED,"",0
-        if not self.request.user.has_perm(APP_NAME+".add_personaccount"):
-            message="دسترسی غیر مجاز"
-            return result,message,person_account_id
-             
-        person_id=kwargs['person_id']
-        person_category_id=kwargs['person_category_id']
-
-        person_account=PersonAccount.objects.filter(person_id=person_id).filter(person_category_id=person_category_id).first()
-        if person_account is None:
-            result=FAILED
-            message="حساب مالی وجود ندارد."
-            return result,message,person_account_id
-
-        person_account_id=person_account.id
-        try:
-            person_account.delete()
-            person_account_=PersonAccount.objects.filter(id=person_account_id).first()
-            if person_account_ is None:
-                result=SUCCEED
-                message=f"حساب مالی  {person_account.name} با موفقیت از شخص {person_account.person.full_name} حذف شد."
-        except:
-            message="حذف نشد. "+"ابتدا رویداد های مالی مرتبط را حذف کنید."+"تا تراز فرد صفر شده و هیچ سندی با شخص در ارتباط نباشد."
-            return result,message,person_account_id
-
-        return result,message,person_account_id
-
- 
 
 
 
@@ -207,10 +140,35 @@ class ProfileRepo():
         self.objects=Profile.objects
         if self.request.user.is_authenticated:
             self.me=Profile.objects.filter(user=request.user).first()
+    
     def logout(self,*args, **kwargs):
-        pass        
+        if 'request' in kwargs:
+            logout(request=kwargs['request'])
+        else:
+            logout(request=self.request)
     def login(self,*args, **kwargs):
-        pass        
+        request=self.request
+        from log.repo import LogRepo
+        logout(request=request)
+        if 'user' in kwargs:
+            user=kwargs['user']
+            if user is not None:
+                login(request,user)
+                if user.is_authenticated:
+                    return (request,user)
+        if 'username' in kwargs and 'password' in kwargs:
+            user=authenticate(request=request,username=kwargs['username'],password=kwargs['password'])
+            if user is not None:
+                login(request,user)
+                if user.is_authenticated:
+                    profile=Profile.objects.filter(user=user).first()
+                    description='لاگین با موفقیت انجام شد.'
+                    title='لاگین'
+                    LogRepo(request=self.request).add_log(title=title,profile=profile,app_name=APP_NAME,description=description)
+                    return (request,user)
+        LogRepo(request=self.request).add_log(title="try to login",app_name=APP_NAME,description="try to login username:"+kwargs['username']+" , password : "+kwargs['password'])
+    
+            
     def profile(self,*args, **kwargs):
         if "profile_id" in kwargs and kwargs["profile_id"] is not None:
             return self.objects.filter(pk=kwargs['profile_id']).first()

@@ -3,6 +3,7 @@ from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_UR
 from authentication.repo import ProfileRepo
 from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
+from .enums import *
 from .forms import *
 from .repo import PageRepo
 from .apps import APP_NAME
@@ -51,9 +52,8 @@ def CoreContext(request,*args, **kwargs):
     context['current_time']=current_time
 
     context['phoenix_apps']=phoenix_apps
-    
-    # parameter_repo=ParameterRepo(request=request,app_name=app_name)
-    # context['farsi_font_name']=parameter_repo.parameter(name="نام فونت فارسی",default="Vazir").value
+    parameter_repo=ParameterRepo(request=request,app_name=app_name)
+    context['farsi_font_name']=parameter_repo.parameter(name=PARAMETER_NAME_ENUM.FARSI_FONT,default="Tanha").value
     # app_has_background=parameter_repo.parameter(name=ParameterNameEnum.HAS_APP_BACKGROUND,default=False).boolean_value
     # app_background_image=PictureRepo(request=request,app_name=app_name).picture(name=PictureNameEnum.APP_BACKGROUND_IMAGE)
     # if app_has_background:
@@ -78,14 +78,16 @@ def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
     me_profile=ProfileRepo(request=request).me
-    from attachments.views import PageImagesContext,PageRelatedContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
+    from attachments.views import PageTagsContext,PageLocationsContext,PageImagesContext,PageRelatedContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
 
     context.update(PageLikesContext(request=request,page=page,profile=me_profile))
     context.update(PageCommentsContext(request=request,page=page,profile=me_profile))
     context.update(PageLinksContext(request=request,page=page,profile=me_profile))
     context.update(PageDownloadsContext(request=request,page=page,profile=me_profile))
     context.update(PageImagesContext(request=request,page=page,profile=me_profile))
-    context.update(PageRelatedContext(request=request,page=page))
+    context.update(PageRelatedContext(request=request,page=page,profile=me_profile))
+    context.update(PageLocationsContext(request=request,page=page,profile=me_profile))
+    context.update(PageTagsContext(request=request,page=page,profile=me_profile))
     return context
 
 
@@ -148,9 +150,12 @@ class IndexView(View):
 # Create your views here.
 
 class MessageView(View):
-    def __init__(self,*args,**kwargs): 
+    def __init__(self,*args,**kwargs):
+        self.links =[]
         self.message ={}
         self.back_url =""
+        if 'links' in kwargs:
+            self.links=kwargs['links']
         if 'title' in kwargs:
             self.message['title']=kwargs['title']
         if 'body' in kwargs:
@@ -165,7 +170,7 @@ class MessageView(View):
 
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        back_url = request.META.get('HTTP_REFERER')
+        self.back_url = request.META.get('HTTP_REFERER') 
         if 'title' in kwargs:
             self.message['title']=kwargs['title']
         if 'body' in kwargs:
@@ -179,6 +184,7 @@ class MessageView(View):
         
         context['message']=self.message     
         context['back_url']=self.back_url     
+        context['links']=self.links   
         return render(request,TEMPLATE_ROOT+"message.html",context)
 # Create your views here.
     def response(self,request,*args,**kwargs):

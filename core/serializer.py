@@ -11,5 +11,5 @@ class PageSerializer(serializers.ModelSerializer):
 class PageBriefSerializer(serializers.ModelSerializer):
     class Meta:
         model=Page
-        fields=['id','title', 'thumbnail','get_absolute_url' ]
+        fields=['id','title','app_name','class_title','get_edit_url','get_delete_url', 'thumbnail','get_absolute_url' ]
  

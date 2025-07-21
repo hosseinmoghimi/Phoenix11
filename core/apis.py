@@ -9,6 +9,26 @@ from utility.constants import SUCCEED, FAILED
 from utility.utils import str_to_html
 from core.views import PageBriefSerializer
   
+class SetPagePriorityApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            set_page_priority_form=SetPagePriorityForm(request.POST)
+            if set_page_priority_form.is_valid():
+                log=333
+                cd=set_page_priority_form.cleaned_data
+                priority,message,result=PageRepo(request=request).set_priority(**cd)
+                if priority is not None:
+                    context['priority']=priority
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
 
 
     

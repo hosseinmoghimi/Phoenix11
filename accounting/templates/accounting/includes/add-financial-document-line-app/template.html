@@ -52,7 +52,7 @@
                 />
                 {% endif %}
 
-                <div class="my-2" v-if="account.name">
+                <div class="my-2" v-if="account.title">
                   {% include "accounting/includes/account-app/media.html" %}
                 </div>
                 {% if not account %}
@@ -110,7 +110,8 @@
                   @input="select_financial_document_by_id()"
                   type="number"
                 />
-                <input type="text" v-model="financial_document.title" class="form-control" placeholder="نام سند جدید">
+                  
+                <input type="text"  v-if="financial_document.id==0" v-model="financial_document.title" class="form-control" placeholder="نام سند جدید">
                 {% else %} {% endif %}
 
                 <div class="my-2">

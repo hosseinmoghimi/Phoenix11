@@ -29,8 +29,21 @@ class Page(models.Model,LinkHelper,ImageHelper):
     thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
     header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'ImageBase/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
     color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY,max_length=50)
+    locations=models.ManyToManyField("attachments.location", blank=True,verbose_name=_("locations"))
     
-    
+       
+    def set_priority(self,request,*args, **kwargs):
+        result,message,priority=FAILED,"",100
+        if not request.user.has_perm(APP_NAME+".change_page"):
+            return result,message,priority
+        priority=kwargs['priority']
+        page_id=kwargs['page_id']
+        page=Page.objects.filter(pk=page_id).first()
+        if page is not None:
+            page.priority=priority
+            page.save()
+        result=SUCCEED
+        return result,message,priority
 
     def save(self):
         if self.class_name is None or self.class_name=="":

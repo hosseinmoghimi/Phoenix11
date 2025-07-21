@@ -1,0 +1,29 @@
+{% extends "attachments/layout.html" %}
+{% block content %}
+<h4 class="text-center my-3">
+    <small class="text-muted">
+        تگ
+    </small>
+    
+</h4>
+
+
+<h4 class="text-center my-3">
+ 
+    {{tag.title}}
+</h4>
+
+
+<div class="row">
+    <div class="col-md-12">
+        {% include "core/includes/pages-app/template.html" %}
+    </div>
+</div>
+{% endblock content %}
+
+
+
+{% block script %}
+{% include "core/includes/pages-app/script.html" %}
+
+{% endblock script %}

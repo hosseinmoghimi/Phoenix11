@@ -21,12 +21,16 @@ urlpatterns = [
     path("financial-years/",login_required(views.FinancialYearsView.as_view()),name="financial_years"),
     path("add-financial-year/",login_required(apis.AddFinancialYearApi.as_view()),name="add_financial_year"),
     
+    path('person-category/<int:pk>/',login_required(views.PersonCategoryView.as_view()),name="personcategory"),
+    path('person-categories/',login_required(views.PersonCategoriesView.as_view()),name="person_categories"),
+
     path('person-accounts/',login_required(views.PersonAccountsView.as_view()),name="person_accounts"),
     path('person-account/<int:pk>/',login_required(views.PersonAccountView.as_view()),name="personaccount"),
     path("add-person-account/",login_required(apis.AddPersonAccountApi.as_view()),name="add_person_account"),
     path("select-person-account/",login_required(apis.SelectPersonAccountApi.as_view()),name="select_person_account"),
     
     
+    path("get-invoice-line-item-units/",login_required(apis.GetInvoiceLineItemUnitsApi.as_view()),name="get_invoice_line_item_units"),
     
     
     
@@ -37,10 +41,9 @@ urlpatterns = [
     path("add-account/",login_required(apis.AddAccountApi.as_view()),name="add_account"),
     path("select-account/",login_required(apis.SelectAccountApi.as_view()),name="select_account"),
     path('selection/',login_required(views.SelectionView.as_view()),name="selection"),
-    path("set-account-priority/",login_required(apis.SetAccountPriorityApi.as_view()),name="set_account_priority"),
     path("set_account_parent/",login_required(apis.SetAccountParentApi.as_view()),name="set_account_parent"),
 
-    path('financialdocuments/',login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
+    path('financial-documents/',login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
     path('financial-document/<int:pk>/',login_required(views.FinancialDocumentView.as_view()),name="financialdocument"),
     path("select-financial-document/",login_required(apis.SelectFinancialDocumentApi.as_view()),name="select_financial_document"),
     
@@ -94,6 +97,8 @@ urlpatterns = [
     path("select-financial-event/",login_required(apis.SelectFinancialEventApi.as_view()),name="select_financial_event"),
     
     
+    path("set_account_parent/",login_required(apis.SetAccountParentApi.as_view()),name="set_account_parent"),
+
 
 
    

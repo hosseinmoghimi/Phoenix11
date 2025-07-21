@@ -57,6 +57,24 @@ class PageRepo():
         return page
 
     
+    def set_priority(self,*args, **kwargs):
+        result,message,priority=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".change_page"):
+            return result,message,priority
+        priority=kwargs['priority']
+        page_id=kwargs['page_id']
+        
+         
+
+        page=Page.objects.filter(pk=page_id).first()
+        if page is not None:
+            page.priority=priority
+            page.save()
+
+        result=SUCCEED
+
+        return result,message,priority
+
     
     def add_related_page(self,*args, **kwargs):
         can_write=False

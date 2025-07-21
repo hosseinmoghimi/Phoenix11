@@ -53,14 +53,16 @@
                             </td>
                             <td>
 
+                                <a href="{{log.profile.get_absolute_url}}">
                                 <div class="media">
-                                    <a href="{{log.profile.get_absolute_url}}">
-                                        <img src="{{me_profile.image}}" class="roounded-circle" width="32" alt="">
-                                    </a>
-                                    <div class="media-body">
-                                        <a href="{{log.profile.get_absolute_url}}">{{log.profile.name}}</a>
+                                        <img src="{{me_profile.image}}" class="rounded-circle" width="48" alt="">
+                                    <div class="media-body mr-2">
+                                        <h6>
+                                            {{log.profile.full_name}}
+                                        </h6>
                                     </div>
                                 </div>
+                             </a>
                             </td>
                             <td>
                                 {{log.date_added|to_persian_datetime|safe}}
