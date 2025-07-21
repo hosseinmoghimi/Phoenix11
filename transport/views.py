@@ -16,14 +16,13 @@ WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
  
-        
+
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
     context[WIDE_LAYOUT]=False 
  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
-
 
  
 class IndexView(View):
