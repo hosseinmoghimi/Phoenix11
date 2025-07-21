@@ -50,9 +50,16 @@ urlpatterns = [
     path('financial-document-line/<int:pk>/',login_required(views.FinancialDocumentLineView.as_view()),name="financialdocumentline"),
     path('add-financial-document-line/',login_required(apis.AddFinancialDocumentLineApi.as_view()),name="add_financial_document_line"),
     
+    path('brands/',login_required(views.BrandsView.as_view()),name="brands"),
+    path('brand/<int:pk>/',login_required(views.BrandView.as_view()),name="brand"),
+    path("add-brand/",login_required(apis.AddBrandApi.as_view()),name="add_brand"),
+
+    
     path('products/',login_required(views.ProductsView.as_view()),name="products"),
     path('product/<int:pk>/',login_required(views.ProductView.as_view()),name="product"),
     path("add-product/",login_required(apis.AddProductApi.as_view()),name="add_product"),
+
+
     path('export-products-to-excel/',login_required(views.ExportProductsToExcelView.as_view()),name="export_products_to_excel"),
     path("import-products-from-excel/",login_required(apis.ImportProductsFromExcelApi.as_view()),name="import_products_from_excel"),
     path('add-product-to-category/',login_required(apis.AddProductToCategoryApi.as_view()),name="add_product_to_category"),

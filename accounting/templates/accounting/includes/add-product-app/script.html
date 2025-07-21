@@ -2,6 +2,8 @@
     let add_product_app = new Vue({
         el: "#add-product-app",
         data: {
+            brand_id:0,
+            model:'',
             unit_price: 0,
             unit_name: "عدد",
             title: "",
@@ -17,6 +19,8 @@
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     title: this.title,
                     category_id: this.category_id,
+                    brand_id: this.brand_id,
+                    model: this.model,
                     unit_name: this.unit_name,
                     coef: this.coef,
                     barcode: this.barcode,

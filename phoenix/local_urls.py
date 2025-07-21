@@ -2,11 +2,14 @@ from django.contrib import admin
 from django.urls import path,include,re_path
 from django.views.static import serve
 from phoenix.server_settings import QRCODE_ROOT,STATIC_ROOT,MEDIA_ROOT
+from authentication.views import LoginView
+
 urlpatterns = [ 
     path('', include('core.urls')),
     path('core/', include('core.urls')),
     path('admin/', admin.site.urls),
     path('log/', include('log.urls')),
+    path('/accounts/login/', LoginView.as_view(),name='login'),
     path('authentication/', include('authentication.urls')),
     path('accounting/', include('accounting.urls')),
     path('market/', include('market.urls')),

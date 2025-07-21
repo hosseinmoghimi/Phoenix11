@@ -28,6 +28,26 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="">برند</label>
+                                <select class="form-control" v-model="brand_id">
+                                    {% for brand in brands_for_add_product_app %}
+                                    <option value="{{brand.id}}">{{brand.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="">مدل</label>
+                                <input type="text" class="form-control" v-model="model">
+                                 
+                            </div>
+                        </div>
+
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">نام کالا</label>

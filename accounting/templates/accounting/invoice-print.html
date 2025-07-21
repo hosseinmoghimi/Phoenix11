@@ -6,6 +6,9 @@
     <div class="card">
       {% load to_price %}
       <div class="card-body">
+        <div class="text-center">
+          <img src="{{invoice.bestankar.logo}}" class="mb-2" width="96" alt="">
+        </div>
         <h5 class="text-center">{{invoice.title}}</h5>
         <div class="text-center">
 
@@ -59,9 +62,9 @@
 
 
         <p class="text-center">
-          فروشنده 
+          فروشنده
           <br>
-           {{invoice.bestankar.title}}
+          {{invoice.bestankar.title}}
         </p>
 
 
@@ -77,7 +80,7 @@
 
 
         <p class="text-center">
-          خریدار 
+          خریدار
           <br>
           {{invoice.bedehkar.title}}
         </p>
@@ -89,7 +92,21 @@
       </div>
     </div>
   </div>
-  
+  <div class="col-12">
+    <div class="card">
+
+      <div class="card-body">
+        توضیحات:
+        <br>
+        کلیه اقلام فاکتور سالم بوده ، تست شده و تحویل خریدار گردید.
+        <br>
+        تا تسویه کامل مبلغ فاکتور اجناس متعلق به فروشنده می باشد.
+        {% if invoice.description %}
+        {{invoice.description|safe}}
+        {% endif %}
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock content %}
 {% block script %}

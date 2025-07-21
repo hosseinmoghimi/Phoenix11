@@ -1,12 +1,20 @@
 from rest_framework import serializers
 from .models import Category,InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
 from .models import FinancialDocument,ProductSpecification,FinancialYear,PersonAccount
+from .models import Brand
 from authentication.serializer import PersonSerializer
 
 class AccountSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
         fields = ['id','title','name','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+
+
+class BrandSerializer(serializers.ModelSerializer):
+       class Meta:
+        model = Brand
+        fields = ['id','name', 'get_absolute_url','get_edit_url','get_delete_url']
+
 
 class InvoiceSerializer(serializers.ModelSerializer):
        bedehkar=AccountSerializer()
@@ -38,7 +46,7 @@ class FinancialEventSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
        class Meta:
         model = Product
-        fields = ['id','title','thumbnail','unit_name','unit_price','barcode',  'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','model','thumbnail','unit_name','unit_price','barcode',  'get_absolute_url','get_edit_url','get_delete_url']
         # fields = ['id','name','get_market_absolute_url','thumbnail','barcode','unit_price', 'unit_name',  'get_absolute_url','get_edit_url','get_delete_url']
 
 
