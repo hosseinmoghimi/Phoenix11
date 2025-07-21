@@ -827,6 +827,9 @@ class ProductRepo():
             
         if 'model' in kwargs:
             product.model=kwargs["model"]
+            
+        if 'thumbnail_origin' in kwargs:
+            product.thumbnail_origin=kwargs["thumbnail_origin"]
          
         if 'barcode' in kwargs and kwargs["barcode"] is not None and not kwargs["barcode"]=="":
             product.barcode=kwargs["barcode"]
@@ -883,6 +886,12 @@ class ProductRepo():
             product['unit_name']=ws['D'+str(i)].value
             product['unit_price']=ws['E'+str(i)].value
             product['thumbnail_origin']=ws['F'+str(i)].value
+            leolog(id=product['id'],
+                   title=product['title'],
+                   barcode=product['barcode'],
+                   unit_name=product['unit_name'],
+                   unit_price=product['unit_price'],
+                   thumbnail_origin=product['thumbnail_origin']) 
             # product['thumbnail_origin']=ws['F'+str(i)].value
             if product['title'] is not None and not product['title']=="":
                 products_to_import.append(product) 
@@ -899,7 +908,7 @@ class ProductRepo():
                 modified+=1
             else:
                 try:
-                    result,message,new_product=self.add_product(title=product["title"],barcode=product["barcode"],unit_name=product["unit_name"],unit_price=product["unit_price"] ,coef=1)
+                    result,message,new_product=self.add_product(title=product["title"],barcode=product["barcode"],unit_name=product["unit_name"],unit_price=product["unit_price"],thumbnail_origin=product["thumbnail_origin"] ,coef=1)
                     products.append(new_product)
                 except:
                     pass

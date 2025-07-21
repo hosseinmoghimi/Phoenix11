@@ -389,6 +389,8 @@ class SettingsView(View):
         context=getContext(request=request)
         # accounts =AccountRepo(request=request).roots(*args, **kwargs)
         # context['accounts']=accounts
+        if request.user.has_perm(APP_NAME+'.view_product'):
+            context['import_from_excel_form']=ImportFromExcelForm()
         return render(request,TEMPLATE_ROOT+"settings.html",context) 
 
 
@@ -755,6 +757,71 @@ class ServicesView(View):
         if request.user.has_perm(APP_NAME+'.add_service'):
             context.update(AddServiceContext(request=request))
         return render(request,TEMPLATE_ROOT+"services.html",context)
+
+
+class ExportToExcelView(View):
+    def get(self,request,*args, **kwargs):
+        now=PersianCalendar().date
+        
+        headers=["id","title","barcode","unit_name","unit_price","thumbnail"]
+        
+        products=ProductRepo(request=request).list()
+         
+            
+        
+        lines=[]
+        for i,product in enumerate(products,start=1):
+            line={
+                'row':i,
+                'title':product.title,
+                'barcode':product.barcode,      
+                'unit_name':product.unit_name,      
+                'unit_price':product.unit_price,       
+                'thumbnail':str(product.thumbnail_origin),       
+            }
+            lines.append(line)
+        headers=['ردیف',
+                 'عنوان',
+                 'بارکد', 
+                 'واحد',
+                 'فی',
+                 'تصویر',
+        ]
+        report_work_book=ReportWorkBook()
+        report_work_book=ReportWorkBook(origin_file_name=f'products.xlsx')
+        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
+        # sheet1=ReportSheet(
+        #     data=lines,
+        #     start_row=3,
+        #     start_col=1,
+        #     table_has_header=False,
+        #     table_headers=None,
+        #     style=style,
+        #     sheet_name='links',
+            
+        # )
+        
+        start_row=EXCEL_PRODUCTS_DATA_START_ROW
+        if start_row>2:
+            start_row-=1
+        report_work_book.add_sheet(
+            data=lines,
+            start_row=start_row,
+            table_has_header=False,
+            table_headers=headers,
+            style=style,
+            title='ttttiiittttllleee',
+            sheet_name='products',
+        )
+        date=PersianCalendar().from_gregorian(now)
+        file_name=f"""Phoenix Products {date.replace('/','').replace(':','')}.xlsx"""
+        
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
+        response["Content-disposition"]=f"attachment; filename={file_name}"
+        report_work_book.work_book.save(response)
+        report_work_book.work_book.close()
+        return response
 
 
 class ExportProductsToExcelView(View):   
