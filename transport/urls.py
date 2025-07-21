@@ -11,4 +11,11 @@ urlpatterns = [
     path('add-vehicle/ ',login_required(apis.AddVehicleApi.as_view()),name="add_vehicle"),
 
 
+    
+    path('maintenance-invoices/',login_required(views.MaintenanceInvoicesView.as_view()),name="maintenance_invoices"),
+    path('maintenance-invoice/<int:pk>/',login_required(views.MaintenanceInvoiceView.as_view()),name="maintenance_invoice"),
+    path('add-maintenance-invoice/ ',login_required(apis.AddMaintenanceInvoiceApi.as_view()),name="add_maintenance_invoice"),
+
+
+
 ]

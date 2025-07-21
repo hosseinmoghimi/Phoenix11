@@ -539,6 +539,7 @@ class TreeListView(View):
         context[WIDE_LAYOUT]=True
         return render(request,TEMPLATE_ROOT+"tree-list.html",context) 
 
+
 class FinancialDocumentView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -1013,8 +1014,6 @@ class CategoriesView(View):
         return CategoryView().get(request=request,pk=0)
       
 
-
-
 class PersonAccountsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -1046,6 +1045,7 @@ class PersonAccountView(View):
          
         return render(request,TEMPLATE_ROOT+"person-account.html",context)
 
+
 class PersonCategoryView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -1054,15 +1054,12 @@ class PersonCategoryView(View):
         return render(request,TEMPLATE_ROOT+"person-category.html",context)
 
 
-
 class PersonCategoriesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         person_category=PersonAccountRepo(request=request).person_category(*args, **kwargs)
         context['person_category']=person_category
         return render(request,TEMPLATE_ROOT+"person-categories.html",context)
-
-
 
     
 class BrandView(View):

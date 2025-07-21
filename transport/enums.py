@@ -9,6 +9,8 @@ class TripStatusEnum(TextChoices):
     APPROVED="تأیید شده",_("تأیید شده")
     CANCELED="کنسل شده",_("کنسل شده")
     DELIVERED="تحویل شده",_("تحویل شده")
+
+
 class MaintenanceEnum(TextChoices):
     WASH="شستشو",_("شستشو") 
     FUEL='سوخت',_('سوخت')
@@ -19,13 +21,15 @@ class MaintenanceEnum(TextChoices):
     BODY ='بدنه',_('بدنه')
     SUSPENTION ='جلوبندی',_('جلوبندی')
     NEW_OIL='تعویض روغن',_('تعویض روغن') 
+
+
 class WorkEventEnum(TextChoices):
     FLAT_TIRE='لاستیک پنچر',_('لاستیک پنچر')
     BROKEN_GLASS="شیشه شکسته",_("شیشه شکسته")
     CRASH1="خسارت مالی",_("خسارت مالی")
     CRASH2="خسارت جانی",_("خسارت جانی")
-    # aaaa=aaaa,_("aaaa")
-    # aaaa=aaaa,_("aaaa")
+    
+
 class VehicleBrandEnum(TextChoices):
     TOYOTA='تویوتا',_('تویوتا')
     PEUGEOT='پژو',_('پژو')
@@ -44,6 +48,7 @@ class VehicleBrandEnum(TextChoices):
     IRAN_KHODRO='ایران خودرو',_('ایران خودرو')
     XCMG='XCMG',_('XCMG')
     
+
 class HazineEnum(TextChoices):
     SOBHANE='صبحانه',_('صبحانه')
     NAHAR='نهار',_('نهار')
@@ -56,6 +61,7 @@ class HazineEnum(TextChoices):
     INTERNET='شارژ اینترنت',_('شارژ اینترنت')
     GENERAL="کل صورت خرجکرد",_("کل صورت خرجکرد")
 
+
 class VehicleColorEnum(TextChoices):
     SEFID='سفید',_('سفید')
     SIAH='سیاه',_('سیاه')
@@ -63,6 +69,7 @@ class VehicleColorEnum(TextChoices):
     DOLPHINI='دلفینی',_('دلفینی')
     BEZH='بژ',_('بژ')
     GHERMEZ='قرمز',_('قرمز')
+
 
 class VehicleTypeEnum(TextChoices):
     MOTORCYCLE='موتورسیکلت',_('موتورسیکلت')

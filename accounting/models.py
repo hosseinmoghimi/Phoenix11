@@ -813,7 +813,7 @@ class BankAccount(Account,LinkHelper):
  
 
 class Asset(CorePage):
-
+    owner=models.ForeignKey("authentication.person", verbose_name=_("owner"), on_delete=models.PROTECT)
     def __str__(self):
         pass
 
@@ -829,4 +829,5 @@ class Asset(CorePage):
         super(Asset,self).save()
         result,message,asset=SUCCEED,"دارایی با موفقیت افزوده شد.",self
         return result,message,asset
-  
+    
+    
