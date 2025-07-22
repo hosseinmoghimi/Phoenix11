@@ -57,6 +57,18 @@ class Page(models.Model,LinkHelper,ImageHelper):
 
      
 
+    def get_qrcode_url(self):
+        if self.pk is None:
+            super(Page,self).save()
+        import os
+        file_path = QRCODE_ROOT
+        file_name=self.class_name+str(self.pk)+".svg"
+        file_address=os.path.join(QRCODE_ROOT,file_name)
+        if not os.path.exists(file_address):
+            content=FULL_SITE_URL[0:-1]+self.get_absolute_url()
+            generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
+        return f"{QRCODE_URL}{file_name}"
+
     def class_title(self):
         return class_title(app_name=self.app_name,class_name=self.class_name)
 
