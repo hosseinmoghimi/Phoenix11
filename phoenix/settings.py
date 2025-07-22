@@ -3,14 +3,15 @@ from pathlib import Path
 from . import server_settings 
 BASE_DIR = Path(__file__).resolve().parent.parent 
 
-
 SECRET_KEY=server_settings.SECRET_KEY
 DEBUG=server_settings.DEBUG
 ALLOWED_HOSTS=server_settings.ALLOWED_HOSTS
 INSTALLED_APPS=server_settings.INSTALLED_APPS
 SECRET_KEY=server_settings.SECRET_KEY
-
-
+PUSHER_IS_ENABLE=server_settings.PUSHER_IS_ENABLE
+DB_PREFIX_NAME=server_settings.DB_PREFIX_NAME
+TEMPORARY_ROOT=server_settings.TEMPORARY_ROOT
+DB_FILE_PATH=server_settings.DB_FILE_PATH
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
