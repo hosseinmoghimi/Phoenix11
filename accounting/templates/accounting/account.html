@@ -32,10 +32,17 @@
     <div class="col-md-4">
         {% include "attachments/includes/downloads-app/template.html" %}
     </div>
+    <div class="col-md-4">
+        {% include "attachments/includes/tags-app/template.html" %}
+    </div>
     <div class="col-md-12">
         {% include "attachments/includes/images-app/template.html" %}
     </div>
 
+    <div class="col-md-12">
+        {% include "accounting/includes/financial-events-app/template.html" %}
+
+    </div>
     {% if add_financial_document_line_form %}
      
     <div class="col-md-12">
@@ -53,14 +60,6 @@
 
 {% block script %}
 
-{% include "core/includes/page-app/script.html" %}
 {% include "accounting/includes/account-app/script.html" %}
-{% include "accounting/includes/accounts-app/script.html" %}
-{% include "accounting/includes/add-account-app/script.html" %}
-{% include "accounting/includes/financial-document-lines-app/script.html" %}
-
-{% if add_financial_document_line_form %}
-{% include "accounting/includes/add-financial-document-line-app/script.html" %}
-{% endif %}
  
 {% endblock script %}
