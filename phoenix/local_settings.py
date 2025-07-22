@@ -1,7 +1,4 @@
 
-
-
-
 from pathlib import Path
 from . import server_settings
 import os
@@ -9,14 +6,15 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
  
-
+DB_PREFIX_NAME='dikoo24ir'
+PUSHER_IS_ENABLE=False
 
 CURRENCY='ریال'
 DEBUG = False
 DEBUG = True
 VUE_VERSION_3=False
 VUE_VERSION_2=True
-DATABASE_NAME='phoenix11_20250712'
+DATABASE_NAME='phoenix11_20250722'
 
 ALLOWED_HOSTS = ['*']
 
@@ -44,14 +42,16 @@ INSTALLED_APPS = [
     'attachments',
     'projectmanager',
     'log',
-    'transport',
     'chef',
     'school',
     'warehouse',
+    'transport',
 ]
  
 
-DB_FULL_NAME=os.path.join(BASE_DIR,'db_'+DATABASE_NAME+'.sqlite3')
+DB_FILE_NAME=DB_PREFIX_NAME+'__'+DATABASE_NAME 
+DB_FILE_PATH=os.path.join(BASE_DIR,'db_'+DB_FILE_NAME+'.sqlite3')
+ 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
