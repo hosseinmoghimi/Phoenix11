@@ -63,7 +63,9 @@ class Account(CorePage,LinkHelper):
          
     @property
     def parent_account(self):
-        return Account.objects.filter(id=self.parent.id).first()
+        if self.parent is not None:
+            return Account.objects.filter(id=self.parent.id).first()
+        return None
     def get_breadcrumb_link(self):
         if self.parent is None:
             return  self.get_link() 

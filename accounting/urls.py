@@ -61,7 +61,7 @@ urlpatterns = [
 
 
     path('export-to-excel/',login_required(views.ExportToExcelView.as_view()),name="export_to_excel"),
-    path("import-from-excel/",login_required(apis.ImportProductsFromExcelApi.as_view()),name="import_from_excel"),
+    path("import-from-excel/",login_required(apis.ImportFromExcelApi.as_view()),name="import_from_excel"),
     
     path('export-products-to-excel/',login_required(views.ExportProductsToExcelView.as_view()),name="export_products_to_excel"),
     path("import-products-from-excel/",login_required(apis.ImportProductsFromExcelApi.as_view()),name="import_products_from_excel"),

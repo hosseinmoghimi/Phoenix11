@@ -422,7 +422,7 @@ class InvoiceToExcelView(View):
                  'فی',
                  'مبلغ'
         ]
-        report_work_book=ReportWorkBook()
+        
         report_work_book=ReportWorkBook(origin_file_name=f'Invoice.xlsx')
         style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
         # sheet1=ReportSheet(
@@ -759,9 +759,8 @@ class ServicesView(View):
         return render(request,TEMPLATE_ROOT+"services.html",context)
 
 
-class ExportToExcelView(View):
+class ExportProductsToExcelView(View):
     def get(self,request,*args, **kwargs):
-        now=PersianCalendar().date
         
         headers=["id","title","barcode","unit_name","unit_price","thumbnail"]
         
@@ -786,8 +785,7 @@ class ExportToExcelView(View):
                  'واحد',
                  'فی',
                  'تصویر',
-        ]
-        report_work_book=ReportWorkBook()
+        ] 
         report_work_book=ReportWorkBook(origin_file_name=f'products.xlsx')
         style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
         # sheet1=ReportSheet(
@@ -810,9 +808,10 @@ class ExportToExcelView(View):
             table_has_header=False,
             table_headers=headers,
             style=style,
-            title='ttttiiittttllleee',
+            title='products',
             sheet_name='products',
         )
+        now=PersianCalendar().date
         date=PersianCalendar().from_gregorian(now)
         file_name=f"""Phoenix Products {date.replace('/','').replace(':','')}.xlsx"""
         
@@ -824,61 +823,141 @@ class ExportToExcelView(View):
         return response
 
 
-class ExportProductsToExcelView(View):   
+class ExportToExcelView(View):   
     def get(self,request,*args, **kwargs):
         now=PersianCalendar().date
-        
-        data=[]  
-        headers=["id","title","barcode","unit_name","unit_price","thumbnail"]
-        
-        products=ProductRepo(request=request).list()
-         
-            
-        
         date=PersianCalendar().from_gregorian(now)
-        lines=[]
-        for i,product in enumerate(products,start=1):
-            line={
-                'row':i,
-                'title':product.title,
-                'barcode':product.barcode,      
-                'unit_name':product.unit_name,      
-                'unit_price':product.unit_price,       
-            }
-            lines.append(line)
-        headers=['ردیف',
-                 'عنوان',
-                 'بارکد', 
-                 'واحد',
-                 'فی',
-        ]
-        report_work_book=ReportWorkBook()
-        report_work_book=ReportWorkBook(origin_file_name=f'products.xlsx')
-        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
-        # sheet1=ReportSheet(
-        #     data=lines,
-        #     start_row=3,
-        #     start_col=1,
-        #     table_has_header=False,
-        #     table_headers=None,
-        #     style=style,
-        #     sheet_name='links',
-            
-        # )
+
         
-        start_row=EXCEL_PRODUCTS_DATA_START_ROW
-        if start_row>2:
-            start_row-=1
-        report_work_book.add_sheet(
-            data=lines,
-            start_row=start_row,
-            table_has_header=False,
-            table_headers=headers,
-            style=style,
-            sheet_name='products',
-        )
+        report_work_book=ReportWorkBook(origin_file_name=f'accounting.xlsx')
+        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
+        
+        EXPORT_PRODUCTS=True
+        EXPORT_SERVICES=True
+        EXPORT_ACCOUNTS=True
+        if EXPORT_PRODUCTS:
             
-        file_name=f"""Phoenix Products {date.replace('/','').replace(':','')}.xlsx"""
+            
+            products=ProductRepo(request=request).list()
+            
+                
+            lines=[]
+            for i,product in enumerate(products,start=1):
+                line={
+                    'row':i,
+                    'id':product.id,
+                    'title':product.title,
+                    'barcode':product.barcode,      
+                    'unit_name':product.unit_name,      
+                    'unit_price':product.unit_price,       
+                    'thumbnail_origin':str(product.thumbnail_origin),       
+                }
+                lines.append(line)
+            headers=['ردیف',
+                    'شناسه',
+                    'عنوان',
+                    'بارکد', 
+                    'واحد',
+                    'فی',
+                    'تصویر',
+            ]
+          
+            
+            start_row=EXCEL_PRODUCTS_DATA_START_ROW
+            if start_row>2:
+                start_row-=1
+            report_work_book.add_sheet(
+                data=lines,
+                start_row=start_row,
+                table_has_header=False,
+                table_headers=headers,
+                style=style,
+                sheet_name='products',
+                title='products',
+            )
+
+            
+        if EXPORT_SERVICES:
+            
+            
+            services=ServiceRepo(request=request).list()
+            
+                
+            lines=[]
+            for i,service in enumerate(services,start=1):
+                line={
+                    'row':i,
+                    'id':service.id,
+                    'title':service.title,
+                    'unit_name':service.unit_name,      
+                    'unit_price':service.unit_price,       
+                    'thumbnail_origin':str(service.thumbnail_origin),       
+                }
+                lines.append(line)
+            headers=['ردیف',
+                    'شناسه',
+                    'عنوان',
+                    'واحد',
+                    'فی',
+                    'تصویر',
+            ]
+         
+            start_row=EXCEL_SERVICES_DATA_START_ROW
+            if start_row>2:
+                start_row-=1
+            report_work_book.add_sheet(
+                data=lines,
+                start_row=start_row,
+                table_has_header=False,
+                table_headers=headers,
+                style=style,
+                sheet_name='services',
+                title='services',
+            )
+
+        
+     
+        if EXPORT_ACCOUNTS:
+            
+            
+            accounts=AccountRepo(request=request).list()
+            
+                
+            lines=[]
+            for i,account in enumerate(accounts,start=1):
+                line={
+                    'row':i,
+                    'parent_code':account.parent_account.code if account.parent_account is not None else '',      
+                    'id':account.id,
+                    'code':account.code,      
+                    'title':account.title,
+                    'color':account.color,
+                    'logo_origin':str(account.logo_origin),       
+                }
+                lines.append(line)
+            headers=['ردیف',
+                    'کد والد',
+                    'شناسه',
+                    'کد',
+                    'عنوان',
+                    'رنگ',
+                    'تصویر',
+            ]
+         
+            start_row=EXCEL_SERVICES_DATA_START_ROW
+            if start_row>2:
+                start_row-=1
+            report_work_book.add_sheet(
+                data=lines,
+                start_row=start_row,
+                table_has_header=False,
+                table_headers=headers,
+                style=style,
+                sheet_name='accounts',
+                title='accounts',
+            )
+        
+        file_name=f"""Phoenix accounting {date.replace('/','').replace(':','')}.xlsx"""
         
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
@@ -915,7 +994,6 @@ class ExportServicesToExcelView(View):
                  'واحد',
                  'فی',
         ]
-        report_work_book=ReportWorkBook()
         report_work_book=ReportWorkBook(origin_file_name=f'services.xlsx')
         style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
         # sheet1=ReportSheet(
@@ -939,6 +1017,7 @@ class ExportServicesToExcelView(View):
             table_headers=headers,
             style=style,
             sheet_name='services',
+            title='services',
         )
             
         file_name=f"""Phoenix Services {date.replace('/','').replace(':','')}.xlsx"""
@@ -1056,7 +1135,6 @@ class CategoryView(View):
             categories=category_repo.list(parent_id=category.id)
             products=category.products.all()
             context['category_id']=category.id
-            # leolog(all_childs_products=category.all_childs_products())
 
         context['categories']=categories
         categories_s=json.dumps(CategorySerializer(categories,many=True).data)

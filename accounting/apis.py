@@ -193,6 +193,44 @@ class AddInvoiceLineItemUnitApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+    
+class ImportFromExcelApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        
+        message_products=''
+        message_services=''
+        message_accounts=''
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            import_from_excel_form=ImportFromExcelForm(request.POST,request.FILES)
+            if import_from_excel_form.is_valid():
+                log=333
+                
+                excel_file = request.FILES['file1']
+                cd=import_from_excel_form.cleaned_data
+                cd['excel_file']=excel_file
+                result,message_products,products=ProductRepo(request=request).import_products_from_excel(**cd)
+                result,message_services,services=ServiceRepo(request=request).import_services_from_excel(**cd)
+                result,message_accounts,accounts=AccountRepo(request=request).import_accounts_from_excel(**cd)
+                if products is not None:
+                    context['products']=ProductSerializer(products,many=True).data
+                if services is not None:
+                    context['services']=ServiceSerializer(services,many=True).data
+                if accounts is not None:
+                    context['accounts']=AccountSerializer(accounts,many=True).data
+        context['message_products']=message_products
+        context['message_services']=message_services
+        context['message_accounts']=message_accounts
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
  
     
 class ImportProductsFromExcelApi(APIView):

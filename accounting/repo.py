@@ -13,7 +13,7 @@ from utility.num import filter_number
 from utility.calendar import PersianCalendar
 from utility.constants import FAILED,SUCCEED
 from utility.log import leolog
-from .constants import EXCEL_PRODUCTS_DATA_START_ROW,EXCEL_SERVICES_DATA_START_ROW
+from .constants import EXCEL_PRODUCTS_DATA_START_ROW,EXCEL_SERVICES_DATA_START_ROW,EXCEL_ACCOUNTS_DATA_START_ROW
 from .defaults import default_accounts,default_persons,default_banks
 from .enums import AccountTypeEnum,AccountNatureEnum
 from .settings_on_server import ACCOUNT_LEVEL_NAMES
@@ -202,6 +202,100 @@ class AccountRepo():
     def roots(self,*args, **kwargs):
         objects=self.objects.filter(parent_id=None)
         return objects.all()
+
+
+        
+    def import_accounts_from_excel(self,*args,**kwargs):
+        result,message,accounts=FAILED,"",[]
+        excel_file=kwargs['excel_file']
+        # import pandas
+        
+        # df = pandas.read_excel(excel_file)
+        # accounts=[]
+        # for row in df.columns[0]:
+        #     print (df.columns)
+        import openpyxl 
+
+        wb = openpyxl.load_workbook(excel_file)
+        try:
+            ws = wb['accounts']
+        
+        except:
+            message='فایل شما برگه حساب ها ندارد.'
+            return result,message,None
+        count=kwargs['count']
+        try:
+            count=int(ws.cell(row=1, column=2).value)
+        except:
+            
+            message='فایل برگه حساب ها ، تعداد ندارد.'
+            return result,message,None  
+        accounts_to_import=[]
+        START_ROW=EXCEL_ACCOUNTS_DATA_START_ROW
+        for i in range(START_ROW,count+START_ROW):
+            account={}
+            
+            
+            i=str(i) 
+            # product['id']=ws['A'+str(i)].value
+            iiiddd=ws['C'+i].value
+            if iiiddd is not None:
+                id=int(ws['C'+i].value)
+                parent_code=(ws['B'+i].value)
+                if parent_code is not None:
+                    parent_code=(parent_code)
+                code=(ws['D'+i].value)
+                title=(ws['E'+i].value)
+                color=(ws['F'+i].value)
+                logo_origin=(ws['G'+i].value)
+                # leolog(account='account',i=i,id=id,title=title,code=code,parent_id=parent_id,logo_origin=logo_origin)  
+
+                account['id']=id
+                account['parent_code']=parent_code
+                account['code']=code
+                account['title']=title
+                account['color']=color
+                account['logo_origin']=logo_origin
+                if account['title'] is not None and not account['title']=="":
+                    accounts_to_import.append(account) 
+        modified=added=0
+        for account in accounts_to_import:
+            old_account=Account.objects.filter(title=account["title"]).filter(code=account["code"]).first()
+            if old_account is not None:
+                old_account.title=account["title"]
+                # old_account.unit_name=account["unit_name"]
+                old_account.logo_origin=account["logo_origin"]
+                # old_account.unit_price=account["unit_price"] 
+                # old_account.thumbnail_origin=account["thumbnail_origin"] 
+                old_account.save()
+                modified+=1
+            else:
+                try:
+                    result,message,new_account=self.add_account(title=account["title"],
+                                                                code=account["code"],
+                                                                parent_code=account["parent_code"],
+                                                                id=account["id"],
+                                                                color=account["color"],
+                                                                logo_origin=account["logo_origin"] ,
+                                                                )
+                    accounts.append(new_account)
+                except:
+                    pass
+                # new_account.title=account["title"]
+                # new_account.barcode=account["barcode"]
+                # new_account.unit_name=account["unit_name"]
+                # new_account.unit_price=account["unit_price"] 
+                # new_account.save()
+                if result==SUCCEED:
+                    added+=1
+        result=SUCCEED
+        message=f"""{added} حساب اضافه شد.
+                    <br>
+                    {modified} حساب ویرایش شد. """
+        accounts=self.list()
+        return result,message,accounts
+
+
 
     def account(self,*args, **kwargs):
         if "account_id" in kwargs and kwargs["account_id"] is not None:
@@ -816,13 +910,13 @@ class ProductRepo():
             return result,message,product
 
         product=Product() 
-
         if 'title' in kwargs:
             product.title=kwargs["title"]
 
             
         if 'brand_id' in kwargs:
-            product.brand_id=kwargs["brand_id"]
+            if kwargs['brand_id']>0:
+                product.brand_id=kwargs["brand_id"]
 
             
         if 'model' in kwargs:
@@ -855,10 +949,11 @@ class ProductRepo():
                  
 
         if 'category_id' in kwargs:
-            category_id=kwargs["category_id"]
-            category=Category.objects.filter(pk=category_id).first()
-            if category is not None:
-                category.products.add(product.id)
+            if kwargs['category_id']>0:
+                category_id=kwargs["category_id"]
+                category=Category.objects.filter(pk=category_id).first()
+                if category is not None:
+                    category.products.add(product.id)
         return result,message,product
  
 
@@ -874,27 +969,43 @@ class ProductRepo():
         import openpyxl 
 
         wb = openpyxl.load_workbook(excel_file)
-        ws = wb.active
+        try:
+            ws = wb['products']
+        except:
+            message='فایل شما برگه محصولات ندارد.'
+            return result,message,None
         count=kwargs['count']
+        try:
+            count=int(ws.cell(row=1, column=2).value)
+        except:
+            message='فایل برگه محصولات ، تعداد ندارد.'
+            return result,message,None 
+
         products_to_import=[]
         START_ROW=EXCEL_PRODUCTS_DATA_START_ROW
+
         for i in range(START_ROW,count+START_ROW):
             product={}
-            product['id']=ws['A'+str(i)].value
-            product['title']=ws['B'+str(i)].value
-            product['barcode']=ws['C'+str(i)].value
-            product['unit_name']=ws['D'+str(i)].value
-            product['unit_price']=ws['E'+str(i)].value
-            product['thumbnail_origin']=ws['F'+str(i)].value
-            leolog(id=product['id'],
-                   title=product['title'],
-                   barcode=product['barcode'],
-                   unit_name=product['unit_name'],
-                   unit_price=product['unit_price'],
-                   thumbnail_origin=product['thumbnail_origin']) 
-            # product['thumbnail_origin']=ws['F'+str(i)].value
-            if product['title'] is not None and not product['title']=="":
-                products_to_import.append(product) 
+            i=str(i) 
+            # product['id']=ws['A'+str(i)].value
+            iiiddd=ws['B'+i].value
+            if iiiddd is not None:
+                id=int(ws['B'+i].value)
+                title=(ws['C'+i].value)
+                barcode=(ws['D'+i].value)
+                unit_name=(ws['E'+i].value)
+                unit_price=int(ws['F'+i].value)
+                thumbnail_origin=(ws['G'+i].value)
+                # leolog(product='product',i=i,id=id,title=title,barcode=barcode,unit_name=unit_name,unit_price=unit_price,thumbnail_origin=thumbnail_origin)                      
+                product['id']=id
+                product['title']=title
+                product['barcode']=barcode
+                product['unit_name']=unit_name
+                product['unit_price']=unit_price
+                product['thumbnail_origin']=thumbnail_origin
+                # product['thumbnail_origin']=ws['F'+str(i)].value
+                if product['title'] is not None and not product['title']=="":
+                    products_to_import.append(product) 
         modified=added=0
         for product in products_to_import:
             old_product=Product.objects.filter(title=product["title"]).filter(barcode=product["barcode"]).first()
@@ -1193,7 +1304,7 @@ class FinancialDocumentRepo():
         import openpyxl 
 
         wb = openpyxl.load_workbook(excel_file)
-        ws = wb.active
+        ws = wb['services']
         count=kwargs['count']
         financial_documents_to_import=[]
 
@@ -1521,21 +1632,43 @@ class ServiceRepo():
         import openpyxl 
 
         wb = openpyxl.load_workbook(excel_file)
-        ws = wb.active
+        try:
+            ws = wb['services']
+        except:
+            message='فایل شما برگه خدمات ندارد.'
+            return result,message,None
         count=kwargs['count']
+        try:
+            count=int(ws.cell(row=1, column=2).value)
+        except:
+            
+            message='فایل برگه خدمات ، تعداد ندارد.'
+            return result,message,None 
+
         services_to_import=[]
 
         START_ROW=EXCEL_SERVICES_DATA_START_ROW
         for i in range(START_ROW,count+START_ROW):
             service={}
-            service['id']=ws['A'+str(i)].value
-            service['title']=ws['B'+str(i)].value
-            service['unit_name']=ws['D'+str(i)].value
-            service['unit_price']=ws['E'+str(i)].value
-            service['thumbnail_origin']=ws['F'+str(i)].value
-            # service['thumbnail_origin']=ws['F'+str(i)].value
-            if service['title'] is not None and not service['title']=="":
-                services_to_import.append(service) 
+            
+            i=str(i) 
+            # product['id']=ws['A'+str(i)].value
+            iiiddd=ws['B'+i].value
+            if iiiddd is not None:
+                id=int(ws['B'+i].value)
+                title=(ws['C'+i].value)
+                unit_name=(ws['D'+i].value)
+                unit_price=int(ws['E'+i].value)
+                thumbnail_origin=(ws['F'+i].value)
+                # leolog(service='service',i=i,id=id,title=title,unit_name=unit_name,unit_price=unit_price,thumbnail_origin=thumbnail_origin)  
+                service['id']=id
+                service['title']=title
+                service['unit_name']=unit_name
+                service['unit_price']=unit_price
+                service['thumbnail_origin']=thumbnail_origin
+                # service['thumbnail_origin']=ws['F'+str(i)].value
+                if service['title'] is not None and not service['title']=="":
+                    services_to_import.append(service) 
         modified=added=0
         for service in services_to_import:
             old_service=Service.objects.filter(title=service["title"]).first()

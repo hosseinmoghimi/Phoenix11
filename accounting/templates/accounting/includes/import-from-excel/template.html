@@ -30,7 +30,7 @@
                     بازیابی از فایل اکسل
 
                 </p>
-                <form id="import-export-from-excel-form" @submit.prevent="import_products_from_excel()"
+                <form id="import-from-excel-form" @submit.prevent="import_from_excel()"
                     enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-12">
@@ -46,30 +46,7 @@
 
 
                         </div>
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label class="form-check-label mr-4" for="flexCheckChecked">
-                                    تعداد
-
-                                </label>
-                                <input v-model="count" class="form-control" type="number">
-                            </div>
-
-
-                        </div>
-
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input v-model="is_open" class="form-check-input" type="checkbox" id="flexCheckChecked">
-                                <label class="form-check-label mr-4" for="flexCheckChecked">
-                                    دسترسی آزاد برای همه
-                                </label>
-                            </div>
-
-
-                        </div>
-
-
+                      
                         <div class="col-12">
                             <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
 
@@ -85,6 +62,9 @@
                                 <div class="my-2">
                                     <h4 v-html="message.title" class="my-2"></h4>
                                     <div v-html="message.body" class="my-2"></div>
+                                    <div  class="my-2">
+                                        <button class="btn btn-info " @click="message.show=false">متوجه شدم.</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
