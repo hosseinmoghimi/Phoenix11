@@ -193,6 +193,8 @@ def class_title(*args, **kwargs):
         class_title = "لیست قیمت"
     if class_name == "poll":
         class_title = "پرسش"
+    if class_name == "account":
+        class_title = "حساب"
     if class_name == "payment":
         class_title = "پرداخت"
     if class_name == "property":
