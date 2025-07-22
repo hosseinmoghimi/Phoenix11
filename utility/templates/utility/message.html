@@ -19,7 +19,10 @@
                     {{link.title}}
                 </a>
                 {% endfor %}
+                {% if back_url %}
+                  
                 <a class="btn btn-primary" href="{{back_url}}">بازگشت</a>
+                {% endif %}
             </div>
         </div>
     </div>

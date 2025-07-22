@@ -57,7 +57,9 @@ class ProjectView(View):
         context=getContext(request=request)
         project=ProjectRepo(request=request).project(*args, **kwargs)
         if project is None:
-            mv=MessageView()
+            title='پروژه وجود ندارد'
+            body='پروژه وجود ندارد'
+            mv=MessageView(title=title,body=body)
             return mv.get(request=request)
         
         context.update(ProjectContext(request=request,project=project))
