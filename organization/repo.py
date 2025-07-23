@@ -13,7 +13,6 @@ from utility.log import leolog
 from .enums import *
  
 
-
 class OrganizationUnitRepo():
     def __init__(self,request,*args, **kwargs):
         self.me=None
@@ -68,7 +67,6 @@ class OrganizationUnitRepo():
         
         (result,message,organization_unit)=organization_unit.save()
         return result,message,organization_unit
-
  
 
 class EmployeeRepo():

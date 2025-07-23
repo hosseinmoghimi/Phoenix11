@@ -3,7 +3,8 @@ from core.models import Page,LinkHelper,FAILED,SUCCEED
 from django.utils.translation import gettext as _
 from .apps import APP_NAME
 from utility.models import DateTimeHelper
-# Create your models here.
+
+
 class OrganizationUnit(Page,LinkHelper):
     my_account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     # account_code=models.CharField(_("account_code"), max_length=50)
@@ -29,8 +30,6 @@ class OrganizationUnit(Page,LinkHelper):
         return (result,message,organization_unit)
     
 
-
-    
 class Employee(models.Model,LinkHelper,DateTimeHelper):
     person=models.ForeignKey("authentication.person",related_name="employees", verbose_name=_("person"), on_delete=models.CASCADE)
     organization_unit=models.ForeignKey("organizationunit",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
