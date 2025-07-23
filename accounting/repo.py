@@ -1841,11 +1841,15 @@ class FinancialDocumentLineRepo:
             return result,message,financial_document_line
         
         financial_document_line=FinancialDocumentLine()
-        leolog(add_financial_document_line_kwargs=kwargs)
         if 'title' in kwargs:
             financial_document_line.title=kwargs['title']
         if 'financial_event_id' in kwargs:
-            financial_document_line.financial_event_id=kwargs['financial_event_id']
+            financial_event_id=kwargs['financial_event_id']
+            financial_event=FinancialEvent.objects.filter(pk=financial_event_id).first()
+            if financial_event is None:
+                message='رویداد مالی درست انتخاب نشده است.'
+                return result,message,None
+            financial_document_line.financial_event_id=financial_event_id
         if 'financial_document_id' in kwargs:
             financial_document_id=kwargs['financial_document_id']
             if int(financial_document_id)==0 and 'financial_document_title' in kwargs:

@@ -56,6 +56,7 @@ class AddPersonAccountApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
 class AddProductSpecificationApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -77,8 +78,6 @@ class AddProductSpecificationApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-
-
 
 
 class AddInvoiceApi(APIView):
@@ -193,7 +192,8 @@ class AddInvoiceLineItemUnitApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-    
+
+
 class ImportFromExcelApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -231,8 +231,6 @@ class ImportFromExcelApi(APIView):
         return JsonResponse(context)
 
 
- 
-    
 class ImportProductsFromExcelApi(APIView):
     def post(self,request,*args, **kwargs):
         
@@ -328,7 +326,6 @@ class AddInvoiceLineApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
-
  
 class AddFinancialYearApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -351,8 +348,6 @@ class AddFinancialYearApi(APIView):
         # context['result2']=result2
         context['log']=log
         return JsonResponse(context)
-
-
 
  
 class SetAccountParentApi(APIView): 
@@ -378,7 +373,6 @@ class SetAccountParentApi(APIView):
         return JsonResponse(context)
 
 
-
 class GetInvoiceLineItemUnitsApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -399,7 +393,6 @@ class GetInvoiceLineItemUnitsApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-
 
 
 class SelectFinancialEventApi(APIView):
@@ -562,9 +555,6 @@ class AddBrandApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
- 
-
- 
 
 class AddProductApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -586,7 +576,6 @@ class AddProductApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-
  
 
 class AddServiceApi(APIView):
