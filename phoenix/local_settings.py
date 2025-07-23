@@ -55,7 +55,7 @@ DB_FILE_PATH=os.path.join(BASE_DIR,'db_'+DB_FILE_NAME+'.sqlite3')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DB_FULL_NAME ,
+        'NAME': DB_FILE_PATH ,
     }
 }
 
@@ -66,8 +66,9 @@ LANGUAGE_CODE = 'en-us'
 
 
 SITE_URL="/"
-PUBLIC_ROOT="f:\\public_html\\phoenix11\\"
-PRIVATE_ROOT="f:\\private_html\\phoenix11\\"
+PUBLIC_ROOT="d:\\public_html\\phoenix11\\"
+PRIVATE_ROOT="d:\\private_html\\phoenix11\\"
+TEMPORARY_ROOT =os.path.join(PRIVATE_ROOT,"temp")
 
 QRCODE_URL =SITE_URL+"qrcode/"
 STATIC_URL =SITE_URL+"static/"
@@ -81,4 +82,6 @@ MEDIA_URL =SITE_URL+"media/"
 MEDIA_ROOT =os.path.join(PUBLIC_ROOT,"media")
 
 ADMIN_URL=SITE_URL+"admin/"
-FULL_SITE_URL='http://127.0.0.1:8000/'
+FULL_SITE_URL='http://127.0.0.1:8011/'
+
+

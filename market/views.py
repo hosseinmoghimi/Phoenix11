@@ -24,7 +24,17 @@ NO_NAVBAR="NO_NAVBAR"
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
     context[WIDE_LAYOUT]=False 
- 
+    me_supplier=SupplierRepo(request=request).me
+    me_customer=CustomerRepo(request=request).me
+
+    context['market_navbar']=False
+    if me_supplier is not None:
+        context['market_navbar']=True
+        context['me_supplier']=me_supplier
+    if me_customer is not None:
+        context['market_navbar']=True
+        context['me_customer']=me_customer
+
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 

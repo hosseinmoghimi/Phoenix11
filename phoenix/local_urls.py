@@ -3,13 +3,14 @@ from django.urls import path,include,re_path
 from django.views.static import serve
 from phoenix.server_settings import QRCODE_ROOT,STATIC_ROOT,MEDIA_ROOT
 from authentication.views import LoginView
+from core.views import IndexView
 
 urlpatterns = [ 
-    path('', include('core.urls')),
+    path('', IndexView.as_view(),name='home'),
     path('core/', include('core.urls')),
     path('admin/', admin.site.urls),
     path('log/', include('log.urls')),
-    path('/accounts/login/', LoginView.as_view(),name='login'),
+    path('accounts/login/', LoginView.as_view(),name='login'),
     path('authentication/', include('authentication.urls')),
     path('accounting/', include('accounting.urls')),
     path('market/', include('market.urls')),
@@ -20,6 +21,7 @@ urlpatterns = [
     path('school/', include('school.urls')),
     path('attachments/', include('attachments.urls')),
     path('warehouse/', include('warehouse.urls')),
+    path('transport/', include('transport.urls')),
     
     
     

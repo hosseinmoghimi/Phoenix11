@@ -53,19 +53,21 @@
       {% include "projectmanager/includes/navbar.html" %}
       {% endif %}
 
-      
       {% if me_supplier %}
-      {% include "market/includes/supplier-app/navbar.html" %}
+        {% include "market/includes/supplier-app/navbar.html" %}
       {% endif %}
- 
+
+      
+      {% if me_customer %}
+        {% include "market/includes/supplier-app/navbar.html" %}
+      {% endif %}
+      
+
+
+
       {% include "authentication/includes/navbar.html" %}
  
-
-        
-      {% if me_customer %}
-      {% include "market/includes/customer-app/navbar.html" %}
-      {% endif %}
-      
+ 
 
 
       {% if warehouse_navbar %}

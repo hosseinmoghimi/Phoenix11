@@ -126,6 +126,7 @@ class PersonPrefixEnum(TextChoices):
     DR="دکتر",_("دکتر")
     ENGINEER="مهندس",_("مهندس")
     COMPLEX=" مجتمع",_(" مجتمع")
+    SHOP="فروشگاه",_("فروشگاه")
   
 class AppNameEnum(TextChoices):
     projectmanager='projectmanager',_('projectmanager')
