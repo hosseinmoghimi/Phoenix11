@@ -1,4 +1,10 @@
 {% extends "market/layout.html" %} {% load static %} {% block content %}
+
+<div class="text-center">
+  <h1 class="text-center">
+  {{menu.title}}
+  </h1>
+</div> 
 <div class="row rtl farsi">
   <div class="col-md-12" id="menu-app"> 
         <div class="media" v-for="shop in shops">
@@ -36,7 +42,7 @@
         return to_price(vall);
       },
       add_to_cart:function(shop){
-console.log(shop)
+        console.log(shop)
       },
     },
   });

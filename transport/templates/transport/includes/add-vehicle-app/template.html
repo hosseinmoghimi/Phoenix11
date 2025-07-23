@@ -10,14 +10,13 @@
           aria-controls="collapse-add-vehicle"
         >
           افزودن وسیله نقلیه
-          
         </button>
       </h5>
     </div>
 
     <div
       id="collapse-add-vehicle"
-      class="collapse  "
+      class="collapse"
       aria-labelledby="heading-add-vehicle"
       data-parent="#accordion-add-vehicle"
     >
@@ -27,12 +26,53 @@
             <div class="col-md-12">
               <div class="form-group">
                 <label for="">عنوان</label>
-                <input required v-model="title" type="text" class="form-control" />
+                <input
+                  required
+                  v-model="title"
+                  type="text"
+                  class="form-control"
+                />
               </div>
             </div>
- 
-  
- 
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">مالک</label>
+                <input
+                  required
+                  v-model="owner.id"
+                  type="number"
+                  class="form-control"
+                  @input="select_owner()"
+                />
+              </div>
+            </div>
+
+            <div class="col-6 mt-3">
+              <hr />
+              <a :href="owner.get_absolute_url" v-if="owner.full_name">
+                <div class="media">
+                  <img :src="owner.logo" width="64" alt="" />
+                  <div class="mr-2 media-body">
+                    <h5 class="my-2">
+                      <span v-text="owner.full_name"></span>
+                    </h5>
+                    <h6>
+                      <span v-text="owner.id"></span>
+                    </h6>
+
+                    
+
+                    <h6>
+                      <small v-text="owner.full_name"></small>
+                    </h6>
+                  </div>
+                </div>
+              </a>
+              <div v-if="!owner.full_name">
+                <h5 class="text-danger">مالک انتخاب نشده است.</h5>
+              </div>
+            </div>
 
             <div class="col-md-12">
               <button class="btn btn-success" type="submit">

@@ -70,9 +70,7 @@ class Vehicle(Asset):
     year=models.CharField(_("سال"), max_length=50,null=True,blank=True)
     vehicle_color=models.CharField(_("رنگ"),choices=VehicleColorEnum.choices,default=VehicleColorEnum.SEFID, max_length=50)
     kilometer=models.IntegerField(_("کیلومتر"),default=0)
-    @property
-    def brand(self):
-        return self.brand_name
+ 
     def save(self,*args, **kwargs): 
         (result,message,vehicle)=FAILED,'',self
         if self.class_name is None or self.class_name=="":

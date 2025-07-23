@@ -1,23 +1,34 @@
-{% include "accounting/includes/account-app/select-script.html" %}
+ {% include "authentication/includes/person-app/select-script.html" %}
 <script>
   let add_vehicle_app = new Vue({
     el: "#add-vehicle-app",
     data: {
-    title: "",
-    }, 
+      title: "",
+      owner: { id: 0, full_name: false },
+    },
     methods: {
-      
-      
+      select_owner: function () {
+        select_person_by_id(add_vehicle_app.owner.id).done((data) => {
+          if (data.result === "SUCCEED") {
+            leolog(data.person);
+            add_vehicle_app.owner = data.person;
+          }
+
+          if (data.result === "FAILED") {
+            add_vehicle_app.owner.full_name = "";
+          }
+        });
+      },
 
       to_price: function (vall) {
         return to_price(vall) + " {{CURRENCY}}";
       },
 
-     
       add_vehicle: function () {
         let payload = {
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           title: this.title,
+          owner_id: this.owner.id,
         };
 
         console.log(payload);

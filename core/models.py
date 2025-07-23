@@ -12,6 +12,7 @@ from django.core.files.storage import FileSystemStorage
 from utility.constants import FAILED,SUCCEED
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_URL,MEDIA_URL,ADMIN_URL,FULL_SITE_URL
 IMAGE_FOLDER = "images/"
+PAGE_TITLE_SEPERATOR=' / '
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 from utility.enums import class_title
 
@@ -98,6 +99,13 @@ class Page(models.Model,LinkHelper,ImageHelper):
     
     def get_absolute_url(self):
         return reverse(self.app_name+":"+self.class_name,kwargs={'pk':self.pk})
+
+    @property  
+    def full_title(self):
+        if self.parent is None:
+            return self.title
+        return self.parent_account.full_title+PAGE_TITLE_SEPERATOR+self.title
+ 
 
 
 class EventCategory(models.Model,LinkHelper):

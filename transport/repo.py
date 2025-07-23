@@ -49,6 +49,8 @@ class VehicleRepo():
         vehicle=Vehicle()
         if 'title' in kwargs:
             vehicle.title=kwargs["title"]
+        if 'owner_id' in kwargs:
+            vehicle.owner_id=kwargs["owner_id"]
           
         (result,message,vehicle)=vehicle.save()
         return result,message,vehicle

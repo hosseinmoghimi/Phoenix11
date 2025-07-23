@@ -185,10 +185,9 @@ class Account(CorePage,LinkHelper):
     def full_name(self):
         if self.parent is None:
             return self.name
-        return self.parent.full_name+ACCOUNT_NAME_SEPERATOR+self.name
+        return self.parent_account.full_name+ACCOUNT_NAME_SEPERATOR+self.title
  
  
-
 class PersonAccount(Account):
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
     person_category=models.ForeignKey("personcategory", verbose_name=_("person_category"), on_delete=models.PROTECT)
@@ -816,9 +815,7 @@ class BankAccount(Account,LinkHelper):
 
 class Asset(CorePage):
     owner=models.ForeignKey("authentication.person", verbose_name=_("owner"), on_delete=models.PROTECT)
-    def __str__(self):
-        pass
-
+   
     class Meta:
         verbose_name = 'Asset'
         verbose_name_plural = 'Assets'

@@ -546,11 +546,17 @@ class FinancialDocumentView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         financial_document=FinancialDocumentRepo(request=request).financial_document(*args, **kwargs)
+        if financial_document is None:
+            mv=MessageView()
+            title='سند پیدا نشد.'
+            body='سند پیدا نشد.'
+            mv.message={'title':title,'body':body}
+            return mv.get(request=request)
         context['financial_document']=financial_document
         financial_document_s=json.dumps(FinancialDocumentSerializer(financial_document).data)
         context['financial_document_s']=financial_document_s
 
-        
+
         financial_document_lines=financial_document.financialdocumentline_set.all()
 
         context['financial_document_lines']=financial_document_lines
@@ -762,68 +768,16 @@ class ServicesView(View):
 class ExportProductsToExcelView(View):
     def get(self,request,*args, **kwargs):
         
-        headers=["id","title","barcode","unit_name","unit_price","thumbnail"]
-        
-        products=ProductRepo(request=request).list()
+        EXPORT_PRODUCTS=True
+        EXPORT_SERVICES=False
+        EXPORT_ACCOUNTS=False
+        return ExportToExcelView().get(request=request,
+                                       EXPORT_PRODUCTS=EXPORT_PRODUCTS,
+                                       EXPORT_SERVICES=EXPORT_SERVICES,
+                                       EXPORT_ACCOUNTS=EXPORT_ACCOUNTS)
          
-            
-        
-        lines=[]
-        for i,product in enumerate(products,start=1):
-            line={
-                'row':i,
-                'title':product.title,
-                'barcode':product.barcode,      
-                'unit_name':product.unit_name,      
-                'unit_price':product.unit_price,       
-                'thumbnail':str(product.thumbnail_origin),       
-            }
-            lines.append(line)
-        headers=['ردیف',
-                 'عنوان',
-                 'بارکد', 
-                 'واحد',
-                 'فی',
-                 'تصویر',
-        ] 
-        report_work_book=ReportWorkBook(origin_file_name=f'products.xlsx')
-        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
-        # sheet1=ReportSheet(
-        #     data=lines,
-        #     start_row=3,
-        #     start_col=1,
-        #     table_has_header=False,
-        #     table_headers=None,
-        #     style=style,
-        #     sheet_name='links',
-            
-        # )
-        
-        start_row=EXCEL_PRODUCTS_DATA_START_ROW
-        if start_row>2:
-            start_row-=1
-        report_work_book.add_sheet(
-            data=lines,
-            start_row=start_row,
-            table_has_header=False,
-            table_headers=headers,
-            style=style,
-            title='products',
-            sheet_name='products',
-        )
-        now=PersianCalendar().date
-        date=PersianCalendar().from_gregorian(now)
-        file_name=f"""Phoenix Products {date.replace('/','').replace(':','')}.xlsx"""
-        
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
-        response["Content-disposition"]=f"attachment; filename={file_name}"
-        report_work_book.work_book.save(response)
-        report_work_book.work_book.close()
-        return response
 
-
-class ExportToExcelView(View):   
+class ExportToExcelView(View):
     def get(self,request,*args, **kwargs):
         now=PersianCalendar().date
         date=PersianCalendar().from_gregorian(now)
@@ -835,6 +789,16 @@ class ExportToExcelView(View):
         EXPORT_PRODUCTS=True
         EXPORT_SERVICES=True
         EXPORT_ACCOUNTS=True
+
+        if 'EXPORT_PRODUCTS' in kwargs:
+            EXPORT_PRODUCTS=kwargs['EXPORT_PRODUCTS']
+
+        if 'EXPORT_SERVICES' in kwargs:
+            EXPORT_SERVICES=kwargs['EXPORT_SERVICES']
+
+        if 'EXPORT_ACCOUNTS' in kwargs:
+            EXPORT_ACCOUNTS=kwargs['EXPORT_ACCOUNTS']
+
         if EXPORT_PRODUCTS:
             
             
@@ -970,65 +934,15 @@ class ExportToExcelView(View):
 class ExportServicesToExcelView(View):
   
     def get(self,request,*args, **kwargs):
-        now=PersianCalendar().date
         
-        data=[]  
-        headers=["id","title","barcode","unit_name","unit_price","thumbnail"]
-        
-        services=ServiceRepo(request=request).list()
-         
-            
-        
-        date=PersianCalendar().from_gregorian(now)
-        lines=[]
-        for i,service in enumerate(services,start=1):
-            line={
-                'row':i,
-                'title':service.title,
-                'unit_name':service.unit_name,      
-                'unit_price':service.unit_price,       
-            }
-            lines.append(line)
-        headers=['ردیف',
-                 'عنوان',
-                 'واحد',
-                 'فی',
-        ]
-        report_work_book=ReportWorkBook(origin_file_name=f'services.xlsx')
-        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
-        # sheet1=ReportSheet(
-        #     data=lines,
-        #     start_row=3,
-        #     start_col=1,
-        #     table_has_header=False,
-        #     table_headers=None,
-        #     style=style,
-        #     sheet_name='links',
-            
-        # )
-        
-        start_row=EXCEL_SERVICES_DATA_START_ROW
-        if start_row>2:
-            start_row-=1
-        report_work_book.add_sheet(
-            data=lines,
-            start_row=start_row,
-            table_has_header=False,
-            table_headers=headers,
-            style=style,
-            sheet_name='services',
-            title='services',
-        )
-            
-        file_name=f"""Phoenix Services {date.replace('/','').replace(':','')}.xlsx"""
-        
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
-        response["Content-disposition"]=f"attachment; filename={file_name}"
-        report_work_book.work_book.save(response)
-        report_work_book.work_book.close()
-        return response
- 
+        EXPORT_PRODUCTS=False
+        EXPORT_SERVICES=True
+        EXPORT_ACCOUNTS=False
+        return ExportToExcelView().get(request=request,
+                                       EXPORT_PRODUCTS=EXPORT_PRODUCTS,
+                                       EXPORT_SERVICES=EXPORT_SERVICES,
+                                       EXPORT_ACCOUNTS=EXPORT_ACCOUNTS)
+          
 
 class FinancialEventView(View):
     def get(self,request,*args, **kwargs):

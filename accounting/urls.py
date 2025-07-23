@@ -66,6 +66,9 @@ urlpatterns = [
     path('export-products-to-excel/',login_required(views.ExportProductsToExcelView.as_view()),name="export_products_to_excel"),
     path("import-products-from-excel/",login_required(apis.ImportProductsFromExcelApi.as_view()),name="import_products_from_excel"),
     
+    path('export-services-to-excel/',login_required(views.ExportServicesToExcelView.as_view()),name="export_services_to_excel"),
+    path("import-services-from-excel/",login_required(apis.ImportServicesFromExcelApi.as_view()),name="import_services_from_excel"),
+    
     
     path('add-product-to-category/',login_required(apis.AddProductToCategoryApi.as_view()),name="add_product_to_category"),
     
@@ -93,9 +96,7 @@ urlpatterns = [
     path('services/',login_required(views.ServicesView.as_view()),name="services"),
     path('service/<int:pk>/',login_required(views.ServiceView.as_view()),name="service"),
     path("add-service/",login_required(apis.AddServiceApi.as_view()),name="add_service"),
-    path('export-services-to-excel/',login_required(views.ExportServicesToExcelView.as_view()),name="export_services_to_excel"),
-    path("import-services-from-excel/",login_required(apis.ImportServicesFromExcelApi.as_view()),name="import_services_from_excel"),
-    
+ 
     path('add-invoice/',login_required(apis.AddInvoiceApi.as_view()),name="add_invoice"),
     path("add-invoice-line/",login_required(apis.AddInvoiceLineApi.as_view()),name="add_invoice_line"),
     
