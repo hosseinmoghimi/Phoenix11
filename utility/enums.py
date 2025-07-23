@@ -12,6 +12,8 @@ class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")
     KILOGERAM="کیلوگرم",_("کیلوگرم")
     METER="متر",_("متر")
+    LITER="لیتر",_("لیتر")
+    CC="سی سی ",_("سی سی ")
     SHAKHEH="شاخه",_("شاخه")
     SHISHEH="شیشه",_("شیشه")
     DASTGAH="دستگاه",_("دستگاه")
