@@ -2,7 +2,7 @@
     let add_brand_app = new Vue({
         el: "#add-brand-app",
         data: {
-            title: "",
+            name: "",
             show_form: false,
             message: { show: false },
         },
@@ -10,7 +10,7 @@
             add_brand: function () {
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    title: this.title,
+                    name: this.name,
                 }
                 console.log(payload)
                 let url = "{% url 'accounting:add_brand' %}"

@@ -4,6 +4,8 @@ from utility.forms import SearchForm
 class GetInvoiceLineItemUnitsForm(forms.Form):
     invoice_line_item_id=forms.IntegerField( required=True)
 
+class AddBrandForm(forms.Form):
+    name=forms.CharField( required=True,max_length=100)
 
 class AddAccountForm(forms.Form):
     parent_code=forms.IntegerField( required=False)

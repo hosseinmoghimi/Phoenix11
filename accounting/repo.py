@@ -1428,11 +1428,11 @@ class BrandRepo():
             brand=None
             return result,message,brand
 
-  
+   
         if 'name' in kwargs:
             brand.name=kwargs["name"] 
         brand.save()       
-        message="بانک جدید با موفقیت اضافه شد."
+        message="برند جدید با موفقیت اضافه شد."
         result=SUCCEED
         return result,message,brand
 

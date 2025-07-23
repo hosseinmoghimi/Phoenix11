@@ -316,9 +316,6 @@ def AddProductToCategoryContext(request,product,*args, **kwargs):
     return context
 
 
-
-
-
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -1144,7 +1141,10 @@ class BrandView(View):
 
         return render(request,TEMPLATE_ROOT+"brand.html",context)   
 
-
+def AddBrandContext(request,*args, **kwargs):
+    context={}
+    context['add_brand_form']=AddBrandForm()
+    return context
 class BrandsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -1153,7 +1153,7 @@ class BrandsView(View):
         context['brands']=brands
         context['brands_s']=brands_s
         if request.user.has_perm(APP_NAME+'.add_brand'):
-            context.update(AddServiceContext(request=request))
+            context.update(AddBrandContext(request=request))
         return render(request,TEMPLATE_ROOT+"brands.html",context)
 
 
