@@ -9,7 +9,7 @@ from django.http import HttpResponseRedirect
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
-from core.views import CoreContext,ParameterRepo,PictureRepo,leolog
+from core.views import MessageView,CoreContext,ParameterRepo,PictureRepo,leolog
 import json
 
 LAYOUT_PARENT='phoenix/layout.html'
@@ -86,6 +86,12 @@ class PersonView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         person=PersonRepo(request=request).person(*args, **kwargs)
+        if person is None:
+            title='شخص پیدا نشد.'
+            body='شخص پیدا نشد.'
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
+        
         context['person']=person
         person_s=json.dumps(PersonSerializer(person).data)
         context['person_s']=person_s

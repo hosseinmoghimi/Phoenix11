@@ -11,7 +11,7 @@ from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from utility.log import leolog
 from django.utils import timezone
-from core.views import CoreContext,PageBriefSerializer,AddRelatedPageForm
+from core.views import MessageView,CoreContext,PageBriefSerializer,AddRelatedPageForm
 from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo, TagRepo
 import json
 
@@ -192,7 +192,10 @@ class TagView(View):
         me = ProfileRepo(request=request).me
         tag = TagRepo(request=request).tag(*args, **kwargs)
         if tag is None:
-            raise Http404
+            title='تگ پیدا نشد.'
+            body='تگ پیدا نشد.'
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
         context=getContext(request=request)
         context['tag']=tag
         page_tags=tag.pages.all()

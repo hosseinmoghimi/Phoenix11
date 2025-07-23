@@ -8,11 +8,17 @@
 <div class="row rtl farsi">
   <div class="col-md-12" id="menu-app"> 
         <div class="media" v-for="shop in shops">
+            <a :href="shop.product.get_market_absolute_url">
+
           <img :src="shop.product.thumbnail" width="128" alt="" />
+            </a>
           <div class="media-body mr-2">
-            <h6 class="text-right">
-              <span v-text="shop.product.title"></span>
-            </h6>
+            <a :href="shop.product.get_market_absolute_url">
+
+              <h6 class="text-right">
+                <span v-text="shop.product.title"></span>
+              </h6>
+            </a>
 
             <h6 class="text-right">
               هر

@@ -104,6 +104,7 @@ class SearchView(View):
 
     def post(self,request,*args, **kwargs):
         result=FAILED
+        search_for=''
         message=''
         log=1
         context=getContext(request=request) 
@@ -111,13 +112,23 @@ class SearchView(View):
         if search_form.is_valid():
             log=2
             search_for=search_form.cleaned_data['search_for']
-            pages=PageRepo(request=request).list(search_for=search_for)
             result=SUCCEED
 
-            context['pages']=pages
-            context['pages_s']=json.dumps(PageBriefSerializer(pages,many=True).data)
+            
+            pages=PageRepo(request=request).list(search_for=search_for)
+            if len(pages)>0:
+                context['pages']=pages
+                context['pages_s']=json.dumps(PageBriefSerializer(pages,many=True).data)
+            
+            from attachments.views import TagRepo,TagSerializer
+            tags=TagRepo(request=request).list(search_for=search_for)
+            if len(tags)>0:
+                context['tags']=tags
+                context['tags_s']=json.dumps(TagSerializer(tags,many=True).data)
+
 
         context['message']=message
+        context['search_for']=search_for
         context['log']=log
         context['result']=result
         return render(request,TEMPLATE_ROOT+"search.html",context)

@@ -1,7 +1,7 @@
 from core.repo import PageRepo,ProfileRepo,FAILED,SUCCEED
 from .models import Like,Comment,Link,Download,Image,Location,Area, Tag
 from .apps import APP_NAME
-
+from django.db.models import Q
 
 class ImageRepo():
 
@@ -117,6 +117,11 @@ class TagRepo():
             if page is not None:
                 return page.tag_set.all()
             objects=objects.filter(page_id=page_id)
+             
+
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects=objects.filter(title__contains=search_for)
         return objects.all()
     def add_tag(self,*args, **kwargs):
         result,message,tags=FAILED,'',[]
