@@ -104,7 +104,7 @@ class Page(models.Model,LinkHelper,ImageHelper):
     def full_title(self):
         if self.parent is None:
             return self.title
-        return self.parent_account.full_title+PAGE_TITLE_SEPERATOR+self.title
+        return self.parent.full_title+PAGE_TITLE_SEPERATOR+self.title
  
 
 

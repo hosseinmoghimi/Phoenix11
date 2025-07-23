@@ -2,24 +2,36 @@
 from pathlib import Path
 from . import server_settings
 import os
-
-
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
  
 DB_PREFIX_NAME='dikoo24ir'
-PUSHER_IS_ENABLE=False
 
 CURRENCY='ریال'
 DEBUG = False
 DEBUG = True
-VUE_VERSION_3=False
-VUE_VERSION_2=True
-DATABASE_NAME='phoenix11_20250722'
+DATABASE_NAME='20250723_23_35_38'
+
+SITE_URL="/"
+PUBLIC_ROOT="d:\\public_html\\phoenix11\\"
+PRIVATE_ROOT="d:\\private_html\\phoenix11\\"
+
+FULL_SITE_URL='http://127.0.0.1:8011/'
 
 ALLOWED_HOSTS = ['*']
 
 SECRET_KEY = 'sth here'
 
+DB_FILE_NAME=DB_PREFIX_NAME+'__'+DATABASE_NAME 
+DB_FILE_PATH=os.path.join(BASE_DIR,DB_FILE_NAME+'.sqlite3')
+ 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': DB_FILE_PATH ,
+    }
+}
 # Application definition
 
 INSTALLED_APPS = [
@@ -49,15 +61,6 @@ INSTALLED_APPS = [
 ]
  
 
-DB_FILE_NAME=DB_PREFIX_NAME+'__'+DATABASE_NAME 
-DB_FILE_PATH=os.path.join(BASE_DIR,'db_'+DB_FILE_NAME+'.sqlite3')
- 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DB_FILE_PATH ,
-    }
-}
 
 
 TIME_ZONE = 'UTC'
@@ -65,14 +68,10 @@ LANGUAGE_CODE = 'en-us'
 
 
 
-SITE_URL="/"
-PUBLIC_ROOT="d:\\public_html\\phoenix11\\"
-PRIVATE_ROOT="d:\\private_html\\phoenix11\\"
-TEMPORARY_ROOT =os.path.join(PRIVATE_ROOT,"temp")
-
 QRCODE_URL =SITE_URL+"qrcode/"
 STATIC_URL =SITE_URL+"static/"
 
+TEMPORARY_ROOT =os.path.join(PRIVATE_ROOT,"temp")
 UPLOAD_ROOT =os.path.join(PRIVATE_ROOT,"upload")
 QRCODE_ROOT =os.path.join(PUBLIC_ROOT,"qrcode")
 STATIC_ROOT =os.path.join(PUBLIC_ROOT,"static")
@@ -82,6 +81,9 @@ MEDIA_URL =SITE_URL+"media/"
 MEDIA_ROOT =os.path.join(PUBLIC_ROOT,"media")
 
 ADMIN_URL=SITE_URL+"admin/"
-FULL_SITE_URL='http://127.0.0.1:8011/'
 
 
+PUSHER_IS_ENABLE=False
+
+VUE_VERSION_3=False
+VUE_VERSION_2=True
