@@ -29,7 +29,6 @@ def OrganizationUnitContext(request,food_item,*args, **kwargs):
     return context
   
  
- 
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -38,7 +37,6 @@ class IndexView(View):
         phoenix_apps=phoenix_apps
 
         return render(request,TEMPLATE_ROOT+"index.html",context)
-# Create your views here. 
 
   
 class OrganizationUnitView(View):
@@ -54,8 +52,6 @@ class OrganizationUnitView(View):
         context['employees_s']=employees_s
 
         return render(request,TEMPLATE_ROOT+"organization-unit.html",context)
-# Create your views here. 
-
   
   
 class OrganizationUnitsView(View):
@@ -70,9 +66,8 @@ class OrganizationUnitsView(View):
         if request.user.has_perm(APP_NAME+".add_organization_unit"):
             context['add_organization_unit_form']=AddOrganizationUnitForm
         return render(request,TEMPLATE_ROOT+"organization-units.html",context)
-# Create your views here. 
 
-  
+
 class EmployeeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -82,8 +77,6 @@ class EmployeeView(View):
         phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
 
         return render(request,TEMPLATE_ROOT+"employee.html",context)
-# Create your views here. 
-
   
   
 class EmployeesView(View):
@@ -100,6 +93,5 @@ class EmployeesView(View):
             organization_units=OrganizationUnitRepo(request=request).list()
             context['organization_units_for_add_employee_form']=organization_units
         return render(request,TEMPLATE_ROOT+"employees.html",context)
-# Create your views here. 
 
   
