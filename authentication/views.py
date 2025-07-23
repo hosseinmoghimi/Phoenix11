@@ -67,7 +67,6 @@ class ChangePersonImageView(View):
         return redirect(reverse(APP_NAME+":person",kwargs={'pk':person_id}))
 
 
-
 class PersonsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -98,6 +97,7 @@ class PersonView(View):
         if request.user.has_perm(APP_NAME+'.change_person'):
             context['change_person_image_form']=ChangePersonImageForm()
         return render(request,TEMPLATE_ROOT+"person.html",context)
+
 
 class LoginView(View):
     def get(self,request,*args, **kwargs): 
@@ -146,6 +146,7 @@ class ChangePasswordView(View):
         context=getContext(request=request) 
            
         return render(request,TEMPLATE_ROOT+"login.html",context)
+
 
 class LogoutView(View):
     def get(self,request,*args, **kwargs):
