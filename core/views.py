@@ -92,7 +92,6 @@ def PageContext(request,page,*args, **kwargs):
     return context
 
 
-
 class SearchView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -134,7 +133,6 @@ class SearchView(View):
         return render(request,TEMPLATE_ROOT+"search.html",context)
 
 
-
 class PageView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -147,7 +145,7 @@ class PageView(View):
             return mv.get(request=request)
         context.update(PageContext(request=request,page=page))
         return render(request,TEMPLATE_ROOT+"page.html",context)
-# Create your views here.
+ 
 
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -159,4 +157,4 @@ class IndexView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
-# Create your views here.
+ 
