@@ -19,6 +19,10 @@
             aria-labelledby="heading-add-product-to-category" data-parent="#accordion-add-product-to-category">
 
             <div class="card-body">
+
+                <a target="_blank" href="{% url 'accounting:category' pk=0 %}">همه دسته بندی ها</a>
+
+                                
                 <div class="my-3">
                     <h6>دسته بندی های این محصول</h6>
                     <div v-for="product_category in product_categories">
