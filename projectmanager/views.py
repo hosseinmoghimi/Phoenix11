@@ -30,6 +30,14 @@ def ProjectContext(request,project,*args, **kwargs):
     context=PageContext(request=request,page=project)
     context['project']=project
     project_s=json.dumps(ProjectSerializer(project).data)
+
+
+    projects=project.childs.all()
+    context['projects']=projects
+    projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
+    context['projects_s']=projects_s
+    if request.user.has_perm(APP_NAME+'.add_project'):
+        context['add_sub_project_form']=AddSubProjectForm()
     context['project_s']=project_s
     context['WIDE_LAYOUT']=True
     if request.user.has_perm(APP_NAME+'.change_project'):

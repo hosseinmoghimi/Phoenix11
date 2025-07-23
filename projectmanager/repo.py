@@ -90,7 +90,12 @@ class ProjectRepo():
             if year=="13" or year=="14":
                 kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
             project.event_datetime=kwargs['event_datetime']
+            
+        if project.parent is not None and project.contractor_id is None:
+            project.contractor_id=project.parent_project.contractor_id
 
+        if project.parent is not None and project.employer_id is None:
+            project.employer_id=project.parent_project.employer_id
  
         
         (result,message,project)=project.save()

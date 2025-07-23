@@ -6,6 +6,9 @@
   </div>
   <div class="col-md-9">
     <div class="row rtl">
+      <div class="col-md-6">
+        {% include "projectmanager/includes/sub-projects-app/template.html" %}
+      </div>
       <div class="col-md-12">
         {% include "attachments/includes/comments-app/template.html" %}
       </div>
@@ -62,4 +65,5 @@
 </script>
 
 {% include "projectmanager/includes/project-app/script.html" %}
+
 {% endblock script %}

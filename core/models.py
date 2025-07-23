@@ -47,6 +47,14 @@ class Page(models.Model,LinkHelper,ImageHelper):
         return result,message,priority
 
     def save(self):
+        from django.utils import timezone
+        now =timezone.now()
+        if self.event_datetime is None:
+            self.event_datetime=now
+        if self.start_datetime is None:
+            self.start_datetime=now
+        if self.end_datetime is None:
+            self.end_datetime=now
         if self.class_name is None or self.class_name=="":
             self.class_name="page"
         if self.app_name is None or self.app_name=="":

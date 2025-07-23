@@ -35,8 +35,14 @@ class Project(Event,LinkHelper,DateHelper):
         result=SUCCEED
         message="پروژه با موفقیت اضافه شد."
         return (result,message,project)
-    
-
+    @property
+    def parent_project(self):
+        if self.parent is None:
+            return None
+        return Project.objects.filter(pk=self.parent_id).first()
+    @property    
+    def childs(self):
+        return Project.objects.filter(parent_id=self.id)
 class Request(InvoiceLine):
     ware_house=models.ForeignKey("warehouse.warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
 
