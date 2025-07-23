@@ -12,7 +12,10 @@
   </a>
 </div>
 <div>
-  <img width="128" src="{{page.get_qrcode_url}}" alt="">
+  <a href="{{page.get_absolute_url}}">
+
+    <img width="128" src="{{page.get_qrcode_url}}" alt="">
+  </a>
 </div>
 <div>{% include "attachments/includes/page-like-app/template.html" %}</div>
 <div class="my-3">

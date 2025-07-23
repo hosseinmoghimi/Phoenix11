@@ -115,7 +115,7 @@ class SearchView(View):
             result=SUCCEED
 
             context['pages']=pages
-            context['pages_s']=json.dumps(PageSerializer(pages,many=True).data)
+            context['pages_s']=json.dumps(PageBriefSerializer(pages,many=True).data)
 
         context['message']=message
         context['log']=log

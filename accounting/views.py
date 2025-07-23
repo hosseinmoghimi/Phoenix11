@@ -370,6 +370,14 @@ class SearchView(View):
 
                 
 
+            services=ServiceRepo(request=request).list(search_for=search_for)
+            if len(services)>0:
+                context['services']=services
+                context['services_s']=json.dumps(ServiceSerializer(services,many=True).data)
+                WAS_FOUND=True
+
+                
+
             categories=CategoryRepo(request=request).list(search_for=search_for)
             if len(categories)>0:
                 context['categories']=categories
