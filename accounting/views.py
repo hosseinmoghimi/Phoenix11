@@ -17,6 +17,7 @@ from .repo import PersonCategoryRepo,ProfileRepo,ServiceRepo,FAILED,SUCCEED,Invo
 from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer,BrandSerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
+from .serializers import PersonCategorySerializer
 from .repo import FinancialYearRepo
 from utility.currency import to_price_colored
 import json 
@@ -1121,8 +1122,10 @@ class PersonCategoryView(View):
 class PersonCategoriesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        person_category=PersonAccountRepo(request=request).person_category(*args, **kwargs)
-        context['person_category']=person_category
+        person_categories=PersonCategoryRepo(request=request).list(*args, **kwargs)
+        context['person_categories']=person_categories
+        person_categories_s=json.dumps(PersonCategorySerializer(person_categories,many=True).data)
+        context['person_categories_s']=person_categories_s
         return render(request,TEMPLATE_ROOT+"person-categories.html",context)
 
     

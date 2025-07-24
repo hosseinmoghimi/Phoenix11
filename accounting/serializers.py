@@ -1,13 +1,21 @@
 from rest_framework import serializers
 from .models import Category,InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
 from .models import FinancialDocument,ProductSpecification,FinancialYear,PersonAccount
-from .models import Brand
+from .models import Brand,PersonCategory
 from authentication.serializer import PersonSerializer
+
 
 class AccountSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
         fields = ['id','title','name','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+
+
+class PersonCategorySerializer(serializers.ModelSerializer):
+       account=AccountSerializer()
+       class Meta:
+        model = PersonCategory
+        fields = ['id','title','account','code_length' , 'get_absolute_url','get_edit_url','get_delete_url']
 
 
 class BrandSerializer(serializers.ModelSerializer):

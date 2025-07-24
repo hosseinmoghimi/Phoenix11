@@ -468,7 +468,7 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
     bedehkar=models.ForeignKey("account", related_name="bedehkar_events",verbose_name=_("دریافت کننده"), on_delete=models.PROTECT)
     bestankar=models.ForeignKey("account",related_name="bestankar_events", verbose_name=_("پرداخت کننده"), on_delete=models.PROTECT)
     creator=models.ForeignKey("authentication.profile",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
-    tax_percentage=models.IntegerField(_("درصد مالیات"),default=-1)
+    tax_percentage=models.IntegerField(_("درصد مالیات"),default=0)
     amount=models.IntegerField(_("مبلغ"),default=0)
     discount_percentage=models.IntegerField(_("درصد تخفیف"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
