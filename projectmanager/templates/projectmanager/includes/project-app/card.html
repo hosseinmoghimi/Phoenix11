@@ -9,5 +9,8 @@
     </div>
     <div class="card-body">
         {% include "core/includes/page-app/card-contents.html" %}
+        <div>
+            <a href="{% url 'projectmanager:tree_chart' pk=project.pk %}">نمودار درختی</a>
+        </div>
     </div>
 </div>
