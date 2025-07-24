@@ -5,6 +5,7 @@
 <div id="accordion-invoices" class="rtl text-right farsi">
 
 
+
     <div class="card" id="invoices-app">
         <div class="card-header" id="heading-invoices">
             <h5 class="text-center">
@@ -23,18 +24,7 @@
                 </button>
             </h5>
 
-            {% if page_pre_description %}
-
-            <h5 class="text-center">
-                {{page_pre_description}}
-            </h5>
-            {% endif %}
-            {% if page_description %}
-
-            <h4 class="text-center">
-                {{page_description}}
-            </h4>
-            {% endif %}
+         
         </div>
         <div id="collapse-invoices" class="collapse {% if expand_invoices %} show {% endif %}"
             aria-labelledby="heading-invoices" data-parent="#accordion-invoices">
