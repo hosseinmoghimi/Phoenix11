@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'warehouse',
     'transport',
     'archive',
+    'health',
 ]
  
 

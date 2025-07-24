@@ -194,6 +194,8 @@ def class_title(*args, **kwargs):
         class_title = "آزمون"
     if class_name == "pricingpage":
         class_title = "لیست قیمت"
+    if class_name == "drug":
+        class_title = "دارو"
     if class_name == "poll":
         class_title = "پرسش"
     if class_name == "account":
