@@ -282,8 +282,8 @@ class FinancialDocument(models.Model,LinkHelper):
     class_name="financialdocument"
     app_name=APP_NAME    
     class Meta:
-        verbose_name = _("FinancialDocument")
-        verbose_name_plural = _("FinancialDocuments")
+        verbose_name = _("سند مالی")
+        verbose_name_plural = _("سند های مالی")
 
     def __str__(self):
         return self.title
@@ -299,7 +299,6 @@ class FinancialDocument(models.Model,LinkHelper):
         self.bestankar=bestankar
         self.balance=bestankar-bedehkar
         self.save()
-                 
 
 
 class Brand(models.Model,LinkHelper):
@@ -310,12 +309,11 @@ class Brand(models.Model,LinkHelper):
 
 
     class Meta:
-        verbose_name = _("Brand")
-        verbose_name_plural = _("Brands")
+        verbose_name = _("برند")
+        verbose_name_plural = _("برند ها")
 
     def __str__(self):
         return self.name
- 
 
 
 class FinancialDocumentLine(models.Model,LinkHelper):
@@ -394,8 +392,8 @@ class FinancialDocumentLine(models.Model,LinkHelper):
     app_name=APP_NAME 
 
     class Meta:
-        verbose_name = _("FinancialDocumentLine")
-        verbose_name_plural = _("FinancialDocumentLines")
+        verbose_name = _("سطر سند حسابداری")
+        verbose_name_plural = _("سطر های سند حسابداری")
 
     def __str__(self):
         event=""
@@ -415,8 +413,8 @@ class FinancialYear(models.Model,LinkHelper,DateTimeHelper):
     app_name=APP_NAME
 
     class Meta:
-        verbose_name = _("FinancialYear")
-        verbose_name_plural = _("FinancialYears")
+        verbose_name = _("سال مالی")
+        verbose_name_plural = _("سال های مالی")
     def __str__(self):
         return self.name+' #' if self.in_progress else ''
 
@@ -459,8 +457,8 @@ class PersonCategory(models.Model,LinkHelper):
             person_ids.append(p_a.person_id)
         return Person.objects.filter(pk__in=person_ids)
     class Meta:
-        verbose_name = _("PersonCategory")
-        verbose_name_plural = _("PersonCategorys")
+        verbose_name = _("دسته بندی اشخاص")
+        verbose_name_plural = _("دسته بندی های اشخاص")
 
     def __str__(self):
         return self.title
@@ -512,7 +510,7 @@ class InvoiceLineItem(CorePage,LinkHelper):
     app_name=APP_NAME
     class Meta:
         verbose_name = _("InvoiceLineItem")
-        verbose_name_plural = _("InvoiceLineItems")
+        verbose_name_plural = _("موارد قابل فروش")
 
     @property    
     def unit_name(self):
@@ -540,7 +538,7 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     
     class Meta:
         verbose_name = _("InvoiceLineItemUnit")
-        verbose_name_plural = _("InvoiceLineItemUnits")
+        verbose_name_plural = _("واحد های قابل فروش")
     @property
     def product(self):
         return Product.objects.filter(pk=self.invoice_line_item_id).first()
@@ -609,8 +607,8 @@ class Category(models.Model,LinkHelper,ImageHelper):
                 ids.append(id)
         return ids
     class Meta:
-        verbose_name = _("Category")
-        verbose_name_plural = _("Categorys")
+        verbose_name = _("دسته بندی")
+        verbose_name_plural = _("دسته بندی ها")
 
     def __str__(self):
         return self.title
@@ -666,12 +664,11 @@ class Product(InvoiceLineItem):
 
 
     class Meta:
-        verbose_name = _("Product")
+        verbose_name = _("کالا")
         verbose_name_plural = _("کالا ها")
  
     def get_market_absolute_url(self):
         return reverse("market:product",kwargs={'pk':self.pk})
-    
     
   
 class ProductSpecification(models.Model,LinkHelper):
@@ -683,11 +680,10 @@ class ProductSpecification(models.Model,LinkHelper):
     app_name=APP_NAME
     class Meta:
         verbose_name = _("ProductSpecification")
-        verbose_name_plural = _("ProductSpecifications")
+        verbose_name_plural = _("ویژگی های محصولات")
 
     def __str__(self):
         return f"{self.product} > {self.name} > {self.value}"
- 
 
 
 class Service(InvoiceLineItem):
@@ -714,10 +710,10 @@ class Service(InvoiceLineItem):
 
 class Invoice(FinancialEvent):
     
-    
+    shipping_fee=models.IntegerField(_("هزینه حمل"),default=0)
 
     class Meta:
-        verbose_name = _("Invoice")
+        verbose_name = _("فاکتور")
         verbose_name_plural = _("فاکتور ها")
 
  
@@ -734,6 +730,21 @@ class Invoice(FinancialEvent):
         return result,message,invoice
 
 
+    def normalize(self): 
+        
+        total=0
+        discount=0
+        tax=0
+        amount=0
+        shipping_fee=self.shipping_fee
+        for line in self.invoiceline_set.all():
+            total+=line.unit_price*line.quantity 
+            discount+=line.discount
+        total_after_discount=total-discount
+        tax=(total_after_discount)*(self.tax_percentage)/100
+        amount=total-discount+tax+shipping_fee
+        self.amount=amount
+        super(Invoice,self).save()
 
     @property
     def statistics(self):
@@ -775,6 +786,11 @@ class InvoiceLine(models.Model,LinkHelper):
     def line_total(self):
         return (100-self.discount_percentage)*self.unit_price*self.quantity/100
 
+    def save(self,*args, **kwargs):
+
+        super(InvoiceLine,self).save()
+        self.invoice.normalize()
+
 
 class Bank(models.Model,LinkHelper):
     name=models.CharField(_("name"),max_length=50)
@@ -782,8 +798,8 @@ class Bank(models.Model,LinkHelper):
     app_name=APP_NAME 
 
     class Meta:
-        verbose_name = _("Bank")
-        verbose_name_plural = _("Banks")
+        verbose_name = _("بانک")
+        verbose_name_plural = _("بانک ها")
 
     def __str__(self):
         return self.name
@@ -803,8 +819,8 @@ class BankAccount(Account,LinkHelper):
     app_name=APP_NAME
 
     class Meta:
-        verbose_name = _("BankAccount")
-        verbose_name_plural = _("BankAccounts")
+        verbose_name = _("حساب بانکی")
+        verbose_name_plural = _("حساب های بانکی")
 
     def __str__(self):
         return f"{self.title} /{self.bank} /{self.person}"
@@ -817,8 +833,8 @@ class Asset(CorePage):
     owner=models.ForeignKey("authentication.person", verbose_name=_("owner"), on_delete=models.PROTECT)
    
     class Meta:
-        verbose_name = 'Asset'
-        verbose_name_plural = 'Assets'
+        verbose_name = 'دارایی'
+        verbose_name_plural = 'دارایی ها'
 
     def save(self):
         if self.class_name is None or self.class_name=="":
