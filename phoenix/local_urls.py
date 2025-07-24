@@ -22,6 +22,7 @@ urlpatterns = [
     path('attachments/', include('attachments.urls')),
     path('warehouse/', include('warehouse.urls')),
     path('transport/', include('transport.urls')),
+    path('archive/', include('archive.urls')),
     
     
     

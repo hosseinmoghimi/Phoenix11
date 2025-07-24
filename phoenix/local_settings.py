@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'school',
     'warehouse',
     'transport',
+    'archive',
 ]
  
 
