@@ -1,3 +1,12 @@
 <script>
     let invoice_id=parseInt("{{invoice.id}}")
 </script>
+
+{% include "accounting/includes/financial-event-app/script.html" %}
+
+
+{% if add_invoice_line_form %}
+{% include "accounting/includes/add-invoice-line-app/script.html" %}
+{% endif %}
+
+{% include "accounting/includes/invoice-lines-app/script.html" %}

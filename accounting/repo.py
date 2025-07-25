@@ -780,7 +780,6 @@ class PersonCategoryRepo():
         return result,message       
 
 
-
 class ProductSpecificationRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
@@ -844,8 +843,6 @@ class ProductSpecificationRepo:
          
  
         return result,message,product_specification,deleted_id
-
- 
 
 
 class ProductRepo():
@@ -1114,7 +1111,6 @@ class InvoiceLineItemRepo():
             InvoiceLineItemUnitRepo(request=self.request).add_invoice_line_item_unit(invoice_line_item_id=invoice_line_item.id,unit_price=invoice_line_item.unit_price,unit_name=invoice_line_item.unit_name,coef=coef)
         return result,message,invoice_line_item
  
- 
 
 class BankAccountRepo():
     def __init__(self,request,*args, **kwargs):
@@ -1346,7 +1342,6 @@ class FinancialDocumentRepo():
         return result,message,financial_documents
 
 
-
 class BrandRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
@@ -1435,8 +1430,6 @@ class BrandRepo():
         message="برند جدید با موفقیت اضافه شد."
         result=SUCCEED
         return result,message,brand
-
- 
 
 
 class BankRepo():
@@ -2079,6 +2072,80 @@ class FinancialEventRepo():
         if "event_id" in kwargs and kwargs["event_id"] is not None:
             return self.objects.filter(pk=kwargs['event_id']).first() 
          
+    def edit_financial_event(self,*args, **kwargs):
+        leolog(edit_financial_event_kwargs=kwargs)
+        result,message,financial_event=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_financialevent"):
+            message="دسترسی غیر مجاز"
+            return result,message,financial_event
+    
+        if "financial_event_id" in kwargs and kwargs["financial_event_id"] is not None:
+            financial_event=FinancialEvent.objects.filter(pk=kwargs['financial_event_id']).first()  
+            if financial_event is None:
+                message="رویداد پیدا نشد."
+                return result,message,financial_event
+
+        if "title" in kwargs and kwargs["title"] is not None:
+            financial_event.title=kwargs['title']
+
+
+        if "amount" in kwargs and kwargs["amount"] is not None:
+            financial_event.amount=kwargs['amount']
+
+        if "payment_method" in kwargs and kwargs["payment_method"] is not None:
+            financial_event.payment_method=kwargs['payment_method']
+
+            
+        if "shipping_fee" in kwargs and kwargs["shipping_fee"] is not None:
+            financial_event.shipping_fee=kwargs['shipping_fee'] 
+
+        if "discount_percentage" in kwargs and kwargs["discount_percentage"] is not None:
+            financial_event.discount_percentage=kwargs['discount_percentage']
+        if "tax_percentage" in kwargs and kwargs["tax_percentage"] is not None:
+            financial_event.tax_percentage=kwargs['tax_percentage']
+
+        if "shipping_fee" in kwargs and kwargs["shipping_fee"] is not None:
+            financial_event.shipping_fee=kwargs['shipping_fee']
+
+        if "bedehkar_id" in kwargs and kwargs["bedehkar_id"] is not None:
+            financial_event.bedehkar_id=kwargs['bedehkar_id']
+
+        if "bestankar_id" in kwargs and kwargs["bestankar_id"] is not None:
+            financial_event.bestankar_id=kwargs['bestankar_id']
+        
+        if 'event_datetime1' in kwargs and kwargs['event_datetime'] is not None:
+            event_datetime=kwargs["event_datetime"]
+            financial_event.event_datetime=event_datetime
+
+           
+            year=event_datetime[:2]
+            if year=="13" or year=="14":
+                event_datetime=PersianCalendar().to_gregorian(event_datetime)
+            financial_event.event_datetime=event_datetime
+
+        # if 'start_datetime' in kwargs:
+        #     start_datetime=kwargs["start_datetime"]
+        #     financial_event.start_datetime=start_datetime
+
+           
+        #     year=start_datetime[:2]
+        #     if year=="13" or year=="14":
+        #         start_datetime=PersianCalendar().to_gregorian(start_datetime)
+        #     financial_event.start_datetime=start_datetime
+
+        # if 'end_datetime' in kwargs:
+        #     end_datetime=kwargs["end_datetime"]
+        #     financial_event.end_datetime=end_datetime
+
+           
+        #     year=end_datetime[:2]
+        #     if year=="13" or year=="14":
+        #         end_datetime=PersianCalendar().to_gregorian(end_datetime)
+        #     financial_event.end_datetime=end_datetime
+
+        result,message,financial_event=financial_event.save()
+
+        return result,message,financial_event
        
     def delete_all(self,*args, **kwargs):
         result,message=FAILED,""
@@ -2090,33 +2157,42 @@ class FinancialEventRepo():
         result=SUCCEED
         message='همه رویداد ها حذف شدند.'
         return result,message
+    
     def add_financial_event(self,*args,**kwargs):
-        result,message,event=FAILED,"",None
+        result,message,financial_event=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_financialevent"):
             message="دسترسی غیر مجاز"
-            return result,message,event
+            return result,message,financial_event
 
         financial_event=FinancialEvent()
         if 'bedehkar_id' in kwargs:
             financial_event.bedehkar_id=kwargs["bedehkar_id"]
         if 'bestankar_id' in kwargs:
             financial_event.bestankar_id=kwargs["bestankar_id"]
-        if 'title' in kwargs:
+
+            
+        if "shipping_fee" in kwargs and kwargs["shipping_fee"] is not None:
+            financial_event.shipping_fee=kwargs['shipping_fee'] 
+
+        if "payment_method" in kwargs and kwargs["payment_method"] is not None:
+            financial_event.payment_method=kwargs['payment_method'] 
+
+        if 'title' in kwargs and kwargs["title"] is not None:
             financial_event.title=kwargs["title"]
-        if 'description' in kwargs:
+        if 'description' in kwargs and kwargs["description"] is not None:
             financial_event.description=kwargs["description"]
-        if 'parent_id' in kwargs:
+        if 'parent_id' in kwargs and kwargs["parent_id"] is not None:
             if kwargs["parent_id"]>0:
                 financial_event.parent_id=kwargs["parent_id"]
-        if 'color' in kwargs:
+        if 'color' in kwargs and kwargs["color"] is not None:
             financial_event.color=kwargs["color"]
-        if 'amount' in kwargs:
+        if 'amount' in kwargs and kwargs["amount"] is not None:
             financial_event.amount=kwargs["amount"]
-        if 'priority' in kwargs:
+        if 'priority' in kwargs and kwargs["priority"] is not None:
             financial_event.priority=kwargs["priority"]
-        if 'type' in kwargs:
+        if 'type' in kwargs and kwargs["type"] is not None:
             financial_event.type=kwargs["type"]
-        if 'event_datetime' in kwargs:
+        if 'event_datetime' in kwargs and kwargs["event_datetime"] is not None:
             event_datetime=kwargs["event_datetime"]
             financial_event.event_datetime=event_datetime
 
@@ -2126,9 +2202,30 @@ class FinancialEventRepo():
                 event_datetime=PersianCalendar().to_gregorian(event_datetime)
             financial_event.event_datetime=event_datetime
 
+        # if 'start_datetime' in kwargs:
+        #     start_datetime=kwargs["start_datetime"]
+        #     financial_event.start_datetime=start_datetime
+
+           
+        #     year=start_datetime[:2]
+        #     if year=="13" or year=="14":
+        #         start_datetime=PersianCalendar().to_gregorian(start_datetime)
+        #     financial_event.start_datetime=start_datetime
+
+        # if 'end_datetime' in kwargs:
+        #     end_datetime=kwargs["end_datetime"]
+        #     financial_event.end_datetime=end_datetime
+
+           
+        #     year=end_datetime[:2]
+        #     if year=="13" or year=="14":
+        #         end_datetime=PersianCalendar().to_gregorian(end_datetime)
+        #     financial_event.end_datetime=end_datetime
+
         (result,message,financial_event)=financial_event.save()
         return result,message,financial_event
  
+
 class CategoryRepo():
 
     def __init__(self,request,*args, **kwargs):

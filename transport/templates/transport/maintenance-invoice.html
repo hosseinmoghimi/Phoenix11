@@ -71,17 +71,7 @@
 
 
 {% block script %}
-
-{% include "accounting/includes/financial-event-app/script.html" %}
-
+ 
 {% include "accounting/includes/invoice-app/script.html" %}
-
-{% if add_invoice_line_form %}
-{% include "accounting/includes/add-invoice-line-app/script.html" %}
-{% endif %}
-{% include "accounting/includes/invoice-lines-app/script.html" %}
-
-{% if add_financial_document_line_form %}
-{% include "accounting/includes/add-financial-document-line-app/script.html" %}
-{% endif %}
+ 
 {% endblock script %}

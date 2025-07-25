@@ -4,8 +4,24 @@ from utility.forms import SearchForm
 class GetInvoiceLineItemUnitsForm(forms.Form):
     invoice_line_item_id=forms.IntegerField( required=True)
 
+
+class EditFinancialEventForm(forms.Form):
+    title=forms.CharField( required=True,max_length=100)
+    financial_event_id=forms.IntegerField(required=True)
+    discount_percentage=forms.IntegerField(required=False)
+    tax_percentage=forms.IntegerField(required=False)
+    shipping_fee=forms.IntegerField(required=False)
+    amount=forms.IntegerField(required=False)
+    event_datetime=forms.CharField(max_length=50, required=False)
+    payment_method=forms.CharField(max_length=50, required=False)
+    bedehkar_id=forms.IntegerField(required=False)
+    bestankar_id=forms.IntegerField(required=False)
+    description=forms.CharField(max_length=1000,required=False)
+
+
 class AddBrandForm(forms.Form):
     name=forms.CharField( required=True,max_length=100)
+
 
 class AddAccountForm(forms.Form):
     parent_code=forms.IntegerField( required=False)
@@ -82,23 +98,7 @@ class AddCategoryForm(forms.Form):
     parent_id=forms.IntegerField(required=False)
     priority=forms.IntegerField(required=False)
     color=forms.CharField( max_length=100, required=False) 
-
-
-class AddPersonForm(forms.Form):
-    code=forms.CharField(max_length=100, required=True)
-    melli_code=forms.CharField(max_length=10, required=True)
-    first_name=forms.CharField(max_length=100, required=False)
-    last_name=forms.CharField(max_length=100, required=False)
-    email=forms.CharField(max_length=100, required=False)
-    bio=forms.CharField(max_length=100, required=False)
-    mobile=forms.CharField(max_length=100, required=False)
-    prefix=forms.CharField(max_length=100, required=False)
-    address=forms.CharField(max_length=100, required=False)
-    type=forms.CharField(max_length=100, required=False)
-    type2=forms.CharField(max_length=20, required=False)
-    person_account_categories=forms.CharField(max_length=200, required=False)
-    balance=forms.IntegerField(required=False) 
-
+ 
 
 class AddAccountToPersonForm(forms.Form):
     person_category_id=forms.IntegerField(required=True)
@@ -154,8 +154,9 @@ class AddFinancialEventForm(forms.Form):
     bedehkar_id=forms.IntegerField(required=True)
     bestankar_id=forms.IntegerField(required=True)
     amount=forms.IntegerField(required=True)
+    payment_method=forms.CharField(max_length=100,required=False)
     description=forms.CharField(max_length=1000,required=False)
-
+    shipping_fee=forms.IntegerField(required=False)
 
 class AddInvoiceForm(AddFinancialEventForm):
     pass

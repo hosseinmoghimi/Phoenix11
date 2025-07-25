@@ -195,8 +195,10 @@ def FinancialEventContext(request,financial_event):
     financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
  
     context["financial_document_lines_s"]=financial_document_lines_s
-    
-
+    if request.user.has_perm(APP_NAME+'.change_financialevent'):
+        payment_methods=(i[0] for i in PaymentMethodEnum.choices)
+        context['payment_methods_for_edit_financial_event']=payment_methods
+        context['edit_financial_event_form']=EditFinancialEventForm()
     return context
 
 def InvoiceContext(request,invoice,*args, **kwargs):
@@ -611,8 +613,9 @@ class FinancialDocumentLineView(View):
         context=getContext(request=request) 
         financial_document_line=FinancialDocumentLineRepo(request=request).financial_document_line(*args, **kwargs)
         context['financial_document_line']=financial_document_line
+        financial_document_line_s=json.dumps(FinancialDocumentLineSerializer(financial_document_line).data)
+        context['financial_document_line_s']=financial_document_line_s
 
-        context.update(PageContext(request=request,page=financial_document_line))
 
         return render(request,TEMPLATE_ROOT+"financial-document-line.html",context)
 

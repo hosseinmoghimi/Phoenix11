@@ -472,6 +472,7 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
     amount=models.IntegerField(_("مبلغ"),default=0)
     discount_percentage=models.IntegerField(_("درصد تخفیف"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
+    shipping_fee=models.IntegerField(_("هزینه حمل"),default=0)
       
 
     @property
@@ -479,7 +480,7 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
         return self.amount*self.tax_percentage/100
     @property
     def sum_total(self):
-        return self.tax_amount+self.amount
+        return self.tax_amount+self.amount-self.discount
 
     class Meta:
         verbose_name = _("رویداد مالی")
@@ -710,7 +711,6 @@ class Service(InvoiceLineItem):
 
 class Invoice(FinancialEvent):
     
-    shipping_fee=models.IntegerField(_("هزینه حمل"),default=0)
 
     class Meta:
         verbose_name = _("فاکتور")

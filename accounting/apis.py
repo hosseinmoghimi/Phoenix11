@@ -393,6 +393,30 @@ class GetInvoiceLineItemUnitsApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+    
+
+class EditFinancialEventApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            edit_financial_event_form=EditFinancialEventForm(request.POST)
+            if edit_financial_event_form.is_valid():
+                log=333
+                cd=edit_financial_event_form.cleaned_data
+                result,message,financial_event=FinancialEventRepo(request=request).edit_financial_event(**cd)
+                if financial_event is not None:
+                    context['financial_event']=FinancialEventSerializer(financial_event).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
 
 
 class SelectFinancialEventApi(APIView):
