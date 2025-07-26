@@ -1,0 +1,54 @@
+
+    <div class="card">
+      <div class="card-header">
+        <h5>{{organization_unit.title}}</h5>
+      </div>
+      <div class="card-body">
+        <h5>
+          <a
+            href="{% url 'organization:organizationunit' pk=organization_unit.pk %}"
+          >
+            organization_unit: {{organization_unit.title}}
+          </a>
+        </h5>
+        <div class="text-center">
+          <img src="{{organization_unit.thumbnail}}" width="128" alt="" />
+        </div>
+        <div class="text-center">
+          <a href="{{organization_unit.get_absolute_url}}">
+            <img width="128" src="{{organization_unit.get_qrcode_url}}" alt="" />
+          </a>
+        </div>
+        <div class="my-3">
+          <h5>{{organization_unit.title}}</h5>
+
+          <small class="text-muted">{{organization_unit.class_title}}</small>
+        </div>
+
+        {% if perms.core.change_organization_unit %}
+        <div>
+          <a
+            href="{{organization_unit.get_edit_url}}"
+            class="my-2 text-warning mx-2"
+            title="ویرایش"
+            target="_blank"
+          >
+            <i class="fa fa-edit text-warning"></i>
+            ویرایش
+          </a>
+        </div>
+        {% endif %} {% if perms.core.delete_organization_unit %}
+        <div>
+          <a
+            href="{{organization_unit.get_delete_url}}"
+            class="my-2 text-danger mx-2"
+            title="حذف"
+            target="_blank"
+          >
+            <i class="fa fa-trash text-danger"></i>
+            حذف
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
