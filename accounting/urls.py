@@ -46,6 +46,7 @@ urlpatterns = [
     path('financial-documents/',login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
     path('financial-document/<int:pk>/',login_required(views.FinancialDocumentView.as_view()),name="financialdocument"),
     path("select-financial-document/",login_required(apis.SelectFinancialDocumentApi.as_view()),name="select_financial_document"),
+    path("edit-financial-document/",login_required(apis.EditFinancialDocumentApi.as_view()),name="edit_financial_document"),
     
     path('financial-document-line/<int:pk>/',login_required(views.FinancialDocumentLineView.as_view()),name="financialdocumentline"),
     path('add-financial-document-line/',login_required(apis.AddFinancialDocumentLineApi.as_view()),name="add_financial_document_line"),
@@ -88,10 +89,11 @@ urlpatterns = [
 
     path("add-product-specification/",login_required(apis.AddProductSpecificationApi.as_view()),name="add_product_specification"),
 
-    
-    path('brands/',login_required(views.CategoriesView.as_view()),name="brands"),
-    path('brand/<int:pk>/',login_required(views.CategoryView.as_view()),name="brand"),
-    path("add-brand/",login_required(apis.AddCategoryApi.as_view()),name="add_brand"),
+     
+
+    path('assets/',login_required(views.AssetsView.as_view()),name="assets"),
+    path('asset/<int:pk>/',login_required(views.AssetView.as_view()),name="asset"),
+    path("add-asset/",login_required(apis.AddAssetApi.as_view()),name="add_asset"),
     
     path('services/',login_required(views.ServicesView.as_view()),name="services"),
     path('service/<int:pk>/',login_required(views.ServiceView.as_view()),name="service"),

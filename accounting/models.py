@@ -252,7 +252,7 @@ class FinancialDocument(models.Model,LinkHelper):
     bedehkar=models.IntegerField(_("بدهکار"),default=0)
     bestankar=models.IntegerField(_("بستانکار"),default=0)
     balance=models.IntegerField(_("تراز"),default=0)
-
+     
     @property 
     def lines(self):
         return self.financialdocumentline_set.all()

@@ -12,12 +12,12 @@ from phoenix.server_apps import phoenix_apps
 from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
-from .repo import FinancialDocumentRepo,CategoryRepo,BrandRepo
+from .repo import FinancialDocumentRepo,CategoryRepo,BrandRepo,AssetRepo
 from .repo import PersonCategoryRepo,ProfileRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
 from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer,BrandSerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
-from .serializers import PersonCategorySerializer
+from .serializers import PersonCategorySerializer,AssetSerializer
 from .repo import FinancialYearRepo
 from utility.currency import to_price_colored
 import json 
@@ -44,6 +44,10 @@ def AddAccountContext(request,*args, **kwargs):
         context['add_account_form']=AddAccountForm()
     return context
 
+def AddAssetContext(request,*args, **kwargs):
+    context={}
+    context['add_asset_form']=AddAssetForm()
+    return context
 def AddInvoiceLineItemContext(request,*args, **kwargs):
     context={}
     unit_names=(i[0] for i in UnitNameEnum.choices)
@@ -197,7 +201,7 @@ def FinancialEventContext(request,financial_event):
     context["financial_document_lines_s"]=financial_document_lines_s
     if request.user.has_perm(APP_NAME+'.change_financialevent'):
         payment_methods=(i[0] for i in PaymentMethodEnum.choices)
-        context['payment_methods_for_edit_financial_event']=payment_methods
+        context['payment_methods_for_edit_financial_event_form']=payment_methods
         context['edit_financial_event_form']=EditFinancialEventForm()
     return context
 
@@ -316,6 +320,12 @@ def AddProductToCategoryContext(request,product,*args, **kwargs):
     product_categories=product.category_set.all()
     product_categories_s=json.dumps(CategorySerializer(product_categories,many=True).data)
     context['product_categories_s']=product_categories_s
+    return context
+
+def EditFinancialDocumentContext(request,financial_document,*args, **kwargs):
+    context={}
+    context['edit_financial_document_form']=EditFinancialDocumentForm()
+    context['statuses_for_edit_financial_document_form']=(i[0] for i in FinancialDocumentStatusEnum.choices)
     return context
 
 
@@ -575,6 +585,10 @@ class FinancialDocumentView(View):
             context.update(AddFinancialDocumentLineContext(request=request,financial_document=financial_document))
              
 
+        if request.user.has_perm(APP_NAME+'.edit_financialdocumentline'):
+            context.update(EditFinancialDocumentContext(request=request,financial_document=financial_document))
+             
+
         return render(request,TEMPLATE_ROOT+"financial-document.html",context)
 
 
@@ -748,6 +762,56 @@ class InvoiceLineView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
     
+class ServiceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        service=ServiceRepo(request=request).service(*args, **kwargs)
+        if service is None:
+            raise Http404
+        
+
+        context.update(ServiceContext(request=request,service=service))
+
+        return render(request,TEMPLATE_ROOT+"service.html",context)   
+
+
+class ServicesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        services=ServiceRepo(request=request).list(*args, **kwargs)
+        services_s=json.dumps(ServiceSerializer(services,many=True).data)
+        context['services']=services
+        context['services_s']=services_s
+        if request.user.has_perm(APP_NAME+'.add_service'):
+            context.update(AddServiceContext(request=request))
+        return render(request,TEMPLATE_ROOT+"services.html",context)
+
+
+class AssetView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        asset=AssetRepo(request=request).asset(*args, **kwargs)
+        if asset is None:
+            raise Http404
+        
+
+        context.update(AssetContext(request=request,asset=asset))
+
+        return render(request,TEMPLATE_ROOT+"asset.html",context)   
+
+
+class AssetsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        assets=AssetRepo(request=request).list(*args, **kwargs)
+        assets_s=json.dumps(AssetSerializer(assets,many=True).data)
+        context['assets']=assets
+        context['assets_s']=assets_s
+        if request.user.has_perm(APP_NAME+'.add_asset'):
+            context.update(AddAssetContext(request=request))
+        return render(request,TEMPLATE_ROOT+"assets.html",context)
+
+
     
 class ServiceView(View):
     def get(self,request,*args, **kwargs):
@@ -959,6 +1023,7 @@ class FinancialEventView(View):
         financial_event=FinancialEventRepo(request=request).financial_event(*args, **kwargs)
         context.update(FinancialEventContext(request=request,financial_event=financial_event))
         context['financial_event']=financial_event
+
         context['WIDE_LAYOUT']=True 
         return render(request,TEMPLATE_ROOT+"financial-event.html",context)
 

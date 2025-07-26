@@ -18,10 +18,20 @@ class EditFinancialEventForm(forms.Form):
     bestankar_id=forms.IntegerField(required=False)
     description=forms.CharField(max_length=1000,required=False)
 
+class EditFinancialDocumentForm(forms.Form):
+    financial_document_id=forms.IntegerField( required=True)
+    title=forms.CharField( required=True,max_length=100)
+    status=forms.CharField(max_length=50, required=False)
+
 
 class AddBrandForm(forms.Form):
     name=forms.CharField( required=True,max_length=100)
 
+
+
+class AddAssetForm(forms.Form):
+    title=forms.CharField( required=True,max_length=100)
+    owner_id=forms.IntegerField(required=False)
 
 class AddAccountForm(forms.Form):
     parent_code=forms.IntegerField( required=False)

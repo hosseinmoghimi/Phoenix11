@@ -3,11 +3,12 @@ from utility.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
-from .repo import CategoryRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo,BrandRepo
+from .repo import AssetRepo,CategoryRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo,BrandRepo
 from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo
 from utility.log import leolog
 from .serializers import  InvoiceLineItemUnitBriefSerializer, ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer,BrandSerializer
+from .serializers import AssetSerializer
 from django.http import JsonResponse
 from .forms import *
 from .repo import FinancialYearRepo,ProductSpecificationRepo,PersonAccountRepo
@@ -418,6 +419,28 @@ class EditFinancialEventApi(APIView):
 
 
 
+class EditFinancialDocumentApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            edit_financial_document_form=EditFinancialDocumentForm(request.POST)
+            if edit_financial_document_form.is_valid():
+                log=333
+                cd=edit_financial_document_form.cleaned_data
+                result,message,financial_document=FinancialDocumentRepo(request=request).edit_financial_document(**cd)
+                if financial_document is not None:
+                    context['financial_document']=FinancialDocumentSerializer(financial_document).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
 
 class SelectFinancialEventApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -578,6 +601,29 @@ class AddBrandApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+
+
+class AddAssetApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_asset_form=AddAssetForm(request.POST)
+        if add_asset_form.is_valid():
+            log=333
+            cd=add_asset_form.cleaned_data
+            result,message,asset=AssetRepo(request=request).add_asset(**cd)
+            if asset is not None:
+                context['asset']=AssetSerializer(asset).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
 
 
 class AddProductApi(APIView):

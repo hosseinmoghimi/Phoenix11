@@ -86,7 +86,7 @@
             <div class="form-group">
               <label for="">نحوه پرداخت</label>
               <select name="" v-model="payment_method" class="form-control">
-                {% for payment_method in payment_methods_for_edit_financial_event %}
+                {% for payment_method in payment_methods_for_edit_financial_event_form %}
                   <option value="{{payment_method}}">{{payment_method}}</option>
                 {% endfor %}
               </select>

@@ -1,4 +1,4 @@
-from .models import Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit
+from .models import Asset,Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit
 from .models import InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,FinancialYear
 from .models import Invoice,Bank,BankAccount,PersonCategory,FinancialYear,PersonAccount,ProductSpecification
 from .models import Brand
@@ -1432,6 +1432,83 @@ class BrandRepo():
         return result,message,brand
 
 
+
+class AssetRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.request=request
+        self.me=None
+        # profile=ProfileRepo(request=request).me
+        self.objects=Asset.objects
+       
+
+        # if profile is not None:
+        #     self.me=self.objects.filter(profile=profile).first()
+    def list(self,*args, **kwargs):
+        objects=self.objects
+  
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(full_name__contains=search_for) | Q(melli_code__contains=search_for) | Q(code=search_for))
+        return objects.all()
+     
+    def asset(self,*args, **kwargs):
+        if "asset_id" in kwargs and kwargs["asset_id"] is not None:
+            return self.objects.filter(pk=kwargs['asset_id']).first()
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        if "code" in kwargs and kwargs["code"] is not None:
+            return self.objects.filter(code=kwargs['code']).first()
+     
+        
+    def delete_all(self,*args, **kwargs):
+      
+        assets_counter=0 
+
+        result=SUCCEED
+        message=""  
+        if not self.request.user.has_perm(APP_NAME+".delete_asset"):
+            message="دسترسی غیر مجاز"
+            result=FAILED
+            return message,result
+        for asset in Asset.objects.all():
+            asset.delete()
+            assets_counter+=1
+
+        message=f"<p>{assets_counter} بانک با موفقیت حذف شد.</p>"
+        return result,message
+    
+    
+    def add_asset(self,*args,**kwargs):
+        result,message,asset=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_asset"):
+            message="دسترسی غیر مجاز"
+            return result,message,asset
+
+        asset=Asset() 
+
+ 
+
+        if Asset.objects.filter(title=kwargs['title']).first() is not None:
+            message="نام وارد شده تکراری است."
+            asset=None
+            return result,message,asset
+
+  
+        if 'title' in kwargs:
+            asset.title=kwargs["title"] 
+
+        if 'owner_id' in kwargs:
+            asset.owner_id=kwargs["owner_id"]
+            
+        asset.save()       
+        message="دارایی جدید با موفقیت اضافه شد."
+        result=SUCCEED
+        return result,message,asset
+
+ 
+
 class BankRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
@@ -1749,6 +1826,44 @@ class FinancialDocumentRepo():
             new_log['url']=financial_document.get_absolute_url()
             new_log['profile']=me_profile
             new_log['description']="سند مالی جدید با موفقیت اضافه گردید."
+            LogRepo(request=self.request).add_log(**new_log)
+        return result,message,financial_document
+
+
+            
+    def edit_financial_document(self,*args, **kwargs):
+        result,message,financial_document=FAILED,"",None
+        # if not Permission(request=self.request).is_permitted(APP_NAME,OperationEnum.ADD,"financialdocument"):
+        if not self.request.user.has_perm(APP_NAME+".add_financialdocument"):
+            message="دسترسی غیر مجاز"
+            return result,message,financial_document
+         
+        financial_document_id=kwargs['financial_document_id']
+        financial_document=FinancialDocument.objects.filter(pk=financial_document_id).first()
+        if financial_document is None:
+            message='سند مالی پیدا نشد.'
+            return FAILED,message,None
+        
+        if 'title' in kwargs:
+            financial_document.title=kwargs['title']
+        if 'status' in kwargs:
+            financial_document.status=kwargs['status']
+     
+        
+        # if 'financial_year_id' in kwargs:
+        #     payment.financial_year_id=kwargs['financial_year_id']
+        # else:
+        #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
+        result,message,financial_document=financial_document.save()
+        if result==SUCCEED:
+            message="با موفقیت ویرایش شد."
+            me_profile=ProfileRepo(request=self.request).me
+            new_log={}
+            new_log['title']="ویرایش سند مالی "+" : "+financial_document.title
+            new_log['app_name']=APP_NAME
+            new_log['url']=financial_document.get_absolute_url()
+            new_log['profile']=me_profile
+            new_log['description']="سند مالی جدید با موفقیت ویرایش گردید."
             LogRepo(request=self.request).add_log(**new_log)
         return result,message,financial_document
 
