@@ -53,7 +53,13 @@ def AddInvoiceLineItemContext(request,*args, **kwargs):
     unit_names=(i[0] for i in UnitNameEnum.choices)
     context['unit_names_for_add_invoice_line_item']=unit_names
     return context
-
+def AssetContext(request,asset,*args, **kwargs):
+    context={}
+    context.update(PageContext(request=request,page=asset))
+    context['asset']=asset
+    asset_s=json.dumps(AssetSerializer(asset).data)
+    context['asset_s']=asset_s
+    return context
 def AddProductContext(request,*args, **kwargs):
     context=AddInvoiceLineItemContext(request=request)
     brands=BrandRepo(request=request).list()

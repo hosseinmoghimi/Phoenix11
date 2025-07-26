@@ -9,6 +9,7 @@ from utility.calendar import PersianCalendar
 import json
 from django.views import View
 from core.views import CoreContext,leolog
+from accounting.views import AssetContext
 
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='transport/'
@@ -23,6 +24,10 @@ def getContext(request,*args, **kwargs):
  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
+
+def VehicleContext(request,vehicle,*args, **kwargs):
+    context=AssetContext(request=request,asset=vehicle)
+    return context 
 
  
 class IndexView(View):
@@ -53,17 +58,14 @@ class VehiclesView(View):
         return render(request,TEMPLATE_ROOT+"vehicles.html",context) 
     
     
- 
-
     
 class VehicleView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         vehicle =VehicleRepo(request=request).vehicle(*args, **kwargs)
         context[WIDE_LAYOUT]=False
-        context['vehicle']=vehicle
-        from core.views import PageContext
-        context.update(PageContext(request=request,page=vehicle))
+        context['vehicle']=vehicle 
+        context.update(VehicleContext(request=request,asset=vehicle))
         return render(request,TEMPLATE_ROOT+"vehicle.html",context) 
     
  
