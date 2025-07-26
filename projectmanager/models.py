@@ -21,10 +21,16 @@ class Project(Event,LinkHelper,DateHelper):
     weight=models.IntegerField(_("وزن پروژه"),default=0)
     invoices=models.ManyToManyField("accounting.invoice", blank=True, verbose_name=_("invoices"))
     remote_clients=models.ManyToManyField("remoteclient", blank=True,verbose_name=_("remote_clients"))
+    amount=models.IntegerField(_("cost"),default=0)
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
- 
+    def normalize(self):
+        sum=0
+        for inv in self.invoices.all():
+            sum+=inv.amount
+        self.amount=sum
+        super(Project,self).save()
     def save(self):
         (result,message,project)=FAILED,'',self
         if self.class_name is None or self.class_name=="":
