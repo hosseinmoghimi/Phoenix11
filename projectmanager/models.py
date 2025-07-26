@@ -53,7 +53,10 @@ class Project(Event,LinkHelper,DateHelper):
     
     @property    
     def total_price(self):
-        return 100000
+        sum=0
+        for pr in self.childs.all():
+            sum+=pr.total_price
+        return sum+self.amount
     
 class Request(InvoiceLine):
     ware_house=models.ForeignKey("warehouse.warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
