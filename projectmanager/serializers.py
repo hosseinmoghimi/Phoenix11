@@ -2,12 +2,13 @@ from rest_framework import serializers
 from .models import Project,RemoteClient
 from accounting.serializers import FinancialEventSerializer,InvoiceLineSerializer
 from organization.serializers import OrganizationUnitSerializer
+
 class ProjectSerializer(FinancialEventSerializer):
        contractor=OrganizationUnitSerializer()
        employer=OrganizationUnitSerializer()
        class Meta:
         model = Project
-        fields = ['id','percentage_completed','title','thumbnail','persian_start_datetime','persian_end_datetime','employer','contractor', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','percentage_completed','amount','weight','title','thumbnail','persian_start_datetime','persian_end_datetime','employer','contractor', 'get_absolute_url','get_edit_url','get_delete_url']
  
 
   

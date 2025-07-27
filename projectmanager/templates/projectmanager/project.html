@@ -1,6 +1,12 @@
 {% extends "projectmanager/layout.html" %} {% block content %}
 <div class="row rtl">
   <div class="col-md-3">
+      {% if project.parent %}
+          
+        <div>
+            {{project.parent.get_breadcrumb|safe}}
+        </div>
+        {% endif %}
     {% include "projectmanager/includes/project-app/card.html" %}
     {% include "core/includes/page-thumbnail-header-app/template.html" %}
   </div>

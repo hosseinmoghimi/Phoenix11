@@ -83,18 +83,9 @@
                         </div>
                     </a>
 
-                    <h6 class="text-secondary ltr" v-show="show_detail">
+                    <h6 class="text-secondary ltr my-1" v-show="show_detail">
                         <small>
-                            <div class="row rtl">
-                                {% if not project %}
-                                <div class="col-2">
-
-
-                                    <span title="کارفرما">
-                                        <span v-text="project.contractor.title"></span>
-
-                                    </span>
-                                </div>
+                            <div class="row rtl">  
                                 <div class="col-2">
 
 
@@ -103,50 +94,10 @@
                                         %
                                     </span>
                                 </div>
-                                <div class="col-2">
-
-
-                                    <span title="پسندیده شده">
-                                        <span v-text="project.likes_count" class="text-primary"></span>
-                                        <small>
-                                            <i class="fa fa-thumbs-up text-primary" aria-hidden="true"></i>
-
-                                        </small>
-                                    </span>
-                                </div>
-                                <div class="col-6">
+                                
+                                <div class="col-8">
                                     <span title="ارزش زیرپروژه">
-                                        <span v-text="to_price(project.sum_total,'')"></span>
-                                        <small>
-                                            {{CURRENCY}}
-                                        </small>
-                                    </span>
-                                </div>
-
-
-                                {% else %}
-                                <div class="col-2">
-
-
-                                    <span title="پیشرفت زیرپروژه">
-                                        <span v-text="project.percentage_completed"></span>
-                                        %
-                                    </span>
-                                </div>
-                                <div class="col-2">
-
-
-                                    <span title="پسندیده شده">
-                                        <span v-text="project.likes_count" class="text-primary"></span>
-                                        <small>
-                                            <i class="fa fa-thumbs-up text-primary" aria-hidden="true"></i>
-
-                                        </small>
-                                    </span>
-                                </div>
-                                <div class="col-6">
-                                    <span title="ارزش زیرپروژه">
-                                        <span v-text="to_price(project.sum_total,'')"></span>
+                                        <span v-text="to_price(project.amount)"></span>
                                         <small>
                                             {{CURRENCY}}
                                         </small>
@@ -159,8 +110,7 @@
                                             X
                                         </small>
                                     </span>
-                                </div>
-                                {% endif %}
+                                </div> 
 
                             </div>
 
@@ -173,6 +123,7 @@
                             aria-valuemax="100" class="progress-bar bg-primary"
                             :style="'width: '+project.percentage_completed+'%;'"></div>
                     </div>
+                   
                 </div>
             </div>
             {% if add_sub_project_form %}

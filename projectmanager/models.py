@@ -18,10 +18,10 @@ class Project(Event,LinkHelper,DateHelper):
     contractor=models.ForeignKey("organization.organizationunit", verbose_name=_("contractor"),related_name="project_contracted", on_delete=models.CASCADE)
     type=models.CharField(_("تایپ"),max_length=50,choices=ProjectTypeEnum.choices,default=ProjectTypeEnum.TYPE_A)
     percentage_completed=models.IntegerField(_("درصد پیشرفت"),default=0)
-    weight=models.IntegerField(_("وزن پروژه"),default=0)
+    weight=models.IntegerField(_("وزن پروژه"),default=1)
     invoices=models.ManyToManyField("accounting.invoice", blank=True, verbose_name=_("invoices"))
     remote_clients=models.ManyToManyField("remoteclient", blank=True,verbose_name=_("remote_clients"))
-    amount=models.IntegerField(_("cost"),default=0)
+    amount=models.IntegerField(_("ارزش پروژه"),default=0)
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
