@@ -1,5 +1,5 @@
 from .models import Like,Comment,Link,Download,Image, Tag
-from core.serializer import ProfileSerializer,serializers,PageSerializer
+from core.serializers import ProfileSerializer,serializers,PageSerializer
 from .models import Area, Location
 
 class LocationSerializer(serializers.ModelSerializer):

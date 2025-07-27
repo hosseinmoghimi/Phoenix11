@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,reverse
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from .repo import ProfileRepo
 from django.views import View
-from .serializer import PersonSerializer
+from .serializers import PersonSerializer
 from .repo import PersonRepo,FAILED,SUCCEED
 from .forms import *
 from django.http import HttpResponseRedirect

@@ -24,6 +24,7 @@ urlpatterns = [
     path('transport/', include('transport.urls')),
     path('archive/', include('archive.urls')),
     path('health/', include('health.urls')),
+    path('messenger/', include('messenger.urls')),
     
     
     

@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'transport',
     'archive',
     'health',
+    'messenger',
 ]
  
 

@@ -5,7 +5,7 @@ import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
 from .repo import PersonRepo,ProfileRepo
-from .serializer import PersonSerializer,ProfileSerializer
+from .serializers import PersonSerializer,ProfileSerializer
 from django.http import JsonResponse
 from .forms import *
    

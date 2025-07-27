@@ -7,3 +7,4 @@ qrcode
 django-social-share
 khayyam
 pillow
+pusher

@@ -14,7 +14,7 @@ from utility.views import MessageView
 from django.utils import timezone
 import json
 from .repo import PageRepo,FAILED,SUCCEED
-from .serializer import PageSerializer,PageBriefSerializer
+from .serializers import PageSerializer,PageBriefSerializer
 
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='core/'
@@ -65,7 +65,8 @@ def CoreContext(request,*args, **kwargs):
             # context['current_app']={'name':appp['name'],'title':appp['title'],'url':appp['url'],'logo':appp['logo']}
             context['current_app']=appp
             context['app_title']=appp['title']
- 
+    from messenger.views import MessengerContext
+    context.update(MessengerContext(request=request,profile=me_profile))
     return context
 
         

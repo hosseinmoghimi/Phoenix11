@@ -1,4 +1,4 @@
-from core.serializer import serializers
+from core.serializers import serializers
 from .models import Shop,Menu,Supplier,Customer,CartItem,Shipper,Desk,DeskCustomer
 from accounting.serializers import Category,Product,AccountBriefSerializer,PersonSerializer
 

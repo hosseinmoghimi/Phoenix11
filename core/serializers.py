@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Page
-from authentication.serializer import ProfileSerializer
+from authentication.serializers import ProfileSerializer
 
 class PageSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,4 +1,4 @@
-from core.serializer import serializers
+from core.serializers import serializers
 from .models import Vehicle,MaintenanceInvoice
 
 class VehicleSerializer(serializers.ModelSerializer):

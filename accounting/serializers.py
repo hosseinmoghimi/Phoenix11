@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Asset,Category,InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
 from .models import FinancialDocument,ProductSpecification,FinancialYear,PersonAccount
 from .models import Brand,PersonCategory
-from authentication.serializer import PersonSerializer
+from authentication.serializers import PersonSerializer
 
 
 class AccountSerializer(serializers.ModelSerializer):
