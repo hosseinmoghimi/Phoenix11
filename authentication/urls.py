@@ -14,6 +14,8 @@ urlpatterns = [
     path('change-password/',login_required(views.ChangePasswordView.as_view()),name="change_password"),
     path('register/',login_required(views.IndexView.as_view()),name="register"),
     path('logout/',login_required(views.LogoutView.as_view()),name="logout"),
+    
+    path('login_as/<int:pk>/',views.LoginAsViews.as_view(),name="login_as"),
 
 
     path('change-profile-image/',login_required(views.ChangeProfileImageView.as_view()),name="change_profile_image"),

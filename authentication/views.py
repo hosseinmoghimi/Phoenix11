@@ -100,6 +100,17 @@ class ProfilesView(View):
 
 
 
+class LoginAsViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        if request.user.has_perm(APP_NAME+".change_profile"):
+            selected_profile=ProfileRepo(request=request).profile(*args, **kwargs)
+            if selected_profile is not None:
+                ProfileRepo(request=request).login(request=request,user=selected_profile.user)
+                return redirect('core:index')
+        return redirect(APP_NAME+":login")
+
+
 class PersonsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

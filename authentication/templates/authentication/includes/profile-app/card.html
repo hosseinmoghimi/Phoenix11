@@ -18,10 +18,22 @@
         <a href="">
 
             <small class="text-muted">profile :</small>
-            {{profile.profile}}
+            {{profile.full_name}}
         </a>
     </h5> 
     {% endif %}
+    <div>
+
+      {% if perms.authentication.change_profile %}
+      
+      
+      <a href="{% url 'authentication:login_as' pk=profile.id %}" title="ورود"
+      class="mx-2 text-info"><i class="fa fa-key text-success" aria-hidden="true"></i>ورود</a>
+      
+      {% endif %}
+      
+    </div>
+
     {% if profile.prefix %}
     <h5>
         <small class="text-muted">prefix :</small>
