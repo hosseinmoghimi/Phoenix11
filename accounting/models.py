@@ -711,7 +711,12 @@ class Service(InvoiceLineItem):
 
 class Invoice(FinancialEvent):
     
-
+    @property
+    def line_discount_amount(self):
+        line_discount_amount=0
+        for line in self.invoiceline_set.all():
+            line_discount_amount+=line.discount_percentage*line.unit_price*line.quantity/100
+        return line_discount_amount
     class Meta:
         verbose_name = _("فاکتور")
         verbose_name_plural = _("فاکتور ها")
