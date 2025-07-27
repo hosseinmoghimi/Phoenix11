@@ -49,7 +49,7 @@ class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
         verbose_name_plural = _("MaterialPorts")
 
     def __str__(self):
-        return f"{self.profile}  {self.product}  {self.status}"
+        return f"{self.profile}  {self.product}  {self.direction}"
 
 
 class WareHouseMaterialSheet(models.Model,LinkHelper):
@@ -90,8 +90,9 @@ class MaterialTerminal(models.Model):
         verbose_name_plural = _("MaterialTerminals")
 
     def __str__(self):
-        if self.profile is None:
-            return f"{self.profile}"
-        if self.ware_house is None:
-            return f"{self.ware_house}"
-        return "___"
+        employee=ware_house=''
+        if self.employee is not None:
+            employee= f"{self.employee}"
+        if self.ware_house is not None:
+            ware_house= f"{str(self.ware_house)}"
+        return ware_house+"___"+employee
