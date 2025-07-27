@@ -27,6 +27,7 @@ urlpatterns = [
     path('person-accounts/',login_required(views.PersonAccountsView.as_view()),name="person_accounts"),
     path('person-account/<int:pk>/',login_required(views.PersonAccountView.as_view()),name="personaccount"),
     path("add-person-account/",login_required(apis.AddPersonAccountApi.as_view()),name="add_person_account"),
+    path("add-person-category/",login_required(apis.AddPersonCategoryApi.as_view()),name="add_person_category"),
     path("select-person-account/",login_required(apis.SelectPersonAccountApi.as_view()),name="select_person_account"),
     
     

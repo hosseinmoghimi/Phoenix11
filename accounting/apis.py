@@ -12,7 +12,7 @@ from .serializers import AssetSerializer
 from django.http import JsonResponse
 from .forms import *
 from .repo import FinancialYearRepo,ProductSpecificationRepo,PersonAccountRepo
-from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
+from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer,PersonCategorySerializer
  
 class AddProductToCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -52,6 +52,29 @@ class AddPersonAccountApi(APIView):
             result,message,person_account=PersonAccountRepo(request=request).add_person_account(**cd)
             if result==SUCCEED:
                 context['person_account']=PersonAccountSerializer(person_account,many=False).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+
+class AddPersonCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_person_category_form=AddPersonCategoryForm(request.POST)
+        if add_person_category_form.is_valid():
+            log=333
+            cd=add_person_category_form.cleaned_data
+            result,message,person_category=PersonCategoryRepo(request=request).add_person_category(**cd)
+            if result==SUCCEED:
+                context['person_category']=PersonCategorySerializer(person_category,many=False).data
         context['message']=message
         context['result']=result
         context['log']=log

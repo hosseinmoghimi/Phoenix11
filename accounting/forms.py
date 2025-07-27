@@ -117,7 +117,8 @@ class AddAccountToPersonForm(forms.Form):
     
 class AddPersonCategoryForm(forms.Form):
     title=forms.CharField(max_length=100, required=True)
-    account_code=forms.IntegerField(required=True)
+    account_id=forms.IntegerField(required=True)
+    code_length=forms.IntegerField(required=False)
 
  
 class AddProductSpecificationForm(forms.Form):

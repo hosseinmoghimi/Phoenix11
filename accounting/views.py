@@ -334,7 +334,10 @@ def EditFinancialDocumentContext(request,financial_document,*args, **kwargs):
     context['statuses_for_edit_financial_document_form']=(i[0] for i in FinancialDocumentStatusEnum.choices)
     return context
 
-
+def AddPersonCategoryContext(request,*args, **kwargs):
+    context={}
+    context['add_person_category_form']=AddPersonCategoryForm()
+    return context
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -1200,6 +1203,8 @@ class PersonCategoriesView(View):
         context['person_categories']=person_categories
         person_categories_s=json.dumps(PersonCategorySerializer(person_categories,many=True).data)
         context['person_categories_s']=person_categories_s
+        if request.user.has_perm(APP_NAME+'.add_personcategory'):
+            context.update(AddPersonCategoryContext(request=request))
         return render(request,TEMPLATE_ROOT+"person-categories.html",context)
 
     

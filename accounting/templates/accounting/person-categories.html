@@ -4,7 +4,7 @@
 {% block content %}
 <div class="row rtl farsi">
        
-   {% if add_person_account_form %}
+   {% if add_person_category_form %}
      
     <div class="col-md-12">
         {% include "accounting/includes/add-person-category-app/template.html" %}
@@ -25,7 +25,7 @@
 
 {% include 'accounting/includes/person-categories-app/script.html' %}
 
-    {% if add_person_account_form %}
+    {% if add_person_category_form %}
     {% include "accounting/includes/add-person-category-app/script.html" %}
     {% endif %}
 {% endblock script %}

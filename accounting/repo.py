@@ -746,9 +746,13 @@ class PersonCategoryRepo():
          
         person_category=PersonCategory()
           
-        if 'account_code' in kwargs:
-            account_code=kwargs["account_code"]
-            person_category.account=Account.objects.filter(code=account_code).first()
+        if 'code_length' in kwargs:
+            code_length=kwargs["code_length"]
+            person_category.code_length=code_length
+            
+        if 'account_id' in kwargs:
+            account_id=kwargs["account_id"]
+            person_category.account=Account.objects.filter(id=account_id).first()
 
           
          
@@ -759,6 +763,8 @@ class PersonCategoryRepo():
             person_category.title=kwargs["title"]
         if 'priority' in kwargs:
             person_category.priority=kwargs["priority"] 
+        if 'code_length' in kwargs:
+            person_category.code_length=kwargs["code_length"] 
         person_category.save()
         result=SUCCEED
         message="دسته بندی جدید برای اشخاص با موفقیت اضافه گردید."
