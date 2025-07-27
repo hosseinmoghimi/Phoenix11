@@ -15,6 +15,7 @@ class UnitNameEnum(TextChoices):
     LITER="لیتر",_("لیتر")
     CC="سی سی ",_("سی سی ")
     SHAKHEH="شاخه",_("شاخه")
+    Node="نود شبکه",_("نود شبکه")
     SHISHEH="شیشه",_("شیشه")
     DASTGAH="دستگاه",_("دستگاه")
     GERAM="گرم",_("گرم")
