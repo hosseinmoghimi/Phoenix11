@@ -187,3 +187,11 @@ class ProfileRepo():
             return self.objects.filter(pk=kwargs['id']).first() 
         if "code" in kwargs and kwargs["code"] is not None:
             return self.objects.filter(code=kwargs['code']).first()
+        
+    def change_image(self,profile_id,image):
+        profile=self.profile(profile_id=profile_id)
+        if profile is not None:
+            profile.image_origin = image
+            profile.save()
+            return SUCCEED
+        return FAILED

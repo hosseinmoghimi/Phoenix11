@@ -1,4 +1,3 @@
-
 <div id="accordion-profiles" class="rtl text-right farsi">
   <div class="card" id="profiles-app">
     <div class="card-header">
@@ -11,7 +10,7 @@
           aria-controls="collapse-profiles"
         >
           پروفایل ها
-        <span v-if="profiles.length>0">
+          <span v-if="profiles.length>0">
             <small class="text-danger mx-2">
               <span v-text="profiles.length"></span>
             </small>
@@ -30,27 +29,34 @@
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
-                
               <th>پروفایل</th>
               <th>نام کاربری</th>
- 
-              <th>
 
-              </th>
+              <th></th>
             </thead>
             <tbody>
               <tr v-for="profile in profiles">
-                 <td>
-                  <a class="text-primary"  :href="profile.get_absolute_url" >
+                <td>
+                  <a class="text-primary" :href="profile.get_absolute_url">
                     <div>
-
-                        <span  v-text="profile.full_name" ></span>
+                      <div class="media">
+                        <img
+                          :src="profile.image"
+                          class="rounded-circle"
+                          width="48"
+                          alt=""
+                        />
+                        <div class="media-body mr-2">
+                          <h6>
+                            <span v-text="profile.full_name"></span>
+                          </h6>
+                        </div>
+                      </div>
                     </div>
                   </a>
                 </td>
                 <td>
                   <a :href="'{{ADMIN_URL}}auth/user/'+profile.user_id">
-
                     <span v-text="profile.username"></span>
                   </a>
                 </td>

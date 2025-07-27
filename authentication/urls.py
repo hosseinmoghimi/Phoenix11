@@ -7,7 +7,7 @@ urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),
     path('profiles/',login_required(views.ProfilesView.as_view()),name="profiles"),
-    path('profile/<int:pk>/',login_required(views.IndexView.as_view()),name="profile"),
+    path('profile/<int:pk>/',login_required(views.ProfileView.as_view()),name="profile"),
     path('select-profile/',login_required(apis.SelectProfileApi.as_view()),name="select_profile"),
     path('settings/',login_required(views.IndexView.as_view()),name="settings"),
     path('login/',(views.LoginView.as_view()),name="login"),
@@ -16,6 +16,7 @@ urlpatterns = [
     path('logout/',login_required(views.LogoutView.as_view()),name="logout"),
 
 
+    path('change-profile-image/',login_required(views.ChangeProfileImageView.as_view()),name="change_profile_image"),
     path('change-person-image/',login_required(views.ChangePersonImageView.as_view()),name="change_person_image"),
     path('persons/',login_required(views.PersonsView.as_view()),name="persons"),
     path('person/<int:pk>/',login_required(views.PersonView.as_view()),name="person"),

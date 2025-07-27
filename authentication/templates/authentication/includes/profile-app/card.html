@@ -1,0 +1,140 @@
+<div class="card">
+  <div class="card-header">
+    <h5>{{profile.full_name}}</h5>
+  </div>
+  <div class="card-body">
+    
+    {% if profile.image %}
+    <img src="{{profile.image}}" width="128" alt="">
+    
+    {% endif %}
+    <h4>
+
+        {{profile.full_name}}
+    </h4>
+
+    {% if profile %}
+    <h5>
+        <a href="">
+
+            <small class="text-muted">profile :</small>
+            {{profile.profile}}
+        </a>
+    </h5> 
+    {% endif %}
+    {% if profile.prefix %}
+    <h5>
+        <small class="text-muted">prefix :</small>
+        {{profile.prefix}}
+    </h5> 
+    {% endif %}
+
+    {% if profile.first_name %}
+      
+    <h5>
+        <small class="text-muted">first_name :</small>
+        {{profile.first_name}}
+    </h5> 
+
+    
+    {% endif %}
+
+    {% if profile.last_name %}
+      
+    <h5>
+        <small class="text-muted">last_name :</small>
+        {{profile.last_name}}
+    </h5> 
+
+    {% endif %}
+
+    {% if profile.melli_code %}
+      
+    
+    <h5>
+        <small class="text-muted">melli_code :</small>
+        {{profile.melli_code}}
+    </h5> 
+
+    
+    {% endif %}
+
+    {% if profile.mobile %}
+      
+    <h5>
+        <small class="text-muted">mobile :</small>
+        {{profile.mobile}}
+    </h5> 
+    {% endif %}
+
+    
+
+    {% if profile.type %}
+      
+    <h5>
+        <small class="text-muted">type :</small>
+        {{profile.type}}
+    </h5> 
+    {% endif %}
+
+    
+
+    {% if profile.type2 %}
+      
+    <h5>
+        <small class="text-muted">type2 :</small>
+        {{profile.type2}}
+    </h5> 
+    {% endif %}
+
+
+     
+
+    {% if profile.email %}
+      
+    <h5>
+        <small class="text-muted">email :</small>
+        {{profile.email}}
+    </h5> 
+    {% endif %}
+
+
+    {% if profile.bio %}
+      
+    <h5>
+        <small class="text-muted">bio :</small>
+        {{profile.bio}}
+    </h5> 
+    {% endif %}
+  
+
+    
+{% if perms.authentication.change_profile %}
+<div>
+  <a
+    href="{{profile.get_edit_url}}"
+    class="my-2 text-warning mx-2"
+    title="ویرایش"
+    target="_blank"
+  >
+    <i class="fa fa-edit text-warning"></i>
+    ویرایش
+  </a>
+</div>
+{% endif %} {% if perms.authentication.delete_profile %}
+<div>
+  <a
+    href="{{profile.get_delete_url}}"
+    class="my-2 text-danger mx-2"
+    title="حذف"
+    target="_blank"
+  >
+    <i class="fa fa-trash text-danger"></i>
+    حذف
+  </a>
+</div>
+{% endif %}
+
+     
+  </div>
+</div>

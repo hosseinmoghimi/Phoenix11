@@ -7,6 +7,9 @@ class LoginForm(forms.Form):
 class ChangePersonImageForm(forms.Form):
     person_id=forms.IntegerField(required=False)
 
+class ChangeProfileImageForm(forms.Form):
+    profile_id=forms.IntegerField(required=False)
+
 class SelectProfileForm(forms.Form):
     profile_id=forms.IntegerField(required=False)
 
