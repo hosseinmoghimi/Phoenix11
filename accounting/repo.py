@@ -2157,6 +2157,42 @@ class InvoiceRepo():
         (result,message,invoice)=invoice.save()
         return result,message,invoice
 
+    def edit_invoice(self,*args, **kwargs):
+        result,message,invoice=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_invoice"):
+            message="دسترسی غیر مجاز"
+            return result,message,invoice
+
+        invoice=Invoice.objects.filter(pk=kwargs['invoice_id']).first()
+        if invoice is None:
+            message="فاکتور پیدا نشد."
+            return result,message,invoice
+        if 'title' in kwargs:
+            invoice.title=kwargs['title'] 
+
+            
+        if 'bedehkar_id' in kwargs:
+            invoice.bedehkar_id=kwargs['bedehkar_id'] 
+
+            
+        if 'bestankar_id' in kwargs:
+            invoice.bestankar_id=kwargs['bestankar_id']   
+
+        if 'invoice_lines' in kwargs:
+            invoice_lines=kwargs['invoice_lines']   
+            leolog(invoice_lines=invoice_lines)
+            for new_invoice_line in invoice_lines:
+                leolog(new_invoice_line=new_invoice_line)
+                invoice_line=InvoiceLineRepo(request=self.request).invoice_line(pk=int(new_invoice_line['invoice_line_id']))
+                if invoice_line is not None:
+                    invoice_line.row=int(new_invoice_line['row'])
+                    invoice_line.quantity=int(new_invoice_line['quantity'])
+                    invoice_line.unit_name=new_invoice_line['unit_name']
+                    invoice_line.unit_price=int(new_invoice_line['unit_price'])
+                    invoice_line.discount_percentage=int(new_invoice_line['discount_percentage'])
+                    invoice_line.save()
+        return invoice.save()
+
 
 class FinancialEventRepo():
     def __init__(self,request,*args, **kwargs):

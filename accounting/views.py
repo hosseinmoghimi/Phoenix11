@@ -1097,7 +1097,9 @@ class InvoiceEditView(View):
         context['bestankar_s']=json.dumps(AccountBriefSerializer(invoice.bestankar).data)
         return render(request,TEMPLATE_ROOT+"invoice-edit.html",context)
 
-
+    def post(self,request,*args, **kwargs):
+        from .apis import EditInvoiceApi
+        return EditInvoiceApi().post(request,*args, **kwargs)
 class InvoicePrintView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

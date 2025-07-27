@@ -109,6 +109,9 @@
                         فی
                     </th>
                     <th>
+                        درصد تخفیف
+                    </th>
+                    <th>
                         جمع
                     </th>
                 </thead>
@@ -147,6 +150,11 @@
                             </label>
                         </td>
 
+                          <td>
+                            <input type="number" class="form-control" v-model="invoice_line.discount_percentage">
+                            
+                        </td>
+
                         
                         <td>
                                 <span v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"></span>
@@ -156,6 +164,13 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <button class="btn btn-success" @click="save()"> ذخیره</button>
+        <a href="{% url 'accounting:invoice' pk=invoice.pk  %}">فاکتور</a>
+        <a href="{% url 'accounting:invoice_print' pk=invoice.pk  %}">چاپ</a>
+      </div>
     </div>
 
   </div>
@@ -205,6 +220,36 @@
           }
         );
       },
+      save:function(){
+        invoice_lines=[]
+        edit_invoice_app.invoice_lines.forEach(invoice_line => {
+          invoice_lines.push({
+            row:parseInt(invoice_line.row),
+            invoice_line_id:parseInt(invoice_line.id),
+            quantity:parseInt(invoice_line.quantity),
+            unit_name:invoice_line.unit_name,
+            unit_price:parseInt(invoice_line.unit_price),
+            discount_percentage:parseInt(invoice_line.discount_percentage),
+          })
+        });
+        console.log(invoice_lines)
+
+        invoice_lines=JSON.stringify(invoice_lines)
+        let payload={
+          csrfmiddlewaretoken:csrfmiddlewaretoken,
+          invoice_lines:invoice_lines,
+          invoice_id:invoice_id,
+          bedehkar_id:edit_invoice_app.bedehkar.id,
+          bestankar_id:edit_invoice_app.bestankar.id,
+          title:edit_invoice_app.title,
+        }  
+        console.log(payload)
+        let url=`{% url 'accounting:invoice_edit' pk=invoice.id %}`
+        $.post(url,payload).done(data=>{
+          console.log(data)
+        })
+      },
+    
     },
   });
 </script>

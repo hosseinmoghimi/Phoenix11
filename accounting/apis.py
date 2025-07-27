@@ -604,6 +604,30 @@ class DeleteALLAccountsApi(APIView):
         return JsonResponse(context)
 
 
+class EditInvoiceApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+         
+        edit_invoice_form=EditInvoiceForm(request.POST)
+        if edit_invoice_form.is_valid():
+            log=333
+            cd=edit_invoice_form.cleaned_data
+            cd['invoice_lines']=json.loads(cd['invoice_lines'])
+            result,message,invoice=InvoiceRepo(request=request).edit_invoice(**cd)
+            if invoice is not None:
+                context['invoice']=InvoiceSerializer(invoice).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
 class AddBrandApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
