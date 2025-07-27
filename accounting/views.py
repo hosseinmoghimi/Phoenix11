@@ -82,6 +82,7 @@ def AddInvoiceLineContext(request,*args, **kwargs):
     context={}
     unit_names=(i[0] for i in UnitNameEnum.choices)
     context["unit_names_for_add_invoice_line"]=unit_names
+    context["unit_names_for_edit_invoice_line"]=unit_names
     context["add_invoice_line_form"]=AddInvoiceLineForm
     invoice_line_items=InvoiceLineItemRepo(request=request).list()
     invoice_line_items_s=json.dumps(InvoiceLineItemSerializer(invoice_line_items,many=True).data)
@@ -253,24 +254,7 @@ def ProductContext(request,product,*args, **kwargs):
         context['all_product_categories_s']=all_product_categories_s
 
     return context
-
-def AddPersonContext(request):
-    context={}
-    if not request.user.has_perm(APP_NAME+".add_person"):
-        return {}
-
-    context['person_account_categories']=PersonCategoryRepo(request=request).list()
-    context['add_person_form']=AddPersonForm()
-
-    persons_ids=PersonRepo(request=request).list().values('profile_id')
-    profiles=ProfileRepo(request=request).list().exclude(id__in=persons_ids)
-    profiles_s=json.dumps(ProfileSerializer(profiles,many=True).data)
-    context['profiles_s_for_add_person_app']=profiles_s
-    context['person_prefixs']=(i[0] for i in PersonPrefixEnum.choices)
-    context['person_types']=(i[0] for i in PersonTypeEnum.choices)
-    context['person_types2']=(i[0] for i in PersonType2Enum.choices)
-    return context
-    
+ 
 def PersonContext(request,person):
     context={} 
     context['person']=person
@@ -338,6 +322,8 @@ def AddPersonCategoryContext(request,*args, **kwargs):
     context={}
     context['add_person_category_form']=AddPersonCategoryForm()
     return context
+
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -771,6 +757,7 @@ class InvoiceLineView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
     
+
 class ServiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -821,7 +808,6 @@ class AssetsView(View):
         return render(request,TEMPLATE_ROOT+"assets.html",context)
 
 
-    
 class ServiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -1096,6 +1082,20 @@ class InvoiceView(View):
             # context["invoice_line_items_s"]=invoice_line_items_s
 
         return render(request,TEMPLATE_ROOT+"invoice.html",context)
+
+
+class InvoiceEditView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['WIDE_LAYOUT']=True
+        invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        context['invoice']=invoice
+        invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)
+        context['invoice_s']=invoice_s
+        context.update(InvoiceContext(request=request,invoice=invoice))
+        context['bedehkar_s']=json.dumps(AccountBriefSerializer(invoice.bedehkar).data)
+        context['bestankar_s']=json.dumps(AccountBriefSerializer(invoice.bestankar).data)
+        return render(request,TEMPLATE_ROOT+"invoice-edit.html",context)
 
 
 class InvoicePrintView(View):

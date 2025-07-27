@@ -761,7 +761,9 @@ class Invoice(FinancialEvent):
         amount=total-discount+tax+shipping_fee
         return (total,discount,total_after_discount,tax,amount)
     
-
+    def get_edit_view_url(self):
+        return reverse(APP_NAME+':invoice_edit',kwargs={'pk':self.pk})
+    
 class InvoiceLine(models.Model,LinkHelper):
     invoice=models.ForeignKey("invoice", verbose_name=_("invoice"), on_delete=models.PROTECT)
     invoice_line_item=models.ForeignKey("invoicelineitem", verbose_name=_("invoice_line_item"), on_delete=models.PROTECT)

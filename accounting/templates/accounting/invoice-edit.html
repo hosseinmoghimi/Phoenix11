@@ -1,0 +1,211 @@
+{% extends "accounting/layout.html" %} {% block content %}
+<div class="row rtl farsi" id="edit-invoice-app">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row rtl">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="">عنوان فاکتور</label>
+              <input type="text" class="form-control" v-model="title" />
+            </div>
+          </div>
+        </div>
+
+        
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        
+
+        <div class="row rtl">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="">بدهکار</label>
+              <input type="text" class="form-control"
+              
+                @input="select_bedehkar()"
+                 v-model="bedehkar_code" />
+              <div v-if="bedehkar.id" class="my-2">
+                <a target="_blank" :href="bedehkar.get_absolute_url">
+                  <div class="media ">
+                    <img
+                      :src="bedehkar.logo"
+                      class="rounded-circle"
+                      width="48"
+                      alt=""
+                    />
+                    <div class="media-body mr-2">
+                      <h6>
+                        <span v-text="bedehkar.title"></span>
+                      </h6>
+                      <h6>
+                        <span v-text="bedehkar.code"></span>
+                      </h6>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div v-else  class="my-2">
+                <div class="alert alert-danger">بدهکار را انتخاب کنید.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="">بستانکار</label>
+              <input
+                type="text"
+                @input="select_bestankar()"
+                class="form-control"
+                v-model="bestankar_code"
+              />
+               <div v-if="bestankar.id"  class="my-2">
+                <a target="_blank" :href="bestankar.get_absolute_url">
+                  <div class="media">
+                    <img
+                      :src="bestankar.logo"
+                      class="rounded-circle"
+                      width="48"
+                      alt=""
+                    />
+                    <div class="media-body mr-2">
+                      <h6>
+                        <span v-text="bestankar.title"></span>
+                      </h6>
+                      <h6>
+                        <span v-text="bestankar.code"></span>
+                      </h6>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div v-else  class="my-2">
+                <div class="alert alert-danger">بستانکار را انتخاب کنید.</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <th>
+                        ردیف
+                    </th>
+                    <th>
+                        شرح
+                    </th>
+                    <th>
+                        تعداد
+                    </th>
+                    <th>
+                        فی
+                    </th>
+                    <th>
+                        جمع
+                    </th>
+                </thead>
+                <tbody>
+                     
+                    <tr v-for="invoice_line in invoice_lines">
+                        <td>
+                            <input type="number" class="form-control" v-model="invoice_line.row">
+                        </td>
+
+                        
+                        <td>
+                            <a :href="invoice_line.invoice_line_item.get_absolute_url">
+
+                                <span v-text="invoice_line.invoice_line_item.title"></span>
+                            </a>
+                            
+                        </td>
+
+                        
+                        <td>
+                            <input type="number" class="form-control" v-model="invoice_line.quantity">
+                            <select  class="form-control" v-model="invoice_line.unit_name">
+                                {% for unit_name in unit_names_for_edit_invoice_line %}
+                                  <option value="{{unit_name}}">{{unit_name}}</option>
+                                {% endfor %}
+                            </select>
+                            
+                        </td>
+
+                        
+                        <td>
+                            <input type="number" class="form-control" v-model="invoice_line.unit_price">
+                            <label for="">
+                                <span v-text="to_price(invoice_line.unit_price)"></span>
+                            </label>
+                        </td>
+
+                        
+                        <td>
+                                <span v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"></span>
+                            {{CURRENCY}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+  </div>
+</div>
+{% endblock content %} {% block script %}
+<script></script>
+{% include "accounting/includes/invoice-app/script.html" %}
+<script>
+    let bestankar= JSON.parse("{{bestankar_s|escapejs}}")
+     let bedehkar= JSON.parse("{{bedehkar_s|escapejs}}")
+     let invoice_lines= JSON.parse("{{invoice_lines_s|escapejs}}")
+  let edit_invoice_app = new Vue({
+    el: "#edit-invoice-app",
+    data: {
+      bestankar:bestankar,
+      bedehkar: bedehkar,
+      bestankar_code:  bestankar.code ,
+      bedehkar_code:  bedehkar.code ,
+      title: "{{invoice.title}}",
+      invoice_lines:invoice_lines,
+    },
+    methods: {
+        to_price:price=>to_price(price),
+      select_bedehkar: function () {
+        select_account_by_code(edit_invoice_app.bedehkar_code).done(
+          (data) => {
+            console.log(data)
+            if (data.result==='SUCCEED') {
+              edit_invoice_app.bedehkar = data.account;
+            } else {
+              edit_invoice_app.bedehkar = {};
+            }
+          }
+        );
+      },
+
+      select_bestankar: function () {
+        select_account_by_code(edit_invoice_app.bestankar_code).done(
+          (data) => {
+            console.log(data)
+
+            if (data.result==='SUCCEED') {
+              edit_invoice_app.bestankar = data.account;
+            } else {
+              edit_invoice_app.bestankar = {};
+            }
+          }
+        );
+      },
+    },
+  });
+</script>
+{% endblock script %}

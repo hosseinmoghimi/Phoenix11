@@ -76,6 +76,7 @@ urlpatterns = [
     
     path('invoices/',login_required(views.InvoicesView.as_view()),name="invoices"),
     path('invoice/<int:pk>/',login_required(views.InvoiceView.as_view()),name="invoice"),
+    path('invoice/edit/<int:pk>/',login_required(views.InvoiceEditView.as_view()),name="invoice_edit"),
     path('invoice/excel/<int:pk>/',login_required(views.InvoiceToExcelView.as_view()),name="invoice_to_excel"),
     path('invoice-line-item/<int:pk>/',login_required(views.InvoiceLineItemView.as_view()),name="invoicelineitem"),
     path('invoice/print/<int:pk>/',login_required(views.InvoicePrintView.as_view()),name="invoice_print"),

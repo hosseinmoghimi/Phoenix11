@@ -13,6 +13,7 @@
       </a>
     </h5>
     {% endfor %}
+    <a class="text-info mx-2" href="{% url 'accounting:invoice_edit' pk=invoice.id%}"> تغییر </a>
 
     <a class="text-info mx-2" href="{% url 'accounting:invoice_print' pk=invoice.id%}"> چاپ </a>
 

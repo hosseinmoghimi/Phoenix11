@@ -33,6 +33,29 @@ class Page(models.Model,LinkHelper,ImageHelper):
     locations=models.ManyToManyField("attachments.location", blank=True,verbose_name=_("locations"))
     
        
+    def get_breadcrumb_link(self):
+        aaa=f"""
+                    <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">
+                    <span class="farsi">
+                    {self.title}
+                    </span>
+                    </a></li> 
+                    
+                    
+                    """
+        if self.parent is None:
+            return aaa
+        return self.parent.get_breadcrumb_link()+aaa
+    def get_breadcrumb(self):
+        return f"""
+        
+                <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    {self.get_breadcrumb_link()}
+                </ol>
+                </nav>
+        """
+    
     def set_priority(self,request,*args, **kwargs):
         result,message,priority=FAILED,"",100
         if not request.user.has_perm(APP_NAME+".change_page"):
