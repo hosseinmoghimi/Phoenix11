@@ -1,5 +1,6 @@
 {% extends "accounting/layout.html" %} {% block content %}
 <div class="row rtl farsi" id="edit-invoice-app">
+  {% load static %}
   <div class="col-12">
     <div class="card">
       <div class="card-body">
@@ -11,26 +12,24 @@
             </div>
           </div>
         </div>
-
-        
       </div>
     </div>
 
     <div class="card">
       <div class="card-body">
-        
-
         <div class="row rtl">
           <div class="col-md-4">
             <div class="form-group">
               <label for="">بدهکار</label>
-              <input type="text" class="form-control"
-              
+              <input
+                type="text"
+                class="form-control"
                 @input="select_bedehkar()"
-                 v-model="bedehkar_code" />
+                v-model="bedehkar_code"
+              />
               <div v-if="bedehkar.id" class="my-2">
                 <a target="_blank" :href="bedehkar.get_absolute_url">
-                  <div class="media ">
+                  <div class="media">
                     <img
                       :src="bedehkar.logo"
                       class="rounded-circle"
@@ -48,7 +47,7 @@
                   </div>
                 </a>
               </div>
-              <div v-else  class="my-2">
+              <div v-else class="my-2">
                 <div class="alert alert-danger">بدهکار را انتخاب کنید.</div>
               </div>
             </div>
@@ -63,7 +62,7 @@
                 class="form-control"
                 v-model="bestankar_code"
               />
-               <div v-if="bestankar.id"  class="my-2">
+              <div v-if="bestankar.id" class="my-2">
                 <a target="_blank" :href="bestankar.get_absolute_url">
                   <div class="media">
                     <img
@@ -83,173 +82,217 @@
                   </div>
                 </a>
               </div>
-              <div v-else  class="my-2">
+              <div v-else class="my-2">
                 <div class="alert alert-danger">بستانکار را انتخاب کنید.</div>
               </div>
-
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="card">
-        <div class="card-body">
-            <table class="table table-striped">
-                <thead>
-                    <th>
-                        ردیف
-                    </th>
-                    <th>
-                        شرح
-                    </th>
-                    <th>
-                        تعداد
-                    </th>
-                    <th>
-                        فی
-                    </th>
-                    <th>
-                        درصد تخفیف
-                    </th>
-                    <th>
-                        جمع
-                    </th>
-                </thead>
-                <tbody>
-                     
-                    <tr v-for="invoice_line in invoice_lines">
-                        <td>
-                            <input type="number" class="form-control" v-model="invoice_line.row">
-                        </td>
+      <div class="card-body">
+        <table class="table table-striped">
+          <thead>
+            <th>ردیف</th>
+            <th>شرح</th>
+            <th>تعداد</th>
+            <th>فی</th>
+            <th>درصد تخفیف</th>
+            <th>جمع</th>
+          </thead>
+          <tbody>
+            <tr v-for="invoice_line in invoice_lines">
+              <td>
+                <input
+                  type="number"
+                  class="form-control"
+                  v-model="invoice_line.row"
+                />
+              </td>
 
-                        
-                        <td>
-                            <a :href="invoice_line.invoice_line_item.get_absolute_url">
+              <td>
+                <a :href="invoice_line.invoice_line_item.get_absolute_url">
+                  <span v-text="invoice_line.invoice_line_item.title"></span>
+                </a>
+              </td>
 
-                                <span v-text="invoice_line.invoice_line_item.title"></span>
-                            </a>
-                            
-                        </td>
+              <td>
+                <input
+                  type="number"
+                  class="form-control"
+                  v-model="invoice_line.quantity"
+                />
+                <select class="form-control" v-model="invoice_line.unit_name">
+                  {% for unit_name in unit_names_for_edit_invoice_line %}
+                  <option value="{{unit_name}}">{{unit_name}}</option>
+                  {% endfor %}
+                </select>
+              </td>
 
-                        
-                        <td>
-                            <input type="number" class="form-control" v-model="invoice_line.quantity">
-                            <select  class="form-control" v-model="invoice_line.unit_name">
-                                {% for unit_name in unit_names_for_edit_invoice_line %}
-                                  <option value="{{unit_name}}">{{unit_name}}</option>
-                                {% endfor %}
-                            </select>
-                            
-                        </td>
+              <td>
+                <input
+                  type="number"
+                  class="form-control"
+                  v-model="invoice_line.unit_price"
+                />
+                <label for="">
+                  <span v-text="to_price(invoice_line.unit_price)"></span>
+                </label>
+              </td>
 
-                        
-                        <td>
-                            <input type="number" class="form-control" v-model="invoice_line.unit_price">
-                            <label for="">
-                                <span v-text="to_price(invoice_line.unit_price)"></span>
-                            </label>
-                        </td>
+              <td>
+                <input
+                  type="number"
+                  class="form-control"
+                  v-model="invoice_line.discount_percentage"
+                />
+              </td>
 
-                          <td>
-                            <input type="number" class="form-control" v-model="invoice_line.discount_percentage">
-                            
-                        </td>
-
-                        
-                        <td>
-                                <span v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"></span>
-                            {{CURRENCY}}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+              <td>
+                <span
+                  v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"
+                ></span>
+                {{CURRENCY}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <div class="card">
       <div class="card-body">
-        <button class="btn btn-success" @click="save()"> ذخیره</button>
-        <a href="{% url 'accounting:invoice' pk=invoice.pk  %}">فاکتور</a>
-        <a href="{% url 'accounting:invoice_print' pk=invoice.pk  %}">چاپ</a>
+        <div class="row rtl">
+
+       <div class="col-md-4">
+         <button v-if="!waiting" class="btn btn-success" @click="save()">ذخیره</button>
+         <img  v-if="waiting" src="{% static 'leo/img/loading.gif' %}" width="48" alt="">
+          
+         <div>
+
+              <a
+          target="_blank"
+          href="{% url 'accounting:invoice' pk=invoice.pk  %}"
+          class="btn btn-link mx-2"
+          >فاکتور</a
+        >
+        <a
+          target="_blank"
+          href="{% url 'accounting:invoice_print' pk=invoice.pk  %}"
+          class="btn btn-link mx-2"
+          >چاپ</a>
+         </div>
+    
+       </div>
+
+        <div class="col-md-8">
+          <div v-if="message.show" class="my-2">
+            <div :class="'alert alert-'+message.color">
+              <h5 v-html="message.title"></h5>
+              <div v-html="message.body"></div>
+            </div>
+          </div>
+        </div>
+        </div>
+
       </div>
     </div>
-
   </div>
 </div>
 {% endblock content %} {% block script %}
 <script></script>
 {% include "accounting/includes/invoice-app/script.html" %}
 <script>
-    let bestankar= JSON.parse("{{bestankar_s|escapejs}}")
-     let bedehkar= JSON.parse("{{bedehkar_s|escapejs}}")
-     let invoice_lines= JSON.parse("{{invoice_lines_s|escapejs}}")
+  let bestankar = JSON.parse("{{bestankar_s|escapejs}}");
+  let bedehkar = JSON.parse("{{bedehkar_s|escapejs}}");
+  let invoice_lines = JSON.parse("{{invoice_lines_s|escapejs}}");
   let edit_invoice_app = new Vue({
     el: "#edit-invoice-app",
     data: {
-      bestankar:bestankar,
+      bestankar: bestankar,
       bedehkar: bedehkar,
-      bestankar_code:  bestankar.code ,
-      bedehkar_code:  bedehkar.code ,
+      bestankar_code: bestankar.code,
+      bedehkar_code: bedehkar.code,
       title: "{{invoice.title}}",
-      invoice_lines:invoice_lines,
+      invoice_lines: invoice_lines,
+      message: { show: false },
+      waiting: false,
     },
     methods: {
-        to_price:price=>to_price(price),
+      to_price: (price) => to_price(price),
       select_bedehkar: function () {
-        select_account_by_code(edit_invoice_app.bedehkar_code).done(
-          (data) => {
-            console.log(data)
-            if (data.result==='SUCCEED') {
-              edit_invoice_app.bedehkar = data.account;
-            } else {
-              edit_invoice_app.bedehkar = {};
-            }
+        select_account_by_code(edit_invoice_app.bedehkar_code).done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            edit_invoice_app.bedehkar = data.account;
+          } else {
+            edit_invoice_app.bedehkar = {};
           }
-        );
+        });
       },
 
       select_bestankar: function () {
-        select_account_by_code(edit_invoice_app.bestankar_code).done(
-          (data) => {
-            console.log(data)
+        select_account_by_code(edit_invoice_app.bestankar_code).done((data) => {
+          console.log(data);
 
-            if (data.result==='SUCCEED') {
-              edit_invoice_app.bestankar = data.account;
-            } else {
-              edit_invoice_app.bestankar = {};
-            }
+          if (data.result === "SUCCEED") {
+            edit_invoice_app.bestankar = data.account;
+          } else {
+            edit_invoice_app.bestankar = {};
           }
-        );
-      },
-      save:function(){
-        invoice_lines=[]
-        edit_invoice_app.invoice_lines.forEach(invoice_line => {
-          invoice_lines.push({
-            row:parseInt(invoice_line.row),
-            invoice_line_id:parseInt(invoice_line.id),
-            quantity:parseInt(invoice_line.quantity),
-            unit_name:invoice_line.unit_name,
-            unit_price:parseInt(invoice_line.unit_price),
-            discount_percentage:parseInt(invoice_line.discount_percentage),
-          })
         });
-        console.log(invoice_lines)
-
-        invoice_lines=JSON.stringify(invoice_lines)
-        let payload={
-          csrfmiddlewaretoken:csrfmiddlewaretoken,
-          invoice_lines:invoice_lines,
-          invoice_id:invoice_id,
-          bedehkar_id:edit_invoice_app.bedehkar.id,
-          bestankar_id:edit_invoice_app.bestankar.id,
-          title:edit_invoice_app.title,
-        }  
-        console.log(payload)
-        let url=`{% url 'accounting:invoice_edit' pk=invoice.id %}`
-        $.post(url,payload).done(data=>{
-          console.log(data)
-        })
       },
-    
+      save: function () {
+        edit_invoice_app.waiting = true;
+        invoice_lines = [];
+        edit_invoice_app.invoice_lines.forEach((invoice_line) => {
+          invoice_lines.push({
+            row: parseInt(invoice_line.row),
+            invoice_line_id: parseInt(invoice_line.id),
+            quantity: parseInt(invoice_line.quantity),
+            unit_name: invoice_line.unit_name,
+            unit_price: parseInt(invoice_line.unit_price),
+            discount_percentage: parseInt(invoice_line.discount_percentage),
+          });
+        });
+        console.log(invoice_lines);
+
+        invoice_lines = JSON.stringify(invoice_lines);
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          invoice_lines: invoice_lines,
+          invoice_id: invoice_id,
+          bedehkar_id: edit_invoice_app.bedehkar.id,
+          bestankar_id: edit_invoice_app.bestankar.id,
+          title: edit_invoice_app.title,
+        };
+        console.log(payload);
+        let url = `{% url 'accounting:invoice_edit' pk=invoice.id %}`;
+        $.post(url, payload).done((data) => {
+          console.log(data);
+          edit_invoice_app.waiting = false;
+          if (data.result === "SUCCEED") {
+            show_message(
+              edit_invoice_app,
+              "موفق",
+              data.message,
+              "success",
+              5000
+            );
+          }
+
+          if (data.result != "SUCCEED") {
+            show_message(
+              edit_invoice_app,
+              "خطا",
+              data.message,
+              "danger",
+              5000
+            );
+          }
+
+        });
+      },
     },
   });
 </script>
