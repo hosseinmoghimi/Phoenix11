@@ -1,0 +1,15 @@
+<script>
+    
+    let profiles_for_profiles_app=JSON.parse("{{profiles_s|escapejs}}")
+    let profiles_app = new Vue({
+        el: "#profiles-app",
+        data: {
+            profiles: profiles_for_profiles_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>

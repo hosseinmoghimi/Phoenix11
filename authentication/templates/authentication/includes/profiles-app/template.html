@@ -1,0 +1,84 @@
+
+<div id="accordion-profiles" class="rtl text-right farsi">
+  <div class="card" id="profiles-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-profiles"
+          aria-expanded="true"
+          aria-controls="collapse-profiles"
+        >
+          پروفایل ها
+        <span v-if="profiles.length>0">
+            <small class="text-danger mx-2">
+              <span v-text="profiles.length"></span>
+            </small>
+          </span>
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-profiles"
+      class="collapse {% if expand_profiles %} show {% endif %}"
+      aria-labelledby="heading-profiles"
+      data-parent="#accordion-profiles"
+    >
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+                
+              <th>پروفایل</th>
+              <th>نام کاربری</th>
+ 
+              <th>
+
+              </th>
+            </thead>
+            <tbody>
+              <tr v-for="profile in profiles">
+                 <td>
+                  <a class="text-primary"  :href="profile.get_absolute_url" >
+                    <div>
+
+                        <span  v-text="profile.full_name" ></span>
+                    </div>
+                  </a>
+                </td>
+                <td>
+                  <a :href="'{{ADMIN_URL}}auth/user/'+profile.user_id">
+
+                    <span v-text="profile.username"></span>
+                  </a>
+                </td>
+                <td>
+                  <a
+                    target="_blank"
+                    :href="profile.get_edit_url"
+                    title="ویرایش"
+                    class="text-warning mx-2"
+                  >
+                    <i class="fa fa-edit text-warning"> </i>
+                    ویرایش
+                  </a>
+                  <a
+                    target="_blank"
+                    :href="profile.get_delete_url"
+                    title="حذف"
+                    class="text-danger mx-2"
+                  >
+                    <i class="fa fa-trash text-danger"> </i>
+                    حذف
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -140,6 +140,15 @@ class ProfileRepo():
         self.objects=Profile.objects
         if self.request.user.is_authenticated:
             self.me=Profile.objects.filter(user=request.user).first()
+    def list(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+'.view_profile'):
+            return []
+        objects=self.objects
+        from django.db.models import Q
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(first_name__contains=search_for) |Q(last_name__contains=search_for) | Q(melli_code__contains=search_for) )
+        return objects.all()
     
     def logout(self,*args, **kwargs):
         if 'request' in kwargs:

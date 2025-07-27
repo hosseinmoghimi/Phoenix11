@@ -25,7 +25,12 @@ class Profile(models.Model,LinkHelper):
 
     def __str__(self):
         return self.full_name
-  
+    @property
+    def user_id(self):
+        return self.user.user.id
+    @property
+    def username(self):
+        return self.user.username
     @property
     def image(self):
         if self.image_origin is None or not self.image_origin:

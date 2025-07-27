@@ -6,7 +6,7 @@ app_name=APP_NAME
 urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),
-    path('profiles/',login_required(views.IndexView.as_view()),name="profiles"),
+    path('profiles/',login_required(views.ProfilesView.as_view()),name="profiles"),
     path('profile/<int:pk>/',login_required(views.IndexView.as_view()),name="profile"),
     path('select-profile/',login_required(apis.SelectProfileApi.as_view()),name="select_profile"),
     path('settings/',login_required(views.IndexView.as_view()),name="settings"),

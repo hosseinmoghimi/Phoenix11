@@ -2,8 +2,8 @@ from django.shortcuts import render,redirect,reverse
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from .repo import ProfileRepo
 from django.views import View
-from .serializers import PersonSerializer
-from .repo import PersonRepo,FAILED,SUCCEED
+from .serializers import PersonSerializer,ProfileSerializer
+from .repo import PersonRepo,FAILED,SUCCEED,ProfileRepo
 from .forms import *
 from django.http import HttpResponseRedirect
 from .apps import APP_NAME
@@ -65,6 +65,19 @@ class ChangePersonImageView(View):
                 image=image,
                 )
         return redirect(reverse(APP_NAME+":person",kwargs={'pk':person_id}))
+
+
+class ProfilesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request) 
+        profiles=ProfileRepo(request=request).list(*args, **kwargs)
+        profiles_s=json.dumps(ProfileSerializer(profiles,many=True).data)
+        context['profiles']=profiles
+        context['profiles_s']=profiles_s
+        if request.user.has_perm(APP_NAME+'.add_profile'):
+            context['add_profile_form']=AddProfileForm() 
+        return render(request,TEMPLATE_ROOT+"profiles.html",context)
+
 
 
 class PersonsView(View):
