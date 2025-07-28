@@ -1,0 +1,64 @@
+<div class="row rtl">
+  <div class="col-3">
+    <a :href="shop.supplier.get_absolute_url"
+      ><span v-text="shop.supplier.person.full_name"></span
+    ></a>
+  </div>
+  <div class="col-6">
+    <h6>
+      با
+      <span v-text="shop.discount_percentage"></span>
+      % تخفیف
+
+      <span
+        style="text-decoration: line-through"
+        v-text="to_price(shop.unit_price)"
+      ></span>
+      {{CURRENCY}}
+    </h6>
+    <h6>
+      از
+      <small class="text-muted">
+        <span v-text="shop.persian_start_date"></span>
+      </small>
+      تا
+      <small class="text-muted">
+        <span v-text="shop.persian_end_date"></span>
+      </small>
+    </h6>
+    <div class="badge badge-success">
+      <span v-text="shop.available"></span>
+      <span v-text="shop.unit_name"></span>
+      موجود است
+    </div>
+  </div>
+  <div class="col-3">
+    <h5 class="text-danger">
+      <span
+        v-text="to_price(shop.unit_price-(shop.discount_percentage*shop.unit_price/100))"
+      ></span>
+      {{CURRENCY}}
+    </h5>
+    <button class="btn btn-danger" @click="add_to_basket(shop)">
+      <h5 class="text-center">خرید اینترنتی</h5>
+    </button>
+    <div>
+      {% if perms.market.change_shop %}
+      <a target="_blank" :href="shop.get_edit_url" title="ویرایش">
+        <i class="fa fa-edit text-warning"></i>
+      </a>
+      {% endif %} {% if perms.market.delete_shop %}
+      <a target="_blank" :href="shop.get_delete_url" title="حذف">
+        <i class="fa fa-trash text-danger"></i>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <div v-if="message.show" :class="'alert alert-'+message.color">
+        <span v-text="message.body"></span>
+    </div>
+    <hr />
+  </div>
+</div>

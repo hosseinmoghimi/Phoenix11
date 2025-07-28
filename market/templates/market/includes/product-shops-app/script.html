@@ -1,17 +1,65 @@
 <script>
   let shops_for_product_shops_app = JSON.parse("{{shops_s|escapejs}}");
 
+  let shop_component_template = `{% include 'market/includes/product-shops-app/component.html' %}`;
+
+
+  let product_shop_component = Vue.component("product-shop-component", {
+    data: function () {
+      return {
+        message: {show:false},
+        waiting:false
+      };
+    },
+    methods: {
+      to_price: (vall) => to_price(vall),
+
+      add_to_basket: function (shop) {
+        console.log(shop);
+        let msg=this.message
+        let body=JSON.stringify(shop)
+        this.message={show:true,body:body,color:'success'}
+        setTimeout(() => {
+          product_shop_component.message.show=false
+        }, 2000);
+      },
+      delete_shop: function (comment_id) {
+        this.confirm_delete = false;
+
+        let url = url_delete_comment;
+        let payload = {
+          comment_id: comment_id,
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+        };
+        let posting = $.post(url, payload);
+        posting.done(function (data) {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            comments_app.comments = comments_app.comments.filter((comment) => {
+              return comment.id != comment_id;
+            });
+            comment_component.confirm_delete = false;
+          }
+        });
+      },
+    },
+    props: ["shop"],
+    template: shop_component_template,
+  });
+
+
+
+
   let product_shops_app = new Vue({
     el: "#product-shops-app",
     data: {
       shops: shops_for_product_shops_app,
     },
+    components: {
+      product_shop_component,
+    },
     methods: {
-            to_price: vall => to_price(vall),
-            add_to_basket:function(shop){
-                console.log(shop)
-
-            },
+      to_price: (vall) => to_price(vall),
     },
   });
 </script>
