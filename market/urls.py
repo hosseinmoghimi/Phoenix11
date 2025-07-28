@@ -7,6 +7,7 @@ urlpatterns = [
     path('',login_required(views.IndexView.as_view()),name="index"),
     path('settings/',login_required(views.IndexView.as_view()),name="settings"),
     path('products/',login_required(views.ProductsView.as_view()),name="products"),
+    path('cart/<int:customer_id>/',login_required(views.ProductView.as_view()),name="cart"), 
     path('product/<int:pk>/',login_required(views.ProductView.as_view()),name="product"), 
     path('shipper/<int:pk>/',login_required(views.ProductView.as_view()),name="shipper"),
     path('customer/<int:pk>/',login_required(views.ProductView.as_view()),name="customer"),

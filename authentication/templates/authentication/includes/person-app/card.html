@@ -15,7 +15,7 @@
 
     {% if person.profile %}
     <h5>
-        <a href="">
+        <a href="{{person.profile.get_absolute_url}}">
 
             <small class="text-muted">profile :</small>
             {{person.profile}}

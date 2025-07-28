@@ -36,7 +36,9 @@ class Customer(MarketPerson):
         super(Customer,self).save()
         return result,message,customer
     
-     
+    @property
+    def total_in_cart(self):
+        return 0
     
 class Supplier(MarketPerson):
     level=models.CharField(_("level"),choices=ShopLevelEnum.choices,default=ShopLevelEnum.END_USER, max_length=50)

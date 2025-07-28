@@ -32,6 +32,7 @@ def CoreContext(request,*args, **kwargs):
     context['VUE_VERSION_3']=VUE_VERSION_3
     context['VUE_VERSION_2']=VUE_VERSION_2
     context['DEBUG']=DEBUG
+    context['NAVBAR_ITEMS_LAYOUT']=app_name+'/includes/navbar.html'
     me_profile=ProfileRepo(request=request).me
     if me_profile is not None:
         context['me_profile']=me_profile

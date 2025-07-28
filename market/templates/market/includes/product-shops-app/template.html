@@ -1,4 +1,4 @@
-<div id="shops-app" class="card">
+<div id="product-shops-app" class="card">
 
     <div class="card-body">
         <h4>
@@ -49,7 +49,7 @@
                     <span v-text="to_price(shop.unit_price-(shop.discount_percentage*shop.unit_price/100))"></span>
                     {{CURRENCY}}
                 </h5>
-                <button class="btn btn-danger">
+                <button class="btn btn-danger" @click="add_to_basket(shop)">
                     <h5 class="text-center">
 
                         خرید

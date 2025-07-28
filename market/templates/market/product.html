@@ -21,54 +21,32 @@
 <div class="row rtl" style="background-color: #F2F3F5;">
     <div class="col-md-12">
         {% include 'market/includes/product-app/navbar.html' %}
-
     </div>
     <div class="col-md-12">
         {% include 'market/includes/product-app/main.html' %}
-
-
     </div>
-    <div class="col-md-6">
-        {% include "core/includes/page-thumbnail-header-app/template.html" %}
-
-
-    </div>
-
     {% if shops %}
-    <div class="col-md-6">
-        {% include 'market/includes/product-app/shops.html' %}
-
-
+    <div class="col-lg-9">
+        {% include 'market/includes/product-shops-app/template.html' %}
     </div>
     {% endif %}
-
     {% if related_pages %}
     <div class="col-md-12">
         <h5 class="text-right mt-3">
             محصولات مشابه
         </h5>
         {% include "market/includes/product-app/relateds.html" %}
-
     </div>
     {% endif %}
-
     <div class="col-md-12">
         {% include "accounting/includes/product-app/card.html" %}
-
     </div>
 </div>
 {% endblock content %}
-
-
 {% block script %}
-
 {% include "accounting/includes/product-app/script.html" %}
-
-
-
-
 {% if shops %}
-   {% include 'market/includes/shops-app/script.html' %} 
+   {% include 'market/includes/product-shops-app/script.html' %} 
 {% endif %}
     
 

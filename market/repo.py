@@ -293,11 +293,15 @@ class ShopRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=Shop.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
-        if profile is not None:
-            if request.user.has_perm(APP_NAME+".view_desk"):
+        me_profile=ProfileRepo(request=request).me
+        if me_profile is not None:
+            if request.user.has_perm(APP_NAME+".view_shop"):
                 self.objects=Shop.objects
                 self.my_accounts=self.objects 
+            else:
+                me_customer=CustomerRepo(request=request).me
+                if me_customer is not None:
+                    self.objects=Shop.objects.filter(level=me_customer.level)
     def primary_shop(self,product,*args, **kwargs):
         if product is None :
             return None
@@ -373,9 +377,9 @@ class CustomerRepo():
         self.request=request
         self.me=None
         self.objects=Customer.objects
-        profile=ProfileRepo(request=request).me
-        if profile is not None:
-            self.me=self.objects.filter(person__profile_id=profile.id).first()
+        me_profile=ProfileRepo(request=request).me
+        if me_profile is not None:
+            self.me=self.objects.filter(person__profile_id=me_profile.id).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         pure_code="876454453342236"
@@ -723,7 +727,11 @@ class SupplierRepo():
                 if supplier_account is None:
                     from accounting.repo import PersonAccountRepo,PersonCategoryRepo
                     person_category=PersonCategoryRepo(request=self.request).person_category(title=PersonCategoryEnum.SUPPLIER)
-                    result,message,supplier_account=PersonAccountRepo(request=self.request).add_person_account(person_id=person.id,person_category_id=person_category.id)
+                    if person_category is None:
+                        message='ابتدا در حسابداری ، دسته بندی فروشنده را برای اشخاص ایجاد کنید.'+f"""<br><a target="_blank" href="{reverse('accounting:person_categories')}">دسته بندی اشخاص</a>"""
+                        result=FAILED
+                        return result,message,supplier
+                    result,message,supplier_account=PersonAccountRepo(request=self.request).add_person_account(person_id=person_id,person_category_id=person_category.id)
                 from accounting.models import PersonAccount
                 supplier.account_id=supplier_account.id
             supplier.person_id=person.id

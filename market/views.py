@@ -19,7 +19,6 @@ TEMPLATE_ROOT='market/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
- 
         
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
@@ -75,21 +74,23 @@ def AddCustomerContext(request,*args, **kwargs):
     context['add_customer_form']=AddCustomerForm()
     return context
 
- 
+       
+def AddShopPackageContext(request,*args, **kwargs):
+    context={}
+    return context
+    
+def AddShopContext(request,*args, **kwargs):
+    context={}
+    return context
+
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
-
-        context['phoenix_apps']=phoenix_apps
+        context=getContext(request=request) 
         return render(request,TEMPLATE_ROOT+"index.html",context)
 # Create your views here.
 
  
-
 class ProductsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -100,7 +101,6 @@ class ProductsView(View):
  
         context[WIDE_LAYOUT]=True
         return render(request,TEMPLATE_ROOT+"products.html",context) 
-    
     
 
 class CategoryView(View):
@@ -134,8 +134,6 @@ class CategoryView(View):
         context['products_s']=products_s
  
         return render(request,TEMPLATE_ROOT+"category.html",context)
-
- 
 
     
 class ProductView(View):
@@ -173,9 +171,7 @@ class MenusView(View):
             context['suppliers']=suppliers
         return render(request,TEMPLATE_ROOT+"menus.html",context) 
     
-    
 
-    
 class MenuView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -194,9 +190,6 @@ class MenuView(View):
         return render(request,TEMPLATE_ROOT+"menu.html",context) 
     
     
-
-    
-
 class SuppliersView(View):
     def get(self,request,*args,**kwargs):
         context=getContext(request=request)
@@ -209,11 +202,6 @@ class SuppliersView(View):
             context.update(AddSupplierContext(request=request))
         return render(request,TEMPLATE_ROOT+"suppliers.html",context) 
 
-       
-def AddShopPackageContext(request,*args, **kwargs):
-    context={}
-    return context
-    
 
 class ShopPackagesView(View):
     def get(self,request,*args,**kwargs):
@@ -226,9 +214,7 @@ class ShopPackagesView(View):
         if request.user.has_perm(APP_NAME+".add_shoppackage"):
             context.update(AddShopPackageContext(request=request))
         return render(request,TEMPLATE_ROOT+"shop-packages.html",context) 
-def AddShopContext(request,*args, **kwargs):
-    context={}
-    return context
+
 
 class ShopPackageView(View):
     def get(self,request,*args,**kwargs):
@@ -266,9 +252,16 @@ class SupplierView(View):
         context['shops']=shops
         context['shops_s']=shops_s
 
-        return render(request,TEMPLATE_ROOT+"supplier.html",context) 
 
-       
+
+        
+        shop_packages=ShopPackageRepo(request=request).list(supplier_id=supplier.id)
+        shop_packages_s=json.dumps(ShopPackageSerializer(shop_packages,many=True).data)
+        context['shop_packages']=shop_packages
+        context['shop_packages_s']=shop_packages_s
+
+
+        return render(request,TEMPLATE_ROOT+"supplier.html",context) 
 
     
 class DeskView(View):
@@ -286,9 +279,6 @@ class DeskView(View):
         context['NOT_NAVBAR']=True
         context['NOT_FOOTER']=True
         return render(request,TEMPLATE_ROOT+"desk.html",context) 
-    
-    
-
     
     
 class DeskMenuView(View):
@@ -319,9 +309,6 @@ class DeskMenuView(View):
         context['NOT_NAVBAR']=True
         context['NOT_FOOTER']=True
         return render(request,TEMPLATE_ROOT+"desk-menu.html",context) 
-    
-    
-
 
     
 class DesksView(View):

@@ -16,11 +16,11 @@ LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='authentication/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
-NO_NAVBAR="NO_NAVBAR"
+NO_NAVBAR="NO_NAVBAR" 
 
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
- 
+  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
  

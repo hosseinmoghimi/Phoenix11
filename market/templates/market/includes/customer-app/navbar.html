@@ -21,7 +21,7 @@
       </a>
       <a class="dropdown-item" style="text-align: center;" href="{% url 'market:cart' customer_id=me_customer.id %}">
         {% load to_price %}
-        {{me_customer.total_in_cart|to_price}}  در سبد خرید شما
+        {{me_customer.total_in_cart|to_price}} {{CURRENCY}}  در سبد خرید شما
       </a>
       {% include "market/includes/cart-items-app/navbar-template.html" %}
 
