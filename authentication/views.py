@@ -191,6 +191,7 @@ class LoginView(View):
 
         messages=[]
         login_form=LoginForm(request.POST)
+        next=request.POST['next']
         if login_form.is_valid():
             username=login_form.cleaned_data['username']
             password=login_form.cleaned_data['password']

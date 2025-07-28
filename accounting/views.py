@@ -1069,6 +1069,11 @@ class InvoiceView(View):
         context=getContext(request=request)
         context['WIDE_LAYOUT']=True
         invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        if invoice is None:
+            title='فاکتور پیدا نشد.'
+            message='فاکتور پیدا نشد.'
+            mv=MessageView(title=title,message=message)
+            return mv.get(request=request)
         context['invoice']=invoice
         invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)
         context['invoice_s']=invoice_s

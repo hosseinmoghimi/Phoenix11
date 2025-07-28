@@ -67,6 +67,29 @@ class Shipper(MarketPerson):
         result,message,shipper=FAILED,'',self
         super(Shipper,self).save()
         return result,message,shipper
+
+class ShopPackage(models.Model,LinkHelper):
+    title=models.CharField(_("title"), max_length=50)    
+    shops=models.ManyToManyField("shop", verbose_name=_("shops"))
+
+    class_name='shoppackage'
+    app_name=APP_NAME
+
+    class Meta:
+        verbose_name = _("ShopPackage")
+        verbose_name_plural = _("ShopPackages")
+
+    def save(self):
+        (result,message,shoppackage)=FAILED,'',self
+        if self.class_name is None or self.class_name=="":
+            self.class_name="shoppackage"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        super(Menu,self).save()   
+        result=SUCCEED
+        message="پکیج با موفقیت اضافه شد."
+        return (result,message,shoppackage)
+
 class Shop(models.Model,LinkHelper,DateTimeHelper):
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
     product=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.CASCADE)
