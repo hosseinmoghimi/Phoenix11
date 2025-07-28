@@ -34,6 +34,29 @@ class AddMenuApi(APIView):
   
 
   
+class AddShopPackageApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_menu_form=AddMenuForm(request.POST)
+        if add_menu_form.is_valid():
+            log=333
+            cd=add_menu_form.cleaned_data
+            result,message,menu=MenuRepo(request=request).add_menu(**cd)
+            if menu is not None:
+                context['menu']=MenuSerializer(menu).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+
+  
 class AddShopApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

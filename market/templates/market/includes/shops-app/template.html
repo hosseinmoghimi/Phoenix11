@@ -1,3 +1,5 @@
+<div id="accordion-shops" class="rtl text-right farsi">
+
 <div id="shops-app" class="card">
     <div class="card-header">
         <h5 class="text-center">
@@ -67,7 +69,7 @@
                         {% if not supplier %}
 
                         <td>
-                            <a :href="shop.supplier.get_absolute_url"><span v-text="shop.supplier.title"></span></a>
+                            <a :href="shop.supplier.get_absolute_url"><span v-text="shop.supplier.full_name"></span></a>
                         </td>
                         {% endif %}
 
@@ -157,4 +159,5 @@
             </table>
         </div>
     </div>
+</div>
 </div>

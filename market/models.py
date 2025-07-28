@@ -68,27 +68,35 @@ class Shipper(MarketPerson):
         super(Shipper,self).save()
         return result,message,shipper
 
-class ShopPackage(models.Model,LinkHelper):
+class ShopPackage(models.Model,LinkHelper,DateTimeHelper):
+    supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
     title=models.CharField(_("title"), max_length=50)    
     shops=models.ManyToManyField("shop", verbose_name=_("shops"))
+    level=models.CharField(_("level"),choices=ShopLevelEnum.choices,default=ShopLevelEnum.END_USER, max_length=50)
+    start_date=models.DateTimeField(_("تاریخ شروع "), auto_now=False, auto_now_add=False)
+    end_date=models.DateTimeField(_("تاریخ پایان "), auto_now=False, auto_now_add=False)
+    quantity=models.IntegerField(_("تعداد کل"))
+    available=models.IntegerField(_("موجود"))
+
 
     class_name='shoppackage'
     app_name=APP_NAME
-
+    def __str__(self):
+        return self.title
     class Meta:
         verbose_name = _("ShopPackage")
         verbose_name_plural = _("ShopPackages")
 
     def save(self):
-        (result,message,shoppackage)=FAILED,'',self
+        (result,message,shop_package)=FAILED,'',self
         if self.class_name is None or self.class_name=="":
-            self.class_name="shoppackage"
+            self.class_name="shop_package"
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        super(Menu,self).save()   
+        super(ShopPackage,self).save()   
         result=SUCCEED
         message="پکیج با موفقیت اضافه شد."
-        return (result,message,shoppackage)
+        return (result,message,shop_package)
 
 class Shop(models.Model,LinkHelper,DateTimeHelper):
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)

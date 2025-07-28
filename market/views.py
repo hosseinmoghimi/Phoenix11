@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from accounting.repo import ProductRepo
-from .serializers import ProductSerializer,MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
-from .repo import MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo,CustomerRepo,ShipperRepo
+from .serializers import ShopPackageSerializer,ProductSerializer,MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
+from .repo import ShopPackageRepo,MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo,CustomerRepo,ShipperRepo
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
@@ -48,6 +48,7 @@ def AddMarketPersonContext(request):
     context['customer_levels']=(i[0] for i in ShopLevelEnum.choices)
  
     return context
+
 def AddSupplierContext(request,*args, **kwargs):
     if not request.user.has_perm(APP_NAME+".add_supplier"):
         return context
@@ -207,6 +208,46 @@ class SuppliersView(View):
         if request.user.has_perm(APP_NAME+".add_supplier"):
             context.update(AddSupplierContext(request=request))
         return render(request,TEMPLATE_ROOT+"suppliers.html",context) 
+
+       
+def AddShopPackageContext(request,*args, **kwargs):
+    context={}
+    return context
+    
+
+class ShopPackagesView(View):
+    def get(self,request,*args,**kwargs):
+        context=getContext(request=request)
+        shop_packages=ShopPackageRepo(request=request).list(*args,**kwargs)
+        shop_packages_s=json.dumps(ShopPackageSerializer(shop_packages,many=True).data)
+        context['shop_packages']=shop_packages
+        context['shop_packages_s']=shop_packages_s
+        
+        if request.user.has_perm(APP_NAME+".add_shoppackage"):
+            context.update(AddShopPackageContext(request=request))
+        return render(request,TEMPLATE_ROOT+"shop-packages.html",context) 
+def AddShopContext(request,*args, **kwargs):
+    context={}
+    return context
+
+class ShopPackageView(View):
+    def get(self,request,*args,**kwargs):
+        context=getContext(request=request)
+        shop_package=ShopPackageRepo(request=request).shop_package(*args,**kwargs)
+        shop_package_s=json.dumps(ShopPackageSerializer(shop_package).data)
+        context['shop_package']=shop_package
+        context['shop_package_s']=shop_package_s
+
+
+        shops=shop_package.shops.all()
+        shops_s=json.dumps(ShopSerializer(shops,many=True).data)
+        context['shops']=shops
+        context['shops_s']=shops_s
+
+        
+        if request.user.has_perm(APP_NAME+".add_shop"):
+            context.update(AddShopContext(request=request))
+        return render(request,TEMPLATE_ROOT+"shop-package.html",context) 
 
         
 class SupplierView(View):

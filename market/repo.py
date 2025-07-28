@@ -1,4 +1,4 @@
-from .models import Shop,Supplier,Customer,CartItem,Shipper,Menu,Desk,DeskCustomer
+from .models import Shop,ShopPackage,Supplier,Customer,CartItem,Shipper,Menu,Desk,DeskCustomer
 
 from .apps import APP_NAME
 from .enums import *
@@ -77,6 +77,81 @@ class MenuRepo():
  
 
  
+
+class ShopPackageRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=ShopPackage.objects.filter(id=0)
+        profile=ProfileRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_desk"):
+                self.objects=ShopPackage.objects
+                self.my_accounts=self.objects 
+     
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        if "supplier_id" in kwargs:
+            supplier_id=kwargs["supplier_id"]
+            objects=objects.filter(supplier_id=supplier_id)
+        if "product_id" in kwargs:
+            product_id=kwargs["product_id"]
+            objects=objects.filter(product_id=product_id)
+        if "level" in kwargs:
+            level=kwargs["level"]
+            objects=objects.filter(level=level)
+        if "customer_id" in kwargs:
+            from .enums import Cus  
+            level=ShopLevelEnum.GUEST
+            customer_id=kwargs["customer_id"]
+            customer=CustomerRepo(request=self.request).customer(customer_id=customer_id)
+            if customer is not None:
+                level=customer.level
+            objects=objects.filter(level=level)
+        return objects.all()
+        
+    def shop_package(self,*args, **kwargs):
+        if "shop_package_id" in kwargs and kwargs["shop_package_id"] is not None:
+            return self.objects.filter(pk=kwargs['shop_package_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_shop_package(self,*args,**kwargs):
+        result,message,shop_package=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_shop_package"):
+            message="دسترسی غیر مجاز"
+            return result,message,shop_package
+
+        shop_package=ShopPackage()
+        if 'title' in kwargs:
+            shop_package.title=kwargs["title"]
+        if 'parent_id' in kwargs:
+            if kwargs["parent_id"]>0:
+                shop_package.parent_id=kwargs["parent_id"]
+        if 'color' in kwargs:
+            shop_package.color=kwargs["color"]
+        if 'supplier_id' in kwargs:
+            shop_package.supplier_id=kwargs["supplier_id"]
+        if 'priority' in kwargs:
+            shop_package.priority=kwargs["priority"]
+        if 'type' in kwargs:
+            shop_package.type=kwargs["type"]
+
+         
+        (result,message,shop_package)=shop_package.save()
+        return result,message,shop_package
+
+
 
 class DeskRepo():
     def __init__(self,request,*args, **kwargs):

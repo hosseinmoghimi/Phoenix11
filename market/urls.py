@@ -29,4 +29,8 @@ urlpatterns = [
     path("suppliers/",login_required(views.SuppliersView.as_view()),name="suppliers"),
     path("supplier/<int:pk>/",(views.SupplierView.as_view()),name="supplier"),
 
+    path("add-shop_package/",login_required(apis.AddShopPackageApi.as_view()),name="add_shop_package"),
+    path("shop_packages/",login_required(views.ShopPackagesView.as_view()),name="shop_packages"),
+    path("shop_package/<int:pk>/",(views.ShopPackageView.as_view()),name="shoppackage"),
+
 ]

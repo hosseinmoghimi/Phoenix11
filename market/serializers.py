@@ -1,13 +1,11 @@
 from core.serializers import serializers
-from .models import Shop,Menu,Supplier,Customer,CartItem,Shipper,Desk,DeskCustomer
+from .models import ShopPackage,Shop,Menu,Supplier,Customer,CartItem,Shipper,Desk,DeskCustomer
 from accounting.serializers import Category,Product,AccountBriefSerializer,PersonSerializer
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model=Product
         fields=['id', 'title','unit_name','unit_price','thumbnail','get_market_absolute_url',  'get_edit_url','get_delete_url']
- 
-
  
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -74,4 +72,14 @@ class DeskCustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model=DeskCustomer 
         fields=['id','desk','account',  'get_absolute_url', 'get_edit_url','get_delete_url']
+ 
+
+
+class ShopPackageSerializer(serializers.ModelSerializer):
+    supplier=SupplierSerializer()
+    class Meta:
+        model=ShopPackage
+        fields=['id','supplier','level', 'title','get_absolute_url','quantity','available','persian_start_date','persian_end_date',  'get_edit_url','get_delete_url']
+ 
+
  
