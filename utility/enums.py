@@ -130,6 +130,7 @@ class PersonPrefixEnum(TextChoices):
     ENGINEER="مهندس",_("مهندس")
     COMPLEX=" مجتمع",_(" مجتمع")
     SHOP="فروشگاه",_("فروشگاه")
+    UNIVERSITY="دانشگاه",_("دانشگاه")
   
 class AppNameEnum(TextChoices):
     projectmanager='projectmanager',_('projectmanager')

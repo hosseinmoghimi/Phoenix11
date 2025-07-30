@@ -323,6 +323,12 @@ def AddPersonCategoryContext(request,*args, **kwargs):
     context['add_person_category_form']=AddPersonCategoryForm()
     return context
 
+def AddPersonAccountContext(request,*args, **kwargs):
+    context=AddAccountContext(request=request)
+    person_categories=PersonCategoryRepo(request=request).list()
+    context['person_categories']=person_categories
+    context['add_person_account_form']=AddPersonAccountForm()
+    return context
 
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -1105,6 +1111,8 @@ class InvoiceEditView(View):
     def post(self,request,*args, **kwargs):
         from .apis import EditInvoiceApi
         return EditInvoiceApi().post(request,*args, **kwargs)
+
+
 class InvoicePrintView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -1175,10 +1183,8 @@ class PersonAccountsView(View):
 
         
         if request.user.has_perm(APP_NAME+'.add_personaccount'):
-            context.update(AddAccountContext(request=request))
-            person_categories=PersonCategoryRepo(request=request).list()
-            context['person_categories']=person_categories
-            context['add_person_account_form']=AddPersonAccountForm()
+            context.update(AddPersonAccountContext(request=request))
+            
         return render(request,TEMPLATE_ROOT+"person-accounts.html",context)
 
 

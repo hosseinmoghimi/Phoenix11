@@ -20,17 +20,8 @@ class AddShopForm(forms.Form):
 
 class AddMarketPersonForm(forms.Form):
     level=forms.CharField(max_length=100, required=False)
-    first_name=forms.CharField(max_length=100, required=False)
-    last_name=forms.CharField(max_length=100, required=False)
-    email=forms.CharField(max_length=100, required=False)
-    bio=forms.CharField(max_length=100, required=False)
-    mobile=forms.CharField(max_length=100, required=False)
-    prefix=forms.CharField(max_length=100, required=False)
-    type=forms.CharField(max_length=100, required=False)
-    person_id=forms.IntegerField(required=True)
-    address=forms.CharField(max_length=100, required=False)
-    balance=forms.IntegerField(required=False) 
-    code=forms.CharField(max_length=100, required=True)
+    person_account_id=forms.IntegerField(required=True)
+   
 
 
 class AddCustomerForm(AddMarketPersonForm):

@@ -19,9 +19,7 @@
         let msg=this.message
         let body=JSON.stringify(shop)
         this.message={show:true,body:body,color:'success'}
-        setTimeout(() => {
-          product_shop_component.message.show=false
-        }, 2000);
+         
       },
       delete_shop: function (comment_id) {
         this.confirm_delete = false;

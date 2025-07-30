@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from accounting.repo import ProductRepo
+from accounting.views import ProductRepo,PersonAccountRepo,AddPersonAccountContext,PersonAccountSerializer
 from .serializers import ShopPackageSerializer,ProductSerializer,MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
 from .repo import ShopPackageRepo,MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo,CustomerRepo,ShipperRepo
 from .forms import *
 from .apps import APP_NAME
+from .serializers import ShipperSerializer
+from .repo import ShipperRepo
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from accounting.views import CategoryRepo
@@ -14,6 +16,8 @@ from django.views import View
 from core.views import CoreContext,leolog
 from authentication.views import PersonRepo,PersonSerializer,AddPersonContext
 from utility.enums import PersonPrefixEnum
+from .serializers import CustomerSerializer
+
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='market/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -39,40 +43,38 @@ def getContext(request,*args, **kwargs):
 
 def AddMarketPersonContext(request):
     context={}
-    context['customer_levels']=(i[0] for i in ShopLevelEnum.choices)
-    context=AddPersonContext(request=request)
-    context['person_prefixs_for_add_supplier_app']=(i[0] for i in PersonPrefixEnum.choices)
-    persons=PersonRepo(request=request).list()
-    context['persons']=persons
-    context['customer_levels']=(i[0] for i in ShopLevelEnum.choices)
- 
+    context=AddPersonAccountContext(request=request)
+    person_accounts=PersonAccountRepo(request=request).list()
+    person_accounts_s=json.dumps(PersonAccountSerializer(person_accounts,many=True).data)
+    context['person_accounts']=person_accounts
+    context['person_accounts_s']=person_accounts_s
+
+    context['levels']=(i[0] for i in ShopLevelEnum.choices)
     return context
 
 def AddSupplierContext(request,*args, **kwargs):
     if not request.user.has_perm(APP_NAME+".add_supplier"):
         return context
     context=AddMarketPersonContext(request=request)
-  
-    ids=(SupplierRepo(request=request).list().values('person_id'))
-    persons=context['persons']
-    persons=persons.exclude(id__in=ids)
-    persons_s_for_add_supplier_app=json.dumps(PersonSerializer(persons,many=True).data)
-    context['persons_s_for_add_supplier_app']=persons_s_for_add_supplier_app
     context['add_supplier_form']=AddSupplierForm()
     return context
 
 def AddCustomerContext(request,*args, **kwargs): 
     if not request.user.has_perm(APP_NAME+".add_customer"):
         return {}
-    
     context=AddMarketPersonContext(request=request) 
-    persons=context['persons']
-    ids=(CustomerRepo(request=request).list().values('person_id'))
-    persons=persons.exclude(id__in=ids)
-    persons_s_for_add_customer_app=json.dumps(PersonSerializer(persons,many=True).data)
-    context['persons_s_for_add_customer_app']=persons_s_for_add_customer_app
     context['add_customer_form']=AddCustomerForm()
     return context
+
+
+
+def AddShipperContext(request,*args, **kwargs): 
+    if not request.user.has_perm(APP_NAME+".add_shipper"):
+        return {}
+    context=AddMarketPersonContext(request=request) 
+    context['add_shipper_form']=AddShipperForm()
+    return context
+
 
        
 def AddShopPackageContext(request,*args, **kwargs):
@@ -243,8 +245,9 @@ class SupplierView(View):
         supplier_s=json.dumps(SupplierSerializer(supplier,many=False).data)
         context['supplier']=supplier
         context['supplier_s']=supplier_s
-        context['person']=supplier.person
-        context['account']=supplier.account
+        context['person_account']=supplier.person_account
+        context['person']=supplier.person_account.person
+        context['account']=supplier.person_account
 
         
         shops=ShopRepo(request=request).list(supplier_id=supplier.id)
@@ -325,3 +328,60 @@ class DesksView(View):
     
     
 
+
+class ShippersView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        shippers =ShipperRepo(request=request).list(*args, **kwargs)
+        context['shippers']=shippers
+        
+        shippers_s=json.dumps(ShipperSerializer(shippers,many=True).data)
+        context['shippers_s']=shippers_s
+        if request.user.has_perm(APP_NAME+'.add_shipper'):
+            context.update(AddShipperContext(request=request))
+ 
+        return render(request,TEMPLATE_ROOT+"shippers.html",context) 
+    
+   
+    
+class ShipperView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        shipper =ShipperRepo(request=request).shipper(*args, **kwargs)
+        context['shipper']=shipper
+        
+        shipper_s=json.dumps(ShipperSerializer(shipper,many=False).data)
+        context['shipper_s']=shipper_s
+ 
+ 
+        return render(request,TEMPLATE_ROOT+"shipper.html",context) 
+    
+    
+class CustomerView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        customer =CustomerRepo(request=request).customer(*args, **kwargs)
+        context['customer']=customer
+        
+        customer_s=json.dumps(CustomerSerializer(customer,many=False).data)
+        context['customer_s']=customer_s
+ 
+ 
+        return render(request,TEMPLATE_ROOT+"customer.html",context) 
+    
+   
+    
+class CustomersView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        customers =CustomerRepo(request=request).list(*args, **kwargs)
+        context['customers']=customers
+        
+        customers_s=json.dumps(CustomerSerializer(customers,many=True).data)
+        context['customers_s']=customers_s
+        if request.user.has_perm(APP_NAME+'.add_customer'):
+            context.update(AddCustomerContext(request=request))
+ 
+        return render(request,TEMPLATE_ROOT+"customers.html",context) 
+    
+   

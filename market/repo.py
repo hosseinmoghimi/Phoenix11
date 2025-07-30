@@ -379,7 +379,7 @@ class CustomerRepo():
         self.objects=Customer.objects
         me_profile=ProfileRepo(request=request).me
         if me_profile is not None:
-            self.me=self.objects.filter(person__profile_id=me_profile.id).first()
+            self.me=self.objects.filter(person_account__person__profile_id=me_profile.id).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         pure_code="876454453342236"
@@ -418,30 +418,22 @@ class CustomerRepo():
         
     def add_customer(self,*args,**kwargs):
         result,message,customer=FAILED,"",None
-        me_supplier=SupplierRepo(request=self.request).me
         if not self.request.user.has_perm(APP_NAME+".add_customer") :
             message="دسترسی غیر مجاز"
             return result,message,customer
-        # if len(Product.objects.filter(product_id=kwargs["product_id"]).filter(unit_name=kwargs["unit_name"]).filter(level=kwargs["level"]).filter(supplier_id=kwargs["supplier_id"]))>0:
-        #     message="نام تکراری برای کالای جدید"
-        #     return result,message,customer
         
 
         customer=Customer() 
-        from accounting.repo import PersonRepo
-        if kwargs['person_id']==0:
-            result22,message22,person=PersonRepo(request=self.request).add_person(**kwargs)
- 
-            if result22==SUCCEED:
-                customer.person=person
-        elif 'person_id' in kwargs and kwargs['person_id'] is not None and kwargs['person_id']>0:
-            customer.person_id=kwargs["person_id"]
+        if 'person_account_id' in kwargs and kwargs['person_account_id'] is not None and kwargs['person_account_id']>0:
+            person_account_id=kwargs["person_account_id"]
+            customer.person_account_id=person_account_id
+            if len(Customer.objects.filter(person_account_id=person_account_id))>0:
+                message='برای این حساب قبلا مشتری ایجاد شده است.'
+                return result,message,None
         if 'level' in kwargs:
             customer.level=kwargs["level"]
-    
-        if 'code' in kwargs:
-            customer.code=kwargs["code"]
-             
+ 
+        leolog(kwargs=kwargs)     
         (result,message,customer)=customer.save() 
 
         return result,message,customer
@@ -455,7 +447,7 @@ class ShipperRepo():
         self.objects=Shipper.objects
         profile=ProfileRepo(request=request).me
         if profile is not None:
-            self.me=self.objects.filter(person__profile_id=profile.id).first()
+            self.me=self.objects.filter(person_account__person__profile_id=profile.id).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         pure_code="876454453342236"
@@ -490,39 +482,29 @@ class ShipperRepo():
                         return a
                 except:
                     pass
-        
-        
+     
+ 
     def add_shipper(self,*args,**kwargs):
         result,message,shipper=FAILED,"",None
-        me_supplier=SupplierRepo(request=self.request).me
         if not self.request.user.has_perm(APP_NAME+".add_shipper") :
             message="دسترسی غیر مجاز"
             return result,message,shipper
-        # if len(Product.objects.filter(product_id=kwargs["product_id"]).filter(unit_name=kwargs["unit_name"]).filter(level=kwargs["level"]).filter(supplier_id=kwargs["supplier_id"]))>0:
-        #     message="نام تکراری برای کالای جدید"
-        #     return result,message,shipper
         
 
         shipper=Shipper() 
-        from accounting.repo import PersonRepo
-        if kwargs['person_id']==0:
-            result22,message22,person=PersonRepo(request=self.request).add_person(**kwargs)
- 
-            if result22==SUCCEED:
-                shipper.person=person
-        elif 'person_id' in kwargs and kwargs['person_id'] is not None and kwargs['person_id']>0:
-            shipper.person_id=kwargs["person_id"]
+        if 'person_account_id' in kwargs and kwargs['person_account_id'] is not None and kwargs['person_account_id']>0:
+            person_account_id=kwargs["person_account_id"]
+            shipper.person_account_id=person_account_id
+            if len(Shipper.objects.filter(person_account_id=person_account_id))>0:
+                message='برای این حساب قبلا فروشنده ایجاد شده است.'
+                return result,message,None
         if 'level' in kwargs:
             shipper.level=kwargs["level"]
-    
-        if 'code' in kwargs:
-            shipper.code=kwargs["code"]
-             
+ 
+        leolog(kwargs=kwargs)     
         (result,message,shipper)=shipper.save() 
 
         return result,message,shipper
- 
- 
 
 class CartItemRepo():
     def __init__(self,request,*args, **kwargs):
@@ -662,7 +644,7 @@ class SupplierRepo():
 
         profile=ProfileRepo(request=request).me
         if profile is not None:
-            self.me=self.objects.filter(person__profile_id=profile.id).first()
+            self.me=self.objects.filter(person_account__person__profile_id=profile.id).first()
 
     def list(self,*args, **kwargs):
         objects=self.objects
@@ -694,51 +676,26 @@ class SupplierRepo():
            
 
 
-              
+ 
     def add_supplier(self,*args,**kwargs):
         result,message,supplier=FAILED,"",None
-        me_supplier=SupplierRepo(request=self.request).me
         if not self.request.user.has_perm(APP_NAME+".add_supplier") :
             message="دسترسی غیر مجاز"
             return result,message,supplier
-        # if len(Product.objects.filter(product_id=kwargs["product_id"]).filter(unit_name=kwargs["unit_name"]).filter(level=kwargs["level"]).filter(supplier_id=kwargs["supplier_id"]))>0:
-        #     message="نام تکراری برای کالای جدید"
-        #     return result,message,supplier
         
 
         supplier=Supplier() 
-        if kwargs['person_id']==0:
-            result22,message22,person=PersonRepo(request=self.request).add_person(**kwargs)
-            supplier.person=person
- 
-            if person is not None:
-                from accounting.repo import PersonAccountRepo,PersonCategoryRepo
-                p_c=PersonCategoryRepo(request=self.request).person_category(title=PersonCategoryEnum.SUPPLIER)
-                result,message,supplier_account=PersonAccountRepo(request=self.request).add_person_account(person_id=person.id,person_category_id=p_c.id)
-             
-                supplier.account=supplier_account
-        elif 'person_id' in kwargs and kwargs['person_id'] is not None and kwargs['person_id']>0:
-            person_id=kwargs["person_id"]
-            person=PersonRepo(request=self.request).person(person_id=person_id)
-            if person is not None:
-                supplier.person=person
-                person_accounts=person.personaccount_set.all()
-                supplier_account=person_accounts.filter(person_category__title=PersonCategoryEnum.SUPPLIER).first()
-                if supplier_account is None:
-                    from accounting.repo import PersonAccountRepo,PersonCategoryRepo
-                    person_category=PersonCategoryRepo(request=self.request).person_category(title=PersonCategoryEnum.SUPPLIER)
-                    if person_category is None:
-                        message='ابتدا در حسابداری ، دسته بندی فروشنده را برای اشخاص ایجاد کنید.'+f"""<br><a target="_blank" href="{reverse('accounting:person_categories')}">دسته بندی اشخاص</a>"""
-                        result=FAILED
-                        return result,message,supplier
-                    result,message,supplier_account=PersonAccountRepo(request=self.request).add_person_account(person_id=person_id,person_category_id=person_category.id)
-                from accounting.models import PersonAccount
-                supplier.account_id=supplier_account.id
-            supplier.person_id=person.id
-
+        if 'person_account_id' in kwargs and kwargs['person_account_id'] is not None and kwargs['person_account_id']>0:
+            person_account_id=kwargs["person_account_id"]
+            supplier.person_account_id=person_account_id
+            if len(Supplier.objects.filter(person_account_id=person_account_id))>0:
+                message='برای این حساب قبلا فروشنده ایجاد شده است.'
+                return result,message,None
         if 'level' in kwargs:
-            supplier.level=kwargs["level"] 
-              
+            supplier.level=kwargs["level"]
+ 
+        leolog(kwargs=kwargs)     
         (result,message,supplier)=supplier.save() 
+
         return result,message,supplier
-  
+ 

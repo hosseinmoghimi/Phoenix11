@@ -1,19 +1,19 @@
-<div id="accordion-customers">
-  <div class="card" id="customers-app">
-    <div class="card-header" id="heading-customers">
+<div id="accordion-shippers">
+  <div class="card" id="shippers-app">
+    <div class="card-header" id="heading-shippers">
       <h5 class="text-center">
         <button
           class="btn btn-link"
           data-toggle="collapse"
-          data-target="#collapse-customers"
+          data-target="#collapse-shippers"
           aria-expanded="true"
-          aria-controls="collapse-customers"
+          aria-controls="collapse-shippers"
         >
-          مشتریان
+          حمل کننده ها
 
-          <span v-if="customers.length>0">
+          <span v-if="shippers.length>0">
             <small class="text-danger mx-2">
-              <span v-text="customers.length"></span>
+              <span v-text="shippers.length"></span>
             </small>
           </span>
         </button>
@@ -21,50 +21,50 @@
     </div>
 
     <div
-      id="collapse-customers"
-      class="collapse {% if expand_customers %} show{% endif %}"
-      aria-labelledby="heading-customers"
-      data-parent="#accordion-customers"
+      id="collapse-shippers"
+      class="collapse {% if expand_shippers %} show{% endif %}"
+      aria-labelledby="heading-shippers"
+      data-parent="#accordion-shippers"
     >
       <div class="card-body">
         <div class="table-responsive">
           <table class="table table-striped rtl">
             <thead>
-              <th>مشتری</th>
+              <th>حمل کننده</th>
               <th>سطح</th>
               <th>مانده</th>
               <th></th>
             </thead>
             <tbody>
-              <tr v-for="customer in customers">
+              <tr v-for="shipper in shippers">
                 <td>
-                  <a :href="customer.get_absolute_url">
+                  <a :href="shipper.get_absolute_url">
                     <span
-                      v-text="customer.person_account.person.full_name"
+                      v-text="shipper.person_account.person.full_name"
                     ></span>
                   </a>
                 </td>
 
                 <td>
-                  <span v-text="customer.level"></span>
+                  <span v-text="shipper.level"></span>
                 </td>
 
                 <td>
-                  <span v-text="to_price(customer.person_account.balance)"></span> {{CURRENCY    }}
+                  <span v-text="to_price(shipper.person_account.balance)"></span> {{CURRENCY    }}
                 </td>
                 <td>
-                  {% if perms.market.change_customer %}
+                  {% if perms.market.change_shipper %}
                   <a
                     target="_blank"
-                    :href="customer.get_edit_url"
+                    :href="shipper.get_edit_url"
                     title="ویرایش"
                   >
                     <i class="fa fa-edit text-warning"></i>
                   </a>
-                  {% endif %} {% if perms.market.delete_customer %}
+                  {% endif %} {% if perms.market.delete_shipper %}
                   <a
                     target="_blank"
-                    :href="customer.get_delete_url"
+                    :href="shipper.get_delete_url"
                     title="حذف"
                   >
                     <i class="fa fa-trash text-danger"></i>

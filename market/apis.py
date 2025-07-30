@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import MenuRepo,ShopRepo,SupplierRepo,CustomerRepo
-from .serializers import MenuSerializer,ShopSerializer,SupplierSerializer,CustomerSerializer
+from .repo import MenuRepo,ShopRepo,SupplierRepo,CustomerRepo,ShipperRepo
+from .serializers import MenuSerializer,ShopSerializer,SupplierSerializer,CustomerSerializer,ShipperSerializer
 from django.http import JsonResponse
 from .enums import *
 from .forms import *
@@ -126,6 +126,29 @@ class AddSupplierApi(APIView):
                     result,message,supplier=SupplierRepo(request=request).add_supplier(**cd)
                     if result==SUCCEED:
                         context['supplier']=SupplierSerializer(supplier).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+class AddShipperApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_shipper_form=AddShipperForm(request.POST)            
+            if add_shipper_form.is_valid():
+                log=333
+                cd=add_shipper_form.cleaned_data
+                result,message,shipper=ShipperRepo(request=request).add_shipper(**cd)
+                if result==SUCCEED:
+                    context['shipper']=ShipperSerializer(shipper).data
+            
         context['message']=message
         context['result']=result
         context['log']=log

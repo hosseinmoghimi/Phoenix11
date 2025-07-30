@@ -1,27 +1,27 @@
-<div id="accordion-add-customer">
-  <div class="card" id="add-customer-app">
+<div id="accordion-add-shipper">
+  <div class="card" id="add-shipper-app">
     <div class="card-header">
       <h5 class="text-center">
         <button
           class="btn btn-link"
           data-toggle="collapse"
-          data-target="#collapse-add-customer"
+          data-target="#collapse-add-shipper"
           aria-expanded="true"
-          aria-controls="collapse-add-customer"
+          aria-controls="collapse-add-shipper"
         >
-          افزودن مشتری جدید
+          افزودن حمل کننده جدید
         </button>
       </h5>
     </div>
     <div
-      id="collapse-add-customer"
-      class="collapse {% if expand_add_customer %} show{% endif %}"
-      aria-labelledby="heading-add-customer"
-      data-parent="#accordion-add-customer"
+      id="collapse-add-shipper"
+      class="collapse {% if expand_add_shipper %} show{% endif %}"
+      aria-labelledby="heading-add-shipper"
+      data-parent="#accordion-add-shipper"
     >
       <div class="card-body">
         <div class="text-right">
-          <form @submit.prevent="add_customer()">
+          <form @submit.prevent="add_shipper()">
             <div class="row">
               <div class="col-md-4">
                 <div class="form-group">

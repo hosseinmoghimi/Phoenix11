@@ -4,8 +4,8 @@
 </script>
 
 <script>
-    let add_customer_app = new Vue({
-        el: "#add-customer-app",
+    let add_shipper_app = new Vue({
+        el: "#add-shipper-app",
         data: {
             level: "", 
             person_account_id:0,
@@ -20,7 +20,7 @@
             to_price: vall => to_price(vall),
             
           
-            add_customer: function () {
+            add_shipper: function () {
 
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
@@ -29,18 +29,18 @@
                 }
  
 
-                let url = "{% url 'market:add_customer' %}"
+                let url = "{% url 'market:add_shipper' %}"
                 $.post(url, payload).done(data => {
                     leolog(data)
                     if (data.result === "SUCCEED") {
-                        if (typeof customers_app != "undefined") {
-                            customers_app.customers.push(data.customer)
+                        if (typeof shippers_app != "undefined") {
+                            shippers_app.shippers.push(data.shipper)
                         }
-                        show_message(add_customer_app, "موفقیت آمیز", data.message, "success", 10000)
-                        add_customer_app.persons=add_customer_app.person_accounts.filter(person_account=>person_account.id!=data.customer.person_account.id)
+                        show_message(add_shipper_app, "موفقیت آمیز", data.message, "success", 10000)
+                        add_shipper_app.persons=add_shipper_app.person_accounts.filter(person_account=>person_account.id!=data.shipper.person_account.id)
                     }
                     else {
-                        show_message(add_customer_app, "خطا", data.message, "danger", 10000)
+                        show_message(add_shipper_app, "خطا", data.message, "danger", 10000)
 
                     }
 

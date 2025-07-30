@@ -1,121 +1,73 @@
-<div class="card" id="add-supplier-app">
+<div id="accordion-add-supplier">
+  <div class="card" id="add-supplier-app">
     <div class="card-header">
-        افزودن فروشنده جدید
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-add-supplier"
+          aria-expanded="true"
+          aria-controls="collapse-add-supplier"
+        >
+          افزودن فروشنده جدید
+        </button>
+      </h5>
     </div>
-    <div class="card-body">
-        <div v-if="!show_form" class="text-right">
-            <button @click="show_form=true" class="btn btn-info">افزودن فروشنده جدید</button>
-        </div>
-        <div v-if="show_form" class="text-right">
-            <form @submit.prevent="add_supplier()">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="">شخص</label>
-                            <select class="form-control" v-model="person_id">
-                                <option value="0">شخص جدید</option>
-                                <option v-for="person in persons" :value="person.id" v-text="person.full_name">
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4" v-if="person_id==0">
-                        <div class="form-group">
-                            <label for="">کد</label>
-                            <input type="text" class="form-control" v-model="code">
-                        </div>
-                    </div>
-                    <div class="col-md-4" >
-                        <div class="form-group">
-                            <label for="">سطح فروشنده</label>
-                            <select class="form-control" v-model="level">
-                                {% for level in customer_levels %}
-                                <option value="{{level}}">
-                                    {{level}}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4" v-if="person_id==0">
-                        <div class="form-group">
-                            <label for="">پیشوند</label>
-                            <select class="form-control" v-model="prefix">
-                                {% for prefix in person_prefixs_for_add_supplier_app %}
-                                <option value="{{prefix}}">
-                                    {{prefix}}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4" v-if="person_id==0">
-                        <div class="form-group">
-                            <label for="">نام</label>
-                            <input type="text" class="form-control" v-model="first_name">
-                        </div>
-                    </div>
-                    <div class="col-md-4" v-if="person_id==0">
-                        <div class="form-group">
-                            <label for="">نام خانوادگی</label>
-                            <input type="text" class="form-control" v-model="last_name">
-                        </div>
-                    </div>
-                    <div class="col-md-4" v-if="person_id==0">
-                        <div class="form-group">
-                            <label for="">موبایل</label>
-                            <input type="text" class="form-control" v-model="mobile">
-                        </div>
-                    </div>
-                    <div class="col-md-4" v-if="person_id==0">
-                        <div class="form-group">
-                            <label for="">ایمیل</label>
-                            <input type="text" class="form-control" v-model="email">
-                        </div>
-                    </div>
-                    <div class="col-md-4" v-if="person_id==0">
-                        <div class="form-group">
-                            <label for="">آدرس</label>
-                            <input type="text" class="form-control" v-model="address">
-                        </div>
-                    </div>
-                    <div class="col-md-4" v-if="person_id==0">
-                        <div class="form-group">
-                            <label for="">بیو</label>
-                            <input type="text" class="form-control" v-model="bio">
-                        </div>
-                    </div>
-                    {% if supplier_account_categories %}
-                    <div class="col-md-12">
-                        <div>
-                            {% for supplier_account_category in supplier_account_categories %}
-                            <div class="form-check">
-                                <input @input="select_supplier_account_category('{{supplier_account_category}}',$event.target.checked)"
-                                    class="form-check-input" type="checkbox" value="{{supplier_account_category}}"
-                                    id="flexCheckChecked">
-                                <label class="form-check-label mr-4" for="flexCheckChecked">
-                                    {{supplier_account_category}}
-                                </label>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
-                    <div class="col-md-12">
-                        <button class="btn btn-success" type="submit"><i class="fa fa-plus"></i> افزودن</button>
-                        <button @click="show_form=false" class="btn btn-secondary">انصراف</button>
-                    </div>
-                    <div class="col-md-12 mt-2" v-if="message.show">
-                        <div :class="'alert alert-'+message.color">
-                            <div class="rtl text-right">
-                                <h5 v-html="message.title"></h5>
-                                <span v-html="message.body"></span>
-                            </div>
-                        </div>
-                    </div>
+    <div
+      id="collapse-add-supplier"
+      class="collapse {% if expand_add_supplier %} show{% endif %}"
+      aria-labelledby="heading-add-supplier"
+      data-parent="#accordion-add-supplier"
+    >
+      <div class="card-body">
+        <div class="text-right">
+          <form @submit.prevent="add_supplier()">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="">شخص</label>
+                  <select class="form-control" v-model="person_account_id">
+                    <option
+                      v-for="person_account in person_accounts"
+                      :value="person_account.id"
+                      v-text="person_account.person.full_name+' => '+person_account.full_name"
+                    ></option>
+                  </select>
+                  <a href="{% url 'accounting:person_accounts'  %}" target="_blank">همه حساب های اشخاص</a>
                 </div>
-            </form>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="">سطح فروشنده</label>
+                  <select class="form-control" v-model="level">
+                    {% for level in levels %}
+                    <option value="{{level}}">{{level}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                <button class="btn btn-success" type="submit">
+                  <i class="fa fa-plus"></i> افزودن
+                </button>
+                <button @click="show_form=false" class="btn btn-secondary">
+                  انصراف
+                </button>
+              </div>
+              <div class="col-md-12 mt-2" v-if="message.show">
+                <div :class="'alert alert-'+message.color">
+                  <div class="rtl text-right">
+                    <h5 v-html="message.title"></h5>
+                    <span v-html="message.body"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
+  </div>
 </div>

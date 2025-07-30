@@ -1,6 +1,6 @@
 from core.serializers import serializers
 from .models import ShopPackage,Shop,Menu,Supplier,Customer,CartItem,Shipper,Desk,DeskCustomer
-from accounting.serializers import Category,Product,AccountBriefSerializer,PersonSerializer
+from accounting.serializers import Category,Product,AccountBriefSerializer,PersonSerializer,PersonAccountSerializer
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,11 +14,10 @@ class CategorySerializer(serializers.ModelSerializer):
         fields=['id', 'title','thumbnail','get_market_absolute_url',  'get_edit_url','get_delete_url']
  
 class SupplierSerializer(serializers.ModelSerializer):
-    account=AccountBriefSerializer()
-    person=PersonSerializer()
+    person_account=PersonAccountSerializer()
     class Meta:
         model=Supplier
-        fields=['id','account','person','full_name','level', 'get_absolute_url', 'get_edit_url','get_delete_url']
+        fields=['id','person_account','full_name','level', 'get_absolute_url', 'get_edit_url','get_delete_url']
  
  
 
@@ -34,15 +33,17 @@ class ShopSerializer(serializers.ModelSerializer):
  
 
 class CustomerSerializer(serializers.ModelSerializer):
+    person_account=PersonAccountSerializer()
     class Meta:
         model=Customer
-        fields=['id','title', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields=['id','level','full_name','person_account', 'get_absolute_url','get_edit_url','get_delete_url']
  
 
 class ShipperSerializer(serializers.ModelSerializer):
+    person_account=PersonAccountSerializer()
     class Meta:
         model=Shipper
-        fields=['id','title', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields=['id','full_name','person_account', 'get_absolute_url','get_edit_url','get_delete_url']
  
 
 

@@ -1,10 +1,10 @@
 <script>
-    let customers = JSON.parse("{{customers_s|escapejs}}")
+    let shippers = JSON.parse("{{shippers_s|escapejs}}")
     // let links=JSON.parse(`{{links_s|escapejs}}`)
-    let customers_app = new Vue({
-        el: "#customers-app",
+    let shippers_app = new Vue({
+        el: "#shippers-app",
         data: {
-            customers: customers,
+            shippers: shippers,
         },
         methods: {
             to_price:vall=>to_price(vall),

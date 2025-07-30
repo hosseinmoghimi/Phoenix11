@@ -10,10 +10,10 @@
         <h6>{{supplier.person.full_name}}</h6>
       </div>
       <div class="card-body">
-        {% if supplier.account %}
+        {% if supplier.person_account %}
         <h6>
-          <a href="{{supplier.account.get_absolute_url}}">
-            {{supplier.account.name}}
+          <a href="{{supplier.person_account.get_absolute_url}}">
+            {{supplier.person_account.name}}
           </a>
         </h6>
         {% endif %}

@@ -7,8 +7,7 @@ from .enums import *
 
 
 class MarketPerson(models.Model,LinkHelper):
-    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
-    person=models.ForeignKey("authentication.person",verbose_name=_("person"), on_delete=models.PROTECT)
+    person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.CASCADE)
 
     app_name=APP_NAME
     class Meta:
@@ -16,10 +15,10 @@ class MarketPerson(models.Model,LinkHelper):
         verbose_name_plural = _("MarketPersons")
 
     def __str__(self):
-        return f'{self.account} # {self.person.full_name}'
+        return f'{self.person_account.person.full_name}'
     
     def full_name(self):
-        return self.person.full_name
+        return self.person_account.person.full_name
 
 class Customer(MarketPerson):
 
@@ -34,6 +33,8 @@ class Customer(MarketPerson):
     def save(self,*args, **kwargs):
         result,message,customer=FAILED,'',self
         super(Customer,self).save()
+        result=SUCCEED
+        message='مشتری با موفقیت اضافه شد.'
         return result,message,customer
     
     @property
@@ -68,6 +69,8 @@ class Shipper(MarketPerson):
     def save(self,*args, **kwargs):
         result,message,shipper=FAILED,'',self
         super(Shipper,self).save()
+        result=SUCCEED
+        message='حمل کننده جدید با موفقیت اضافه شد.'
         return result,message,shipper
 
 class ShopPackage(models.Model,LinkHelper,DateTimeHelper):
