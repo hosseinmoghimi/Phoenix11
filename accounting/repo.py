@@ -452,6 +452,7 @@ class AccountRepo():
         (result,message,account)=account.save()
         return result,message,account
  
+
 class PersonAccountRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
@@ -1443,7 +1444,6 @@ class BrandRepo():
         return result,message,brand
 
 
-
 class AssetRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
@@ -1517,7 +1517,6 @@ class AssetRepo():
         message="دارایی جدید با موفقیت اضافه شد."
         result=SUCCEED
         return result,message,asset
-
  
 
 class BankRepo():
