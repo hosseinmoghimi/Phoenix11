@@ -177,14 +177,13 @@ class InvoiceLineRepo:
 class AccountRepo():
     def __init__(self,request,*args, **kwargs):
         self.me=None
-        self.my_accounts=[]
         self.request=request
         self.objects=Account.objects.filter(id=0)
-        profile=PersonRepo(request=request).me
-        if profile is not None:
-            if request.user.has_perm(APP_NAME+".view_account"):
-                self.objects=Account.objects
-                self.my_accounts=self.objects 
+        person=PersonRepo(request=request).me
+        if request.user.has_perm(APP_NAME+".view_account"):
+            self.objects=Account.objects
+        else:
+            self.objects=Account.objects.filter(pk=0)
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
@@ -327,6 +326,9 @@ class AccountRepo():
     def set_account_parent(self,*args, **kwargs):
         result,message,account,parent=FAILED,"",None,None
         account=self.account(*args,**kwargs)
+        if account is None:
+            message='حساب پیدا نشد.'
+            return result,message,None,None
         parent=None
         parent_code=kwargs["parent_code"]
         if parent_code=='0':
