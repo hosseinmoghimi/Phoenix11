@@ -14,15 +14,15 @@ LAYOUT_PARENT='phoenix/layout.html'
 
 def MessengerContext(request,*args, **kwargs):
     context={}
-    if 'profile' in kwargs and kwargs['profile'] is not None:
-        profile=kwargs['profile']
+    if 'person' in kwargs and kwargs['person'] is not None:
+        person=kwargs['person']
     else:
-        profile=ProfileRepo(request=request).me
-        if profile is None:
+        person=ProfileRepo(request=request).me
+        if person is None:
             context['PUSHER_IS_ENABLE']=False
             return {}
     PUSHER_IS_ENABLE=ParameterRepo(request=request,app_name=APP_NAME).parameter(name=ParameterEnum.PUSHER_IS_ENABLE,default='False').boolean_value
-    if PUSHER_IS_ENABLE and profile is not None and profile.member_set.first() is not None:
+    if PUSHER_IS_ENABLE and person is not None and person.member_set.first() is not None:
         context.update(get_member_context(request=request))
         notifications=NotificationRepo(request=request).list(member_id=context['member'].id,read=False)
         notifications_s=json.dumps(NotificationSerializer(notifications,many=True).data)

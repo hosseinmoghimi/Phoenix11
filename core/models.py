@@ -159,7 +159,7 @@ class Event(Page,DateTimeHelper):
         _("start_datetime"),null=True,blank=True, auto_now=False, auto_now_add=False)
     end_datetime = models.DateTimeField(
         _("end_datetime"),null=True,blank=True, auto_now=False, auto_now_add=False)
-    # adder=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    # adder=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         

@@ -103,10 +103,10 @@ class ProfilesView(View):
 class LoginAsViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        if request.user.has_perm(APP_NAME+".change_profile"):
-            selected_profile=ProfileRepo(request=request).profile(*args, **kwargs)
-            if selected_profile is not None:
-                ProfileRepo(request=request).login(request=request,user=selected_profile.user)
+        if request.user.has_perm(APP_NAME+".change_person"):
+            selected_person=PersonRepo(request=request).person(*args, **kwargs)
+            if selected_person is not None:
+                PersonRepo(request=request).login(request=request,user=selected_person.user)
                 return redirect('core:index')
         return redirect(APP_NAME+":login")
 
@@ -124,6 +124,15 @@ class PersonsView(View):
             context.update(AddPersonContext(request=request))
         return render(request,TEMPLATE_ROOT+"persons.html",context)
 
+def PersonContext(request,*args, **kwargs):
+    context={}
+    person=PersonRepo(request=request).person(*args, **kwargs)
+    if request.user.has_perm('authentication.change_person'):
+        if person.user is not None: 
+            context['login_as_form']=True 
+    context['person']=person
+    return context
+     
 
 class PersonView(View):
     def get(self,request,*args, **kwargs):
@@ -134,7 +143,7 @@ class PersonView(View):
             body='شخص پیدا نشد.'
             mv=MessageView(title=title,body=body)
             return mv.get(request=request)
-        
+        context.update(PersonContext(request=request,person=person))
         context['person']=person
         person_s=json.dumps(PersonSerializer(person).data)
         context['person_s']=person_s

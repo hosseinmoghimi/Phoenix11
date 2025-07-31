@@ -13,7 +13,7 @@ from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
 from .repo import FinancialDocumentRepo,CategoryRepo,BrandRepo,AssetRepo
-from .repo import PersonCategoryRepo,ProfileRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
+from .repo import PersonCategoryRepo,PersonRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
 from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer,BrandSerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
@@ -258,8 +258,7 @@ def ProductContext(request,product,*args, **kwargs):
 def PersonContext(request,person):
     context={} 
     context['person']=person
-    if person.profile:
-        context['profile']=person.profile
+    
     return context
 
 def ProductContext(request,product,*args, **kwargs):

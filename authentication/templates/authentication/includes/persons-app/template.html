@@ -32,7 +32,7 @@
             <thead>
                
               <th>نام </th>
-              <th>پروفایل</th>
+              <th>نام کاربری</th>
  
               <th>
 
@@ -58,16 +58,11 @@
  
                 </td>
 
-                 <td>
-                  <a class="text-primary"  :href="person.profile.get_absolute_url" v-if="person.profile">
-                    <span v-text="person.profile.name"></span>
-                    <div>
-
-                        <span  v-text="person.profile.full_name" ></span>
-                    </div>
-
-                    
+                <td>
+                  <a target="_blank" :href="'{{ADMIN_URL}}auth/user/'+person.user_id">
+                    <span v-text="person.username"></span>
                   </a>
+                </td>
 
                   
 

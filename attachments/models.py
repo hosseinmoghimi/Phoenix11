@@ -16,7 +16,7 @@ upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
  
 class Comment(models.Model,DateTimeHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
     comment=HTMLField(verbose_name="comment")
     datetime_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
 
@@ -25,13 +25,13 @@ class Comment(models.Model,DateTimeHelper):
         verbose_name_plural = _("Comments")
 
     def __str__(self):
-        return f"{self.profile} : {self.page}"
+        return f"{self.person} : {self.page}"
      
     
 
 class Like(models.Model,DateTimeHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
     datetime_added=models.DateTimeField(_("datetime_added"), auto_now=False, auto_now_add=True)
 
     class Meta:
@@ -39,25 +39,25 @@ class Like(models.Model,DateTimeHelper):
         verbose_name_plural = _("Likes")
 
     def __str__(self):
-        return f" {self.profile.full_name} @ {self.page.title}"
+        return f" {self.person.full_name} @ {self.page.title}"
 
     def my_like(self,*args, **kwargs):
-        profile_id=0
-        if 'profile_id' in kwargs:
-            profile_id=kwargs['profile_id']
-        if 'profile' in kwargs:
-            profile=kwargs['profile']
-            profile_id=profile.id
-        if 'profile' in kwargs:
-            profile=kwargs['profile']
-            profile_id=profile.id
+        person_id=0
+        if 'person_id' in kwargs:
+            person_id=kwargs['person_id']
+        if 'person' in kwargs:
+            person=kwargs['person']
+            person_id=person.id
+        if 'person' in kwargs:
+            person=kwargs['person']
+            person_id=person.id
         if 'page' in kwargs:
             page=kwargs['page']
         if 'page_id' in kwargs:
             page_id=kwargs['page_id']
         from core.repo import PageRepo,Page
         page=Page.objects.filter(pk=page_id).first()
-        my_likes=Like.objects.filter(page_id=page.id).filter(profile_id=profile_id)
+        my_likes=Like.objects.filter(page_id=page.id).filter(person_id=person_id)
         return len(my_likes)>0
     
 
@@ -72,8 +72,8 @@ class Icon(models.Model,LinkHelper):
     icon_material = models.CharField(
         _("material_icon"), null=True, blank=True, max_length=50)
     icon_svg = models.TextField(_("svg_icon"), null=True, blank=True)
-    # profile = models.ForeignKey("authentication.profile", null=True,
-                                # blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
+    # person = models.ForeignKey("authentication.person", null=True,
+                                # blank=True, verbose_name=_("person"), on_delete=models.CASCADE)
     color = models.CharField(
         _("color"), choices=ColorEnum.choices, default=ColorEnum.PRIMARY, max_length=50)
     width = models.IntegerField(_("عرض آیکون"), null=True, blank=True)
@@ -148,11 +148,11 @@ class Download(Icon):
     date_updated = models.DateTimeField(
         _("اصلاح شده در"), auto_now_add=False, auto_now=True)
     download_counter = models.IntegerField(_("download_counter"), default=0)
-    profiles = models.ManyToManyField(
-        "authentication.profile", blank=True, related_name="profile_downloads", verbose_name=_("profiles"))
+    persons = models.ManyToManyField(
+        "authentication.person", blank=True, related_name="person_downloads", verbose_name=_("persons"))
     is_open = models.BooleanField(_("is_open?"), default=False)
-    profile = models.ForeignKey("authentication.Profile", null=True,
-                                blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
+    person = models.ForeignKey("authentication.person", null=True,
+                                blank=True, verbose_name=_("person"), on_delete=models.CASCADE)
     class_name='download'
     app_name=APP_NAME
     @property
@@ -204,8 +204,8 @@ class Link(Icon,LinkHelper):
     
     url = models.CharField(_("url"), max_length=2000)
     new_tab=models.BooleanField(_("new_tab"),default=False)
-    profile = models.ForeignKey("authentication.Profile", null=True,
-                                blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
+    person = models.ForeignKey("authentication.person", null=True,
+                                blank=True, verbose_name=_("person"), on_delete=models.CASCADE)
     class_name='link'
     app_name=APP_NAME
     def __str__(self):
@@ -261,7 +261,7 @@ class Image(models.Model,LinkHelper,DateTimeHelper):
     image_header_origin = models.ImageField(_("تصویر سربرگ"), null=True, blank=True, upload_to=IMAGE_FOLDER +
                                             'ImageBase/Header/', height_field=None, width_field=None, max_length=None)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    creator=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.CASCADE)
+    creator=models.ForeignKey("authentication.person", verbose_name=_("person"),null=True,blank=True, on_delete=models.CASCADE)
     def __str__(self):
         return f'{self.page} {self.title}'
     class Meta:
@@ -380,7 +380,7 @@ class Location(models.Model,LinkHelper):
     longitude=models.CharField(_("longitude"),null=True,blank=True, max_length=50)
 
 
-    creator = models.ForeignKey("authentication.profile", null=True,blank=True,related_name="maplocation_set", verbose_name=_("profile"), on_delete=models.CASCADE)
+    creator = models.ForeignKey("authentication.person", null=True,blank=True,related_name="maplocation_set", verbose_name=_("person"), on_delete=models.CASCADE)
     date_added = models.DateTimeField(
         _("date_added"), auto_now=False, auto_now_add=True)
     class_name = "location"

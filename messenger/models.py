@@ -20,7 +20,7 @@ class Message(models.Model,LinkHelper):
     # read=models.BooleanField(_("read?"),default=False)
     # draft=models.BooleanField(_("draft?"),default=True)
     date_send=models.DateTimeField(_("date send"), auto_now=False, auto_now_add=True)
-    sender=models.ForeignKey("authentication.profile", verbose_name=_("sender"), on_delete=models.CASCADE)
+    sender=models.ForeignKey("authentication.person", verbose_name=_("sender"), on_delete=models.CASCADE)
     class_name="message"
     app_name=APP_NAME
     class Meta:
@@ -83,7 +83,7 @@ class Channel(models.Model):
         return self.channel_name
 
 class Member(models.Model,LinkHelper):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
     channel=models.ForeignKey("channel", verbose_name=_("channel"), on_delete=models.CASCADE)
     event=models.CharField(_("event"),default="DEFAULT", max_length=50)
     date_join=models.DateTimeField(_("date join"), auto_now=False, auto_now_add=False)

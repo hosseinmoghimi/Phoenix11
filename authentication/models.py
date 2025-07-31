@@ -3,43 +3,17 @@ from django.utils.translation import gettext as _
 from .enums import *
 from django.conf import settings
 from utility.models import LinkHelper
-from phoenix.settings import MEDIA_URL,STATIC_URL
+from phoenix.settings import MEDIA_URL,STATIC_URL,SITE_URL
 from .apps import APP_NAME
 from utility.models import ImageHelper
 from utility.constants import FAILED,SUCCEED
 IMAGE_FOLDER=APP_NAME+"/images/"
 from utility.enums import *
-
-class Profile(models.Model,LinkHelper):
-
-    full_name=models.CharField(_("full_name"), max_length=50)
-    user=models.OneToOneField(settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,null=True,blank=True)
-    image_origin=models.ImageField(_("تصویر"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/", height_field=None, width_field=None, max_length=None)
-    enabled=models.BooleanField(_("فعال"),default=True)
-    class_name="profile"
-    app_name=APP_NAME
-    class Meta:
-        verbose_name = _("Profile")
-        verbose_name_plural = _("Profiles")
-
-    def __str__(self):
-        return self.full_name
-    @property
-    def user_id(self):
-        return self.user.user.id
-    @property
-    def username(self):
-        return self.user.username
-    @property
-    def image(self):
-        if self.image_origin is None or not self.image_origin:
-            return f'{STATIC_URL}{APP_NAME}/img/default-avatar.png'
-        return f"{MEDIA_URL}{self.image_origin}"
-    
+ 
 
 class Person(models.Model,ImageHelper,LinkHelper):
-    profile=models.ForeignKey("profile",null=True,blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
+    user=models.OneToOneField(settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,null=True,blank=True)
     prefix=models.CharField(_("پیشوند"),default=PersonPrefixEnum.MR,choices=PersonPrefixEnum.choices, max_length=50)
     title=models.CharField(_("عنوان"),null=True,blank=True, max_length=50)
     first_name=models.CharField(_("نام"),null=True,blank=True, max_length=50)
@@ -97,6 +71,15 @@ class Person(models.Model,ImageHelper,LinkHelper):
     def __str__(self):
         return self.full_name
 
+    def username(self):
+        if self.user is not None:
+            return self.user.username
+
+   
+    def user_id(self):
+        if self.user is not None:
+            return self.user.id
+
    
 
     def save(self,*args, **kwargs):
@@ -112,5 +95,12 @@ class Person(models.Model,ImageHelper,LinkHelper):
         result=SUCCEED
         message=" با موفقیت اضافه گردید."
         person=self
-        return result,message,person    
+        return result,message,person 
 
+    def image(self):
+        if self.image_origin is None or str(self.image_origin)=='':
+            return f'{STATIC_URL}{APP_NAME}/img/person.png'
+        
+        return f'{MEDIA_URL}{self.image_origin}'
+
+Profile=Person

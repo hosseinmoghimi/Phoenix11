@@ -1,130 +1,130 @@
 <div class="card">
   <div class="card-header">
-    <h5>{{profile.full_name}}</h5>
+    <h5>{{person.full_name}}</h5>
   </div>
   <div class="card-body">
     
-    {% if profile.image %}
-    <img src="{{profile.image}}" width="128" alt="">
+    {% if person.image %}
+    <img src="{{person.image}}" width="128" alt="">
     
     {% endif %}
     <h4>
 
-        {{profile.full_name}}
+        {{person.full_name}}
     </h4>
 
-    {% if profile %}
+    {% if person %}
     <h5>
         <a href="">
 
-            <small class="text-muted">profile :</small>
-            {{profile.full_name}}
+            <small class="text-muted">person :</small>
+            {{person.full_name}}
         </a>
     </h5> 
     {% endif %}
     <div>
 
-      {% if perms.authentication.change_profile %}
+      {% if perms.authentication.change_person %}
       
       
-      <a href="{% url 'authentication:login_as' pk=profile.id %}" title="ورود"
+      <a href="{% url 'authentication:login_as' pk=person.id %}" title="ورود"
       class="mx-2 text-info"><i class="fa fa-key text-success" aria-hidden="true"></i>ورود</a>
       
       {% endif %}
       
     </div>
 
-    {% if profile.prefix %}
+    {% if person.prefix %}
     <h5>
         <small class="text-muted">prefix :</small>
-        {{profile.prefix}}
+        {{person.prefix}}
     </h5> 
     {% endif %}
 
-    {% if profile.first_name %}
+    {% if person.first_name %}
       
     <h5>
         <small class="text-muted">first_name :</small>
-        {{profile.first_name}}
+        {{person.first_name}}
     </h5> 
 
     
     {% endif %}
 
-    {% if profile.last_name %}
+    {% if person.last_name %}
       
     <h5>
         <small class="text-muted">last_name :</small>
-        {{profile.last_name}}
+        {{person.last_name}}
     </h5> 
 
     {% endif %}
 
-    {% if profile.melli_code %}
+    {% if person.melli_code %}
       
     
     <h5>
         <small class="text-muted">melli_code :</small>
-        {{profile.melli_code}}
+        {{person.melli_code}}
     </h5> 
 
     
     {% endif %}
 
-    {% if profile.mobile %}
+    {% if person.mobile %}
       
     <h5>
         <small class="text-muted">mobile :</small>
-        {{profile.mobile}}
+        {{person.mobile}}
     </h5> 
     {% endif %}
 
     
 
-    {% if profile.type %}
+    {% if person.type %}
       
     <h5>
         <small class="text-muted">type :</small>
-        {{profile.type}}
+        {{person.type}}
     </h5> 
     {% endif %}
 
     
 
-    {% if profile.type2 %}
+    {% if person.type2 %}
       
     <h5>
         <small class="text-muted">type2 :</small>
-        {{profile.type2}}
+        {{person.type2}}
     </h5> 
     {% endif %}
 
 
      
 
-    {% if profile.email %}
+    {% if person.email %}
       
     <h5>
         <small class="text-muted">email :</small>
-        {{profile.email}}
+        {{person.email}}
     </h5> 
     {% endif %}
 
 
-    {% if profile.bio %}
+    {% if person.bio %}
       
     <h5>
         <small class="text-muted">bio :</small>
-        {{profile.bio}}
+        {{person.bio}}
     </h5> 
     {% endif %}
   
 
     
-{% if perms.authentication.change_profile %}
+{% if perms.authentication.change_person %}
 <div>
   <a
-    href="{{profile.get_edit_url}}"
+    href="{{person.get_edit_url}}"
     class="my-2 text-warning mx-2"
     title="ویرایش"
     target="_blank"
@@ -133,10 +133,10 @@
     ویرایش
   </a>
 </div>
-{% endif %} {% if perms.authentication.delete_profile %}
+{% endif %} {% if perms.authentication.delete_person %}
 <div>
   <a
-    href="{{profile.get_delete_url}}"
+    href="{{person.get_delete_url}}"
     class="my-2 text-danger mx-2"
     title="حذف"
     target="_blank"

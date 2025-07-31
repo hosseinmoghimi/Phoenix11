@@ -108,6 +108,13 @@
     {% endif %}
   
 
+      {% if perms.authentication.change_person and login_as_form %}
+      
+      
+      <a href="{% url 'authentication:login_as' pk=person.id %}" title="ورود"
+      class="mx-2 text-info"><i class="fa fa-key text-success" aria-hidden="true"></i>ورود</a>
+      
+      {% endif %}
     
 {% if perms.core.change_person %}
 <div>

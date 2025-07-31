@@ -188,7 +188,7 @@ class Account(CorePage,LinkHelper):
         return self.parent_account.full_name+ACCOUNT_NAME_SEPERATOR+self.title
  
  
-class PersonAccount(Account):
+class PersonAccount(Account,LinkHelper):
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
     person_category=models.ForeignKey("personcategory", verbose_name=_("person_category"), on_delete=models.PROTECT)
     
@@ -220,8 +220,8 @@ class PersonAccount(Account):
                 is_available=False
         return self.person_category.account.code+code
     def save(self):
-        result,message,person_account=FAILED,"",None
         
+        result,message,person_account=FAILED,"",None
         p_a=PersonAccount.objects.filter(person_id=self.person_id).filter(person_category_id=self.person_category_id).first()
         if p_a is not None:
             message="تکراری است"
@@ -234,6 +234,12 @@ class PersonAccount(Account):
             self.code=self.generate_code()
         
         self.title=f'{self.person} # {self.category}'
+        
+        if self.app_name is None or self.app_name=='':
+            self.app_name=APP_NAME
+        if self.class_name is None or self.class_name=='':
+            self.class_name='personaccount'
+            
         result,message,account=super(PersonAccount,self).save()
         if account.id is not None:
             result=SUCCEED
@@ -467,7 +473,7 @@ class PersonCategory(models.Model,LinkHelper):
 class FinancialEvent(CoreEvent,DateTimeHelper):
     bedehkar=models.ForeignKey("account", related_name="bedehkar_events",verbose_name=_("دریافت کننده"), on_delete=models.PROTECT)
     bestankar=models.ForeignKey("account",related_name="bestankar_events", verbose_name=_("پرداخت کننده"), on_delete=models.PROTECT)
-    creator=models.ForeignKey("authentication.profile",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
+    creator=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
     tax_percentage=models.IntegerField(_("درصد مالیات"),default=0)
     amount=models.IntegerField(_("مبلغ"),default=0)
     discount_percentage=models.IntegerField(_("درصد تخفیف"),default=0)

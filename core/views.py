@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,CURRENCY,VUE_VERSION_3,VUE_VERSION_2
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo,ProfileRepo
 from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
 from .enums import *
@@ -33,10 +33,10 @@ def CoreContext(request,*args, **kwargs):
     context['VUE_VERSION_2']=VUE_VERSION_2
     context['DEBUG']=DEBUG
     context['NAVBAR_ITEMS_LAYOUT']=app_name+'/includes/navbar.html'
-    me_profile=ProfileRepo(request=request).me
-    if me_profile is not None:
-        context['me_profile']=me_profile
-        context['profile']=me_profile
+    me_person=PersonRepo(request=request).me
+    if me_person is not None:
+        context['me_person']=me_person
+        context['person']=me_person
     context['ADMIN_URL']=ADMIN_URL
     context['SITE_URL']=SITE_URL
     context['STATIC_URL']=STATIC_URL
@@ -67,7 +67,7 @@ def CoreContext(request,*args, **kwargs):
             context['current_app']=appp
             context['app_title']=appp['title']
     from messenger.views import MessengerContext
-    context.update(MessengerContext(request=request,profile=me_profile))
+    context.update(MessengerContext(request=request,person=me_person))
     return context
 
         

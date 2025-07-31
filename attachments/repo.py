@@ -23,9 +23,9 @@ class ImageRepo():
     def add_image(self,*args, **kwargs):
         result,message,image=FAILED,"",None
         title=''
-        profile_me=ProfileRepo(request=self.request).me
+        me_person=ProfileRepo(request=self.request).me
         page=PageRepo(request=self.request).page(*args, **kwargs)
-        if profile_me is None:
+        if me_person is None:
             return None
         if page is None:
             return None
@@ -36,17 +36,17 @@ class ImageRepo():
             image_text=kwargs['image']
         if image_text is None:
             return result,message,image
-        image=Image(creator_id=profile_me.id,page_id=page.id,image_main_origin=image_text,title=title)
+        image=Image(creator_id=me_person.id,page_id=page.id,image_main_origin=image_text,title=title)
         image.save()
         result=SUCCEED
         message='تصویر با موفقیت اضافه شد.'
         return result,message,image
     
     def delete_image(self,*args, **kwargs):
-        profile_me=ProfileRepo(request=self.request).me
+        me_person=ProfileRepo(request=self.request).me
         if 'image_id' in kwargs:
             image_id=kwargs['image_id']
-        # images=Image.objects.filter(profile_id=profile_me.id).filter(pk=image_id)
+        # images=Image.objects.filter(person_id=me_person.id).filter(pk=image_id)
         images=Image.objects.filter(pk=image_id)
         images.delete()
         result=SUCCEED
@@ -67,9 +67,9 @@ class CommentRepo():
 
     def add_comment(self,*args, **kwargs):
         result,message,comment=FAILED,"",None
-        profile_me=ProfileRepo(request=self.request).me
+        me_person=ProfileRepo(request=self.request).me
         page=PageRepo(request=self.request).page(*args, **kwargs)
-        if profile_me is None:
+        if me_person is None:
             return None
         if page is None:
             return None
@@ -77,17 +77,17 @@ class CommentRepo():
             comment_text=kwargs['comment']
         if comment_text is None:
             return result,message,comment
-        comment=Comment(profile_id=profile_me.id,page_id=page.id,comment=comment_text)
+        comment=Comment(person_id=me_person.id,page_id=page.id,comment=comment_text)
         comment.save()
         result=SUCCEED
         message='کامنت با موفقیت اضافه شد.'
         return result,message,comment
     
     def delete_page_comment(self,*args, **kwargs):
-        profile_me=ProfileRepo(request=self.request).me
+        me_person=ProfileRepo(request=self.request).me
         if 'comment_id' in kwargs:
             comment_id=kwargs['comment_id']
-        # comments=Comment.objects.filter(profile_id=profile_me.id).filter(pk=comment_id)
+        # comments=Comment.objects.filter(person_id=me_person.id).filter(pk=comment_id)
         comments=Comment.objects.filter(pk=comment_id)
         comments.delete()
         from utility.log import leolog
@@ -164,7 +164,7 @@ class LikeRepo():
         me_profile=ProfileRepo(request=self.request).me
         if me_profile is None:
             return None
-        likes=Like.objects.filter(page_id=page.id).filter(profile_id=me_profile.id)
+        likes=Like.objects.filter(page_id=page.id).filter(person_id=me_profile.id)
         my_like=False
         if len(likes)==0:
             my_like=Like(page=page,profile=me_profile)
@@ -177,12 +177,12 @@ class LikeRepo():
     
 
     def my_like(self,page,*args, **kwargs):
-        profile_me=ProfileRepo(request=self.request).me
-        if profile_me is None:
+        me_person=ProfileRepo(request=self.request).me
+        if me_person is None:
             return None
         if page is None:
             return None
-        likes=Like.objects.filter(profile_id=profile_me.id).filter(page_id=page.id)
+        likes=Like.objects.filter(person_id=me_person.id).filter(page_id=page.id)
         return len(likes)>0
     
     def likes_count(self,*args, **kwargs):
@@ -255,7 +255,7 @@ class DownloadRepo():
         if me_profile is None:
             message='پروفایل وجود ندارد.'
             return result,message,download
-        download=Download(icon_fa="fa fa-download",title=title,is_open=is_open,file=file,priority=priority,page_id=page.id,profile_id=me_profile.id)
+        download=Download(icon_fa="fa fa-download",title=title,is_open=is_open,file=file,priority=priority,page_id=page.id,person_id=me_profile.id)
         download.save()
         result=SUCCEED
         message='دانلود با موفقیت اضافه شد.'

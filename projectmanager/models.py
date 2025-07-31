@@ -22,15 +22,26 @@ class Project(Event,LinkHelper,DateHelper):
     invoices=models.ManyToManyField("accounting.invoice", blank=True, verbose_name=_("invoices"))
     remote_clients=models.ManyToManyField("remoteclient", blank=True,verbose_name=_("remote_clients"))
     amount=models.IntegerField(_("ارزش پروژه"),default=0)
+    @property
+    def children(self):
+        return Project.objects.filter(parent_id=self.id)
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
     def normalize(self):
         sum=0
+        for child in self.children.all():
+            # child.normalize()
+            sum+=child.amount
         for inv in self.invoices.all():
             sum+=inv.amount
         self.amount=sum
+        from utility.log import leolog
+        leolog(project=self,sum=sum)
         super(Project,self).save()
+        if self.parent_project is not None:
+            self.parent_project.normalize()
+
     def save(self):
         (result,message,project)=FAILED,'',self
         if self.class_name is None or self.class_name=="":
@@ -48,15 +59,18 @@ class Project(Event,LinkHelper,DateHelper):
         return Project.objects.filter(pk=self.parent_id).first()
     @property    
     def childs(self):
-        return Project.objects.filter(parent_id=self.id)
+        return self.children
     
-    
+    def all_sub_projects(self):
+        ids=[]
+        for proj in self.children.all():
+            ids.append(proj.id)
+            for i in proj.all_sub_projects():
+                ids.append(i.id)
+        return Project.objects.filter(id__in=ids)
     @property    
     def total_price(self):
-        sum=0
-        for pr in self.childs.all():
-            sum+=pr.total_price
-        return sum+self.amount
+        return self.amount
     
 class Request(InvoiceLine):
     ware_house=models.ForeignKey("warehouse.warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
@@ -96,7 +110,7 @@ class Ticket(models.Model,DateTimeHelper,LinkHelper):
     parent=models.ForeignKey("ticket",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
     title=models.CharField(_("title"),max_length=500)
     description=HTMLField(_("description"),max_length=5000,blank=True,null=True)
-    profile=models.ForeignKey("authentication.profile",null=True,blank=True, verbose_name=_("پروفایل"), on_delete=models.PROTECT)
+    person=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("پروفایل"), on_delete=models.PROTECT)
     project=models.ForeignKey("project",null=True,blank=True, verbose_name=_("پروژه"), on_delete=models.CASCADE)
     datetime_added=models.DateTimeField(_("date added"),auto_now=False,auto_now_add=True)
     type=models.CharField(_("تایپ"),max_length=50,choices=TicketTypeEnum.choices)

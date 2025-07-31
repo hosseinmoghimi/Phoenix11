@@ -113,7 +113,7 @@ class ProjectTreeChartView(View):
         context['project']=project  
 
 
-        projects=project.childs.all()
+        projects=project.all_sub_projects()
         context['projects']=projects
         projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
         context['projects_s']=projects_s
@@ -142,7 +142,7 @@ class ProjectTreeChartView(View):
                 'id': project.id,
                 'pre_title': "",
                 'color': project.color,
-                'sub_title':to_price(project.total_price),
+                'sub_title':to_price(project.amount),
                 })
 
         context['pages_s'] = json.dumps(pages)

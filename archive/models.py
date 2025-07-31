@@ -14,9 +14,9 @@ class Folder(models.Model,LinkHelper):
     parent=models.ForeignKey("folder",related_name="childs",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     date_updated=models.DateTimeField(_("date_updated"), auto_now=True, auto_now_add=False)
-    profiles=models.ManyToManyField("authentication.profile",blank=True, verbose_name=_("profile"))
+    persons=models.ManyToManyField("authentication.person",blank=True, verbose_name=_("persons"))
     priority=models.IntegerField(_("ترتیب"),default=1000)
-    owner=models.ForeignKey("authentication.profile", verbose_name=_("profile"),related_name="folders_owned",null=True,blank=True, on_delete=models.CASCADE)
+    owner=models.ForeignKey("authentication.person", verbose_name=_("person"),related_name="folders_owned",null=True,blank=True, on_delete=models.CASCADE)
     class_name='folder'
     app_name=APP_NAME
     @property

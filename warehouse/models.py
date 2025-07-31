@@ -33,7 +33,7 @@ class WareHouse(models.Model,LinkHelper):
  
 
 class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
     source=models.ForeignKey("warehouse",related_name="material_from", verbose_name=_("source"), on_delete=models.PROTECT)
     destination=models.ForeignKey("warehouse",related_name="material_to", verbose_name=_("destination"), on_delete=models.PROTECT)
     product=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.CASCADE)
@@ -57,7 +57,7 @@ class WareHouseMaterialSheet(models.Model,LinkHelper):
     material=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.PROTECT)
     direction=models.CharField(_("direction"),max_length=50,choices=MaterialPortDirectionEnum.choices)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.PROTECT)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD,max_length=100)
     quantity=models.IntegerField(_("quantity"))
     shelf=models.CharField(_("shelf"),max_length=50)

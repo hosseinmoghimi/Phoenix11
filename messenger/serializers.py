@@ -1,11 +1,11 @@
 from authentication.serializers import ProfileSerializer
 from messenger.models import Channel, Member, Message
 from rest_framework import serializers
-from authentication.models import Profile
+from authentication.models import Person
 
 class SenderSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Profile
+        model = Person
         fields=['id','full_name','image','get_absolute_url']
         
 class MessageSerializer(serializers.ModelSerializer):

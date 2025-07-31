@@ -7,7 +7,7 @@ from .enums import *
 from log.repo import LogRepo
 from django.db.models import Q
 from django.shortcuts import reverse
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo
 # from processmanagement.permission import Permission,OperationEnum
 from utility.num import filter_number
 from utility.calendar import PersianCalendar
@@ -152,9 +152,9 @@ class InvoiceLineRepo:
         if 'unit_name' in kwargs:
             unit_name=kwargs["unit_name"]
             invoice_line.unit_name=unit_name
-        if 'save' in kwargs:
+        if 'save' in kwargs or kwargs["default"]:
             save=kwargs["save"]
-            if save:
+            if save or kwargs["default"]:
                 if 'coef' in kwargs:
                     coef=kwargs["coef"]
                 if 'default' in kwargs:
@@ -180,7 +180,7 @@ class AccountRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=Account.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_account"):
                 self.objects=Account.objects
@@ -393,6 +393,8 @@ class AccountRepo():
         return result,message
  
     def delete_all_accounts(self,*args, **kwargs):
+        
+        result,message=FAILED,''
         if not self.request.user.has_perm(APP_NAME+".delete_account"):
             message="دسترسی غیر مجاز"
             return message,result
@@ -449,16 +451,17 @@ class AccountRepo():
             account.nature=kwargs["nature"]
         (result,message,account)=account.save()
         return result,message,account
-
-
+ 
 class PersonAccountRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
-        self.objects=PersonAccount.objects 
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
+        self.objects=PersonAccount.objects.filter(pk=0)
+        me_person=PersonRepo(request=request).me
+        if request.user.has_perm(APP_NAME+'.view_personaccount'):
+            self.objects=PersonAccount.objects.all()
+        elif me_person is not None:
+            self.objects=PersonAccount.objects.filter(person__user_id=me_person.user.id) 
     def list(self,*args, **kwargs):
         objects=self.objects
         pure_code="876454453342236"
@@ -528,6 +531,7 @@ class PersonAccountRepo():
                     
     def delete_all(self,*args,**kwargs):
         
+        result,message=FAILED,''
         if not self.request.user.has_perm(APP_NAME+".delete_personaccount"):
             message="دسترسی غیر مجاز"
             return result,message
@@ -597,10 +601,11 @@ class FinancialYearRepo():
 
         
         self.objects=None
-        if request.user.has_perm(APP_NAME+".view_person"):
+        if request.user.has_perm(APP_NAME+".view_financialyear"):
             self.objects=FinancialYear.objects
         elif request.user.is_authenticated:
-            self.objects=FinancialYear.objects.filter(profile__user_id=request.user.id)
+
+            self.objects=FinancialYear.objects.filter(id=0)
                  
         else:
             self.objects=FinancialYear.objects.filter(pk=0)
@@ -704,7 +709,7 @@ class PersonCategoryRepo():
 
      
     def delete_all(self,*args,**kwargs):
-        
+        result,message=FAILED,''
         if not self.request.user.has_perm(APP_NAME+".delete_personcategory"):
             message="دسترسی غیر مجاز"
             return result,message
@@ -2035,7 +2040,7 @@ class FinancialDocumentLineRepo:
         return result,message,financial_document_line
     
     def delete_all(self,*args,**kwargs):
-        
+        result,message=FAILED,''
         if not self.request.user.has_perm(APP_NAME+".delete_accountingdocumentline"):
             message="دسترسی غیر مجاز"
             return result,message
@@ -2200,8 +2205,8 @@ class FinancialEventRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=FinancialEvent.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
-        if profile is not None:
+        person=PersonRepo(request=request).me
+        if person is not None:
             if request.user.has_perm(APP_NAME+".view_invoice"):
                 self.objects=FinancialEvent.objects
     def list(self,*args, **kwargs):
