@@ -30,12 +30,13 @@ class InvoiceLineItemUnitRepo:
             self.objects=InvoiceLineItemUnit.objects
         elif request.user.is_authenticated:
             accs=[]
+            from authentication.models import Person
             for person in Person.objects.filter(profile__user_id=request.user.id):
 
-                my_accounts=AccountRepo(request=request).my_accounts
+                my_accounts=AccountRepo(request=request).list()
                 for acc in my_accounts:
                     accs.append(acc.id)
-            self.objects=Event.objects.filter(Q(bedehkar_id__in=accs)|Q(bestankar_id__in=accs))
+            self.objects=I.objects.filter(Q(bedehkar_id__in=accs)|Q(bestankar_id__in=accs))
         else:
             self.objects=Event.objects.filter(pk=0)
 
@@ -180,10 +181,13 @@ class AccountRepo():
         self.request=request
         self.objects=Account.objects.filter(id=0)
         person=PersonRepo(request=request).me
+        self.my_accounts=Account.objects.filter(pk=0)
+        if person is not None:
+            self.my_accounts=PersonAccount.objects.filter(person_id=person.id)
         if request.user.has_perm(APP_NAME+".view_account"):
             self.objects=Account.objects
-        else:
-            self.objects=Account.objects.filter(pk=0)
+        elif person is not None:
+            self.objects=self.my_accounts
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
@@ -385,11 +389,11 @@ class AccountRepo():
         message+=f"<br>{moein2_accounts_counter}  حساب معین سطح دو " 
         message+=f"<br>{tafsili_accounts_counter}  حساب تفصیلی " 
 
-        me_profile=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         new_log={}
         new_log['title']="افزودن حساب های پیش فرض"
         new_log['app_name']=APP_NAME
-        new_log['profile']=me_profile
+        new_log['person']=me_person
         new_log['description']="حساب های پیش فرض اضافه شدند."
         LogRepo(request=self.request).add_log(**new_log)
         return result,message
@@ -411,11 +415,11 @@ class AccountRepo():
         result=SUCCEED
         message="همه حساب ها حذف شد."
 
-        me_profile=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         new_log={}
         new_log['title']="حذف همه حساب ها"
         new_log['app_name']=APP_NAME
-        new_log['profile']=me_profile
+        new_log['person']=me_person
         new_log['description']="همه ی حساب ها حذف شدند."
         LogRepo(request=self.request).add_log(**new_log)
 
@@ -1831,12 +1835,12 @@ class FinancialDocumentRepo():
         result,message,financial_document=financial_document.save()
         if result==SUCCEED:
             message="با موفقیت اضافه شد."
-            me_profile=ProfileRepo(request=self.request).me
+            me_person=PersonRepo(request=self.request).me
             new_log={}
             new_log['title']="سند مالی جدید "+" : "+financial_document.title
             new_log['app_name']=APP_NAME
             new_log['url']=financial_document.get_absolute_url()
-            new_log['profile']=me_profile
+            new_log['person']=me_person
             new_log['description']="سند مالی جدید با موفقیت اضافه گردید."
             LogRepo(request=self.request).add_log(**new_log)
         return result,message,financial_document
@@ -1869,12 +1873,12 @@ class FinancialDocumentRepo():
         result,message,financial_document=financial_document.save()
         if result==SUCCEED:
             message="با موفقیت ویرایش شد."
-            me_profile=ProfileRepo(request=self.request).me
+            me_person=PersonRepo(request=self.request).me
             new_log={}
             new_log['title']="ویرایش سند مالی "+" : "+financial_document.title
             new_log['app_name']=APP_NAME
             new_log['url']=financial_document.get_absolute_url()
-            new_log['profile']=me_profile
+            new_log['person']=me_person
             new_log['description']="سند مالی جدید با موفقیت ویرایش گردید."
             LogRepo(request=self.request).add_log(**new_log)
         return result,message,financial_document
@@ -2030,12 +2034,12 @@ class FinancialDocumentLineRepo:
         message="با موفقیت اضافه گردید."
          
 
-        me_profile=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         new_log={}
         new_log['title']="خط سند مالی جدید "
         new_log['app_name']=APP_NAME
         new_log['url']=financial_document_line.get_absolute_url()
-        new_log['profile']=me_profile
+        new_log['person']=me_person
         new_log['description']="خط سند مالی جدید با موفقیت اضافه گردید."
         LogRepo(request=self.request).add_log(**new_log)
         return result,message,financial_document_line
@@ -2091,125 +2095,29 @@ class FinancialDocumentLineRepo:
             message="اضافه شد."
             return result,message,financial_document_line
   
-
-class InvoiceRepo():
-    def __init__(self,request,*args, **kwargs):
-        self.me=None
-        self.my_accounts=[]
-        self.request=request
-        self.objects=Invoice.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
-        if profile is not None:
-            if request.user.has_perm(APP_NAME+".view_invoice"):
-                self.objects=Invoice.objects
-    def list(self,*args, **kwargs):
-        objects=self.objects
-        if "search_for" in kwargs:
-            search_for=kwargs["search_for"]
-            codeee=str(filter_number(search_for))
-            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
-        if "parent_id" in kwargs:
-            parent_id=kwargs["parent_id"]
-            objects=objects.filter(parent_id=parent_id)  
-        return objects.all()
-       
-    def roots(self,*args, **kwargs):
-        objects=self.objects.filter(parent_id=None)
-        return objects.all()
-
-    def invoice(self,*args, **kwargs):
-        if "invoice_id" in kwargs and kwargs["invoice_id"] is not None:
-            return self.objects.filter(pk=kwargs['invoice_id']).first()  
-        if "pk" in kwargs and kwargs["pk"] is not None:
-            return self.objects.filter(pk=kwargs['pk']).first() 
-        if "id" in kwargs and kwargs["id"] is not None:
-            return self.objects.filter(pk=kwargs['id']).first() 
-         
-       
-
-    def add_invoice(self,*args,**kwargs):
-        result,message,invoice=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".add_invoice"):
-            message="دسترسی غیر مجاز"
-            return result,message,invoice
-
-        invoice=Invoice()
-        if 'title' in kwargs:
-            invoice.title=kwargs["title"]
-        if 'parent_id' in kwargs:
-            if kwargs["parent_id"]>0:
-                invoice.parent_id=kwargs["parent_id"]
-        if 'color' in kwargs:
-            invoice.color=kwargs["color"]
-        if 'code' in kwargs:
-            invoice.code=kwargs["code"]
-        if 'priority' in kwargs:
-            invoice.priority=kwargs["priority"]
-        if 'bedehkar_id' in kwargs:
-            invoice.bedehkar_id=kwargs["bedehkar_id"]
-        if 'bestankar_id' in kwargs:
-            invoice.bestankar_id=kwargs["bestankar_id"]
-        if 'event_datetime' in kwargs:
-            
-            year=kwargs['event_datetime'][:2]
-            if year=="13" or year=="14":
-                kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
-            invoice.event_datetime=kwargs["event_datetime"]
-
-        if 'type' in kwargs:
-            invoice.type=kwargs["type"]
-
-           
-        (result,message,invoice)=invoice.save()
-        return result,message,invoice
-
-    def edit_invoice(self,*args, **kwargs):
-        result,message,invoice=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".add_invoice"):
-            message="دسترسی غیر مجاز"
-            return result,message,invoice
-
-        invoice=Invoice.objects.filter(pk=kwargs['invoice_id']).first()
-        if invoice is None:
-            message="فاکتور پیدا نشد."
-            return result,message,invoice
-        if 'title' in kwargs:
-            invoice.title=kwargs['title'] 
-
-            
-        if 'bedehkar_id' in kwargs:
-            invoice.bedehkar_id=kwargs['bedehkar_id'] 
-
-            
-        if 'bestankar_id' in kwargs:
-            invoice.bestankar_id=kwargs['bestankar_id']   
-
-        if 'invoice_lines' in kwargs:
-            invoice_lines=kwargs['invoice_lines']   
-            leolog(invoice_lines=invoice_lines)
-            for new_invoice_line in invoice_lines:
-                leolog(new_invoice_line=new_invoice_line)
-                invoice_line=InvoiceLineRepo(request=self.request).invoice_line(pk=int(new_invoice_line['invoice_line_id']))
-                if invoice_line is not None:
-                    invoice_line.row=int(new_invoice_line['row'])
-                    invoice_line.quantity=int(new_invoice_line['quantity'])
-                    invoice_line.unit_name=new_invoice_line['unit_name']
-                    invoice_line.unit_price=int(new_invoice_line['unit_price'])
-                    invoice_line.discount_percentage=int(new_invoice_line['discount_percentage'])
-                    invoice_line.save()
-        return invoice.save()
-
-
 class FinancialEventRepo():
     def __init__(self,request,*args, **kwargs):
         self.me=None
-        self.my_accounts=[]
+        self.my_financial_events=[]
         self.request=request
         self.objects=FinancialEvent.objects.filter(id=0)
         person=PersonRepo(request=request).me
         if person is not None:
-            if request.user.has_perm(APP_NAME+".view_invoice"):
                 self.objects=FinancialEvent.objects
+
+
+        if request.user.has_perm(APP_NAME+".view_financialevent"):
+            self.objects=FinancialEvent.objects
+        elif person is not None:
+            my_accounts=AccountRepo(request=request).my_accounts
+            ids=[]
+            for acc in my_accounts:
+                ids.append(acc.id)
+            
+            iddsss=list(my_accounts)
+            leolog(iddsss=iddsss)
+            self.my_financial_events=FinancialEvent.objects.filter(Q(bedehkar_id__in=ids)|Q(bestankar_id__in=ids))
+            self.objects=self.my_financial_events
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
@@ -2389,6 +2297,123 @@ class FinancialEventRepo():
         return result,message,financial_event
  
 
+class InvoiceRepo(FinancialEventRepo):
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        super().__init__(request,*args, **kwargs)
+        leolog(my_financial_events=self.my_financial_events)
+        self.my_invoices=Invoice.objects.filter(pk=0)
+        self.request=request
+        self.objects=self.my_invoices
+        person=PersonRepo(request=request).me
+        if request.user.has_perm(APP_NAME+".view_invoice"):
+            self.objects=Invoice.objects
+        elif person is not None:
+            ids=[]
+            for financial_event in self.my_financial_events:
+                ids.append(financial_event.id)
+            
+            self.my_invoices=Invoice.objects.filter(id__in=ids)
+            self.objects=self.my_invoices
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            codeee=str(filter_number(search_for))
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.all()
+       
+    def roots(self,*args, **kwargs):
+        objects=self.objects.filter(parent_id=None)
+        return objects.all()
+
+    def invoice(self,*args, **kwargs):
+        if "invoice_id" in kwargs and kwargs["invoice_id"] is not None:
+            return self.objects.filter(pk=kwargs['invoice_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+         
+       
+
+    def add_invoice(self,*args,**kwargs):
+        result,message,invoice=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_invoice"):
+            message="دسترسی غیر مجاز"
+            return result,message,invoice
+
+        invoice=Invoice()
+        if 'title' in kwargs:
+            invoice.title=kwargs["title"]
+        if 'parent_id' in kwargs:
+            if kwargs["parent_id"]>0:
+                invoice.parent_id=kwargs["parent_id"]
+        if 'color' in kwargs:
+            invoice.color=kwargs["color"]
+        if 'code' in kwargs:
+            invoice.code=kwargs["code"]
+        if 'priority' in kwargs:
+            invoice.priority=kwargs["priority"]
+        if 'bedehkar_id' in kwargs:
+            invoice.bedehkar_id=kwargs["bedehkar_id"]
+        if 'bestankar_id' in kwargs:
+            invoice.bestankar_id=kwargs["bestankar_id"]
+        if 'event_datetime' in kwargs:
+            
+            year=kwargs['event_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
+            invoice.event_datetime=kwargs["event_datetime"]
+
+        if 'type' in kwargs:
+            invoice.type=kwargs["type"]
+
+           
+        (result,message,invoice)=invoice.save()
+        return result,message,invoice
+
+    def edit_invoice(self,*args, **kwargs):
+        result,message,invoice=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_invoice"):
+            message="دسترسی غیر مجاز"
+            return result,message,invoice
+
+        invoice=Invoice.objects.filter(pk=kwargs['invoice_id']).first()
+        if invoice is None:
+            message="فاکتور پیدا نشد."
+            return result,message,invoice
+        if 'title' in kwargs:
+            invoice.title=kwargs['title'] 
+
+            
+        if 'bedehkar_id' in kwargs:
+            invoice.bedehkar_id=kwargs['bedehkar_id'] 
+
+            
+        if 'bestankar_id' in kwargs:
+            invoice.bestankar_id=kwargs['bestankar_id']   
+
+        if 'invoice_lines' in kwargs:
+            invoice_lines=kwargs['invoice_lines']   
+            leolog(invoice_lines=invoice_lines)
+            for new_invoice_line in invoice_lines:
+                leolog(new_invoice_line=new_invoice_line)
+                invoice_line=InvoiceLineRepo(request=self.request).invoice_line(pk=int(new_invoice_line['invoice_line_id']))
+                if invoice_line is not None:
+                    invoice_line.row=int(new_invoice_line['row'])
+                    invoice_line.quantity=int(new_invoice_line['quantity'])
+                    invoice_line.unit_name=new_invoice_line['unit_name']
+                    invoice_line.unit_price=int(new_invoice_line['unit_price'])
+                    invoice_line.discount_percentage=int(new_invoice_line['discount_percentage'])
+                    invoice_line.save()
+        return invoice.save()
+
+
+
 class CategoryRepo():
 
     def __init__(self,request,*args, **kwargs):
@@ -2396,10 +2421,10 @@ class CategoryRepo():
         self.my_categorys=[]
         self.request=request
         self.objects=Category.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
-        if profile is not None:
-            if request.user.has_perm(APP_NAME+".view_category"):
-                self.objects=Category.objects
+        person=PersonRepo(request=request).me
+        if request.user.has_perm(APP_NAME+".view_category"):
+            self.objects=Category.objects
+        if person is not None:
                 self.my_categorys=self.objects
                 
     def list(self,*args, **kwargs):
@@ -2509,11 +2534,11 @@ class CategoryRepo():
         message+=f"<br>{moein2_categorys_counter}  حساب معین سطح دو " 
         message+=f"<br>{tafsili_categorys_counter}  حساب تفصیلی " 
 
-        me_profile=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         new_log={}
         new_log['title']="افزودن حساب های پیش فرض"
         new_log['app_name']=APP_NAME
-        new_log['profile']=me_profile
+        new_log['person']=me_person
         new_log['description']="حساب های پیش فرض اضافه شدند."
         LogRepo(request=self.request).add_log(**new_log)
         return result,message

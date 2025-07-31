@@ -1,5 +1,5 @@
 from .models import Page,FAILED,SUCCEED
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo
 from django.db.models import Q
 from .apps import APP_NAME
 class PageRepo():

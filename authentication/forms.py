@@ -19,6 +19,10 @@ class AddProfileForm(forms.Form):
     last_name=forms.CharField(max_length=11,required=False)
 
 
+class SelectUserForm(forms.Form):
+    user_id=forms.IntegerField(required=False)
+
+
 class SelectPersonForm(forms.Form):
     person_id=forms.IntegerField(required=False)
 

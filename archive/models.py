@@ -31,7 +31,7 @@ class Folder(models.Model,LinkHelper):
     def save(self,*args, **kwargs):
         super(Folder,self).save()
         if self.owner is not None:
-            self.profiles.add(self.owner)
+            self.persons.add(self.owner)
 
     def get_breadcrumb_link(self):
         aaa=f"""

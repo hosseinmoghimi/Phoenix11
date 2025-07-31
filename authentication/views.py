@@ -147,31 +147,11 @@ class PersonView(View):
         context['person']=person
         person_s=json.dumps(PersonSerializer(person).data)
         context['person_s']=person_s
+        context['title']=person.full_name
         if request.user.has_perm(APP_NAME+'.change_person'):
             context['change_person_image_form']=ChangePersonImageForm()
         return render(request,TEMPLATE_ROOT+"person.html",context)
-
-
-class ProfileView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        profile=ProfileRepo(request=request).profile(*args, **kwargs)
-        if profile is None:
-            title='پروفایل پیدا نشد.'
-            body='پروفایل پیدا نشد.'
-            mv=MessageView(title=title,body=body)
-            return mv.get(request=request)
-        
-        context['profile']=profile
-        profile_s=json.dumps(ProfileSerializer(profile).data)
-        context['profile_s']=profile_s
-        profile_s=json.dumps(ProfileSerializer(profile).data)
-        context['profile_s']=profile_s
-        if request.user.has_perm(APP_NAME+'.change_profile'):
-            context['change_profile_image_form']=ChangeProfileImageForm()
-        return render(request,TEMPLATE_ROOT+"profile.html",context)
-
-
+ 
 class LoginView(View):
     def get(self,request,*args, **kwargs): 
         messages=[]

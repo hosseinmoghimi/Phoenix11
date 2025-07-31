@@ -6,9 +6,6 @@ app_name=APP_NAME
 urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),
-    path('profiles/',login_required(views.ProfilesView.as_view()),name="profiles"),
-    path('profile/<int:pk>/',login_required(views.ProfileView.as_view()),name="profile"),
-    path('select-profile/',login_required(apis.SelectProfileApi.as_view()),name="select_profile"),
     path('settings/',login_required(views.IndexView.as_view()),name="settings"),
     path('login/',(views.LoginView.as_view()),name="login"),
     path('change-password/',login_required(views.ChangePasswordView.as_view()),name="change_password"),
@@ -23,6 +20,7 @@ urlpatterns = [
     path('persons/',login_required(views.PersonsView.as_view()),name="persons"),
     path('person/<int:pk>/',login_required(views.PersonView.as_view()),name="person"),
     path('select-person/',login_required(apis.SelectPersonApi.as_view()),name="select_person"),
+    path('select-user/',login_required(apis.SelectUserApi.as_view()),name="select_user"),
     path('add-person/',login_required(apis.AddPersonApi.as_view()),name='add_person'),
     
 

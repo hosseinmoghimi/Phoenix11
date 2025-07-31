@@ -1,9 +1,16 @@
 from .models import Person,FAILED,SUCCEED,APP_NAME
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.models import User
 from utility.log import leolog
 
  
 class PersonRepo():
+    def user(self,*args, **kwargs):
+        user_id=0
+        if 'user_id' in kwargs:
+            user_id=kwargs['user_id']
+            return User.objects.filter(pk=user_id).first()
+        return User.objects.filter(pk=0).first()
     def __init__(self,request,*args, **kwargs):
         self.me=None
         self.request=request

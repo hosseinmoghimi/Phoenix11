@@ -1,4 +1,4 @@
-from core.repo import PageRepo,ProfileRepo,FAILED,SUCCEED
+from core.repo import PageRepo,PersonRepo,FAILED,SUCCEED
 from .models import Like,Comment,Link,Download,Image,Location,Area, Tag
 from .apps import APP_NAME
 from django.db.models import Q
@@ -23,7 +23,7 @@ class ImageRepo():
     def add_image(self,*args, **kwargs):
         result,message,image=FAILED,"",None
         title=''
-        me_person=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if me_person is None:
             return None
@@ -43,7 +43,7 @@ class ImageRepo():
         return result,message,image
     
     def delete_image(self,*args, **kwargs):
-        me_person=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         if 'image_id' in kwargs:
             image_id=kwargs['image_id']
         # images=Image.objects.filter(person_id=me_person.id).filter(pk=image_id)
@@ -67,7 +67,7 @@ class CommentRepo():
 
     def add_comment(self,*args, **kwargs):
         result,message,comment=FAILED,"",None
-        me_person=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if me_person is None:
             return None
@@ -84,7 +84,7 @@ class CommentRepo():
         return result,message,comment
     
     def delete_page_comment(self,*args, **kwargs):
-        me_person=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         if 'comment_id' in kwargs:
             comment_id=kwargs['comment_id']
         # comments=Comment.objects.filter(person_id=me_person.id).filter(pk=comment_id)
@@ -161,7 +161,7 @@ class LikeRepo():
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is None:
             return None
-        me_profile=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         if me_profile is None:
             return None
         likes=Like.objects.filter(page_id=page.id).filter(person_id=me_profile.id)
@@ -177,7 +177,7 @@ class LikeRepo():
     
 
     def my_like(self,page,*args, **kwargs):
-        me_person=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         if me_person is None:
             return None
         if page is None:
@@ -251,15 +251,15 @@ class DownloadRepo():
             is_open=True
         else:
             is_open=False
-        me_profile=ProfileRepo(request=self.request).me
-        if me_profile is None:
+        me_person=PersonRepo(request=self.request).me
+        if me_person is None:
             message='پروفایل وجود ندارد.'
             return result,message,download
-        download=Download(icon_fa="fa fa-download",title=title,is_open=is_open,file=file,priority=priority,page_id=page.id,person_id=me_profile.id)
+        download=Download(icon_fa="fa fa-download",title=title,is_open=is_open,file=file,priority=priority,page_id=page.id,person_id=me_person.id)
         download.save()
         result=SUCCEED
         message='دانلود با موفقیت اضافه شد.'
-        download.profiles.add(me_profile)
+        download.persons.add(me_person)
         return result,message,download
 
 
@@ -272,7 +272,7 @@ class LocationRepo():
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        self.profile=ProfileRepo(*args, **kwargs).me
+        self.profile=PersonRepo(*args, **kwargs).me
         self.objects = Location.objects
     def list(self,*args, **kwargs):
         objects= self.objects
@@ -344,7 +344,7 @@ class AreaRepo():
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        self.profile=ProfileRepo(*args, **kwargs).me
+        self.profile=PersonRepo(*args, **kwargs).me
         self.objects = Area.objects
     def list(self,*args, **kwargs):
         objects= self.objects

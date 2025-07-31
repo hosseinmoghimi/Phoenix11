@@ -55,6 +55,30 @@ class SelectPersonApi(APIView):
         context['log']=log
         return JsonResponse(context)
  
+
+class SelectUserApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        select_person_form=SelectUserForm(request.POST)
+        if select_person_form.is_valid():
+            log=333
+            cd=select_person_form.cleaned_data
+            user=PersonRepo(request=request).user(**cd)
+            if user is not None:
+                context['username']=user.username
+                result=SUCCEED
+                message='موفق'
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
 class SelectProfileApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

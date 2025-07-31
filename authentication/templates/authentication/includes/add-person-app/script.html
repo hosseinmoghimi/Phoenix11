@@ -1,5 +1,5 @@
 {% include "accounting/includes/account-app/select-script.html" %}
-{% include "authentication/includes/profile-app/select-script.html" %}
+{% include "authentication/includes/user-app/select-script.html" %}
 
 <script>
   let add_person_app = new Vue({
@@ -18,8 +18,9 @@
     type2:'حقیقی',
     email:'',
     gender:'مرد',
-    profile:{id:0},
-    profile_id:0,
+
+    username:'',
+    user_id:0,
     message:{show:false},
     waiting:false,
     },
@@ -46,14 +47,13 @@
       to_price: function (vall) {
         return to_price(vall) + " {{CURRENCY}}";
       },
-      select_profile: function () { 
-          select_profile_by_id(profile_id=add_person_app.profile_id).done((data) => {
+      select_user: function () { 
+          select_user_by_id(user_id=add_person_app.user_id).done((data) => {
             console.log(data)
-              add_person_app.profile = data.profile;
               if (data.result === "SUCCEED") {
-                  add_person_app.profile = data.profile;
+                  add_person_app.username = data.username;
               } else {
-                  add_person_app.profile = {}
+                  add_person_app.username = ""
               }
         });
       },

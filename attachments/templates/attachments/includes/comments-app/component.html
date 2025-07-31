@@ -1,13 +1,13 @@
 <div class="media aaa">
-    <a :title="comment.profile.full_name" :href="comment.profile.get_absolute_url">
-        <img :src="comment.profile.image" class="rounded-circle" width="64" alt="">
+    <a :title="comment.person.full_name" :href="comment.person.get_absolute_url">
+        <img :src="comment.person.image" class="rounded-circle" width="64" alt="">
     </a>
     <div class="media-body mr-2">
         <div class="text-right">
-            <a target="_blank" :href="comment.profile.get_absolute_url">
-                <span class="farsi text-right text-primary" v-text="comment.profile.full_name"></span>
+            <a target="_blank" :href="comment.person.get_absolute_url">
+                <span class="farsi text-right text-primary" v-text="comment.person.full_name"></span>
             </a>
-            <span class="farsi small text-secondary mr-2 text-right" v-text="comment.persian_date_added"></span>
+            <span class="farsi small text-secondary mr-2 text-right" v-text="comment.persian_datetime_added"></span>
         </div>
         <div class="alert alert-light farsi  text-right fade show" role="alert">
             
@@ -26,22 +26,22 @@
             <div class="small farsi text-dark text-right" v-html="comment.comment">
             </div>
             <div>
-                {% if profile %}
-                <a v-if="comment.profile.id=={{me_profile.id}} && !confirm_delete" style="cursor:pointer"
+                {% if me_person %}
+                <a v-if="comment.person.id=={{me_person.id}} && !confirm_delete" style="cursor:pointer"
                     class="small text-danger mr-auto1 mx-2" @click="confirm_delete=true">
                     <i class="fa fa-trash text-danger"></i>
                     حذف
                 </a>
-                <span v-if="comment.profile.id=={{me_profile.id}} && confirm_delete" style="cursor:pointer"
+                <span v-if="comment.person.id=={{me_person.id}} && confirm_delete" style="cursor:pointer"
                     class="small text-danger mr-auto1 mx-2">
                     این نظر حذف شود ؟
                 </span>
-                <a v-if="comment.profile.id=={{me_profile.id}} && confirm_delete" style="cursor:pointer"
+                <a v-if="comment.person.id=={{me_person.id}} && confirm_delete" style="cursor:pointer"
                     class="small text-secondary mr-auto1 mx-2" @click="confirm_delete=false">
                     <i class="fa fa-ban" aria-hidden="true"></i>
                     خیر
                 </a>
-                <a v-if="comment.profile.id=={{me_profile.id}} && confirm_delete" style="cursor:pointer"
+                <a v-if="comment.person.id=={{me_person.id}} && confirm_delete" style="cursor:pointer"
                     class="small text-danger mr-auto1 mx-2" @click="delete_comment(comment.id)">
                     <i class="fa fa-trash text-danger"></i>
                     حذف کن

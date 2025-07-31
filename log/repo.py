@@ -46,6 +46,8 @@ class LogRepo():
             log.url=kwargs['url']
         if 'app_name' in kwargs:     
             log.app_name=kwargs['app_name']
+        if 'person' in kwargs:            
+            log.person=kwargs['person']
         if 'profile' in kwargs:            
             log.profile=kwargs['profile']
         if 'profile_id' in kwargs:            

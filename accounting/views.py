@@ -1116,6 +1116,11 @@ class InvoicePrintView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        if invoice is None:
+            title='فاکتور پیدا نشد.'
+            message='فاکتور پیدا نشد.'
+            mv=MessageView(title=title,message=message)
+            return mv.get(request=request)
         context['invoice']=invoice
         context['NOT_REPONSIVE']=True
         context['NOT_NAVBAR']=True

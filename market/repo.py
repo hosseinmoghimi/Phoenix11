@@ -379,7 +379,7 @@ class CustomerRepo():
         self.objects=Customer.objects
         me_profile=ProfileRepo(request=request).me
         if me_profile is not None:
-            self.me=self.objects.filter(person_account__person__profile_id=me_profile.id).first()
+            self.me=self.objects.filter(person_account__person_id=me_profile.id).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         pure_code="876454453342236"
@@ -642,9 +642,9 @@ class SupplierRepo():
         self.me=None
         self.objects=Supplier.objects
 
-        profile=ProfileRepo(request=request).me
-        if profile is not None:
-            self.me=self.objects.filter(person_account__person__profile_id=profile.id).first()
+        person=ProfileRepo(request=request).me
+        if person is not None:
+            self.me=self.objects.filter(person_account__person_id=person.id).first()
 
     def list(self,*args, **kwargs):
         objects=self.objects
