@@ -114,8 +114,10 @@ def PageImagesContext(request,page,profile,*args, **kwargs):
     images_s=json.dumps(ImageSerializer(images,many=True).data)
     context['images']=images  
     context['images_s']=images_s  
-    if profile is not None:
+    if request.user.has_perm(APP_NAME+'.add_image') :
         context['add_image_form']=AddImageForm()
+    if profile is not None :
+        context['add_image_form']=False
     return context
 
 

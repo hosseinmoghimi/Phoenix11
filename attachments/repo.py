@@ -23,6 +23,9 @@ class ImageRepo():
     def add_image(self,*args, **kwargs):
         result,message,image=FAILED,"",None
         title=''
+        if not self.request.user.has_perm(APP_NAME+'.add_image'):
+            message='دسترسی غیر مجاز'
+            return FAILED,message,None
         me_person=PersonRepo(request=self.request).me
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if me_person is None:

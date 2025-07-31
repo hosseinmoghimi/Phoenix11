@@ -82,7 +82,8 @@ def PageContext(request,page,*args, **kwargs):
     context['page']=page
     me_profile=ProfileRepo(request=request).me
     from attachments.views import PageTagsContext,PageLocationsContext,PageImagesContext,PageRelatedContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
-
+    if request.user.has_perm(APP_NAME+'.change_page'):
+        context['set_page_thumbnail_header_form']=SetPageThumbnailHeaderForm()
     context.update(PageLikesContext(request=request,page=page,profile=me_profile))
     context.update(PageCommentsContext(request=request,page=page,profile=me_profile))
     context.update(PageLinksContext(request=request,page=page,profile=me_profile))
