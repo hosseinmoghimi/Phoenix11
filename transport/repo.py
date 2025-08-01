@@ -49,6 +49,9 @@ class VehicleRepo():
         vehicle=Vehicle()
         if 'title' in kwargs:
             vehicle.title=kwargs["title"]
+            if len(Vehicle.objects.filter(title=vehicle.title))>0:
+                message='نام تکراری برای وسیله نقلیه جدید'
+                return FAILED,message,None
         if 'owner_id' in kwargs:
             vehicle.owner_id=kwargs["owner_id"]
           
