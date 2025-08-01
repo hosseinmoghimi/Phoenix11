@@ -1,8 +1,7 @@
 from django.utils.translation import gettext as _
 from utility.enums import UnitNameEnum
 from .enums import *
-from django.db.models import TextChoices
-
+from django.db.models import TextChoices 
 
 class PersonCategoryEnum(TextChoices):
     DEFAULT='پیش فرض',_('پیش فرض')
@@ -69,7 +68,7 @@ class PaymentMethodEnum(TextChoices):
     CARD="کارت به کارت",_("کارت به کارت")
 
 
-class EventStatusEnum(TextChoices):
+class FinancialEventStatusEnum(TextChoices):
     DRAFT="پیش نویس",_("پیش نویس")
     IN_PROGRESS="در جریان",_("در جریان")
     READY="آماده تحویل",_("آماده تحویل")

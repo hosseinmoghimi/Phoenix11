@@ -80,6 +80,16 @@
             </div>
           </div>
 
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="">وضعیت</label>
+              <select name="" v-model="status" class="form-control">
+                {% for status in financial_event_statuses %}
+                  <option value="{{status}}">{{status}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
 
           
           <div class="col-md-4">

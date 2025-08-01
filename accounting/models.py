@@ -479,7 +479,7 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
     discount_percentage=models.IntegerField(_("درصد تخفیف"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
     shipping_fee=models.IntegerField(_("هزینه حمل"),default=0)
-      
+    # status=models.CharField(_("status"),choices=FinancialEventStatusEnum.choices,default=FinancialEventStatusEnum.DRAFT, max_length=50)
 
     @property
     def tax_amount(self):
@@ -775,6 +775,7 @@ class Invoice(FinancialEvent):
     def get_edit_view_url(self):
         return reverse(APP_NAME+':invoice_edit',kwargs={'pk':self.pk})
     
+
 class InvoiceLine(models.Model,LinkHelper):
     invoice=models.ForeignKey("invoice", verbose_name=_("invoice"), on_delete=models.PROTECT)
     invoice_line_item=models.ForeignKey("invoicelineitem", verbose_name=_("invoice_line_item"), on_delete=models.PROTECT)

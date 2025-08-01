@@ -2099,6 +2099,7 @@ class FinancialDocumentLineRepo:
             message="اضافه شد."
             return result,message,financial_document_line
   
+
 class FinancialEventRepo():
     def __init__(self,request,*args, **kwargs):
         self.me=None
@@ -2162,6 +2163,10 @@ class FinancialEventRepo():
 
         if "title" in kwargs and kwargs["title"] is not None:
             financial_event.title=kwargs['title']
+
+
+        if "status" in kwargs  :
+            financial_event.status=kwargs['status']
 
 
         if "amount" in kwargs and kwargs["amount"] is not None:
@@ -2305,7 +2310,6 @@ class InvoiceRepo(FinancialEventRepo):
     def __init__(self,request,*args, **kwargs):
         self.me=None
         super().__init__(request,*args, **kwargs)
-        leolog(my_financial_events=self.my_financial_events)
         self.my_invoices=Invoice.objects.filter(pk=0)
         self.request=request
         self.objects=self.my_invoices
@@ -2415,7 +2419,6 @@ class InvoiceRepo(FinancialEventRepo):
                     invoice_line.discount_percentage=int(new_invoice_line['discount_percentage'])
                     invoice_line.save()
         return invoice.save()
-
 
 
 class CategoryRepo():

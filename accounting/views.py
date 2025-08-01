@@ -207,6 +207,8 @@ def FinancialEventContext(request,financial_event):
     context["financial_document_lines_s"]=financial_document_lines_s
     if request.user.has_perm(APP_NAME+'.change_financialevent'):
         payment_methods=(i[0] for i in PaymentMethodEnum.choices)
+        financial_event_statuses=(i[0] for i in FinancialEventStatusEnum.choices)
+        context['financial_event_statuses']=financial_event_statuses
         context['payment_methods_for_edit_financial_event_form']=payment_methods
         context['edit_financial_event_form']=EditFinancialEventForm()
     return context

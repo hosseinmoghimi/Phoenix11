@@ -3,6 +3,7 @@
     el: "#edit_financial-event-app",
     data: {
       title: "{{financial_event.title}}",
+      status: "{{financial_event.status}}",
       payment_method: "{{financial_event.payment_method}}",
       discount_percentage: parseInt("{{financial_event.discount_percentage}}"),
       tax_percentage: parseInt("{{financial_event.tax_percentage}}"),
@@ -30,6 +31,7 @@
           amount: parseInt(edit_financial_event_app.amount),
           tax_percentage: parseInt(edit_financial_event_app.tax_percentage),
           shipping_fee: parseInt(edit_financial_event_app.shipping_fee),
+          status: edit_financial_event_app.status,
           bedehkar_code: edit_financial_event_app.bedehkar_code,
           bestankar_code: edit_financial_event_app.bestankar_code,
         };
