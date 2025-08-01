@@ -122,12 +122,9 @@ class AddPersonCategoryForm(forms.Form):
     code_length=forms.IntegerField(required=False)
 
  
-class EditInvoiceForm(forms.Form):
-    bedehkar_id=forms.IntegerField(required=True)
-    bestankar_id=forms.IntegerField(required=True)
+class EditInvoiceForm(EditFinancialEventForm):
     invoice_id=forms.IntegerField(required=True)
-    invoice_lines=forms.CharField(max_length=2000, required=True)
-    title=forms.CharField(max_length=200, required=True)
+    invoice_lines=forms.CharField(max_length=2000, required=False)
 
 class AddProductSpecificationForm(forms.Form):
     priority=forms.IntegerField(required=False)

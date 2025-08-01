@@ -2398,14 +2398,14 @@ class InvoiceRepo(FinancialEventRepo):
             invoice.title=kwargs['title'] 
 
             
-        if 'bedehkar_id' in kwargs:
+        if 'bedehkar_id' in kwargs and kwargs['bedehkar_id'] is not None:
             invoice.bedehkar_id=kwargs['bedehkar_id'] 
 
             
-        if 'bestankar_id' in kwargs:
+        if 'bestankar_id' in kwargs and kwargs['bestankar_id'] is not None:
             invoice.bestankar_id=kwargs['bestankar_id']   
 
-        if 'invoice_lines' in kwargs:
+        if 'invoice_lines' in kwargs and kwargs['invoice_lines'] is not None and not kwargs['invoice_lines']=='':
             invoice_lines=kwargs['invoice_lines']   
             leolog(invoice_lines=invoice_lines)
             for new_invoice_line in invoice_lines:

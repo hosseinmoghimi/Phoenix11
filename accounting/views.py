@@ -227,6 +227,13 @@ def InvoiceContext(request,invoice,*args, **kwargs):
         invoice_lines_s=json.dumps(InvoiceLineSerializer(invoice_lines,many=True).data)
         context['invoice_lines_s']=invoice_lines_s
     
+    if request.user.has_perm(APP_NAME+'.change_invoice'):
+        payment_methods=(i[0] for i in PaymentMethodEnum.choices)
+        invoice_statuses=(i[0] for i in FinancialEventStatusEnum.choices)
+        context['invoice_statuses']=invoice_statuses
+        context['payment_methods_for_edit_invoice_form']=payment_methods
+        context['edit_invoice_form']=EditFinancialEventForm()
+        
     (total,discount,total_after_discount,tax,amount)=invoice.statistics
     context['total']=total
     context['total_after_discount']=total_after_discount

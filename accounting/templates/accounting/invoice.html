@@ -55,6 +55,13 @@
         {% include "accounting/includes/edit-financial-event-app/template.html" %}
       </div>
       {% endif %}
+
+         {% if edit_invoice_form %}
+      <div class="col-md-12">
+        {% include "accounting/includes/edit-invoice-app/template.html" %}
+      </div>
+      {% endif %}
+      
       <div class="col-md-12">
         {% include "attachments/includes/images-app/template.html" %}
       </div>

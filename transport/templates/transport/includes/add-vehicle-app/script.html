@@ -5,6 +5,8 @@
     data: {
       title: "",
       owner: { id: 0, full_name: false },
+      message:{show:false},
+      waiting:false,
     },
     methods: {
       select_owner: function () {
@@ -40,6 +42,9 @@
             if (typeof vehicles_app != "undefined") {
               vehicles_app.vehicles.push(data.vehicle);
             }
+          }
+          else{
+            show_message(add_vehicle_app,'موفق',data.message,'danger',3000)
           }
         });
       },

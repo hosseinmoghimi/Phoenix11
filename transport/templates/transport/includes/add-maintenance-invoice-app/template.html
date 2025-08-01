@@ -1,22 +1,22 @@
-<div id="accordion-add-invoice" class="rtl text-right farsi">
+<div id="accordion-add-maintenance-invoice" class="rtl text-right farsi">
 
 
 
   
 
 
-  <div class="card" id="add-invoice-app">
+  <div class="card" id="add-maintenance-invoice-app">
     <div class="card-header">
        <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-invoice"
-                    aria-expanded="true" aria-controls="collapse-add-invoice">
-                افزودن فاکتور  
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-maintenance-invoice"
+                    aria-expanded="true" aria-controls="collapse-add-maintenance-invoice">
+                افزودن فاکتور  تعمیر و نگهداری
                 </button>
             </h5>
     </div>
 
-     <div id="collapse-add-invoice" class="collapse "
-            aria-labelledby="heading-add-invoice" data-parent="#accordion-add-invoice">
+     <div id="collapse-add-maintenance-invoice" class="collapse "
+            aria-labelledby="heading-add-maintenance-invoice" data-parent="#accordion-add-maintenance-invoice">
 
 
     <div class="card-body">
@@ -124,6 +124,13 @@
               <input type="text" required class="form-control" v-model="event_time" />
             </div>
           </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="exampleInputDate">هزینه حمل</label>
+
+              <input type="number" required class="form-control" v-model="shipping_fee" />
+            </div>
+          </div>
 
 
           <div class="col-md-4">
@@ -172,6 +179,19 @@
               افزودن
             </button>
           </div>
+
+           <div class="col-md-12" v-if="message.show">
+           <div :class="'alert alert-' + message.color">
+            <h5 v-text="message.title">
+
+            </h5>
+            <div v-html="message.body">
+
+            </div>
+           </div>
+          </div>
+
+
         </div>
       </form>
     </div>

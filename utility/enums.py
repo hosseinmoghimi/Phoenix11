@@ -192,6 +192,10 @@ def class_title(*args, **kwargs):
         app_name=kwargs['app_name']
 
     class_title = "صفحه"
+
+
+    if class_name == "maintenanceinvoice":
+        class_title = "فاکتور تعمیر و نگهداری"
     if class_name == "exam":
         class_title = "آزمون"
     if class_name == "pricingpage":

@@ -8,8 +8,14 @@
 
 </script>
 {% endif %}
-
-
+<script>
+    let page_id_for_new_location=0
+</script>
+{% if page %}
+  <script>
+    page_id_for_new_location=parseInt("{{page.id}}")
+  </script>
+{% endif %}
 <script>
     let locations = []
 
@@ -61,7 +67,7 @@
                 let payload = {
                     location: locations_app.new_location,
                     title: locations_app.new_location_title,
-                    page_id: page_id_,
+                    page_id: page_id_for_new_location,
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
                 // //console.log(payload)

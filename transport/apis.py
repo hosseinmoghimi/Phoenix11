@@ -51,7 +51,7 @@ class AddMaintenanceInvoiceApi(APIView):
             cd=add_maintenance_invoice_form.cleaned_data
             result,message,maintenance_invoice=MaintenanceInvoiceRepo(request=request).add_maintenance_invoice(**cd)
             if maintenance_invoice is not None:
-                context['maintenance']=MaintenanceInvoiceSerializer(maintenance_invoice).data
+                context['maintenance_invoice']=MaintenanceInvoiceSerializer(maintenance_invoice).data
         context['message']=message
         context['result']=result
         context['log']=log

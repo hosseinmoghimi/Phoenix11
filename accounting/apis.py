@@ -618,7 +618,9 @@ class EditInvoiceApi(APIView):
         if edit_invoice_form.is_valid():
             log=333
             cd=edit_invoice_form.cleaned_data
-            cd['invoice_lines']=json.loads(cd['invoice_lines'])
+            if 'invoice_lines' in cd and cd['invoice_lines'] is not None and not cd['invoice_lines']=='':
+                leolog(invoice_lines=cd['invoice_lines'])
+                cd['invoice_lines']=json.loads(cd['invoice_lines'])
             result,message,invoice=InvoiceRepo(request=request).edit_invoice(**cd)
             if invoice is not None:
                 context['invoice']=InvoiceSerializer(invoice).data

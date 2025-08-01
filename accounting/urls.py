@@ -105,6 +105,7 @@ urlpatterns = [
     path("add-invoice-line/",login_required(apis.AddInvoiceLineApi.as_view()),name="add_invoice_line"),
     
     path("add-invoice-line-item-unit/",login_required(apis.AddInvoiceLineItemUnitApi.as_view()),name="add_invoice_line_item_unit"),
+    path("edit-invoice/",login_required(apis.EditInvoiceApi.as_view()),name="edit_invoice"),
 
       
     path("financial_events/",login_required(views.FinancialEventsView.as_view()),name="financial_events"),

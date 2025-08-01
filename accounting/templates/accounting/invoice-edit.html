@@ -1,5 +1,5 @@
 {% extends "accounting/layout.html" %} {% block content %}
-<div class="row rtl farsi" id="edit-invoice-app">
+<div class="row rtl farsi" id="invoice-edit-app">
   {% load static %}
   <div class="col-12">
     <div class="card">
@@ -208,8 +208,8 @@
   let bestankar = JSON.parse("{{bestankar_s|escapejs}}");
   let bedehkar = JSON.parse("{{bedehkar_s|escapejs}}");
   let invoice_lines = JSON.parse("{{invoice_lines_s|escapejs}}");
-  let edit_invoice_app = new Vue({
-    el: "#edit-invoice-app",
+  let invoice_edit_app = new Vue({
+    el: "#invoice-edit-app",
     data: {
       bestankar: bestankar,
       bedehkar: bedehkar,
@@ -223,31 +223,31 @@
     methods: {
       to_price: (price) => to_price(price),
       select_bedehkar: function () {
-        select_account_by_code(edit_invoice_app.bedehkar_code).done((data) => {
+        select_account_by_code(invoice_edit_app.bedehkar_code).done((data) => {
           console.log(data);
           if (data.result === "SUCCEED") {
-            edit_invoice_app.bedehkar = data.account;
+            invoice_edit_app.bedehkar = data.account;
           } else {
-            edit_invoice_app.bedehkar = {};
+            invoice_edit_app.bedehkar = {};
           }
         });
       },
 
       select_bestankar: function () {
-        select_account_by_code(edit_invoice_app.bestankar_code).done((data) => {
+        select_account_by_code(invoice_edit_app.bestankar_code).done((data) => {
           console.log(data);
 
           if (data.result === "SUCCEED") {
-            edit_invoice_app.bestankar = data.account;
+            invoice_edit_app.bestankar = data.account;
           } else {
-            edit_invoice_app.bestankar = {};
+            invoice_edit_app.bestankar = {};
           }
         });
       },
       save: function () {
-        edit_invoice_app.waiting = true;
+        invoice_edit_app.waiting = true;
         invoice_lines = [];
-        edit_invoice_app.invoice_lines.forEach((invoice_line) => {
+        invoice_edit_app.invoice_lines.forEach((invoice_line) => {
           invoice_lines.push({
             row: parseInt(invoice_line.row),
             invoice_line_id: parseInt(invoice_line.id),
@@ -264,18 +264,19 @@
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           invoice_lines: invoice_lines,
           invoice_id: invoice_id,
-          bedehkar_id: edit_invoice_app.bedehkar.id,
-          bestankar_id: edit_invoice_app.bestankar.id,
-          title: edit_invoice_app.title,
+          financial_event_id: invoice_id,
+          bedehkar_id: invoice_edit_app.bedehkar.id,
+          bestankar_id: invoice_edit_app.bestankar.id,
+          title: invoice_edit_app.title,
         };
         console.log(payload);
         let url = `{% url 'accounting:invoice_edit' pk=invoice.id %}`;
         $.post(url, payload).done((data) => {
           console.log(data);
-          edit_invoice_app.waiting = false;
+          invoice_edit_app.waiting = false;
           if (data.result === "SUCCEED") {
             show_message(
-              edit_invoice_app,
+              invoice_edit_app,
               "موفق",
               data.message,
               "success",
@@ -285,7 +286,7 @@
 
           if (data.result != "SUCCEED") {
             show_message(
-              edit_invoice_app,
+              invoice_edit_app,
               "خطا",
               data.message,
               "danger",

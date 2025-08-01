@@ -312,6 +312,8 @@ class LocationRepo():
             
 
     def add_location(self,*args, **kwargs):
+        from utility.log import leolog
+        leolog(kwargs=kwargs)
         result,message,location=FAILED,'',self
         if not self.user.has_perm(APP_NAME+".add_location"):
             return result,message,None
@@ -322,14 +324,17 @@ class LocationRepo():
             location.title=kwargs['title']
         if 'location' in kwargs:
             location.location=kwargs['location']
-        if 'page_id' in kwargs:
-            location.page_id=kwargs['page_id']
         if 'latitude' in kwargs:
             location.latitude=kwargs['latitude']
         if 'longitude' in kwargs:
             location.longitude=kwargs['longitude']
         location.creator=self.person
         (result,message,location)=location.save()
+        if 'page_id' in kwargs and kwargs['page_id'] is not None:
+            page_id=kwargs['page_id']
+            page=PageRepo(request=self.request).page(pk=page_id)
+            if page is not None and location is not None:
+                page.locations.add(location.id)
         return result,message,location
     
     def search(self,search_for):
