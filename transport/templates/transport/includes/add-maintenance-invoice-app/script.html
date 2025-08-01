@@ -11,6 +11,12 @@
     bestankar: false ,  
     bedehkar_code: "0", 
     bestankar_code: "0",   
+    kilometer:0,
+    vehicle_id:parseInt('{{vehicle.id}}'),
+    maintenance_type:'',
+    description:'',
+    amount:0,
+    service_man_id:0,
     },
 
     components: {
@@ -83,9 +89,14 @@
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           title: this.title,
           event_datetime: this.event_date+" "+this.event_time,
-          bedehkar_id: this.bedehkar.id,
-          bestankar_id: this.bestankar.id,
-          amount:0,
+          bedehkar_id: parseInt(this.bedehkar.id),
+          amount: parseInt(this.amount),
+          service_man_id: parseInt(this.service_man_id),
+          bestankar_id: parseInt(this.bestankar.id),
+          kilometer:parseInt(this.kilometer),
+          description:this.description,
+          vehicle_id:parseInt('{{vehicle.id}}'),
+          maintenance_type:this.maintenance_type,
         };
 
         console.log(payload);
@@ -94,8 +105,8 @@
         posting.done((data) => {
           console.log(data);
           if (data.result === "SUCCEED") {
-            if (typeof invoices_app != "undefined") {
-              invoices_app.invoices.push(data.invoice);
+            if (typeof maintenance_invoices_app != "undefined") {
+              maintenance_invoices_app.maintenance_invoices.push(data.maintenance_invoice);
             }
           }
         });

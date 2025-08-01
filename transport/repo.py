@@ -1,4 +1,4 @@
-from .models import Vehicle,MaintenanceInvoice
+from .models import Vehicle,MaintenanceInvoice,ServiceMan
 
 from .apps import APP_NAME
 from .enums import *
@@ -56,6 +56,52 @@ class VehicleRepo():
         return result,message,vehicle
 
 
+class ServiceManRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=ServiceMan.objects.filter(id=0)
+        profile=PersonRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_vehicle"):
+                self.objects=ServiceMan.objects
+                self.my_accounts=self.objects 
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(person_account__person__full_name__contains=search_for)    )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.all()
+        
+    def service_man(self,*args, **kwargs):
+        if "service_man_id" in kwargs and kwargs["service_man_id"] is not None:
+            return self.objects.filter(pk=kwargs['service_man_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_service_man(self,*args,**kwargs):
+        result,message,service_man=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_service_man"):
+            message="دسترسی غیر مجاز"
+            return result,message,service_man
+
+        service_man=Vehicle()
+        if 'title' in kwargs:
+            service_man.title=kwargs["title"]
+        if 'owner_id' in kwargs:
+            service_man.owner_id=kwargs["owner_id"]
+          
+        (result,message,service_man)=service_man.save()
+        return result,message,service_man
+
+
   
 class MaintenanceInvoiceRepo():
     def __init__(self,request,*args, **kwargs):
@@ -76,6 +122,12 @@ class MaintenanceInvoiceRepo():
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
+        if "vehicle" in kwargs:
+            vehicle=kwargs["vehicle"]
+            objects=objects.filter(vehicle=vehicle)  
+        if "service_man_id" in kwargs:
+            service_man_id=kwargs["service_man_id"]
+            objects=objects.filter(service_man_id=service_man_id)  
         return objects.all()
         
     def maintenance_invoice(self,*args, **kwargs):
@@ -121,8 +173,8 @@ class MaintenanceInvoiceRepo():
                 kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
             maintenance_invoice.event_datetime=kwargs["event_datetime"]
 
-        if 'type' in kwargs:
-            maintenance_invoice.type=kwargs["type"]
+        if 'maintenance_type' in kwargs:
+            maintenance_invoice.maintenance_type=kwargs["maintenance_type"]
 
            
            

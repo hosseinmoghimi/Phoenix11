@@ -18,15 +18,16 @@ from accounting.models import Invoice,InvoiceLine
 
   
 class ServiceMan(models.Model,LinkHelper):
-    title=models.CharField(_("title"),null=True,blank=True, max_length=100)
-    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.CASCADE)
     class_name='serviceman'
     app_name=APP_NAME
 
     class Meta:
         verbose_name = _("ServiceMan")
         verbose_name_plural = _("ServiceMans")
-
+    @property
+    def title(self):
+        return self.person_account.person.full_name
     def __str__(self):
         return str(self.title)
     def save(self,*args, **kwargs):
@@ -40,16 +41,16 @@ class MaintenanceInvoice(Invoice):
     kilometer=models.IntegerField(_("کیلومتر"),default=0)
     service_man=models.ForeignKey("serviceman", verbose_name=_("service man"), on_delete=models.PROTECT)
     vehicle=models.ForeignKey("vehicle", verbose_name=_("vehicle"), on_delete=models.PROTECT)
-    maintenance_type=models.CharField(_("سرویس"),choices=MaintenanceEnum.choices, max_length=100)
+    maintenance_type=models.CharField(_("سرویس"),choices=MaintenanceTypesEnum.choices, max_length=100)
     class Meta:
         verbose_name = _("MaintenanceInvoice")
         verbose_name_plural = _("MaintenanceInvoices")
     def save(self,*args, **kwargs):
-        result,message,self=FAILED,'',None
+        result,message,self=FAILED,'',self
         if self.title is None or self.title=="":
             self.title=self.maintenance_type
         if self.class_name is None or self.class_name=="":
-            self.class_name='maintenance'
+            self.class_name='maintenanceinvoice'
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         super(MaintenanceInvoice,self).save(*args, **kwargs)

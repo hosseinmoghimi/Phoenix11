@@ -11,7 +11,7 @@ class TripStatusEnum(TextChoices):
     DELIVERED="تحویل شده",_("تحویل شده")
 
 
-class MaintenanceEnum(TextChoices):
+class MaintenanceTypesEnum(TextChoices):
     WASH="شستشو",_("شستشو") 
     FUEL='سوخت',_('سوخت')
     REPAIR_ENGINE='تعمیر موتور',_('تعمیر موتور') 

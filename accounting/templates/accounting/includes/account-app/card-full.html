@@ -47,10 +47,10 @@
             </a>
             {% endif %}
         </div>
-        <div>
+        <!-- <div>
             <small class="text-muted">مانده : </small>
-            {{account.balance }}
-        </div>
+            {{account.balance|to_price}} {{CURRENCY}}
+        </div> -->
         <div id="account-balance-app">
             <small class="text-muted">مانده : </small>
             {{account.balance|to_price_color_btn|safe}}

@@ -1,20 +1,19 @@
-<div id="accordion-customers">
-  <div class="card" id="customers-app">
-    <div class="card-header" id="heading-customers">
+<div id="accordion-service-mans">
+  <div class="card" id="service-mans-app">
+    <div class="card-header" id="heading-service-mans">
       <h5 class="text-center">
         <button
           class="btn btn-link"
           data-toggle="collapse"
-          data-target="#collapse-customers"
+          data-target="#collapse-service-mans"
           aria-expanded="true"
-          aria-controls="collapse-customers"
+          aria-controls="collapse-service-mans"
         >
-          مشتریان
+          تعمیرکار ها
 
-          
-          <span v-if="customers.length>0">
+          <span v-if="service_mans.length>0">
             <small class="text-danger mx-2">
-              <span v-text="customers.length"></span>
+              <span v-text="service_mans.length"></span>
             </small>
           </span>
         </button>
@@ -22,10 +21,10 @@
     </div>
 
     <div
-      id="collapse-customers"
-      class="collapse {% if expand_customers %} show{% endif %}"
-      aria-labelledby="heading-customers"
-      data-parent="#accordion-customers"
+      id="collapse-service-mans"
+      class="collapse {% if expand_service_mans %} show{% endif %}"
+      aria-labelledby="heading-service-mans"
+      data-parent="#accordion-service-mans"
     >
       <div class="card-body">
         <div class="table-responsive">
@@ -37,35 +36,35 @@
               <th></th>
             </thead>
             <tbody>
-              <tr v-for="customer in customers">
+              <tr v-for="service_man in service_mans">
                 <td>
-                  <a :href="customer.get_absolute_url">
+                  <a :href="service_man.get_absolute_url">
                     <span
-                      v-text="customer.person_account.person.full_name"
+                      v-text="service_man.person_account.person.full_name"
                     ></span>
                   </a>
                 </td>
 
                 <td>
-                  <span v-text="customer.level"></span>
+                  <span v-text="service_man.level"></span>
                 </td>
 
                 <td>
-                  <span v-text="to_price(customer.person_account.balance)"></span> {{CURRENCY    }}
+                  <span v-text="to_price(service_man.person_account.balance)"></span> {{CURRENCY    }}
                 </td>
                 <td>
-                  {% if perms.market.change_customer %}
+                  {% if perms.market.change_service_man %}
                   <a
                     target="_blank"
-                    :href="customer.get_edit_url"
+                    :href="service_man.get_edit_url"
                     title="ویرایش"
                   >
                     <i class="fa fa-edit text-warning"></i>
                   </a>
-                  {% endif %} {% if perms.market.delete_customer %}
+                  {% endif %} {% if perms.market.delete_service_man %}
                   <a
                     target="_blank"
-                    :href="customer.get_delete_url"
+                    :href="service_man.get_delete_url"
                     title="حذف"
                   >
                     <i class="fa fa-trash text-danger"></i>
