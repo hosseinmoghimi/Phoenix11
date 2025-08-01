@@ -1,12 +1,20 @@
 {% include "authentication/includes/person-app/select-script.html" %}
 <script>
+  let organization_unit_id_for_add_employee_app=0
+</script>
+{% if organization_unit %}
+  <script>
+  organization_unit_id_for_add_employee_app=parseInt("{{organization_unit.id}}")
+</script>
+{% endif %}
+<script>
   let add_employee_app = new Vue({
     el: "#add-employee-app",
     data: {
     job_title: "",
     person_id:"0",
     person:false,
-    organization_unit_id:"0",
+    organization_unit_id:organization_unit_id_for_add_employee_app,
     organization_unit:false,
     event_date: current_date,
     event_time: "00:00:00",

@@ -51,9 +51,7 @@ class OrganizationUnitRepo():
         if len(OrganizationUnit.objects.filter(title=kwargs['title']))>0:
             message="عنوان تکراری"
             return result,message,organization_unit
-        if len(OrganizationUnit.objects.filter(person_account_id=kwargs['person_account_id']))>0:
-            message="حساب تکراری"
-            return result,message,organization_unit
+         
         organization_unit=OrganizationUnit()
         if 'name' in kwargs:
             organization_unit.name=kwargs["name"]

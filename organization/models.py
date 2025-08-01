@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import Page,LinkHelper,FAILED,SUCCEED
+from core.models import Page,LinkHelper,FAILED,SUCCEED,reverse
 from django.utils.translation import gettext as _
 from .apps import APP_NAME
 from utility.models import DateTimeHelper
@@ -28,6 +28,21 @@ class OrganizationUnit(Page,LinkHelper):
         result=SUCCEED
         message="سازمان با موفقیت اضافه شد."
         return (result,message,organization_unit)
+    
+    def get_tree_chart_url(self):
+        return reverse(APP_NAME+':tree_chart',kwargs={'pk':self.pk})
+    
+    @property
+    def children(self):
+        return OrganizationUnit.objects.filter(parent_id=self.id)
+    
+    def all_sub_organization_units(self):
+        ids=[]
+        for organization_unit in self.children.all():
+            ids.append(organization_unit.id)
+            for i in organization_unit.all_sub_organization_units():
+                ids.append(i.id)
+        return OrganizationUnit.objects.filter(id__in=ids)
     
 
 class Employee(models.Model,LinkHelper,DateTimeHelper):

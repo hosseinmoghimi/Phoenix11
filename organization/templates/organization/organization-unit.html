@@ -12,10 +12,27 @@
   <div class="col-12">
     {% include "organization/includes/employees-app/template.html" %}
   </div>
+  <div class="col-12">
+    {% include "organization/includes/sub-organization-units-app/template.html" %}
+  </div>
+
+  {% if add_employee_form %}
+      <div class="col-md-12">
+          {% include "organization/includes/add-employee-app/template.html" %}
+
+      </div>
+    {% endif %}
+
 </div>
 {% endblock content %} {% block script %}
 <script>
   let organization_unit_id = parseInt("{{organization_unit.id}}");
 </script>
+  {% include "organization/includes/sub-organization-units-app/script.html" %}
 {% include "organization/includes/employees-app/script.html" %} 
+{% if add_employee_form %}
+          {% include "organization/includes/add-employee-app/script.html" %}
+
+    {% endif %}
+
 {% endblock script %}

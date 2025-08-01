@@ -1,0 +1,41 @@
+<!-- sub-organization_units-app  -->
+<!-- #################################################################################### -->
+
+<script>
+    let organization_units = JSON.parse(`{{organization_units_s|escapejs}}`)
+    let sub_organization_units_app = new Vue({
+        el: "#sub-organization-units-app",
+        data: {
+            new_organization_unit_title: "",
+            organization_units: organization_units,
+            waiting: false,
+            show_detail: false,
+        },
+        methods: {
+            to_price: function (value) {
+                return to_price(value)
+            },
+            add_organization_unit: function () {
+                sub_organization_units_app.waiting = true
+                let url = "{% url 'organization:add_organization_unit' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    parent_id: parseInt('{{organization_unit.id}}'),
+                    person_account_id: parseInt('{{organization_unit.person_account_id}}'),
+                    title: this.new_organization_unit_title,
+                }
+                console.log(payload)
+                let posting = $.post(url, payload)
+                posting.done((data) => {
+                    console.log(data)
+                    sub_organization_units_app.waiting = false
+                    if (data.result === 'SUCCEED') {
+
+                        sub_organization_units_app.organization_units.push(data.organization_unit)
+                        sub_organization_units_app.new_organization_unit_title = ""
+                    }
+                })
+            },
+        }
+    })
+</script>
