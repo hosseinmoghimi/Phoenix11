@@ -1983,7 +1983,12 @@ class FinancialDocumentLineRepo:
                 else:
                     # message='سند مالی جدید ایجاد نشد.'
                     return result,message,None
+            
             financial_document_line.financial_document_id=financial_document_id
+            financial_document=financial_document_line.financial_document
+            if financial_document.status==FinancialDocumentStatusEnum.ACCEPTED:
+                message='سند مرتبط تایید شده می باشد.<br> نمی توان به سطر های آن افزود'
+                return FAILED,message,None
         if 'description' in kwargs:
             financial_document_line.description=kwargs['description']
         if 'persian_date_time' in kwargs and kwargs['persian_date_time'] is not None and not kwargs['persian_date_time']=='':
@@ -2024,7 +2029,6 @@ class FinancialDocumentLineRepo:
             message=financial_document_line.account.name+" ماهیت فقط بدهکار دارد"
             financial_document_line=None
             return result,message,financial_document_line
-
 
         result,message,financial_document_line=financial_document_line.save()
         if result==FAILED:
