@@ -47,6 +47,17 @@
                         {{customer.person_account.name}}
                     </a>
                 </h6>
+
+                 <h6>
+                    <small class="text-muted">
+                    شخص :
+
+                    </small>
+                    <a href="{{customer.person_account.person.get_absolute_url}}">
+                        {{customer.person_account.person.full_name}}
+                    </a>
+                </h6>
+
                 {% endif %}
 
                 {% if perms.market.change_customer %}

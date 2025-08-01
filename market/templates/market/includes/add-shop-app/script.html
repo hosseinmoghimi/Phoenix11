@@ -40,6 +40,7 @@
                 const payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     product_id: parseInt("{{product.id}}"),
+                    supplier_id: parseInt("{{me_supplier.id}}"),
                     level: this.level,
                     available: this.available,
                     unit_price: this.unit_price,

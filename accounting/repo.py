@@ -2442,10 +2442,8 @@ class CategoryRepo():
         self.request=request
         self.objects=Category.objects.filter(id=0)
         person=PersonRepo(request=request).me
-        if request.user.has_perm(APP_NAME+".view_category"):
-            self.objects=Category.objects
-        if person is not None:
-                self.my_categorys=self.objects
+         
+        self.objects=Category.objects 
                 
     def list(self,*args, **kwargs):
         objects=self.objects

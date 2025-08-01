@@ -8,7 +8,7 @@ from django.shortcuts import reverse
 from authentication.repo import PersonRepo
 from accounting.repo import InvoiceLineItemUnitRepo
 from utility.num import filter_number
-from utility.calendar import PersianCalendar
+from utility.calendar import PersianCalendar,to_gregorian
 from utility.constants import FAILED,SUCCEED
 from utility.log import leolog
 from authentication.repo import PersonRepo
@@ -208,11 +208,7 @@ class DeskRepo():
             desk.type=kwargs["type"]
 
             
-        if 'parent_code' in kwargs:
-            parent_code= kwargs["parent_code"]
-            parent=Account.objects.filter(code=parent_code).first()
-            if parent is not None:
-                desk.parent_id=parent.id
+         
 
         if 'nature' in kwargs:
             desk.nature=kwargs["nature"]
@@ -294,14 +290,14 @@ class ShopRepo():
         self.request=request
         self.objects=Shop.objects.filter(id=0)
         me_person=PersonRepo(request=request).me
-        if me_person is not None:
-            if request.user.has_perm(APP_NAME+".view_shop"):
-                self.objects=Shop.objects
-                self.my_accounts=self.objects 
-            else:
-                me_customer=CustomerRepo(request=request).me
-                if me_customer is not None:
-                    self.objects=Shop.objects.filter(level=me_customer.level)
+        me_customer=CustomerRepo(request=request).me
+        me_supplier=SupplierRepo(request=request).me
+        if request.user.has_perm(APP_NAME+".view_shop"):
+            self.objects=Shop.objects 
+        elif me_customer is not None:
+            self.objects=Shop.objects.filter(level=me_customer.level)
+        elif me_supplier is not None:
+            self.objects=Shop.objects.filter(supplier_id=me_supplier.id)
     def primary_shop(self,product,*args, **kwargs):
         if product is None :
             return None
@@ -347,24 +343,35 @@ class ShopRepo():
         
     def add_shop(self,*args,**kwargs):
         result,message,shop=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".add_shop"):
-            message="دسترسی غیر مجاز"
-            return result,message,shop
+        
+        me_supplier=SupplierRepo(request=self.request).me
+        if me_supplier is None:
+            if not self.request.user.has_perm(APP_NAME+".add_shop"):
+                message="دسترسی غیر مجاز"
+                return result,message,shop
 
         shop=Shop()
-        if 'title' in kwargs:
-            shop.title=kwargs["title"]
-        if 'parent_id' in kwargs:
-            if kwargs["parent_id"]>0:
-                shop.parent_id=kwargs["parent_id"]
-        if 'color' in kwargs:
-            shop.color=kwargs["color"]
+        if 'level' in kwargs:
+            shop.level=kwargs["level"]
+        if 'unit_price' in kwargs:
+            if kwargs["unit_price"]>0:
+                shop.unit_price=kwargs["unit_price"]
+        if 'unit_name' in kwargs:
+            shop.unit_name=kwargs["unit_name"]
         if 'supplier_id' in kwargs:
             shop.supplier_id=kwargs["supplier_id"]
-        if 'priority' in kwargs:
-            shop.priority=kwargs["priority"]
-        if 'type' in kwargs:
-            shop.type=kwargs["type"]
+             
+        if 'available' in kwargs:
+            shop.available=kwargs["available"]
+            shop.quantity=kwargs["available"]
+        if 'product_id' in kwargs:
+            shop.product_id=kwargs["product_id"]
+        if 'start_date' in kwargs:
+            start_date=kwargs["start_date"]
+            shop.start_date=to_gregorian(start_date)
+        if 'end_date' in kwargs:
+            end_date=kwargs["end_date"]
+            shop.end_date=to_gregorian(end_date)
 
          
         (result,message,shop)=shop.save()

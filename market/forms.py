@@ -14,13 +14,18 @@ class AddShopForm(forms.Form):
     unit_price=forms.IntegerField( required=True)
     available=forms.IntegerField( required=True)
     product_id=forms.IntegerField( required=True)
-    supplier_id=forms.IntegerField( required=True)
+    supplier_id=forms.IntegerField( required=False)
     menu_id=forms.IntegerField( required=False)
     menu_title=forms.CharField( max_length=100, required=False)
+    start_date=forms.CharField( max_length=100, required=False)
+    end_date=forms.CharField( max_length=100, required=False)
 
 class AddMarketPersonForm(forms.Form):
     level=forms.CharField(max_length=100, required=False)
     person_account_id=forms.IntegerField(required=True)
+   
+class AddCartLineForm(forms.Form):
+    shop_id=forms.IntegerField(required=True)
    
 
 

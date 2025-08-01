@@ -13,6 +13,7 @@ urlpatterns = [
     path('shippers/',login_required(views.ShippersView.as_view()),name="shippers"),
     path('customers/',login_required(views.CustomersView.as_view()),name="customers"),
     path('customer/<int:pk>/',login_required(views.CustomerView.as_view()),name="customer"),
+    path("add-shop/",login_required(apis.AddShopApi.as_view()),name="add_shop"),
     path("add-customer/",login_required(apis.AddCustomerApi.as_view()),name="add_customer"),
     path("add-shipper/",login_required(apis.AddShipperApi.as_view()),name="add_shipper"),
     path('desk-customer/<int:pk>/',login_required(views.ProductView.as_view()),name="deskcustomer"),

@@ -5,6 +5,13 @@ from khayyam import *
 HOURS_OFFSET=3
 MINUTES_OFFSET=30
 
+def to_gregorian(date):
+    date=str(date)
+    year=str(date)[:2]
+    if year=="13" or year=="14":
+        date=PersianCalendar().to_gregorian(date)
+    return date
+            
 
 DAY_LIGHT_SAVING=False
 def to_persian_datetime_tag(value,*args, **kwargs):

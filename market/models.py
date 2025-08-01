@@ -124,8 +124,14 @@ class Shop(models.Model,LinkHelper,DateTimeHelper):
 
     def __str__(self):
         return f'{self.product} @ {self.supplier} $ {self.unit_name} {self.unit_price}'
- 
-
+    def save(self):
+        (result,message,shop)=FAILED,'',self
+         
+        super(Shop,self).save()
+        result=SUCCEED
+        message="قیمت جدید با موفقیت اضافه شد."
+        return (result,message,shop)
+         
 class CartItem(models.Model):
     row=models.IntegerField(_("ردیف"),default=1,blank=True)
     customer=models.ForeignKey("customer", verbose_name=_("مشتری"), on_delete=models.CASCADE)

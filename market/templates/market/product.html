@@ -38,6 +38,18 @@
         {% include "market/includes/product-app/relateds.html" %}
     </div>
     {% endif %}
+
+    
+    {% if add_shop_form %}
+    <div class="col-md-12">
+        <h5 class="text-right mt-3">
+            افزودن قیمت برای کالای موجود
+        </h5>
+        {% include "market/includes/add-shop-app/template.html" %}
+    </div>
+    {% endif %}
+
+
     <div class="col-md-12">
         {% include "accounting/includes/product-app/card.html" %}
     </div>
@@ -49,7 +61,9 @@
    {% include 'market/includes/product-shops-app/script.html' %} 
 {% endif %}
     
-
+{% if add_shop_form %}
+{% include "market/includes/add-shop-app/script.html" %}
+{% endif %}
 
 
 

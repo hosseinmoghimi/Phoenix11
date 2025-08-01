@@ -79,9 +79,15 @@ def AddShipperContext(request,*args, **kwargs):
 def AddShopPackageContext(request,*args, **kwargs):
     context={}
     return context
+   
     
 def AddShopContext(request,*args, **kwargs):
+ 
     context={}
+    context['add_shop_form']=AddShopForm()
+    context['unit_names_for_add_shop_app']=(i[0] for i in UnitNameEnum.choices)
+    context['unit_names_for_add_shop_app']=(i[0] for i in UnitNameEnum.choices)
+    context['levels_for_add_shop_app']=(i[0] for i in ShopLevelEnum .choices)
     return context
 
 
@@ -153,6 +159,18 @@ class ProductView(View):
         shops_s=json.dumps(ShopSerializer(shops,many=True).data)
         context['shops']=shops
         context['shops_s']=shops_s
+
+
+        me_supplier=SupplierRepo(request=request).me
+        if me_supplier is not None:
+            context.update(AddShopContext(request=request))
+
+            
+        me_customer=CustomerRepo(request=request).me
+        if me_customer is not None:
+            context['add_cart_line_form']=AddCartLineForm()
+            # context.update(AddShopContext(request=request))
+            pass
 
         return render(request,TEMPLATE_ROOT+"product.html",context) 
     
@@ -231,8 +249,7 @@ class ShopPackageView(View):
         context['shops']=shops
         context['shops_s']=shops_s
 
-        
-        if request.user.has_perm(APP_NAME+".add_shop"):
+        if 'me_supplier' in kwargs and context['me_supplier'] is not None:
             context.update(AddShopContext(request=request))
         return render(request,TEMPLATE_ROOT+"shop-package.html",context) 
 
@@ -326,8 +343,6 @@ class DesksView(View):
         return render(request,TEMPLATE_ROOT+"desks.html",context) 
     
     
-
-
 class ShippersView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -342,7 +357,6 @@ class ShippersView(View):
         return render(request,TEMPLATE_ROOT+"shippers.html",context) 
     
    
-    
 class ShipperView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -372,8 +386,7 @@ class CustomerView(View):
  
  
         return render(request,TEMPLATE_ROOT+"customer.html",context) 
-    
-   
+       
     
 class CustomersView(View):
     def get(self,request,*args, **kwargs):
