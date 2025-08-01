@@ -170,7 +170,7 @@ class LikeRepo():
         likes=Like.objects.filter(page_id=page.id).filter(person_id=me_person.id)
         my_like=False
         if len(likes)==0:
-            my_like=Like(page=page,profile=me_person)
+            my_like=Like(page=page,person=me_person)
             my_like.save()
             my_like=True
         else:

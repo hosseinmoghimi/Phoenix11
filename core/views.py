@@ -85,14 +85,14 @@ def PageContext(request,page,*args, **kwargs):
     from attachments.views import PageTagsContext,PageLocationsContext,PageImagesContext,PageRelatedContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
     if request.user.has_perm(APP_NAME+'.change_page'):
         context['set_page_thumbnail_header_form']=SetPageThumbnailHeaderForm()
-    context.update(PageLikesContext(request=request,page=page,profile=me_person))
-    context.update(PageCommentsContext(request=request,page=page,profile=me_person))
-    context.update(PageLinksContext(request=request,page=page,profile=me_person))
-    context.update(PageDownloadsContext(request=request,page=page,profile=me_person))
-    context.update(PageImagesContext(request=request,page=page,profile=me_person))
-    context.update(PageRelatedContext(request=request,page=page,profile=me_person))
-    context.update(PageLocationsContext(request=request,page=page,profile=me_person))
-    context.update(PageTagsContext(request=request,page=page,profile=me_person))
+    context.update(PageLikesContext(request=request,page=page,person=me_person))
+    context.update(PageCommentsContext(request=request,page=page,person=me_person))
+    context.update(PageLinksContext(request=request,page=page,person=me_person))
+    context.update(PageDownloadsContext(request=request,page=page,person=me_person))
+    context.update(PageImagesContext(request=request,page=page,person=me_person))
+    context.update(PageRelatedContext(request=request,page=page,person=me_person))
+    context.update(PageLocationsContext(request=request,page=page,person=me_person))
+    context.update(PageTagsContext(request=request,page=page,person=me_person))
     return context
 
 

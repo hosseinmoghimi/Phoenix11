@@ -26,14 +26,14 @@ WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
 
-def PageLikesContext(request,page,profile,*args, **kwargs):
+def PageLikesContext(request,page,person,*args, **kwargs):
     context={}
     like_repo = LikeRepo(request=request) 
     my_like = like_repo.my_like(page=page)
     likes_count = like_repo.likes_count(page=page)
     context['my_like']=my_like
     context['likes_count']=likes_count  
-    if profile is not None:
+    if person is not None:
         context['toggle_page_like_form']=TogglePageLikeForm()
     return context
  
@@ -43,53 +43,53 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
  
-def PageCommentsContext(request,page,profile,*args, **kwargs):
+def PageCommentsContext(request,page,person,*args, **kwargs):
     context={}
     comment_repo = CommentRepo(request=request) 
     comments=comment_repo.list(page_id=page.id)
     comments_s=json.dumps(CommentSerializer(comments,many=True).data)
     context['comments']=comments  
     context['comments_s']=comments_s  
-    if profile is not None:
+    if person is not None:
         if request.user.has_perm(APP_NAME+'.add_comment'):
             context['add_comment_form']=AddPageCommentForm()
             context['delete_comment_form']=DeletePageCommentForm()
     return context
  
-def PageLinksContext(request,page,profile,*args, **kwargs):
+def PageLinksContext(request,page,person,*args, **kwargs):
     context={}
     link_repo = LinkRepo(request=request) 
     links=link_repo.list(page_id=page.id)
     links_s=json.dumps(LinkSerializer(links,many=True).data)
     context['links']=links  
     context['links_s']=links_s  
-    if profile is not None:
-        if profile.user.has_perm(APP_NAME+'.add_link'):
+    if person is not None:
+        if person.user.has_perm(APP_NAME+'.add_link'):
             context['add_link_form']=AddLinkForm()
     return context
 
-def PageDownloadsContext(request,page,profile,*args, **kwargs):
+def PageDownloadsContext(request,page,person,*args, **kwargs):
     context={}
     download_repo = DownloadRepo(request=request) 
     downloads=download_repo.list(page_id=page.id)
     downloads_s=json.dumps(DownloadSerializer(downloads,many=True).data)
     context['downloads']=downloads  
     context['downloads_s']=downloads_s  
-    if profile is not None:
-        if profile.user.has_perm(APP_NAME+'.add_download'):
+    if person is not None:
+        if person.user.has_perm(APP_NAME+'.add_download'):
             context['add_download_form']=AddDownloadForm()
     return context
 
 
-def PageTagsContext(request,page,profile,*args, **kwargs):
+def PageTagsContext(request,page,person,*args, **kwargs):
     context={}
     tag_repo = TagRepo(request=request) 
     tags=tag_repo.list(page_id=page.id)
     tags_s=json.dumps(TagSerializer(tags,many=True).data)
     context['tags']=tags  
     context['tags_s']=tags_s  
-    if profile is not None:
-        if profile.user.has_perm(APP_NAME+'.add_tag'):
+    if person is not None:
+        if person.user.has_perm(APP_NAME+'.add_tag'):
             context['add_tag_form']=AddTagForm()
     return context
 
@@ -107,7 +107,7 @@ def PageRelatedContext(request,page,*args, **kwargs):
 
 
 
-def PageImagesContext(request,page,profile,*args, **kwargs):
+def PageImagesContext(request,page,person,*args, **kwargs):
     context={}
     image_repo = ImageRepo(request=request) 
     images=image_repo.list(page_id=page.id)
@@ -116,7 +116,7 @@ def PageImagesContext(request,page,profile,*args, **kwargs):
     context['images_s']=images_s  
     if request.user.has_perm(APP_NAME+'.add_image') :
         context['add_image_form']=AddImageForm()
-    if profile is not None :
+    if person is not None :
         context['add_image_form']=False
     return context
 
