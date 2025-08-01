@@ -10,7 +10,9 @@
     bedehkar: false ,
     bestankar: false ,  
     bedehkar_code: "0", 
-    bestankar_code: "0",   
+    bestankar_code: "0",  
+    message:{show:false},
+    waiting:false, 
     },
 
     components: {
@@ -96,7 +98,11 @@
           if (data.result === "SUCCEED") {
             if (typeof invoices_app != "undefined") {
               invoices_app.invoices.push(data.invoice);
+              show_message(add_invoice_app,'موفق',data.message,'success',5000)
             }
+          }
+          else{
+            show_message(add_invoice_app,'خطا',data.message,'danger',5000)
           }
         });
       },

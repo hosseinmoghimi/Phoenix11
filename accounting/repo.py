@@ -2240,6 +2240,11 @@ class FinancialEventRepo():
     
     def add_financial_event(self,*args,**kwargs):
         result,message,financial_event=FAILED,"",None
+        
+        if len(FinancialEvent.objects.filter(title=kwargs['title']))>0:
+            message='عنوان تکراری' 
+            return result,message,None
+        
         if not self.request.user.has_perm(APP_NAME+".add_financialevent"):
             message="دسترسی غیر مجاز"
             return result,message,financial_event
@@ -2350,6 +2355,11 @@ class InvoiceRepo(FinancialEventRepo):
 
     def add_invoice(self,*args,**kwargs):
         result,message,invoice=FAILED,"",None
+        
+        if len(Invoice.objects.filter(title=kwargs['title']))>0:
+            message='عنوان تکراری' 
+            return result,message,invoice
+            
         if not self.request.user.has_perm(APP_NAME+".add_invoice"):
             message="دسترسی غیر مجاز"
             return result,message,invoice
@@ -2397,7 +2407,6 @@ class InvoiceRepo(FinancialEventRepo):
         if 'title' in kwargs:
             invoice.title=kwargs['title'] 
 
-            
         if 'bedehkar_id' in kwargs and kwargs['bedehkar_id'] is not None:
             invoice.bedehkar_id=kwargs['bedehkar_id'] 
 
@@ -2418,6 +2427,7 @@ class InvoiceRepo(FinancialEventRepo):
                     invoice_line.unit_price=int(new_invoice_line['unit_price'])
                     invoice_line.discount_percentage=int(new_invoice_line['discount_percentage'])
                     invoice_line.save()
+                    
         return invoice.save()
 
 

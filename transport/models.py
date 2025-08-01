@@ -53,7 +53,7 @@ class MaintenanceInvoice(Invoice):
             self.class_name='maintenanceinvoice'
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        super(MaintenanceInvoice,self).save(*args, **kwargs)
+        result,message,inv=super(MaintenanceInvoice,self).save(*args, **kwargs)
         result=SUCCEED
         message='با موفقیت اضافه شد.'    
         return (result,message,self)

@@ -143,6 +143,7 @@ class MaintenanceInvoiceRepo():
         
         
     def add_maintenance_invoice(self,*args,**kwargs):
+
         result,message,maintenance_invoice=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_maintenance_invoice"):
             message="دسترسی غیر مجاز"
@@ -180,7 +181,9 @@ class MaintenanceInvoiceRepo():
             maintenance_invoice.maintenance_type=kwargs["maintenance_type"]
 
            
-           
+        if len(MaintenanceInvoice.objects.filter(title=kwargs['title']))>0:
+            message='عنوان تکراری'    
+            return result,message,maintenance_invoice
         (result,message,maintenance_invoice)=maintenance_invoice.save()
         return result,message,maintenance_invoice
     

@@ -738,6 +738,7 @@ class Invoice(FinancialEvent):
 
         super(Invoice,self).save()
         result=SUCCEED
+        message='فاکتور با موفقیت اضافه شد.'
         return result,message,invoice
 
 
