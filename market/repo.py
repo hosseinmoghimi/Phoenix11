@@ -5,7 +5,7 @@ from .enums import *
 from log.repo import LogRepo 
 from django.db.models import Q
 from django.shortcuts import reverse
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo
 from accounting.repo import InvoiceLineItemUnitRepo
 from utility.num import filter_number
 from utility.calendar import PersianCalendar
@@ -21,7 +21,7 @@ class MenuRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=Menu.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_menu"):
                 self.objects=Menu.objects
@@ -84,7 +84,7 @@ class ShopPackageRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=ShopPackage.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_desk"):
                 self.objects=ShopPackage.objects
@@ -159,7 +159,7 @@ class DeskRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=Desk.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_desk"):
                 self.objects=Desk.objects
@@ -226,7 +226,7 @@ class DeskCustomerRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=DeskCustomer.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_desk_customer"):
                 self.objects=DeskCustomer.objects
@@ -293,8 +293,8 @@ class ShopRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=Shop.objects.filter(id=0)
-        me_profile=ProfileRepo(request=request).me
-        if me_profile is not None:
+        me_person=PersonRepo(request=request).me
+        if me_person is not None:
             if request.user.has_perm(APP_NAME+".view_shop"):
                 self.objects=Shop.objects
                 self.my_accounts=self.objects 
@@ -376,10 +376,18 @@ class CustomerRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        self.objects=Customer.objects
-        me_profile=ProfileRepo(request=request).me
-        if me_profile is not None:
-            self.me=self.objects.filter(person_account__person_id=me_profile.id).first()
+        self.objects=Customer.objects.filter(pk=0)
+        person=PersonRepo(request=request).me
+        if request.user.has_perm(APP_NAME+'.view_customer'):
+            self.objects=Customer.objects
+        elif person is not None:
+            self.objects=Customer.objects.filter(person_account__person_id=person.id)
+
+
+        
+        if person is not None:
+            self.me=Customer.objects.filter(person_account__person_id=person.id).first()
+
     def list(self,*args, **kwargs):
         objects=self.objects
         pure_code="876454453342236"
@@ -445,7 +453,7 @@ class ShipperRepo():
         self.request=request
         self.me=None
         self.objects=Shipper.objects
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             self.me=self.objects.filter(person_account__person__profile_id=profile.id).first()
     def list(self,*args, **kwargs):
@@ -510,7 +518,7 @@ class CartItemRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=CartItem.objects
         # if profile is not None:
         #     self.me=self.objects.filter(profile=profile).first()
@@ -642,7 +650,7 @@ class SupplierRepo():
         self.me=None
         self.objects=Supplier.objects
 
-        person=ProfileRepo(request=request).me
+        person=PersonRepo(request=request).me
         if person is not None:
             self.me=self.objects.filter(person_account__person_id=person.id).first()
 

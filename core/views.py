@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,CURRENCY,VUE_VERSION_3,VUE_VERSION_2
-from authentication.repo import PersonRepo,ProfileRepo
+from authentication.repo import PersonRepo,PersonRepo
 from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
 from .enums import *
@@ -55,6 +55,7 @@ def CoreContext(request,*args, **kwargs):
 
     context['phoenix_apps']=phoenix_apps
     parameter_repo=ParameterRepo(request=request,app_name=app_name)
+    context['WIDE_LAYOUT']=parameter_repo.parameter(name=PARAMETER_NAME_ENUM.WIDE_LAYOUT,default="0").boolean_value
     context['farsi_font_name']=parameter_repo.parameter(name=PARAMETER_NAME_ENUM.FARSI_FONT,default="Tanha").value
     # app_has_background=parameter_repo.parameter(name=ParameterNameEnum.HAS_APP_BACKGROUND,default=False).boolean_value
     # app_background_image=PictureRepo(request=request,app_name=app_name).picture(name=PictureNameEnum.APP_BACKGROUND_IMAGE)
@@ -80,18 +81,18 @@ def getContext(request,*args, **kwargs):
 def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
-    me_profile=ProfileRepo(request=request).me
+    me_person=PersonRepo(request=request).me
     from attachments.views import PageTagsContext,PageLocationsContext,PageImagesContext,PageRelatedContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
     if request.user.has_perm(APP_NAME+'.change_page'):
         context['set_page_thumbnail_header_form']=SetPageThumbnailHeaderForm()
-    context.update(PageLikesContext(request=request,page=page,profile=me_profile))
-    context.update(PageCommentsContext(request=request,page=page,profile=me_profile))
-    context.update(PageLinksContext(request=request,page=page,profile=me_profile))
-    context.update(PageDownloadsContext(request=request,page=page,profile=me_profile))
-    context.update(PageImagesContext(request=request,page=page,profile=me_profile))
-    context.update(PageRelatedContext(request=request,page=page,profile=me_profile))
-    context.update(PageLocationsContext(request=request,page=page,profile=me_profile))
-    context.update(PageTagsContext(request=request,page=page,profile=me_profile))
+    context.update(PageLikesContext(request=request,page=page,profile=me_person))
+    context.update(PageCommentsContext(request=request,page=page,profile=me_person))
+    context.update(PageLinksContext(request=request,page=page,profile=me_person))
+    context.update(PageDownloadsContext(request=request,page=page,profile=me_person))
+    context.update(PageImagesContext(request=request,page=page,profile=me_person))
+    context.update(PageRelatedContext(request=request,page=page,profile=me_person))
+    context.update(PageLocationsContext(request=request,page=page,profile=me_person))
+    context.update(PageTagsContext(request=request,page=page,profile=me_person))
     return context
 
 

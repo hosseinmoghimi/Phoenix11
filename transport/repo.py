@@ -5,7 +5,7 @@ from .enums import *
 from log.repo import LogRepo 
 from django.db.models import Q
 from django.shortcuts import reverse
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo
 from utility.constants import FAILED,SUCCEED
 from utility.log import leolog
 
@@ -16,7 +16,7 @@ class VehicleRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=Vehicle.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_vehicle"):
                 self.objects=Vehicle.objects
@@ -63,7 +63,7 @@ class MaintenanceInvoiceRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=MaintenanceInvoice.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_maintenance_invoice"):
                 self.objects=MaintenanceInvoice.objects

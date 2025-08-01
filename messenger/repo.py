@@ -3,7 +3,7 @@ from authentication.serializers import ProfileSerializer
 import pusher
 from django.db.models.query_utils import Q
 from pusher.http import request_method
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo
 from messenger.models import Member, Message,Channel, Notification
 
 class NotificationRepo():
@@ -11,7 +11,7 @@ class NotificationRepo():
         self.request = request
          
         self.objects = Notification.objects
-        self.me=ProfileRepo(request=self.request).me
+        self.me=PersonRepo(request=self.request).me
 
     def add(self,*args, **kwargs):
         title=""
@@ -43,7 +43,7 @@ class MessageRepo:
         self.request = request
          
         self.objects = Message.objects
-        self.me=ProfileRepo(request=request).me
+        self.me=PersonRepo(request=request).me
     def list(self,*args, **kwargs):
         objects=self.objects.all()
         if 'channel_id' in kwargs:
@@ -79,7 +79,7 @@ class MessageRepo:
         message.event=event
         message.title=message_title
         message.body=message_body
-        message.sender=ProfileRepo(request=self.request).me
+        message.sender=PersonRepo(request=self.request).me
         message.save()
         
         if channel is None:
@@ -106,7 +106,7 @@ class NotificationRepo:
         self.request = request
          
         self.objects = Notification.objects
-        self.me=ProfileRepo(request=self.request).me
+        self.me=PersonRepo(request=self.request).me
     def list(self,*args, **kwargs):
         objects=self.objects.all()
         if 'member_id' in kwargs:
@@ -137,7 +137,7 @@ class NotificationRepo:
         notification.member=member
         notification.title=message_title
         notification.body=message_body
-        notification.sender=ProfileRepo(request=self.request).me
+        notification.sender=PersonRepo(request=self.request).me
         notification.save()
         
         if channel is None:
@@ -164,7 +164,7 @@ class ChannelRepo:
         self.request = request
          
         self.objects = Channel.objects
-        self.me=ProfileRepo(request=self.request).me
+        self.me=PersonRepo(request=self.request).me
     def list(self,*args, **kwargs):
         objects=self.objects.all()
         if 'for_home' in kwargs:
@@ -186,7 +186,7 @@ class MemberRepo:
         self.request = request
          
         self.objects = Member.objects
-        self.me=ProfileRepo(request=self.request).me
+        self.me=PersonRepo(request=self.request).me
     def list(self,*args, **kwargs):
         objects=self.objects.all()
         if 'for_home' in kwargs:

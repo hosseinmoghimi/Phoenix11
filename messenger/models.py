@@ -98,7 +98,7 @@ class Member(models.Model,LinkHelper):
         verbose_name_plural = _("Members")
 
     def __str__(self):
-        return f"""{self.event} {self.profile.full_name}"""
+        return f"""{self.event} {self.person.full_name}"""
  
 
 class Notification(Message,LinkHelper):

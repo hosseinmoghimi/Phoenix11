@@ -25,14 +25,13 @@ from core.views import MessageView
 from .models import UnitNameEnum
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='accounting/'
-WIDE_LAYOUT=False
+WIDE_LAYOUT=True
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
 
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
-    context['WIDE_LAYOUT']=WIDE_LAYOUT
- 
+    # context['WIDE_LAYOUT']=WIDE_LAYOUT
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
  

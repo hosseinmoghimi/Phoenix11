@@ -1,18 +1,18 @@
 from archive.models import Folder,File
 from django.db.models import Q
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo
 from .apps import APP_NAME
     
 
 class FolderRepo:
     def __init__(self,request, *args, **kwargs): 
         self.request = request 
-        self.profile = ProfileRepo(request=request).me
+        self.person = PersonRepo(request=request).me
         self.objects = Folder.objects.order_by('name')
         if self.request.user.has_perm(APP_NAME+".view_folder"):
             self.objects = self.objects.all()
-        elif self.profile is not None:
-            self.objects = self.profile.folder_set.all()
+        elif self.person is not None:
+            self.objects = self.person.folder_set.all()
         else:
             self.objects = self.objects.filter(pk=0)
 
@@ -20,8 +20,8 @@ class FolderRepo:
         if not self.request.user.has_perm(APP_NAME+".add_folder"):
             return
         folder=Folder(*args, **kwargs)
-        if self.profile is not None:
-            folder.owner=self.profile
+        if self.person is not None:
+            folder.owner=self.person
         folder.save(*args, **kwargs)
         return folder
     def list(self, *args, **kwargs):
@@ -61,23 +61,23 @@ class FolderRepo:
             return folder
         else:
             folder=self.objects.filter(pk=pk).first()
-        if self.profile is None or folder is None:
+        if self.person is None or folder is None:
             return
         if self.request.user.has_perm(APP_NAME+".view_fodler"):
             return folder
-        if self.profile in folder.profiles.all() or self.profile.pk==folder.owner.pk:
+        if self.person in folder.profiles.all() or self.person.pk==folder.owner.pk:
             return folder 
    
 
 class FileRepo:
     def __init__(self,request, *args, **kwargs):
         self.request = request
-        self.profile = ProfileRepo(request=request).me
+        self.person = PersonRepo(request=request).me
         self.objects = File.objects.all()
         if self.request.user.has_perm(APP_NAME+".view_file"):
             self.objects = self.objects.all()
-        elif self.profile is not None:
-            self.objects = self.objects.filter(Q(is_public=True)|Q(folder__owner_id=self.profile.pk))
+        elif self.person is not None:
+            self.objects = self.objects.filter(Q(is_public=True)|Q(folder__owner_id=self.person.pk))
         else:
             self.objects = self.objects.filter(pk=0)
 

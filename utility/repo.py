@@ -1,8 +1,8 @@
 from .models import Parameter,Picture
 from utility.constants import *
 from django.db.models import Q
-from authentication.repo import ProfileRepo
-# from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo
+# from authentication.repo import PersonRepo
 from .apps import APP_NAME
 
 from .log import leolog
@@ -23,7 +23,7 @@ class PictureRepo:
         if 'request' in kwargs:
             self.request=kwargs['request']
             self.user=self.request.user 
-        self.profile=ProfileRepo(request=self.request).me
+        self.person=PersonRepo(request=self.request).me
         self.objects=Picture.objects.filter(app_name=self.app_name)
     def list(self,*args, **kwargs):
         return self.objects.filter(app_name=self.app_name)
@@ -68,7 +68,7 @@ class ParameterRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=None 
         self.app_name=None
-        self.profile=None
+        self.person=None
         self.request=request
         if request is not None:
             self.user=self.request.user 
@@ -78,7 +78,7 @@ class ParameterRepo:
             self.objects=Parameter.objects.filter(app_name=self.app_name)
         else:
             self.app_name=None
-        # self.profile=ProfileRepo(request=self.request).me
+        # self.person=PersonRepo(request=self.request).me
         
         if 'force' in kwargs and kwargs['force']:
             self.objects=Parameter.objects.all()

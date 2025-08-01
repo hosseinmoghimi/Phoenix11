@@ -4,7 +4,7 @@ from .enums import *
 from log.repo import LogRepo 
 from django.db.models import Q
 from django.shortcuts import reverse
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo
 from accounting.repo import InvoiceLineItemUnitRepo
 from utility.num import filter_number
 from utility.calendar import PersianCalendar
@@ -19,7 +19,7 @@ class WareHouseRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=WareHouse.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_account"):
                 self.objects=WareHouse.objects

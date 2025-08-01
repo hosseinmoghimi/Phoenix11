@@ -2,7 +2,7 @@ from .models import Drug
 from .apps import APP_NAME
 from .enums import * 
 from django.db.models import Q 
-from authentication.repo import ProfileRepo 
+from authentication.repo import PersonRepo 
 from utility.num import filter_number
 from utility.calendar import PersianCalendar
 from utility.constants import FAILED,SUCCEED
@@ -17,7 +17,7 @@ class DrugRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=Drug.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_account"):
                 self.objects=Drug.objects

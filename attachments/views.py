@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,CURRENCY,VUE_VERSION_3,VUE_VERSION_2
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo
 from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
 from .forms import *
@@ -139,7 +139,7 @@ def PageLocationsContext(request,page,*args, **kwargs):
 
 class DownloadView(View):
     def get(self, request, *args, **kwargs): 
-        me = ProfileRepo(request=request).me
+        me = PersonRepo(request=request).me
         download = DownloadRepo(request=request).download(*args, **kwargs)
         if download is None or (me is None and not download.is_open):
             pass
@@ -191,7 +191,7 @@ class IndexView(View):
 
 class TagView(View):
     def get(self, request, *args, **kwargs):
-        me = ProfileRepo(request=request).me
+        me = PersonRepo(request=request).me
         tag = TagRepo(request=request).tag(*args, **kwargs)
         if tag is None:
             title='تگ پیدا نشد.'
@@ -214,7 +214,7 @@ class TagView(View):
 
 class TagsView(View):
     def get(self, request, *args, **kwargs):
-        me = ProfileRepo(request=request).me
+        me = PersonRepo(request=request).me
         tags = TagRepo(request=request).list(*args, **kwargs)
         tags_s=json.dumps(TagSerializer(tags,many=True).data)
         context=getContext(request=request)
@@ -275,7 +275,7 @@ class ImagesView(View):
   
 class ImageView(View):
     def get(self, request, *args, **kwargs):
-        me = ProfileRepo(request=request).me
+        me = PersonRepo(request=request).me
         image = ImageRepo(request=request).image(*args, **kwargs)
         if image is None:
             raise Http404

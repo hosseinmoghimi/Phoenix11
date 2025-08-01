@@ -16,7 +16,7 @@ class PersonRepo():
         self.request=request
         if request.user.is_authenticated:
             self.me=Person.objects.filter(user_id=request.user.id).first()
-        # person=ProfileRepo(request=request).me
+        # person=PersonRepo(request=request).me
         self.objects=Person.objects
 
         
@@ -109,7 +109,7 @@ class PersonRepo():
             person.title=kwargs["title"]
             
         if 'person_id' in kwargs and kwargs['person_id']>0:
-            person=ProfileRepo(request=self.request).person(person_id=kwargs['person_id'])
+            person=PersonRepo(request=self.request).person(person_id=kwargs['person_id'])
             person.person=person
         if 'color' in kwargs:
             person.color=kwargs["color"]
@@ -170,5 +170,5 @@ class PersonRepo():
         LogRepo(request=self.request).add_log(title="try to login",app_name=APP_NAME,description="try to login username:"+kwargs['username']+" , password : "+kwargs['password'])
     
 
-class ProfileRepo(PersonRepo):
+class PersonRepo(PersonRepo):
         pass 

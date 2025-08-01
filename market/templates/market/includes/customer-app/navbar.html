@@ -2,12 +2,14 @@
     <a class="nav-link dropdown-toggle text-right" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
       aria-haspopup="true" aria-expanded="false">
 
-      {{me_customer.person.full_name}}
-
+      <small class="text-muted mr-1">
+        خریدار
+      </small>
+      {{me_customer.person_account.person.full_name}}
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
       <a class="dropdown-item" style="text-align: center;" href="{{me_customer.get_absolute_url}}">
-        <img src="{{me_profile.image}}" class="rounded-circle" width="128" alt="">
+        <img src="{{me_customer.person_account.person.image}}" class="rounded-circle" width="128" alt="">
       </a>
 
       <a class="dropdown-item" style="text-align: center;" href="{{me_customer.get_absolute_url}}">

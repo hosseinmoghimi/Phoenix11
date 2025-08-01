@@ -102,10 +102,10 @@ class ParametersView(View):
 class BackupDBView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
-        from authentication.views import ProfileRepo
+        from authentication.views import PersonRepo
         from django.http import HttpResponse
         from django.utils import timezone
-        me = ProfileRepo(request=request).me
+        me = PersonRepo(request=request).me
         if not request.user.has_perm("core.change_download"):
             mv=MessageView(request=request)
             mv.title="عدم دسترسی مجاز"

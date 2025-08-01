@@ -69,7 +69,7 @@ class Folder(models.Model,LinkHelper):
 #         verbose_name_plural = _("FolderPermissions")
 
 #     def __str__(self):
-#         return f"""{"rw" if self.can_write else "r"} ^ {self.folder.title} @ {self.profile.name} """
+#         return f"""{"rw" if self.can_write else "r"} ^ {self.folder.title} @ {self.person.name} """
  
 class File(Page):
     folder=models.ForeignKey("folder",related_name="files", verbose_name=_("folder"), on_delete=models.CASCADE)

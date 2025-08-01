@@ -1,4 +1,4 @@
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo
 from messenger.enums import ParameterEnum
 from messenger.serializers import MemberSerializer,NotificationSerializer
 from messenger.repo import MemberRepo, MessageRepo,ChannelRepo,NotificationRepo
@@ -17,7 +17,7 @@ def MessengerContext(request,*args, **kwargs):
     if 'person' in kwargs and kwargs['person'] is not None:
         person=kwargs['person']
     else:
-        person=ProfileRepo(request=request).me
+        person=PersonRepo(request=request).me
         if person is None:
             context['PUSHER_IS_ENABLE']=False
             return {}
@@ -52,10 +52,10 @@ def get_member_context(request,*args, **kwargs):
         profile=kwargs['profile']
         member=profile.member_set.first()
     elif 'profile_id' in kwargs:
-        profile=ProfileRepo(request=request).profile(*args, **kwargs)
+        profile=PersonRepo(request=request).profile(*args, **kwargs)
         member=profile.member_set.first()
     else:
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         member=profile.member_set.first()
     
     if member is not None:

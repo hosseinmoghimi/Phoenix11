@@ -22,7 +22,7 @@ class InvoiceLineItemUnitRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         
         
         self.objects=None
@@ -97,7 +97,7 @@ class InvoiceLineRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         
         
         self.objects=None
@@ -603,7 +603,7 @@ class FinancialYearRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=FinancialYear.objects
 
         
@@ -700,7 +700,7 @@ class PersonCategoryRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=PersonCategory.objects
         # if profile is not None:
         #     self.me=self.objects.filter(profile=profile).first()
@@ -802,7 +802,7 @@ class ProductSpecificationRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         
         
         self.objects=None
@@ -867,7 +867,7 @@ class ProductRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=Product.objects
         # if profile is not None:
         #     self.me=self.objects.filter(profile=profile).first()
@@ -1057,7 +1057,7 @@ class InvoiceLineItemRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=InvoiceLineItem.objects
         # if profile is not None:
         #     self.me=self.objects.filter(profile=profile).first()
@@ -1134,7 +1134,7 @@ class BankAccountRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=BankAccount.objects
        
 
@@ -1231,7 +1231,7 @@ class FinancialDocumentRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=FinancialDocument.objects
         # if profile is not None:
         #     self.me=self.objects.filter(profile=profile).first()
@@ -1364,7 +1364,7 @@ class BrandRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=Brand.objects
        
 
@@ -1454,7 +1454,7 @@ class AssetRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=Asset.objects
        
 
@@ -1529,7 +1529,7 @@ class BankRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=Bank.objects
        
 
@@ -1619,7 +1619,7 @@ class ServiceRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=Service.objects
         # if profile is not None:
         #     self.me=self.objects.filter(profile=profile).first()
@@ -1787,7 +1787,7 @@ class FinancialDocumentRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=FinancialDocument.objects
         # if profile is not None:
         #     self.me=self.objects.filter(profile=profile).first()
@@ -1888,7 +1888,7 @@ class FinancialDocumentLineRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
+        # profile=PersonRepo(request=request).me
         self.objects=FinancialDocumentLine.objects
         
     def list(self,*args, **kwargs):

@@ -165,12 +165,12 @@ class LikeRepo():
         if page is None:
             return None
         me_person=PersonRepo(request=self.request).me
-        if me_profile is None:
+        if me_person is None:
             return None
-        likes=Like.objects.filter(page_id=page.id).filter(person_id=me_profile.id)
+        likes=Like.objects.filter(page_id=page.id).filter(person_id=me_person.id)
         my_like=False
         if len(likes)==0:
-            my_like=Like(page=page,profile=me_profile)
+            my_like=Like(page=page,profile=me_person)
             my_like.save()
             my_like=True
         else:
@@ -275,7 +275,7 @@ class LocationRepo():
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        self.profile=PersonRepo(*args, **kwargs).me
+        self.person=PersonRepo(*args, **kwargs).me
         self.objects = Location.objects
     def list(self,*args, **kwargs):
         objects= self.objects
@@ -328,7 +328,7 @@ class LocationRepo():
             location.latitude=kwargs['latitude']
         if 'longitude' in kwargs:
             location.longitude=kwargs['longitude']
-        location.creator=self.profile
+        location.creator=self.person
         (result,message,location)=location.save()
         return result,message,location
     
@@ -347,7 +347,7 @@ class AreaRepo():
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        self.profile=PersonRepo(*args, **kwargs).me
+        self.person=PersonRepo(*args, **kwargs).me
         self.objects = Area.objects
     def list(self,*args, **kwargs):
         objects= self.objects

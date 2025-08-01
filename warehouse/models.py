@@ -49,7 +49,7 @@ class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
         verbose_name_plural = _("MaterialPorts")
 
     def __str__(self):
-        return f"{self.profile}  {self.product}  {self.direction}"
+        return f"{self.person}  {self.product}  {self.direction}"
 
 
 class WareHouseMaterialSheet(models.Model,LinkHelper):

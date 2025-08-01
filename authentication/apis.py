@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import PersonRepo,ProfileRepo
+from .repo import PersonRepo,PersonRepo
 from .serializers import PersonSerializer,ProfileSerializer
 from django.http import JsonResponse
 from .forms import *
@@ -92,7 +92,7 @@ class SelectProfileApi(APIView):
         if select_profile_form.is_valid():
             log=333
             cd=select_profile_form.cleaned_data
-            profile=ProfileRepo(request=request).profile(**cd)
+            profile=PersonRepo(request=request).profile(**cd)
             if profile is not None:
                 context['profile']=ProfileSerializer(profile).data
                 message='موفق'

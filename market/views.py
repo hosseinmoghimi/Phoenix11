@@ -17,7 +17,7 @@ from core.views import CoreContext,leolog
 from authentication.views import PersonRepo,PersonSerializer,AddPersonContext
 from utility.enums import PersonPrefixEnum
 from .serializers import CustomerSerializer
-
+from utility.views import MessageView
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='market/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -29,7 +29,6 @@ def getContext(request,*args, **kwargs):
     context[WIDE_LAYOUT]=False 
     me_supplier=SupplierRepo(request=request).me
     me_customer=CustomerRepo(request=request).me
-
     context['market_navbar']=False
     if me_supplier is not None:
         context['market_navbar']=True
@@ -362,7 +361,12 @@ class CustomerView(View):
         context=getContext(request=request)
         customer =CustomerRepo(request=request).customer(*args, **kwargs)
         context['customer']=customer
-        
+        if customer is None:
+            msg={}
+            msg['title']='خطا'
+            msg['body']='خریداری پیدا نشد.'
+            mv=MessageView(**msg)
+            return mv.get(request=request)   
         customer_s=json.dumps(CustomerSerializer(customer,many=False).data)
         context['customer_s']=customer_s
  

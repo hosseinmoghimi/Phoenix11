@@ -13,22 +13,38 @@
             <small class="text-muted">
                 مشتری :
             </small>
-            {{customer.person.full_name}}
+            {{customer.person_account.person.full_name}}
         </h5>
     </div>
     <div class="col-md-4">
         <div class="card">
             <div class="card-header ">
                 <h6>
-                    {{customer.person.full_name}}
+                    <small class="text-muted">
+                    خریدار :
+
+                    </small>
+                    {{customer.person_account.person.full_name}}
 
                 </h6>
             </div>
             <div class="card-body">
-                {% if customer.account %}
                 <h6>
-                    <a href="{{customer.account.get_absolute_url}}">
-                        {{customer.account.name}}
+                    <small class="text-muted">
+                    خریدار :
+
+                    </small>
+                    {{customer.person_account.person.full_name}}
+
+                </h6>
+                {% if customer.person_account %}
+                <h6>
+                    <small class="text-muted">
+                    حساب :
+
+                    </small>
+                    <a href="{{customer.person_account.get_absolute_url}}">
+                        {{customer.person_account.name}}
                     </a>
                 </h6>
                 {% endif %}

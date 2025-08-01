@@ -1,9 +1,9 @@
 from django.shortcuts import render,redirect,reverse
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import ProfileRepo
+from .repo import PersonRepo
 from django.views import View
 from .serializers import PersonSerializer,ProfileSerializer
-from .repo import PersonRepo,FAILED,SUCCEED,ProfileRepo
+from .repo import PersonRepo,FAILED,SUCCEED,PersonRepo
 from .forms import *
 from django.http import HttpResponseRedirect
 from .apps import APP_NAME
@@ -81,7 +81,7 @@ class ChangeProfileImageView(View):
                 log=3              
                 profile_id=change_profile_image_form.cleaned_data['profile_id']
                 image=request.FILES['image']
-                result=ProfileRepo(request=request).change_image(profile_id=profile_id,
+                result=PersonRepo(request=request).change_image(profile_id=profile_id,
                 image=image,
                 )
         return redirect(reverse(APP_NAME+":profile",kwargs={'pk':profile_id}))
@@ -90,7 +90,7 @@ class ChangeProfileImageView(View):
 class ProfilesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request) 
-        profiles=ProfileRepo(request=request).list(*args, **kwargs)
+        profiles=PersonRepo(request=request).list(*args, **kwargs)
         profiles_s=json.dumps(ProfileSerializer(profiles,many=True).data)
         context['profiles']=profiles
         context['profiles_s']=profiles_s
@@ -165,7 +165,7 @@ class LoginView(View):
         else:
             context['next']=SITE_URL
 
-        ProfileRepo(request=request).logout(request)
+        PersonRepo(request=request).logout(request)
         context['login_form']=LoginForm()
         context['build_absolute_uri']=request.build_absolute_uri()
         build_absolute_uri=request.build_absolute_uri()
@@ -187,7 +187,7 @@ class LoginView(View):
             if 'next' in login_form.cleaned_data:
                 next=login_form.cleaned_data['next']
             
-            a=ProfileRepo(request=request).login(request=request,username=username,password=password)
+            a=PersonRepo(request=request).login(request=request,username=username,password=password)
             if a is not None:
                 (request,user)=a
                 return HttpResponseRedirect(next)
@@ -204,6 +204,6 @@ class ChangePasswordView(View):
 
 class LogoutView(View):
     def get(self,request,*args, **kwargs):
-        ProfileRepo(request=request).logout(request)
+        PersonRepo(request=request).logout(request)
         message='شما با موفقیت از سیستم خارج شدید.'
         return LoginView().get(request=request,messages=[message])
