@@ -770,6 +770,11 @@ class PersonCategoryRepo():
             person_category.account=Account.objects.filter(id=account_id).first()
 
           
+        if 'account_code' in kwargs:
+            account_code=kwargs["account_code"]
+            person_category.account=Account.objects.filter(code=account_code).first()
+
+          
          
         if 'title' in kwargs:
             if len(PersonCategory.objects.filter(title=kwargs["title"]))>0:
@@ -780,6 +785,7 @@ class PersonCategoryRepo():
             person_category.priority=kwargs["priority"] 
         if 'code_length' in kwargs:
             person_category.code_length=kwargs["code_length"] 
+        leolog(kwargs=kwargs)
         person_category.save()
         result=SUCCEED
         message="دسته بندی جدید برای اشخاص با موفقیت اضافه گردید."
