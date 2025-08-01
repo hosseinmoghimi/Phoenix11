@@ -48,14 +48,21 @@ class OrganizationUnitRepo():
         if not self.request.user.has_perm(APP_NAME+".add_organizationunit"):
             message="دسترسی غیر مجاز"
             return result,message,organization_unit
+        if len(OrganizationUnit.objects.filter(title=kwargs['title']))>0:
+            message="عنوان تکراری"
+            return result,message,organization_unit
+        if len(OrganizationUnit.objects.filter(person_account_id=kwargs['person_account_id']))>0:
+            message="حساب تکراری"
+            return result,message,organization_unit
         organization_unit=OrganizationUnit()
         if 'name' in kwargs:
             organization_unit.name=kwargs["name"]
         if 'parent_id' in kwargs :
             if kwargs["parent_id"] is not None and kwargs["parent_id"]>0:
                 organization_unit.parent_id=kwargs["parent_id"]
-        if 'account_id' in kwargs:
-            organization_unit.my_account_id=kwargs["account_id"]
+
+        if 'person_account_id' in kwargs:
+            organization_unit.person_account_id=kwargs["person_account_id"]
             # from accounting.models import Account
             # account=Account.objects.filter(id=kwargs['account_id']).first()
             # if account is not None:
@@ -101,6 +108,11 @@ class EmployeeRepo():
         
     def add_employee(self,*args,**kwargs):
         result,message,employee=FAILED,"",None
+        if len(Employee.objects.filter(job_title=kwargs['job_title']).filter(person_id=kwargs['person_id']).filter(organization_unit_id=kwargs['organization_unit_id']))>0:
+            message="پرسنل تکراری"
+            return result,message,None
+        
+
         if not self.request.user.has_perm(APP_NAME+".add_organizationunit"):
             message="دسترسی غیر مجاز"
             return result,message,employee

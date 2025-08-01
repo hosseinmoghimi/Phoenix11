@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import School,CourseClass,Course
-from accounting.serializers import FinancialEventSerializer,InvoiceLineSerializer,AccountBriefSerializer
+from accounting.serializers import FinancialEventSerializer,InvoiceLineSerializer,AccountBriefSerializer,PersonAccountSerializer
 
 class CourseSerializer(serializers.ModelSerializer):
        class Meta:
@@ -8,10 +8,10 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = ['id','title','thumbnail','get_absolute_url','get_edit_url','get_delete_url']
  
 class SchoolSerializer(serializers.ModelSerializer):
-       account=AccountBriefSerializer()
+       person_account=PersonAccountSerializer()
        class Meta:
         model = School
-        fields = ['id','name','account', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','name','person_account', 'get_absolute_url','get_edit_url','get_delete_url']
  
 class CourseClassSerializer(FinancialEventSerializer):
        class Meta:

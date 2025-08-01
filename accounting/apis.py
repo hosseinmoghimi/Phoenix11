@@ -555,6 +555,7 @@ class SelectPersonAccountApi(APIView):
                     result=SUCCEED
                     message="موفقیت آمیز"
                     context['person_account']=PersonAccountSerializer(person_account).data
+                    context['account']=AccountSerializer(person_account).data
         context['message']=message
         context['result']=result
         context['log']=log

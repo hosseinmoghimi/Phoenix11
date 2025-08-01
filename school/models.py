@@ -6,7 +6,7 @@ from accounting.models import Product,InvoiceLine,Invoice,CorePage
 
 class School(models.Model,LinkHelper):
     name=models.CharField(_("نام"), max_length=50)
-    account=models.ForeignKey("accounting.account", verbose_name=_("account"),null=True,blank=True, on_delete=models.CASCADE)
+    person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.CASCADE)
 
     app_name=APP_NAME
     class_name="school"

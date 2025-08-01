@@ -515,14 +515,17 @@ class PersonAccountRepo():
         return result,message,person_account
 
     def person_account(self,*args, **kwargs):
-        if "person_account_id" in kwargs and kwargs["person_account"] is not None:
+        if "person_account_id" in kwargs and kwargs["person_account_id"] is not None:
             return self.objects.filter(pk=kwargs['person_account_id']).first() 
         if "pk" in kwargs and kwargs["pk"] is not None:
             return self.objects.filter(pk=kwargs['pk']).first() 
         if "id" in kwargs and kwargs["id"] is not None:
             return self.objects.filter(pk=kwargs['id']).first() 
         if "code" in kwargs and kwargs["code"] is not None:
-            return self.objects.filter(code=kwargs['code']).first()
+            code=kwargs['code']
+            return self.objects.filter(code=code).first()
+        if "person_account_code" in kwargs and kwargs["person_account_code"] is not None:
+            return self.objects.filter(code=kwargs['person_account_code']).first()
              
         if "account_code" in kwargs and kwargs["account_code"] is not None:
             a= self.objects.filter(code=kwargs['account_code']).first() 

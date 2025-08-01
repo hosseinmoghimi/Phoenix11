@@ -45,15 +45,21 @@ class SchoolRepo():
         
     def add_school(self,*args,**kwargs):
         result,message,school=FAILED,"",None
+        if len(School.objects.filter(name=kwargs["name"]))>0:
+            message='نام تکراری برای آموزشگاه جدید'
+            return FAILED,message,None
+        if len(School.objects.filter(person_account_id=kwargs["person_account_id"]))>0:
+            message='حساب تکراری برای آموزشگاه جدید'
+            return FAILED,message,None
         if not self.request.user.has_perm(APP_NAME+".add_school"):
             message="دسترسی غیر مجاز"
             return result,message,school
 
-        school=School()
+        school=School() 
+        if 'person_account_id' in kwargs:
+            school.person_account_id=kwargs["person_account_id"]
         if 'name' in kwargs:
             school.name=kwargs["name"]
-        if 'account_id' in kwargs:
-            school.account_id=kwargs["account_id"]
           
         (result,message,school)=school.save()
         return result,message,school

@@ -45,6 +45,10 @@ class WareHouseRepo():
         
     def add_warehouse(self,*args,**kwargs):
         result,message,warehouse=FAILED,"",None
+        
+        if len(WareHouse.objects.filter(name=kwargs["name"]))>0:
+            message='نام تکراری برای انبار جدید'
+            return FAILED,message,None 
         if not self.request.user.has_perm(APP_NAME+".add_warehouse"):
             message="دسترسی غیر مجاز"
             return result,message,warehouse

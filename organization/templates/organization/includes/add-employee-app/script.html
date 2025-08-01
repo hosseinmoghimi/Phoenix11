@@ -11,6 +11,8 @@
     event_date: current_date,
     event_time: "00:00:00",
     event_datetime: current_datetime,
+    message:{show:false},
+    waiting:false,
     },
     components: {
       DatePicker: VuePersianDatetimePicker,
@@ -63,9 +65,14 @@
         posting.done((data) => {
           console.log(data);
           if (data.result === "SUCCEED") {
+            show_message(add_employee_app,'موفق',data.message,'success',2000)
             if (typeof employees_app != "undefined") {
               employees_app.employees.push(data.employee);
             }
+          }
+          
+          else{
+            show_message(add_employee_app,'خطا',data.message,'danger',2000)
           }
         });
       },

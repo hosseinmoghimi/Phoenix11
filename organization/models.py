@@ -6,11 +6,11 @@ from utility.models import DateTimeHelper
 
 
 class OrganizationUnit(Page,LinkHelper):
-    my_account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person account"), on_delete=models.CASCADE)
     # account_code=models.CharField(_("account_code"), max_length=50)
     @property
     def account(self):
-        return self.my_account
+        return self.person_account
     #     from accounting.models import Account
     #     return Account.objects.filter(code=self.account_code).first()
 

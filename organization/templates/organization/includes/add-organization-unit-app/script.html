@@ -1,27 +1,28 @@
-{% include "accounting/includes/account-app/select-script.html" %}
+{% include "accounting/includes/person-account-app/select-script.html" %}
 <script>
   let add_organization_unit_app = new Vue({
     el: "#add-organization-unit-app",
     data: {
     title: "",
-    account_code:"0",
-    account:{id:"0"},
+    person_account_code:"0",
+    person_account:{id:"0"},
     event_date: current_date,
     event_time: "00:00:00",
     event_datetime: current_datetime,
+    message:{show:false},
+    waiting:false,
     },
     components: {
       DatePicker: VuePersianDatetimePicker,
     },
     methods: {
       
-      select_account: function () {
-          select_account_by_code(add_organization_unit_app.account_code).done((data) => {
-              add_organization_unit_app.account = data.account;
+      select_person_account: function () {
+          select_person_account_by_code(add_organization_unit_app.person_account_code).done((data) => {
               if (data.result === "SUCCEED") {
-                  add_organization_unit_app.account = data.account;
+                  add_organization_unit_app.person_account = data.person_account;
               } else {
-                  add_organization_unit_app.account = {}
+                  add_organization_unit_app.person_account = {}
               }
         });
       },
@@ -50,7 +51,7 @@
         let payload = {
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           title: this.title,
-          account_id: this.account.id,
+          person_account_id: this.person_account.id,
           event_datetime: this.event_date+" "+this.event_time,
         };
 
@@ -60,9 +61,13 @@
         posting.done((data) => {
           console.log(data);
           if (data.result === "SUCCEED") {
+            show_message(add_organization_unit_app,'موفق',data.message,'success',2000)
             if (typeof organization_units_app != "undefined") {
               organization_units_app.organization_units.push(data.organization_unit);
             }
+          }
+          else{
+            show_message(add_organization_unit_app,'خطا',data.message,'danger',2000)
           }
         });
       },

@@ -10,7 +10,7 @@ from projectmanager.models import Request
 
 class WareHouse(models.Model,LinkHelper):
     name=models.CharField(_("نام"), max_length=50)
-    account=models.ForeignKey("accounting.account", verbose_name=_("account"),null=True,blank=True, on_delete=models.PROTECT)
+    person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"),null=True,blank=True, on_delete=models.PROTECT)
     organization_unit=models.ForeignKey("organization.organizationunit", verbose_name=_("organization_unit"),null=True,blank=True, on_delete=models.PROTECT)
 
     app_name=APP_NAME
