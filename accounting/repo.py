@@ -939,8 +939,9 @@ class ProductRepo():
 
             
         if 'brand_id' in kwargs:
-            if kwargs['brand_id']>0:
-                product.brand_id=kwargs["brand_id"]
+            brand_id=kwargs['brand_id']
+            if brand_id is not None and brand_id>0:
+                product.brand_id=brand_id
 
             
         if 'model' in kwargs:

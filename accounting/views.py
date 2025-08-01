@@ -1216,8 +1216,17 @@ class PersonAccountView(View):
 class PersonCategoryView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        person_category=PersonAccountRepo(request=request).person_category(*args, **kwargs)
+        person_category=PersonCategoryRepo(request=request).person_category(*args, **kwargs)
         context['person_category']=person_category
+
+        person_accounts=person_category.personaccount_set.all()
+
+        context['person_accounts']=person_accounts
+        person_accounts_s=json.dumps(PersonAccountSerializer(person_accounts,many=True).data)
+        context['person_accounts_s']=person_accounts_s
+
+
+
         return render(request,TEMPLATE_ROOT+"person-category.html",context)
 
 
