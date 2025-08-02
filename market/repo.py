@@ -76,8 +76,6 @@ class MenuRepo():
 
  
 
- 
-
 class ShopPackageRepo():
     def __init__(self,request,*args, **kwargs):
         self.me=None
@@ -150,7 +148,6 @@ class ShopPackageRepo():
          
         (result,message,shop_package)=shop_package.save()
         return result,message,shop_package
-
 
 
 class DeskRepo():
@@ -304,7 +301,10 @@ class ShopRepo():
         shops=Shop.objects.filter(product_id=product.id)
         if len(shops)==1:
             return shops.first()
+        if len(shops)>1:
+            return shops.order_by('unit_price').first()
         return None
+    
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
@@ -339,7 +339,6 @@ class ShopRepo():
             return self.objects.filter(pk=kwargs['pk']).first() 
         if "id" in kwargs and kwargs["id"] is not None:
             return self.objects.filter(pk=kwargs['id']).first() 
-        
         
     def add_shop(self,*args,**kwargs):
         result,message,shop=FAILED,"",None
@@ -376,7 +375,6 @@ class ShopRepo():
          
         (result,message,shop)=shop.save()
         return result,message,shop
-
 
 
 class CustomerRepo():
@@ -452,7 +450,6 @@ class CustomerRepo():
         (result,message,customer)=customer.save() 
 
         return result,message,customer
- 
 
 
 class ShipperRepo():
@@ -520,6 +517,7 @@ class ShipperRepo():
         (result,message,shipper)=shipper.save() 
 
         return result,message,shipper
+
 
 class CartItemRepo():
     def __init__(self,request,*args, **kwargs):

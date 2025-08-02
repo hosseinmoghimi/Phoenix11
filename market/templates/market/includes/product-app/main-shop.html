@@ -1,9 +1,10 @@
 
+{% load to_price %}
 {% if primary_shop %}
     <button class="btn btn-danger">
         هر 
         {{primary_shop.unit_name}}
-        {{primary_shop.unit_price}}
+        {{primary_shop.unit_price|to_price}}
         {{CURRENCY}}
     </button>
 {% else %}
