@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import MenuRepo,ShopRepo,SupplierRepo,CustomerRepo,ShipperRepo
-from .serializers import MenuSerializer,ShopSerializer,SupplierSerializer,CustomerSerializer,ShipperSerializer
+from .repo import MenuRepo,ShopRepo,SupplierRepo,CustomerRepo,ShipperRepo,CartItemRepo
+from .serializers import MenuSerializer,ShopSerializer,CartItemSerializer,SupplierSerializer,CustomerSerializer,ShipperSerializer
 from django.http import JsonResponse
 from .enums import *
 from .forms import *
@@ -57,6 +57,28 @@ class AddShopPackageApi(APIView):
   
 
   
+class AddCartItemApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_to_cart_form=AddCartItemForm(request.POST)
+        if add_to_cart_form.is_valid():
+            log=333
+            cd=add_to_cart_form.cleaned_data
+            result,message,cart_item=CartItemRepo(request=request).add_cart_item(**cd)
+            if cart_item is not None:
+                context['cart_item']=CartItemSerializer(cart_item).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+
 class AddShopApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

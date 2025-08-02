@@ -7,7 +7,6 @@ class ProductSerializer(serializers.ModelSerializer):
         model=Product
         fields=['id', 'title','unit_name','unit_price','thumbnail','get_market_absolute_url',  'get_edit_url','get_delete_url']
  
-
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model=Category
@@ -83,4 +82,12 @@ class ShopPackageSerializer(serializers.ModelSerializer):
         fields=['id','supplier','level', 'title','get_absolute_url','quantity','available','persian_start_date','persian_end_date',  'get_edit_url','get_delete_url']
  
 
+ 
+
+class CartItemSerializer(serializers.ModelSerializer):
+    shop=ShopSerializer()
+    customer=CustomerSerializer()
+    class Meta:
+        model=CartItem
+        fields=['id', 'shop','quantity','customer','persian_date_added']
  

@@ -537,39 +537,26 @@ class CartItemRepo():
             search_for=kwargs["search_for"]
             objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(pure_code=pure_code ) )
             
-        if "supplier_id" in kwargs:
-            supplier_id=kwargs["supplier_id"]
-            objects=objects.filter(supplier_id=supplier_id)
+        if "shop_id" in kwargs:
+            shop_id=kwargs["shop_id"]
+            objects=objects.filter(shop_id=shop_id)
 
             
         if "customer_id" in kwargs:
             customer_id=kwargs["customer_id"]
             objects=objects.filter(customer_id=customer_id)
+            
+        if "supplier_id" in kwargs:
+            supplier_id=kwargs["supplier_id"]
+            objects=objects.filter(shop__supplier_id=supplier_id)
 
         if "product_id" in kwargs:
             product_id=kwargs["product_id"]
-            objects=objects.filter(product_id=product_id)
-        if "level" in kwargs:
-            level=kwargs["level"]
-            objects=objects.filter(level=level)
+            objects=objects.filter(shop__product_id=product_id)
+   
         return objects.all()
-    
-
-    def shop(self,*args, **kwargs):
-        if "shop_id" in kwargs and kwargs["shop_id"] is not None:
-            return self.objects.filter(pk=kwargs['shop_id']).first() 
-        if "pk" in kwargs and kwargs["pk"] is not None:
-            return self.objects.filter(pk=kwargs['pk']).first() 
-        if "id" in kwargs and kwargs["id"] is not None:
-            return self.objects.filter(pk=kwargs['id']).first() 
-        if "code" in kwargs and kwargs["code"] is not None:
-            return self.objects.filter(code=kwargs['code']).first()
-             
-        if "barcode" in kwargs and kwargs["barcode"] is not None:
-            a= self.objects.filter(barcode=kwargs['barcode']).first() 
-            return a 
-           
-    def add_to_cart(self,*args,**kwargs):
+   
+    def add_cart_item(self,*args,**kwargs):
         result,message,cart_item=FAILED,"",None
         me_customer=CustomerRepo(request=self.request).me
         if  me_customer is None and not self.request.user.has_perm(APP_NAME+".add_cartitem") :

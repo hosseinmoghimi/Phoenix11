@@ -24,6 +24,11 @@ class AddShopForm(forms.Form):
     end_date=forms.CharField(max_length=100, required=False)
     
 
+class AddCartItemForm(forms.Form):
+    unit_name=forms.CharField(max_length=100, required=False)
+    shop_id=forms.IntegerField(required=True)
+    quantity=forms.IntegerField(required=False)
+    
 class AddMarketPersonForm(forms.Form):
     level=forms.CharField(max_length=100, required=False)
     person_account_id=forms.IntegerField(required=True)

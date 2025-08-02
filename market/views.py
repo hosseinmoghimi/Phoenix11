@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from accounting.views import ProductRepo,PersonAccountRepo,AddPersonAccountContext,PersonAccountSerializer
-from .serializers import ShopPackageSerializer,ProductSerializer,MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
-from .repo import ShopPackageRepo,MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo,CustomerRepo,ShipperRepo
+from .serializers import CartItemSerializer,ShopPackageSerializer,ProductSerializer,MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
+from .repo import CartItemRepo,ShopPackageRepo,MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo,CustomerRepo,ShipperRepo
 from .forms import *
 from .apps import APP_NAME
 from .serializers import ShipperSerializer
@@ -36,10 +36,19 @@ def getContext(request,*args, **kwargs):
     if me_customer is not None:
         context['market_navbar']=True
         context['me_customer']=me_customer
+        context.update(CartItemContext(request=request,customer=me_customer))
 
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 
+def CartItemContext(request,customer,*args, **kwargs):
+    context={}
+    cart_items=CartItemRepo(request=request).list(customer_id=customer.id)
+    cart_items_s=json.dumps(CartItemSerializer(cart_items,many=True).data)
+    context['cart_items']=cart_items
+    context['cart_items_s']=cart_items_s
+    context['cart_items_navbar_s']=cart_items_s
+    return context
 def AddMarketPersonContext(request):
     context={}
     context=AddPersonAccountContext(request=request)
@@ -66,14 +75,12 @@ def AddCustomerContext(request,*args, **kwargs):
     return context
 
 
-
 def AddShipperContext(request,*args, **kwargs): 
     if not request.user.has_perm(APP_NAME+".add_shipper"):
         return {}
     context=AddMarketPersonContext(request=request) 
     context['add_shipper_form']=AddShipperForm()
     return context
-
 
        
 def AddShopPackageContext(request,*args, **kwargs):

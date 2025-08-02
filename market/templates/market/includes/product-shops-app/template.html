@@ -4,6 +4,9 @@
         <h4>
             فروشنده ها
         </h4>
+        <div>
+            {% include "utility/includes/message-app/alert.html" %}
+        </div>
         <product-shop-component v-for="shop in shops" :shop="shop">
         </product-shop-component>
     </div>

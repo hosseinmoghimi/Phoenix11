@@ -20,6 +20,7 @@ class MarketPerson(models.Model,LinkHelper):
     def full_name(self):
         return self.person_account.person.full_name
 
+
 class Customer(MarketPerson):
 
     level=models.CharField(_("level"),choices=ShopLevelEnum.choices,default=ShopLevelEnum.END_USER, max_length=50)
@@ -41,6 +42,12 @@ class Customer(MarketPerson):
     def total_in_cart(self):
         return 0
     
+    @property
+    def total_in_cart(self):
+        sum=0
+        for cart_item in self.cartitem_set.all():
+            sum+=cart_item.sum
+        return sum
 class Supplier(MarketPerson):
     level=models.CharField(_("level"),choices=ShopLevelEnum.choices,default=ShopLevelEnum.END_USER, max_length=50)
 
@@ -73,6 +80,7 @@ class Shipper(MarketPerson):
         message='حمل کننده جدید با موفقیت اضافه شد.'
         return result,message,shipper
 
+
 class ShopPackage(models.Model,LinkHelper,DateTimeHelper):
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
     title=models.CharField(_("title"), max_length=50)    
@@ -103,6 +111,7 @@ class ShopPackage(models.Model,LinkHelper,DateTimeHelper):
         message="پکیج با موفقیت اضافه شد."
         return (result,message,shop_package)
 
+
 class Shop(models.Model,LinkHelper,DateTimeHelper):
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
     product=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.CASCADE)
@@ -131,8 +140,9 @@ class Shop(models.Model,LinkHelper,DateTimeHelper):
         result=SUCCEED
         message="قیمت جدید با موفقیت اضافه شد."
         return (result,message,shop)
-         
-class CartItem(models.Model):
+
+
+class CartItem(models.Model,DateTimeHelper):
     row=models.IntegerField(_("ردیف"),default=1,blank=True)
     customer=models.ForeignKey("customer", verbose_name=_("مشتری"), on_delete=models.CASCADE)
     shop=models.ForeignKey("shop", verbose_name=_("فروش"), on_delete=models.CASCADE)
@@ -146,7 +156,18 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.customer} @ {self.shop} # {self.quantity} {self.shop.unit_name}"
- 
+    
+    def save(self):
+        result,message,cart_item=FAILED,'',self
+        super(CartItem,self).save()
+        result=SUCCEED
+        return result,message,cart_item
+    
+    @property
+    def sum(self):
+        sum=self.shop.unit_price*self.quantity
+        return sum
+
 
 class Menu(CorePage):
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)

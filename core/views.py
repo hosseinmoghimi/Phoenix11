@@ -32,7 +32,9 @@ def CoreContext(request,*args, **kwargs):
     context['VUE_VERSION_3']=VUE_VERSION_3
     context['VUE_VERSION_2']=VUE_VERSION_2
     context['DEBUG']=DEBUG
-    context['NAVBAR_ITEMS_LAYOUT']=app_name+'/includes/navbar.html'
+    context['APP_NAVBAR']=app_name+'/includes/navbar.html'
+    context['APP_SCRIPT']=app_name+'/includes/script.html'
+    context['APP_FOOTER']=app_name+'/includes/footer.html'
     me_person=PersonRepo(request=request).me
     if me_person is not None:
         context['me_person']=me_person
