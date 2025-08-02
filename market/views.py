@@ -49,6 +49,7 @@ def CartItemContext(request,customer,*args, **kwargs):
     context['cart_items_s']=cart_items_s
     context['cart_items_navbar_s']=cart_items_s
     return context
+
 def AddMarketPersonContext(request):
     context={}
     context=AddPersonAccountContext(request=request)
@@ -74,19 +75,16 @@ def AddCustomerContext(request,*args, **kwargs):
     context['add_customer_form']=AddCustomerForm()
     return context
 
-
 def AddShipperContext(request,*args, **kwargs): 
     if not request.user.has_perm(APP_NAME+".add_shipper"):
         return {}
     context=AddMarketPersonContext(request=request) 
     context['add_shipper_form']=AddShipperForm()
     return context
-
        
 def AddShopPackageContext(request,*args, **kwargs):
     context={}
     return context
-   
     
 def AddShopContext(request,*args, **kwargs):
  
@@ -390,6 +388,9 @@ class CustomerView(View):
             return mv.get(request=request)   
         customer_s=json.dumps(CustomerSerializer(customer,many=False).data)
         context['customer_s']=customer_s
+ 
+
+
  
  
         return render(request,TEMPLATE_ROOT+"customer.html",context) 
