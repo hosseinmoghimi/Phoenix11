@@ -45,7 +45,6 @@ class AddAccountForm(forms.Form):
 
 
 class AddPersonAccountForm(AddAccountForm):
-    account_id=forms.IntegerField(required=False)
     person_id=forms.IntegerField(required=True)
     person_category_id=forms.IntegerField(required=True)
     

@@ -10,8 +10,6 @@
         data: { 
             person_category_id:0,
             person:{},
-            account:{},
-            account_code:"",
             person_id:0,
             priority: 100,
             type: "",
@@ -56,7 +54,6 @@
                 const payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     priority: parseInt(this.priority),
-                    account_id: parseInt(this.account.id),
                     parent_id:0, 
                     person_id: parseInt(this.person.id),
                     person_category_id: parseInt(this.person_category_id),

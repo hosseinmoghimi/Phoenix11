@@ -57,42 +57,7 @@
               </div>
 
             </div>
-
-             <div class="col-md-6">
-              <div class="form-group">
-                <label for=""
-                  >شناسه حساب
-
-                  <a href="{% url 'accounting:accounts' %}" target="_blank"
-                    >همه حساب ها</a
-                  >
-                </label>
-                <input
-                  type="text"
-                  @input="select_account()"
-                  required
-                  class="form-control"
-                  v-model="account_code"
-                />
-              </div>
-                <div v-if="account.title">
-                <a :href="account.get_absolute_url">
-                  <div class="media">
-                    <img
-                      :src="account.image"
-                      class="rounded-circle"
-                      width="48"
-                      alt=""
-                    />
-                    <div class="media-body mr-2">
-                      <h6 :class="'text-'+account.color" v-text="account.title"></h6>
-                      <h6 class="small" v-text="account.code"></h6>
-                    </div>
-                  </div>
-                </a>
-              </div>
-            </div>
-
+ 
             
             <div class="col-md-3">
               <div class="form-group">

@@ -494,11 +494,6 @@ class PersonAccountRepo():
         person_account=PersonAccount()
         
         
-        if 'account_id' in kwargs:
-            account_id=kwargs['account_id']
-            if account_id is not None and account_id>0:
-                person_account.account_id=account_id
-       
     
 
         if 'person' in kwargs:
@@ -512,14 +507,13 @@ class PersonAccountRepo():
         result,message,person_account=person_account.save()
         # result=SUCCEED
         # message="با موفقیت حساب فرد ایجاد شد."
-        if person_account.account_id>0:
-            if 'title' in kwargs:
-                person_account.title=kwargs['title']
-            if 'code' in kwargs:
-                code=kwargs['code']
-                person_account.code=code
-            if 'color' in kwargs:
-                person_account.color=kwargs['color']
+        if 'title' in kwargs:
+            person_account.title=kwargs['title']
+        if 'code' in kwargs:
+            code=kwargs['code']
+            person_account.code=code
+        if 'color' in kwargs:
+            person_account.color=kwargs['color']
         
 
         return result,message,person_account
