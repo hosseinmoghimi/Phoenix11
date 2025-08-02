@@ -348,7 +348,7 @@ class ShopRepo():
                 message="دسترسی غیر مجاز"
                 return result,message,shop
 
-        shop=Shop()
+        shop=Shop(supplier_id=me_supplier.id)
         if 'level' in kwargs:
             shop.level=kwargs["level"]
         if 'unit_price' in kwargs:
@@ -356,9 +356,7 @@ class ShopRepo():
                 shop.unit_price=kwargs["unit_price"]
         if 'unit_name' in kwargs:
             shop.unit_name=kwargs["unit_name"]
-        if 'supplier_id' in kwargs:
-            shop.supplier_id=kwargs["supplier_id"]
-             
+         
         if 'available' in kwargs:
             shop.available=kwargs["available"]
             shop.quantity=kwargs["available"]

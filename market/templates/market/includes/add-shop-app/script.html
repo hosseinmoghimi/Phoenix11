@@ -51,9 +51,8 @@
                 const payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     product_id: parseInt("{{product.id}}"),
-                    discount_percentage: parseInt("{{discount_percentage}}"),
-                    coef: parseInt("{{coef}}"),
-                    supplier_id: parseInt("{{me_supplier.id}}"),
+                    discount_percentage: parseInt(this.discount_percentage),
+                    coef: parseInt(this.coef), 
                     level: this.level,
                     available: this.available,
                     unit_price: this.unit_price,
