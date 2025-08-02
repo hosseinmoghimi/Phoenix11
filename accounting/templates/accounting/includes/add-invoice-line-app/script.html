@@ -86,6 +86,18 @@
         return to_price(vall);
       },
       add_invoice_line: function () {
+        let failure=false
+        let quantity=0
+        try {
+          quantity=parseFloat(this.quantity)
+        } catch (error) {
+            show_message(add_invoice_line_app, 'خطا', ',عدد به درستی در فیلد تعداد وارد نشده است', 'danger', 2000)
+            failure=true
+        }
+        if(failure){
+          return
+        }
+
         add_invoice_line_app.show_add_btn = false
         add_invoice_line_app.waiting = true
         add_invoice_line_app.message.show = false
@@ -93,7 +105,7 @@
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           invoice_id: invoice_id,
           invoice_line_item_id: this.invoice_line_item_id,
-          quantity: parseInt(this.quantity),
+          quantity: parseFloat(this.quantity),
           unit_price: parseInt(this.unit_price),
           unit_name: this.unit_name,
           default: this.default11,

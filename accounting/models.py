@@ -781,7 +781,7 @@ class InvoiceLine(models.Model,LinkHelper):
     invoice=models.ForeignKey("invoice", verbose_name=_("invoice"), on_delete=models.PROTECT)
     invoice_line_item=models.ForeignKey("invoicelineitem", verbose_name=_("invoice_line_item"), on_delete=models.PROTECT)
     row=models.IntegerField(_("row"),default=0)
-    quantity=models.IntegerField(_("quantity"))
+    quantity=models.FloatField(_("quantity"))
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices, max_length=50)
     unit_price=models.IntegerField(_("unit_price"))
     discount_percentage=models.IntegerField(_("discount_percentage"),default=0)

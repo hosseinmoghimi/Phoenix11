@@ -29,10 +29,10 @@ class AddBrandForm(forms.Form):
     name=forms.CharField( required=True,max_length=100)
 
 
-
 class AddAssetForm(forms.Form):
     title=forms.CharField( required=True,max_length=100)
     owner_id=forms.IntegerField(required=False)
+
 
 class AddAccountForm(forms.Form):
     parent_code=forms.IntegerField( required=False)
@@ -45,6 +45,7 @@ class AddAccountForm(forms.Form):
 
 
 class AddPersonAccountForm(AddAccountForm):
+    account_id=forms.IntegerField(required=False)
     person_id=forms.IntegerField(required=True)
     person_category_id=forms.IntegerField(required=True)
     
@@ -238,7 +239,7 @@ class AddInvoiceLineForm(forms.Form):
     invoice_line_item_id=forms.IntegerField(required=True)
     invoice_id=forms.IntegerField(required=True)
     discount_percentage=forms.IntegerField(required=False)
-    quantity=forms.IntegerField(required=True)
+    quantity=forms.FloatField(required=True)
     unit_price=forms.IntegerField(required=True)
     coef=forms.IntegerField(required=False)
     save=forms.BooleanField(required=False)
