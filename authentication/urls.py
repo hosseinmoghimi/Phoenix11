@@ -15,7 +15,6 @@ urlpatterns = [
     path('login_as/<int:pk>/',views.LoginAsViews.as_view(),name="login_as"),
 
 
-    path('change-profile-image/',login_required(views.ChangeProfileImageView.as_view()),name="change_profile_image"),
     path('change-person-image/',login_required(views.ChangePersonImageView.as_view()),name="change_person_image"),
     path('persons/',login_required(views.PersonsView.as_view()),name="persons"),
     path('person/<int:pk>/',login_required(views.PersonView.as_view()),name="person"),

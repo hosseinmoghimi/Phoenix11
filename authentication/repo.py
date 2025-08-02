@@ -169,6 +169,4 @@ class PersonRepo():
                     return (request,user)
         LogRepo(request=self.request).add_log(title="try to login",app_name=APP_NAME,description="try to login username:"+kwargs['username']+" , password : "+kwargs['password'])
     
-
-class PersonRepo(PersonRepo):
-        pass 
+ 

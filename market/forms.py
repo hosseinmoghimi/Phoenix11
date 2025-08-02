@@ -1,24 +1,28 @@
 from django import forms
 
 class AddMenuForm(forms.Form):
-    title=forms.CharField( max_length=100, required=True)
-    supplier_id=forms.IntegerField( required=True)
+    title=forms.CharField(max_length=100, required=True)
+    supplier_id=forms.IntegerField(required=True)
     
 class AddShopToMenuForm(forms.Form):
-    title=forms.CharField( max_length=100, required=True)
-    supplier_id=forms.IntegerField( required=True)
+    title=forms.CharField(max_length=100, required=True)
+    supplier_id=forms.IntegerField(required=True)
 
     
 class AddShopForm(forms.Form):
-    unit_name=forms.CharField( max_length=100, required=True)
-    unit_price=forms.IntegerField( required=True)
-    available=forms.IntegerField( required=True)
-    product_id=forms.IntegerField( required=True)
-    supplier_id=forms.IntegerField( required=False)
-    menu_id=forms.IntegerField( required=False)
-    menu_title=forms.CharField( max_length=100, required=False)
-    start_date=forms.CharField( max_length=100, required=False)
-    end_date=forms.CharField( max_length=100, required=False)
+    level=forms.CharField(max_length=100, required=True)
+    unit_name=forms.CharField(max_length=100, required=True)
+    unit_price=forms.IntegerField(required=True)
+    available=forms.IntegerField(required=True)
+    product_id=forms.IntegerField(required=True)
+    supplier_id=forms.IntegerField(required=False)
+    coef=forms.IntegerField(required=False)
+    discount_percentage=forms.IntegerField(required=False)
+    menu_id=forms.IntegerField(required=False)
+    menu_title=forms.CharField(max_length=100, required=False)
+    start_date=forms.CharField(max_length=100, required=False)
+    end_date=forms.CharField(max_length=100, required=False)
+    
 
 class AddMarketPersonForm(forms.Form):
     level=forms.CharField(max_length=100, required=False)

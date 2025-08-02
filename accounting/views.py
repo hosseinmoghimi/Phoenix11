@@ -245,8 +245,7 @@ def InvoiceContext(request,invoice,*args, **kwargs):
 def ProductContext(request,product,*args, **kwargs):
     context=InvoiceLineItemContext(request=request,invoice_line_item=product)
     context['product']=product
-    base_price=product.base_price
-    context['base_price']=base_price
+    
 
  
     
@@ -269,11 +268,6 @@ def PersonContext(request,person):
     
     return context
 
-def ProductContext(request,product,*args, **kwargs):
-    context={}
-    context.update(InvoiceLineItemContext(request=request,invoice_line_item=product))
-    context["product"]=product
-    return context
  
 def ServiceContext(request,service,*args, **kwargs):
     context={}

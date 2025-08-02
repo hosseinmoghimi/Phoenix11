@@ -10,6 +10,8 @@
             start_date: current_date,
             end_date: current_date,
             available: 0,
+            coef:1,
+            discount_percentage:0,
 
         },
         components: {
@@ -19,8 +21,17 @@
         methods: {
             to_price:vll=>to_price(vll),
             add_shop: function () {
+                
                 if (this.available < 1) {
                     show_message(add_shop_app, "خطا", "موجودی را وارد کنید.", "danger", 5000)
+                    return
+                }
+                if (this.discount_percentage < 0 || this.discount_percentage>100) {
+                    show_message(add_shop_app, "خطا", "درصد تخفیف را وارد کنید.", "danger", 5000)
+                    return
+                }
+                if (this.coef < 0  ) {
+                    show_message(add_shop_app, "خطا", "ضریب را وارد کنید.", "danger", 5000)
                     return
                 }
 
@@ -40,6 +51,8 @@
                 const payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     product_id: parseInt("{{product.id}}"),
+                    discount_percentage: parseInt("{{discount_percentage}}"),
+                    coef: parseInt("{{coef}}"),
                     supplier_id: parseInt("{{me_supplier.id}}"),
                     level: this.level,
                     available: this.available,
@@ -55,6 +68,9 @@
                     if (data.result === "SUCCEED") {
                         if (typeof shops_app != "undefined") {
                             shops_app.shops.push(data.shop)
+                        }
+                        if (typeof product_shops_app != "undefined") {
+                            product_shops_app.shops.push(data.shop)
                         }
                         show_message(add_shop_app, "موفقیت آمیز", data.message, "success", 5000)
                     }

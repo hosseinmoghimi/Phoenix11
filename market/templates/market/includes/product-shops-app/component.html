@@ -13,7 +13,7 @@
     </div>
   </div>
   <div class="col-6">
-    <h6>
+    <h6 v-if="shop.discount_percentage>0">
       با
       <span v-text="shop.discount_percentage"></span>
       % تخفیف
