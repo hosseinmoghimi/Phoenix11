@@ -1,9 +1,8 @@
 from django.shortcuts import render,redirect,reverse
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import PersonRepo
 from django.views import View
-from .serializers import PersonSerializer,ProfileSerializer
-from .repo import PersonRepo,FAILED,SUCCEED,PersonRepo
+from .serializers import PersonSerializer
+from .repo import PersonRepo,FAILED,SUCCEED
 from .forms import *
 from django.http import HttpResponseRedirect
 from .apps import APP_NAME
@@ -36,6 +35,16 @@ def AddPersonContext(request,*args, **kwargs):
     return context
 
 
+def PersonContext(request,*args, **kwargs):
+    context={}
+    person=PersonRepo(request=request).person(*args, **kwargs)
+    if request.user.has_perm('authentication.change_person'):
+        if person.user is not None: 
+            context['login_as_form']=True 
+    context['person']=person
+    return context
+     
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -50,9 +59,9 @@ class IndexView(View):
 
 class ChangePersonImageView(View):
     def post(self,request,*args, **kwargs):
-        profile_id=0
+        person_id=0
         if 'pk' in kwargs:
-            profile_id=kwargs['pk']
+            person_id=kwargs['pk']
         log=1
         if request.method=='POST':
             log=2
@@ -65,39 +74,6 @@ class ChangePersonImageView(View):
                 image=image,
                 )
         return redirect(reverse(APP_NAME+":person",kwargs={'pk':person_id}))
-
-
-
-class ChangeProfileImageView(View):
-    def post(self,request,*args, **kwargs):
-        profile_id=0
-        if 'pk' in kwargs:
-            profile_id=kwargs['pk']
-        log=1
-        if request.method=='POST':
-            log=2
-            change_profile_image_form=ChangeProfileImageForm(request.POST,request.FILES)
-            if change_profile_image_form.is_valid():
-                log=3              
-                profile_id=change_profile_image_form.cleaned_data['profile_id']
-                image=request.FILES['image']
-                result=PersonRepo(request=request).change_image(profile_id=profile_id,
-                image=image,
-                )
-        return redirect(reverse(APP_NAME+":profile",kwargs={'pk':profile_id}))
-
-
-class ProfilesView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request) 
-        profiles=PersonRepo(request=request).list(*args, **kwargs)
-        profiles_s=json.dumps(ProfileSerializer(profiles,many=True).data)
-        context['profiles']=profiles
-        context['profiles_s']=profiles_s
-        if request.user.has_perm(APP_NAME+'.add_profile'):
-            context['add_profile_form']=AddProfileForm()  
-        return render(request,TEMPLATE_ROOT+"profiles.html",context)
-
 
 
 class LoginAsViews(View):
@@ -124,15 +100,6 @@ class PersonsView(View):
             context.update(AddPersonContext(request=request))
         return render(request,TEMPLATE_ROOT+"persons.html",context)
 
-def PersonContext(request,*args, **kwargs):
-    context={}
-    person=PersonRepo(request=request).person(*args, **kwargs)
-    if request.user.has_perm('authentication.change_person'):
-        if person.user is not None: 
-            context['login_as_form']=True 
-    context['person']=person
-    return context
-     
 
 class PersonView(View):
     def get(self,request,*args, **kwargs):
@@ -151,6 +118,7 @@ class PersonView(View):
         if request.user.has_perm(APP_NAME+'.change_person'):
             context['change_person_image_form']=ChangePersonImageForm()
         return render(request,TEMPLATE_ROOT+"person.html",context)
+ 
  
 class LoginView(View):
     def get(self,request,*args, **kwargs): 
