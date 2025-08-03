@@ -70,6 +70,9 @@ class Page(models.Model,LinkHelper,ImageHelper):
         return result,message,priority
 
     def save(self,*args, **kwargs):
+        from django.utils import timezone
+        now=timezone.now()
+        self.date_added=now
         if self.class_name is None or self.class_name=="":
             self.class_name="page"
         if self.app_name is None or self.app_name=="":

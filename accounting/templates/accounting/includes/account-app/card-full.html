@@ -1,6 +1,6 @@
-
 {% load account_code_seperator %}
 {% load static %}
+{% load to_persian_date %}
 {% load to_price %}
 <div class="card rtl text-right">
     <div class="card-header">
@@ -15,11 +15,11 @@
         </div>
         {% endif %}
         <div class="mt-2" id="account-code-app">
-            <h5 class="ltr" @click="copy_code()"   style="cursor: pointer;">
+            <h5 class="ltr" @click="copy_code()" style="cursor: pointer;">
                 <span class="ltr">
                     {{account.code | account_code_seperator}}
                 </span>
-            
+
             </h5>
 
         </div>
@@ -29,6 +29,14 @@
                 {{account.name}}
                 <span class="badge badge-{{account.color}}">{{account.type}}</span>
             </h3>
+
+            <h6>
+                <small class="text-muted">
+                    تاریخ ایجاد :
+                </small>
+                {{page.date_added|to_persian_datetime|safe}}
+            </h6>
+
         </div>
         <div class="my-2">
             <a href="{% url 'accounting:tree_chart' pk=account.id %}" target="_blank">
@@ -54,7 +62,7 @@
         <div id="account-balance-app">
             <small class="text-muted">مانده : </small>
             {{account.balance|to_price_color_btn|safe}}
-            <small class="text-muted"  v-show="show_balance_copied">کپی شد.</small>
+            <small class="text-muted" v-show="show_balance_copied">کپی شد.</small>
 
         </div>
 

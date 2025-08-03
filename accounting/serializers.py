@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Asset,Category,InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
-from .models import FinancialDocument,ProductSpecification,FinancialYear,PersonAccount
+from .models import FinancialDocument,ProductSpecification,FinancialYear,PersonAccount,BankAccount
 from .models import Brand,PersonCategory
 from authentication.serializers import PersonSerializer
 
@@ -139,4 +139,10 @@ class PersonAccountSerializer(serializers.ModelSerializer):
        person=PersonSerializer()
        class Meta:
         model = PersonAccount
+        fields = ['id','person','name','title','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+
+class BankAccountSerializer(serializers.ModelSerializer):
+       person=PersonSerializer()
+       class Meta:
+        model = BankAccount
         fields = ['id','person','name','title','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']

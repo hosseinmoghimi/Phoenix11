@@ -1,4 +1,5 @@
 {% load static %}
+{% load to_persian_date %}
 <h5>
   <a href="{% url 'core:page' pk=page.pk %}"> page: {{page.title}} </a>
 </h5>
@@ -16,6 +17,16 @@
 
     <img width="128" src="{{page.get_qrcode_url}}" alt="">
   </a>
+</div>
+<div>
+  <h6>
+  <small class="text-muted">
+    تاریخ ایجاد
+  </small>
+  
+
+  {{page.date_added|to_persian_datetime|safe}}
+</h6>
 </div>
 <div>{% include "attachments/includes/page-like-app/template.html" %}</div>
 <div class="my-3">

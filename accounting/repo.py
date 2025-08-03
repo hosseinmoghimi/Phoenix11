@@ -498,6 +498,9 @@ class PersonAccountRepo():
 
         if 'person' in kwargs:
             person_account.person=kwargs['person']
+
+        if 'nature' in kwargs:
+            person_account.nature=kwargs['nature']
         if 'person_id' in kwargs:
             person_account.person_id=kwargs['person_id']
         if 'person_category' in kwargs:
@@ -505,17 +508,19 @@ class PersonAccountRepo():
         if 'person_category_id' in kwargs:
             person_account.person_category_id=kwargs['person_category_id']
         result,message,person_account=person_account.save()
+        if person_account is None:
+            return result,message,None
         # result=SUCCEED
         # message="با موفقیت حساب فرد ایجاد شد."
-        if 'title' in kwargs:
-            person_account.title=kwargs['title']
-        if 'code' in kwargs:
-            code=kwargs['code']
-            person_account.code=code
+        # if 'title' in kwargs:
+        #     person_account.title=kwargs['title']
+        # if 'code' in kwargs:
+        #     code=kwargs['code']
+        #     person_account.code=code
         if 'color' in kwargs:
             person_account.color=kwargs['color']
         
-
+            person_account.save()
         return result,message,person_account
 
     def person_account(self,*args, **kwargs):
@@ -1179,34 +1184,36 @@ class BankAccountRepo():
             return self.objects.filter(pk=kwargs['id']).first() 
         if "code" in kwargs and kwargs["code"] is not None:
             return self.objects.filter(code=kwargs['code']).first()
-             
-    def add_bank_account(self,*args,**kwargs):
+    
+    
+    def add_bank_account(self,*args, **kwargs):
         result,message,bank_account=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_bankaccount"):
             message="دسترسی غیر مجاز"
             return result,message,bank_account
+        bank_account=BankAccount()
+        
+        
 
-        bank_account=BankAccount() 
 
- 
-
-        if BankAccount.objects.filter(title=kwargs['title']).first() is not None:
-            message="نام وارد شده تکراری است."
-            bank_account=None
-            return result,message,bank_account
-
-        if BankAccount.objects.filter(code=kwargs['code']).first() is not None:
-            message="کد وارد شده تکراری است."
-            bank_account=None
-            return result,message,bank_account
-
-  
+        if 'person' in kwargs:
+            bank_account.person=kwargs['person']
+        if 'person_id' in kwargs:
+            bank_account.person_id=kwargs['person_id']
+        if 'person_category' in kwargs:
+            bank_account.person_category=kwargs['person_category']
+        if 'person_category_id' in kwargs:
+            bank_account.person_category_id=kwargs['person_category_id']
+        # result=SUCCEED
+        # message="با موفقیت حساب فرد ایجاد شد."
         if 'title' in kwargs:
-            bank_account.title=kwargs["title"] 
-            bank_account.name=kwargs["title"] 
-
-
-            
+            bank_account.title=kwargs['title']
+        if 'code' in kwargs:
+            code=kwargs['code']
+            bank_account.code=code
+        if 'color' in kwargs:
+            bank_account.color=kwargs['color']
+        
   
         if 'card_no' in kwargs:
             bank_account.card_no=kwargs["card_no"] 
@@ -1220,26 +1227,20 @@ class BankAccountRepo():
   
         if 'account_no' in kwargs:
             bank_account.account_no=kwargs["account_no"] 
+  
+        if 'title' in kwargs:
+            bank_account.title=kwargs["title"] 
 
         if 'bank_id' in kwargs:
             bank_account.bank_id=kwargs["bank_id"] 
+        # result,message,bank_account=bank_account.save()
+        # return result,message,bank_account 
+        return bank_account.save()
 
-        if 'person_id' in kwargs:
-            bank_account.person_id=kwargs["person_id"]
 
-        if 'code' in kwargs:
-            bank_account.code=kwargs["code"] 
 
-        if 'parent_code' in kwargs:
-            parent=Account.objects.filter(code=kwargs['parent_code']).first()
-            bank_account.parent=parent
-        
-        bank_account.save() 
-        if bank_account.id is not None:
-            message="حساب بانکی جدید با موفقیت اضافه شد."
-            result=SUCCEED
-        return result,message,bank_account
 
+ 
  
 class FinancialDocumentRepo():
     def __init__(self,request,*args, **kwargs):
@@ -2142,6 +2143,12 @@ class FinancialEventRepo():
             search_for=kwargs["search_for"]
             codeee=str(filter_number(search_for))
             objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
+        if "account_code" in kwargs:
+            account_code=kwargs["account_code"]
+            objects=objects.filter(Q(bedehkar__code=account_code) | Q(bestankar__code=account_code)  )
+        if "account_id" in kwargs:
+            account_id=kwargs["account_id"]
+            objects=objects.filter(Q(bedehkar_id=account_id) | Q(bestankar_id=account_id)  )
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  

@@ -1,5 +1,6 @@
 {% load static %} 
 {% load to_price %} 
+{% load to_persian_date %}
 {% load account_code_seperator %}
 {% load to_price_color_btn %}
 <div class="card rtl text-right">
@@ -26,7 +27,14 @@
       <small class="text-muted"> کد : </small>
       {{account.code}}
     </h5>
+<h6>
+  <small class="text-muted">
+    تاریخ ایجاد
+  </small>
+  
 
+  {{page.date_added|to_persian_datetime|safe}}
+</h6>
     <h5 class="text-center mt-4">
       <small class="text-muted"> مانده : </small>
       {{account.balance|to_price_color|safe}} {{CURRENCY}}

@@ -1,4 +1,5 @@
 {% load static %}
+{% load to_persian_date %}
 {% load to_price %}
 {% load account_code_seperator %}
 
@@ -21,7 +22,12 @@
             <span class="badge badge-{{account.color}}">{{account.type}}</span>
 
         </h5>
-
+<h6>
+    <small class="text-muted">
+        تاریخ ایجاد :
+    </small>
+    {{page.date_added|to_persian_datetime|safe}}
+</h6>
         
  
 

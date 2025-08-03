@@ -8,10 +8,10 @@ from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRep
 from utility.log import leolog
 from .serializers import  InvoiceLineItemUnitBriefSerializer, ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer,BrandSerializer
-from .serializers import AssetSerializer
+from .serializers import AssetSerializer,BankAccountSerializer
 from django.http import JsonResponse
 from .forms import *
-from .repo import FinancialYearRepo,ProductSpecificationRepo,PersonAccountRepo
+from .repo import FinancialYearRepo,ProductSpecificationRepo,PersonAccountRepo,BankAccountRepo
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer,PersonCategorySerializer
  
 class AddProductToCategoryApi(APIView):
@@ -52,6 +52,29 @@ class AddPersonAccountApi(APIView):
             result,message,person_account=PersonAccountRepo(request=request).add_person_account(**cd)
             if result==SUCCEED:
                 context['person_account']=PersonAccountSerializer(person_account,many=False).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+
+class AddBankAccountApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_bank_account_form=AddBankAccountForm(request.POST)
+        if add_bank_account_form.is_valid():
+            log=333
+            cd=add_bank_account_form.cleaned_data
+            result,message,bank_account=BankAccountRepo(request=request).add_bank_account(**cd)
+            if result==SUCCEED:
+                context['bank_account']=BankAccountSerializer(bank_account,many=False).data
         context['message']=message
         context['result']=result
         context['log']=log

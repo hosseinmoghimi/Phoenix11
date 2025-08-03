@@ -38,6 +38,10 @@ urlpatterns = [
     
     
     
+    path("add-bank-account/",login_required(apis.AddBankAccountApi.as_view()),name="add_bank_account"),
+    path('bank-accounts/',login_required(views.BankAccountsView.as_view()),name="bank_accounts"),
+    path('bank-account/',login_required(views.BankAccountView.as_view()),name="bankaccount"),
+
     path('accounts/',login_required(views.AccountsView.as_view()),name="accounts"),
     path('account/<int:pk>/',login_required(views.AccountView.as_view()),name="account"),
     path("add-account/",login_required(apis.AddAccountApi.as_view()),name="add_account"),

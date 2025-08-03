@@ -2,6 +2,8 @@ from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from utility.log import leolog
 from .constants import EXCEL_PRODUCTS_DATA_START_ROW,EXCEL_SERVICES_DATA_START_ROW
+from .serializers import BankAccountSerializer
+
 
 from django.http import Http404,HttpResponse
 from django.views import View
@@ -18,7 +20,8 @@ from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategoryS
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
 from .serializers import PersonCategorySerializer,AssetSerializer
-from .repo import FinancialYearRepo
+from .repo import FinancialYearRepo,BankRepo
+from authentication.views import PersonContext
 from utility.currency import to_price_colored
 import json 
 from core.views import MessageView
@@ -35,6 +38,18 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
  
+def AddBrandContext(request,*args, **kwargs):
+    context={}
+    context['add_brand_form']=AddBrandForm()
+    return context
+
+def AddBankAccountContext(request,*args, **kwargs):
+    context=AddPersonAccountContext(request=request,*args, **kwargs)
+    context['add_bank_account_form']=AddBankAccountForm()
+    banks_for_add_bank_account=BankRepo(request=request).list(*args, **kwargs)
+    context['banks_for_add_bank_account']=banks_for_add_bank_account
+    return context
+
 def AddAccountContext(request,*args, **kwargs):
     context={}
     if request.user.has_perm(APP_NAME+".add_account"):
@@ -47,11 +62,13 @@ def AddAssetContext(request,*args, **kwargs):
     context={}
     context['add_asset_form']=AddAssetForm()
     return context
+
 def AddInvoiceLineItemContext(request,*args, **kwargs):
     context={}
     unit_names=(i[0] for i in UnitNameEnum.choices)
     context['unit_names_for_add_invoice_line_item']=unit_names
     return context
+
 def AssetContext(request,asset,*args, **kwargs):
     context={}
     context.update(PageContext(request=request,page=asset))
@@ -59,6 +76,7 @@ def AssetContext(request,asset,*args, **kwargs):
     asset_s=json.dumps(AssetSerializer(asset).data)
     context['asset_s']=asset_s
     return context
+
 def AddProductContext(request,*args, **kwargs):
     context=AddInvoiceLineItemContext(request=request)
     brands=BrandRepo(request=request).list()
@@ -134,7 +152,7 @@ def AccountContext(request,account,*args, **kwargs):
 
 
     
-    financial_events=FinancialEventRepo(request=request).list(account_code=account.code)
+    financial_events=FinancialEventRepo(request=request).list(account_id=account.id)
     financial_events_s=json.dumps(FinancialEventSerializer(financial_events,many=True).data)
     context['financial_events']=financial_events
     context['financial_events_s']=financial_events_s 
@@ -322,6 +340,20 @@ def AddPersonAccountContext(request,*args, **kwargs):
     person_categories=PersonCategoryRepo(request=request).list()
     context['person_categories']=person_categories
     context['add_person_account_form']=AddPersonAccountForm()
+    return context
+
+def PersonAccountContext(request,person_account,*args, **kwargs):
+    context=AccountContext(request=request,account=person_account,*args, **kwargs)
+    context['person_account']=person_account
+    person_account_s=json.dumps(PersonAccountSerializer(person_account).data)
+    context['person_account_s']=person_account_s
+    return context
+
+def BankAccountContext(request,bank_account,*args, **kwargs):
+    context=PersonAccountContext(request=request,person_account=bank_account,*args, **kwargs)
+    context['bank_account']=bank_account
+    bank_account_s=json.dumps(PersonAccountSerializer(bank_account).data)
+    context['bank_account_s']=bank_account_s
     return context
 
 class IndexView(View):
@@ -641,6 +673,7 @@ class AccountsView(View):
         context.update(AddAccountContext(request=request))
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
 
+
 class PersonView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -653,7 +686,6 @@ class PersonView(View):
 
             mv=MessageView(title=title,body=body)
             return mv.get(request=request)
-        from authentication.views import PersonContext
         context.update(PersonContext(request=request,person=person))
                 
         person_accounts=person.personaccount_set.all()
@@ -667,7 +699,6 @@ class PersonView(View):
             context.update(AddPersonAccountContext(request=request))
             
         return render(request,TEMPLATE_ROOT+"person.html",context)
-
 
 
 class AccountView(View):
@@ -1228,6 +1259,49 @@ class PersonAccountView(View):
         return render(request,TEMPLATE_ROOT+"person-account.html",context)
 
 
+class BankAccountsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+       
+        bank_accounts=BankAccountRepo(request=request).list(*args, **kwargs)
+
+        context['bank_accounts']=bank_accounts
+        bank_accounts_s=json.dumps(BankAccountSerializer(bank_accounts,many=True).data)
+        context['bank_accounts_s']=bank_accounts_s
+
+        
+        if request.user.has_perm(APP_NAME+'.add_bankaccount'):
+            context.update(AddBankAccountContext(request=request))
+            
+        return render(request,TEMPLATE_ROOT+"bank-accounts.html",context)
+
+
+class BankAccountView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        bank_account=BankAccountRepo(request=request).bank_account(*args, **kwargs)
+        context['bank_account']=bank_account
+
+        if bank_account is None:
+            raise Http404
+        context.update(BankAccountContext(request=request,bank_account=bank_account))
+         
+        return render(request,TEMPLATE_ROOT+"bank-account.html",context)
+
+
+class PersonAccountView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        person_account=PersonAccountRepo(request=request).person_account(*args, **kwargs)
+        context['person_account']=person_account
+
+        if person_account is None:
+            raise Http404
+        context.update(PersonAccountContext(request=request,person_account=person_account))
+         
+        return render(request,TEMPLATE_ROOT+"person-account.html",context)
+
+
 class PersonCategoryView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -1272,10 +1346,7 @@ class BrandView(View):
 
         return render(request,TEMPLATE_ROOT+"brand.html",context)   
 
-def AddBrandContext(request,*args, **kwargs):
-    context={}
-    context['add_brand_form']=AddBrandForm()
-    return context
+
 class BrandsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
