@@ -727,7 +727,8 @@ class Invoice(FinancialEvent):
         verbose_name = _("فاکتور")
         verbose_name_plural = _("فاکتور ها")
 
- 
+    def get_print_url(self):
+        return reverse(APP_NAME+':invoice_print',kwargs={'pk':self.pk})
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
             self.class_name="invoice"
@@ -806,7 +807,8 @@ class InvoiceLine(models.Model,LinkHelper):
         super(InvoiceLine,self).save()
         self.invoice.normalize()
 
-
+    def __str__(self):
+        return f'{self.invoice}>{self.invoice_line_item}*{self.quantity}'
 class Bank(models.Model,LinkHelper):
     name=models.CharField(_("name"),max_length=50)
     class_name="bank"

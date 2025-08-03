@@ -2133,8 +2133,7 @@ class FinancialEventRepo():
             for acc in my_accounts:
                 ids.append(acc.id)
             
-            iddsss=list(my_accounts)
-            leolog(iddsss=iddsss)
+             
             self.my_financial_events=FinancialEvent.objects.filter(Q(bedehkar_id__in=ids)|Q(bestankar_id__in=ids))
             self.objects=self.my_financial_events
     def list(self,*args, **kwargs):
