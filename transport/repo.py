@@ -90,16 +90,15 @@ class ServiceManRepo():
         
         
     def add_service_man(self,*args,**kwargs):
+        leolog(kwargs_add_service_man=kwargs)
         result,message,service_man=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_service_man"):
             message="دسترسی غیر مجاز"
             return result,message,service_man
 
-        service_man=Vehicle()
-        if 'title' in kwargs:
-            service_man.title=kwargs["title"]
-        if 'owner_id' in kwargs:
-            service_man.owner_id=kwargs["owner_id"]
+        service_man=ServiceMan() 
+        if 'person_account_id' in kwargs:
+            service_man.person_account_id=kwargs["person_account_id"]
           
         (result,message,service_man)=service_man.save()
         return result,message,service_man

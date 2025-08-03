@@ -14,9 +14,6 @@ class AddMaintenanceInvoiceForm(AddInvoiceForm):
     
 
     
-class AddServiceManForm(AddInvoiceForm):
-    kilometer=forms.IntegerField(  required=False)
-    service_man_id=forms.IntegerField(required=True)
-    vehicle_id=forms.IntegerField(required=True)
-    maintenance_type=forms.CharField(max_length=100, required=True)
-    
+class AddServiceManForm(forms.Form):
+    person_account_id=forms.IntegerField(required=True)
+     

@@ -31,10 +31,12 @@ class ServiceMan(models.Model,LinkHelper):
     def __str__(self):
         return str(self.title)
     def save(self,*args, **kwargs):
-       
+        result,message,service_man=FAILED,'',None
         if self.title is None or self.title=="":
             self.title=self.account.title
-        return super(ServiceMan,self).save(*args, **kwargs)
+        super(ServiceMan,self).save(*args, **kwargs)
+        message='سرویس کار با موفقیت اضافه شد.'
+        return SUCCEED,message,self
   
 
 class MaintenanceInvoice(Invoice):

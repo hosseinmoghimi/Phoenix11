@@ -847,7 +847,7 @@ class BankAccount(Account,LinkHelper):
  
 
 class Asset(CorePage):
-    owner=models.ForeignKey("authentication.person", verbose_name=_("owner"), on_delete=models.PROTECT)
+    owner=models.ForeignKey("accounting.personaccount", verbose_name=_("owner"), on_delete=models.PROTECT)
    
     class Meta:
         verbose_name = 'دارایی'

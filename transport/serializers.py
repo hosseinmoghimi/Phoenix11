@@ -2,9 +2,10 @@ from core.serializers import serializers
 from .models import Vehicle,MaintenanceInvoice,ServiceMan
 from accounting.serializers import PersonAccountSerializer,AccountBriefSerializer,InvoiceSerializer
 class VehicleSerializer(serializers.ModelSerializer):
+    owner=PersonAccountSerializer()
     class Meta:
         model=Vehicle
-        fields=['id', 'title','thumbnail','get_absolute_url',  'get_edit_url','get_delete_url']
+        fields=['id','owner', 'title','thumbnail','get_absolute_url',  'get_edit_url','get_delete_url']
   
  
 

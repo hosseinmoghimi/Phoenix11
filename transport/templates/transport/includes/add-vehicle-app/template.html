@@ -40,7 +40,7 @@
                 <label for="">مالک</label>
                 <input
                   required
-                  v-model="owner.id"
+                  v-model="owner_code"
                   type="number"
                   class="form-control"
                   @input="select_owner()"
@@ -50,15 +50,15 @@
 
             <div class="col-6 mt-3">
               <hr />
-              <a :href="owner.get_absolute_url" v-if="owner.full_name">
+              <a :href="owner.get_absolute_url" v-if="owner.name">
                 <div class="media">
                   <img :src="owner.logo" width="64" alt="" />
                   <div class="mr-2 media-body">
                     <h5 class="my-2">
-                      <span v-text="owner.full_name"></span>
+                      <span v-text="owner.name"></span>
                     </h5>
                     <h6>
-                      <span v-text="owner.id"></span>
+                      <span v-text="owner.code"></span>
                     </h6>
 
                     
