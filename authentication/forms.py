@@ -1,5 +1,5 @@
 from django import forms
-
+from core.forms import SearchForm
 class LoginForm(forms.Form):
     username=forms.CharField(max_length=50,required=True)
     password=forms.CharField(max_length=50,required=True)

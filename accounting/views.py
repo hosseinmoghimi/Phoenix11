@@ -394,7 +394,7 @@ class SearchView(View):
         context['message']=message
         context['log']=log
         context['result']=result
-        return render(request,TEMPLATE_ROOT+"search.html",context)
+        return render(request,"utility/search.html",context)
 
 
 class SettingsView(View):
