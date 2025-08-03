@@ -139,4 +139,4 @@ class PersonAccountSerializer(serializers.ModelSerializer):
        person=PersonSerializer()
        class Meta:
         model = PersonAccount
-        fields = ['id','person','name','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','person','name','title','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']

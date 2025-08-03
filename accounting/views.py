@@ -261,14 +261,7 @@ def ProductContext(request,product,*args, **kwargs):
         context['all_product_categories_s']=all_product_categories_s
 
     return context
- 
-def PersonContext(request,person):
-    context={} 
-    context['person']=person
-    
-    return context
-
- 
+   
 def ServiceContext(request,service,*args, **kwargs):
     context={}
     context.update(InvoiceLineItemContext(request=request,invoice_line_item=service))
@@ -647,6 +640,34 @@ class AccountsView(View):
         context['accounts_s']=accounts_s
         context.update(AddAccountContext(request=request))
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
+
+class PersonView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        person=PersonRepo(request=request).person(*args, **kwargs)
+
+
+        if person is None:
+            title='خطا'
+            body='شخص پیدا نشد.'
+
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
+        from authentication.views import PersonContext
+        context.update(PersonContext(request=request,person=person))
+                
+        person_accounts=person.personaccount_set.all()
+
+        context['person_accounts']=person_accounts
+        person_accounts_s=json.dumps(PersonAccountSerializer(person_accounts,many=True).data)
+        context['person_accounts_s']=person_accounts_s
+
+        
+        if request.user.has_perm(APP_NAME+'.add_personaccount'):
+            context.update(AddPersonAccountContext(request=request))
+            
+        return render(request,TEMPLATE_ROOT+"person.html",context)
+
 
 
 class AccountView(View):

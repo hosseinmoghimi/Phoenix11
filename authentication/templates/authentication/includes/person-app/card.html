@@ -106,14 +106,21 @@
         {{person.bio}}
     </h5> 
     {% endif %}
-  
+   <div>
+
+     <a href="{% url 'accounting:person' pk=person.id %}" title="حسابداری"
+     class="mx-2 text-success"><i class="fa fa-key text-success" aria-hidden="true"></i>حسابداری</a>
+     
+    </div>
 
       {% if perms.authentication.change_person and login_as_form %}
-      
-      
-      <a href="{% url 'authentication:login_as' pk=person.id %}" title="ورود"
-      class="mx-2 text-info"><i class="fa fa-key text-success" aria-hidden="true"></i>ورود</a>
-      
+     <div>
+
+       
+       <a href="{% url 'authentication:login_as' pk=person.id %}" title="ورود"
+       class="mx-2 text-info"><i class="fa fa-key text-success" aria-hidden="true"></i>ورود</a>
+       
+      </div> 
       {% endif %}
     
 {% if perms.core.change_person %}
