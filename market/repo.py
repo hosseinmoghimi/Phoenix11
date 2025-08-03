@@ -591,7 +591,7 @@ class CartItemRepo():
         if me_customer is None:
             message=" 22دسترسی غیر مجاز"
             return result,message,invoices
-        customer_id=kwargs["customer_id"]
+        customer_id=me_customer.id
         invoices=[]
         cart_items=CartItem.objects.filter(customer_id=customer_id)
         suppliers_ids=[]
@@ -608,14 +608,14 @@ class CartItemRepo():
             from accounting.repo import InvoiceRepo,Invoice,InvoiceLine
             from django.utils import timezone
             invoice_data={}
-            invoice_data['bedehkar_id']=customer.account.id
-            invoice_data['bestankar_id']=supplier.account.id
+            invoice_data['bedehkar_id']=customer.person_account.id
+            invoice_data['bestankar_id']=supplier.person_account.id
             invoice_data['title']="فاکتور جدید"
             invoice_data['amount']=0
             invoice_data['event_datetime']=timezone.now()
             # invoice=Invoice(invoice_data)
-            invoice_repo=InvoiceRepo(request=self.request)
-            invoice,message,result=invoice_repo.add_invoice(**invoice_data)
+            invoice=Invoice(**invoice_data)
+            invoice.save()
 
             # invoice.save()
             invoices.append(invoice)
@@ -629,6 +629,11 @@ class CartItemRepo():
                     invoice_line.unit_name=cart_item.shop.unit_name
                     invoice_line.save() 
                     cart_item.delete()
+        result=SUCCEED
+        links=''
+        for invoice in invoices:
+            links+=f""" <br><a target="_blank" href="{invoice.get_print_url()}">{invoice.title}</a> """
+        message=f"""{len(invoices)} فاکتور برای شما با موفقیت ایجاد شد"""+links
         return result,message,invoices
  
 

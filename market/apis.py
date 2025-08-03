@@ -5,6 +5,7 @@ import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
 from .repo import MenuRepo,ShopRepo,SupplierRepo,CustomerRepo,ShipperRepo,CartItemRepo
+from accounting.apis import InvoiceRepo,InvoiceSerializer
 from .serializers import MenuSerializer,ShopSerializer,CartItemSerializer,SupplierSerializer,CustomerSerializer,ShipperSerializer
 from django.http import JsonResponse
 from .enums import *
@@ -101,6 +102,28 @@ class AddShopApi(APIView):
         return JsonResponse(context)
   
 
+class CheckoutCartApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        checkout_cart_form=CheckoutCartForm(request.POST)
+        if checkout_cart_form.is_valid():
+            log=333
+            cd=checkout_cart_form.cleaned_data
+            result,message,invoices=CartItemRepo(request=request).checkout(**cd)
+            
+            if result == SUCCEED:
+                context['invoices']=InvoiceSerializer(invoices,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
   
 class AddCustomerApi(APIView):
     def post(self,request,*args, **kwargs):

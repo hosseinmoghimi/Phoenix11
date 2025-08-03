@@ -23,6 +23,9 @@ class AddShopForm(forms.Form):
     start_date=forms.CharField(max_length=100, required=False)
     end_date=forms.CharField(max_length=100, required=False)
     
+class CheckoutCartForm(forms.Form):
+    address=forms.CharField(max_length=100, required=True)
+    postal_code=forms.CharField(max_length=100, required=True)
 
 class AddCartItemForm(forms.Form):
     unit_name=forms.CharField(max_length=100, required=False)

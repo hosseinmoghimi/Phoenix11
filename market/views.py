@@ -410,3 +410,24 @@ class CustomersView(View):
         return render(request,TEMPLATE_ROOT+"customers.html",context) 
     
    
+    
+class CartView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        customer =CustomerRepo(request=request).customer(*args, **kwargs)
+        context['customer']=customer
+        if customer is None:
+            msg={}
+            msg['title']='خطا'
+            msg['body']='خریداری پیدا نشد.'
+            mv=MessageView(**msg)
+            return mv.get(request=request)   
+        customer_s=json.dumps(CustomerSerializer(customer,many=False).data)
+        context['customer_s']=customer_s
+ 
+
+        context['checkout_cart_form']=CheckoutCartForm()
+ 
+ 
+        return render(request,TEMPLATE_ROOT+"cart.html",context) 
+       
