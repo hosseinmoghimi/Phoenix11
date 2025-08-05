@@ -22,6 +22,16 @@
 
 
             <div class="card-body">
+
+                {% if not account %}
+                  <div>
+                    <input type="text" placeholder="جستجو" class="form-control" @input="filter()" v-model="search_for">
+                  </div>
+                  <div>
+                    ترتیب : 
+                    <button class="btn btn-sm btn-info mx-2 my-2" @click="sort('balance')">مانده</button> 
+                  </div>
+                {% endif %}
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
