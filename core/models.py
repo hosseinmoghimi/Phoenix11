@@ -73,12 +73,15 @@ class Page(models.Model,LinkHelper,ImageHelper):
         from django.utils import timezone
         now=timezone.now()
         self.date_added=now
-        if not bool(self.class_name)  :
+        if self.class_name is None or self.class_name =='':
             self.class_name="page"
         if self.app_name is None or self.app_name=="":
             self.app_name="core"
         super(Page,self).save()
-
+        page=self
+        message=''
+        result=SUCCEED
+        return result,message,self
     # def likes_count(self):
     #     return len(PageLike.objects.filter(page_id=self.id))
 

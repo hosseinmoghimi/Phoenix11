@@ -869,7 +869,7 @@ class Asset(CorePage):
             self.class_name="asset"
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        super(Asset,self).save()
+        result,message,self=super(Asset,self).save()
         result,message,asset=SUCCEED,"دارایی با موفقیت افزوده شد.",self
         return result,message,asset
     
