@@ -269,7 +269,8 @@ class AddTaxForm(AddFinancialEventForm):
     priority=forms.IntegerField(required=False)
 
 
-class AddBankAccountForm(AddPersonAccountForm):
+class AddBankAccountForm(AddAccountForm):
+    person_id=forms.IntegerField(required=True)
     bank_id=forms.IntegerField(required=True)
     shaba_no=forms.CharField(max_length=50, required=False)
     account_no=forms.CharField(max_length=50, required=False)

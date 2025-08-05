@@ -8,10 +8,12 @@ from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRep
 from utility.log import leolog
 from .serializers import  InvoiceLineItemUnitBriefSerializer, ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer,BrandSerializer
-from .serializers import AssetSerializer,BankAccountSerializer
+from .serializers import AssetSerializer
+from .serializers import BankAccountSerializer,BankSerializer
+from .repo import BankAccountRepo
 from django.http import JsonResponse
 from .forms import *
-from .repo import FinancialYearRepo,ProductSpecificationRepo,PersonAccountRepo,BankAccountRepo
+from .repo import FinancialYearRepo,ProductSpecificationRepo,PersonAccountRepo
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer,PersonCategorySerializer
  
 class AddProductToCategoryApi(APIView):
@@ -75,6 +77,29 @@ class AddBankAccountApi(APIView):
             result,message,bank_account=BankAccountRepo(request=request).add_bank_account(**cd)
             if result==SUCCEED:
                 context['bank_account']=BankAccountSerializer(bank_account,many=False).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+
+class AddBankApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_bank_form=AddBankForm(request.POST)
+        if add_bank_form.is_valid():
+            log=333
+            cd=add_bank_form.cleaned_data
+            result,message,bank=BankRepo(request=request).add_bank(**cd)
+            if result==SUCCEED:
+                context['bank']=BankSerializer(bank,many=False).data
         context['message']=message
         context['result']=result
         context['log']=log

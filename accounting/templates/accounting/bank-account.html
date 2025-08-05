@@ -4,15 +4,18 @@
 {% block content %}
 <div class="row rtl farsi">
     <div class="col-md-4">
-        {% include "accounting/includes/person-account-app/card.html" %}
+        {% include "accounting/includes/bank-account-app/card.html" %}
     </div>
     
     <div class="col-md-4">
         {% include "accounting/includes/account-app/card-full.html" %}
     </div>
 
+  <div class="col-md-4">
+        {% include "accounting/includes/set-account-parent-app/template.html" %}
+    </div>
     <div class="col-md-4">
-        {% include "accounting/includes/person-account-app/category.html" %}
+        {% include "accounting/includes/bank-app/card.html" %}
     </div>
 
     <div class="col-md-12">
@@ -48,10 +51,10 @@
 
 
 {% block script %}
+{% include "accounting/includes/bank-app/script.html" %}
+
 {% include "accounting/includes/account-app/script.html" %}
-{% include "accounting/includes/accounts-app/script.html" %}
-{% include "accounting/includes/add-account-app/script.html" %}
-{% include "accounting/includes/financial-document-lines-app/script.html" %}
+        {% include "accounting/includes/set-account-parent-app/script.html" %}
  
 {% if add_person_account_form %}
 {% include "accounting/includes/add-person-account-app/script.html" %}

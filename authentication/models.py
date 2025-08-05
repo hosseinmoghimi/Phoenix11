@@ -34,7 +34,9 @@ class Person(models.Model,ImageHelper,LinkHelper):
     class Meta:
         verbose_name = _("Person")
         verbose_name_plural = _("اشخاص")
-
+    def get_accounting_absolute_url(self):
+        from django.shortcuts import reverse
+        return reverse('accounting:person',kwargs={'pk':self.pk})
    
     @property
     def full_name_(self):

@@ -27,6 +27,8 @@
                     {{customer.person_account.person.full_name}}
 
                 </h6>
+
+               
             </div>
             <div class="card-body">
                 <h6>
@@ -37,6 +39,12 @@
                     {{customer.person_account.person.full_name}}
 
                 </h6>
+                  <h6> 
+                    <a href="{% url 'market:cart' customer_id=customer.id %}">سبد خرید</a>
+
+                </h6>
+
+                
                 {% if customer.person_account %}
                 <h6>
                     <small class="text-muted">

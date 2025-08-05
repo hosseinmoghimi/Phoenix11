@@ -23,6 +23,14 @@
 
             <div class="col-md-6">
               <div class="form-group">
+                <label for="">کد</label>
+                <input type="text" required class="form-control" v-model="code" />
+              </div>
+            </div>
+
+
+            <div class="col-md-6">
+              <div class="form-group">
                 <label for="">شناسه شخص
 
                   <a href="{% url 'authentication:persons' %}" target="_blank">همه اشخاص</a>

@@ -2,7 +2,6 @@ from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from utility.log import leolog
 from .constants import EXCEL_PRODUCTS_DATA_START_ROW,EXCEL_SERVICES_DATA_START_ROW
-from .serializers import BankAccountSerializer
 
 
 from django.http import Http404,HttpResponse
@@ -15,11 +14,14 @@ from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
 from .repo import FinancialDocumentRepo,CategoryRepo,BrandRepo,AssetRepo
-from .repo import PersonCategoryRepo,PersonRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
+from .repo import PersonCategoryRepo,PersonRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo
+from .repo import ProductRepo,InvoiceRepo,FinancialEventRepo,PersonAccountRepo
+from .repo import  BankAccountRepo
+from .serializers import BankAccountSerializer
 from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer,BrandSerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
-from .serializers import PersonCategorySerializer,AssetSerializer
+from .serializers import PersonCategorySerializer,AssetSerializer,BankSerializer
 from .repo import FinancialYearRepo,BankRepo
 from authentication.views import PersonContext
 from utility.currency import to_price_colored
@@ -44,7 +46,7 @@ def AddBrandContext(request,*args, **kwargs):
     return context
 
 def AddBankAccountContext(request,*args, **kwargs):
-    context=AddPersonAccountContext(request=request,*args, **kwargs)
+    context=AddAccountContext(request=request,*args, **kwargs)
     context['add_bank_account_form']=AddBankAccountForm()
     banks_for_add_bank_account=BankRepo(request=request).list(*args, **kwargs)
     context['banks_for_add_bank_account']=banks_for_add_bank_account
@@ -350,11 +352,20 @@ def PersonAccountContext(request,person_account,*args, **kwargs):
     return context
 
 def BankAccountContext(request,bank_account,*args, **kwargs):
-    context=PersonAccountContext(request=request,person_account=bank_account,*args, **kwargs)
+    context=AccountContext(request=request,account=bank_account,*args, **kwargs)
     context['bank_account']=bank_account
     bank_account_s=json.dumps(PersonAccountSerializer(bank_account).data)
     context['bank_account_s']=bank_account_s
     return context
+
+
+def BankContext(request,bank,*args, **kwargs):
+    context={}
+    context['bank']=bank
+    bank_s=json.dumps(BankSerializer(bank).data)
+    context['bank_s']=bank_s
+    return context
+
 
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -693,6 +704,15 @@ class PersonView(View):
         context['person_accounts']=person_accounts
         person_accounts_s=json.dumps(PersonAccountSerializer(person_accounts,many=True).data)
         context['person_accounts_s']=person_accounts_s
+
+
+
+        bank_accounts=person.bankaccount_set.all()
+
+        context['bank_accounts']=bank_accounts
+        bank_accounts_s=json.dumps(BankAccountSerializer(bank_accounts,many=True).data)
+        context['bank_accounts_s']=bank_accounts_s
+
 
         
         if request.user.has_perm(APP_NAME+'.add_personaccount'):
@@ -1275,6 +1295,25 @@ class BankAccountsView(View):
             
         return render(request,TEMPLATE_ROOT+"bank-accounts.html",context)
 
+def AddBankContext(request,*args, **kwargs):
+    context={}
+    return context
+
+class BanksView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+       
+        banks=BankRepo(request=request).list(*args, **kwargs)
+
+        context['banks']=banks
+        banks_s=json.dumps(BankSerializer(banks,many=True).data)
+        context['banks_s']=banks_s
+
+        
+        if request.user.has_perm(APP_NAME+'.add_bank'):
+            context.update(AddBankContext(request=request))
+            
+        return render(request,TEMPLATE_ROOT+"banks.html",context)
 
 class BankAccountView(View):
     def get(self,request,*args, **kwargs):
@@ -1285,8 +1324,27 @@ class BankAccountView(View):
         if bank_account is None:
             raise Http404
         context.update(BankAccountContext(request=request,bank_account=bank_account))
+        context.update(BankContext(request=request,bank=bank_account.bank))
          
         return render(request,TEMPLATE_ROOT+"bank-account.html",context)
+
+
+class BankView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        bank=BankRepo(request=request).bank(*args, **kwargs)
+        context['bank']=bank
+
+        if bank is None:
+            raise Http404
+        context.update(BankContext(request=request,bank=bank))
+        bank_accounts=bank.bankaccount_set.all()
+        context['bank_accounts']=bank_accounts
+        bank_accounts_s=json.dumps(BankAccountSerializer(bank_accounts,many=True).data)
+        context['bank_accounts_s']=bank_accounts_s
+        if request.user.has_perm(APP_NAME+'.add_bankaccount'):
+            context.update(AddBankAccountContext(request=request,bank=bank))
+        return render(request,TEMPLATE_ROOT+"bank.html",context)
 
 
 class PersonAccountView(View):

@@ -71,14 +71,37 @@ class AddCartItemApi(APIView):
         if add_to_cart_form.is_valid():
             log=333
             cd=add_to_cart_form.cleaned_data
-            result,message,cart_item=CartItemRepo(request=request).add_cart_item(**cd)
-            if cart_item is not None:
+            result,message,cart_item,cart_items=CartItemRepo(request=request).add_cart_item(**cd)
+            if result==SUCCEED:
                 context['cart_item']=CartItemSerializer(cart_item).data
+                context['cart_items']=CartItemSerializer(cart_items,many=True).data
         context['message']=message
         context['result']=result
         context['log']=log
         return JsonResponse(context)
   
+  
+class ChangeCartItemApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_to_cart_form=ChangeCartItemForm(request.POST)
+        if add_to_cart_form.is_valid():
+            log=333
+            cd=add_to_cart_form.cleaned_data
+            result,message,cart_item,cart_items=CartItemRepo(request=request).change_cart_item(**cd)
+            if result==SUCCEED:
+                context['cart_item']=CartItemSerializer(cart_item).data
+                context['cart_items']=CartItemSerializer(cart_items,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
 
 class AddShopApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -115,6 +138,7 @@ class CheckoutCartApi(APIView):
         if checkout_cart_form.is_valid():
             log=333
             cd=checkout_cart_form.cleaned_data
+            cd['cart_items']=json.loads(cd['cart_items'])
             result,message,invoices=CartItemRepo(request=request).checkout(**cd)
             
             if result == SUCCEED:

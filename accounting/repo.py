@@ -1,6 +1,7 @@
 from .models import Asset,Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit
 from .models import InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,FinancialYear
-from .models import Invoice,Bank,BankAccount,PersonCategory,FinancialYear,PersonAccount,ProductSpecification
+from .models import Invoice,Bank,PersonCategory,FinancialYear,PersonAccount,ProductSpecification
+from .models import BankAccount
 from .models import Brand
 from .apps import APP_NAME
 from .enums import *
@@ -1193,9 +1194,6 @@ class BankAccountRepo():
             return result,message,bank_account
         bank_account=BankAccount()
         
-        
-
-
         if 'person' in kwargs:
             bank_account.person=kwargs['person']
         if 'person_id' in kwargs:

@@ -555,31 +555,128 @@ class CartItemRepo():
         return objects.all()
    
     def add_cart_item(self,*args,**kwargs):
-        result,message,cart_item=FAILED,"",None
+        result,message,cart_item,cart_items=FAILED,"",None,[]
         me_customer=CustomerRepo(request=self.request).me
         if  me_customer is None and not self.request.user.has_perm(APP_NAME+".add_cartitem") :
             message="دسترسی غیر مجاز"
-            return result,message,cart_item
+            return result,message,cart_item,cart_items
         # if len(Product.objects.filter(product_id=kwargs["product_id"]).filter(unit_name=kwargs["unit_name"]).filter(level=kwargs["level"]).filter(customer_id=kwargs["customer_id"]))>0:
         #     message="نام تکراری برای کالای جدید"
         #     return result,message,cart_item
         if me_customer is None:
             message=" 22دسترسی غیر مجاز"
-            return result,message,cart_item
+            return result,message,cart_item,cart_items
 
-        cart_item=CartItem(customer_id=me_customer.id) 
         if 'shop_id' in kwargs:
-            cart_item.shop_id=kwargs["shop_id"]
+            shop_id=kwargs["shop_id"]
          
         if 'quantity' in kwargs:
-            cart_item.quantity=kwargs["quantity"] 
+            quantity=kwargs["quantity"] 
+
+        cart_item=CartItem.objects.filter(shop_id=shop_id).filter(customer_id=me_customer.id).first()
+        if cart_item is None:
+            cart_item=CartItem(customer_id=me_customer.id,quantity=0) 
+
+        cart_item.shop_id=shop_id
+        cart_item.quantity+=quantity
+        (result,message,cart_item)=cart_item.save() 
+        cart_items=CartItem.objects.filter(customer_id=me_customer.id)
+
+        return result,message,cart_item,cart_items
+ 
+ 
+   
+    def change_cart_item(self,*args,**kwargs):
+        result,message,cart_item,cart_items=FAILED,"",None,[]
+        me_customer=CustomerRepo(request=self.request).me
+        if  me_customer is None and not self.request.user.has_perm(APP_NAME+".change_cartitem") :
+            message="دسترسی غیر مجاز"
+            return result,message,cart_item,cart_items
+        # if len(Product.objects.filter(product_id=kwargs["product_id"]).filter(unit_name=kwargs["unit_name"]).filter(level=kwargs["level"]).filter(customer_id=kwargs["customer_id"]))>0:
+        #     message="نام تکراری برای کالای جدید"
+        #     return result,message,cart_item
+        if me_customer is None:
+            message=" 22دسترسی غیر مجاز"
+            return result,message,cart_item,cart_items
+        cart_item=CartItem(customer_id=me_customer.id) 
+        if 'shop_id' in kwargs:
+            shop_id=kwargs["shop_id"]
+         
+        if 'quantity' in kwargs:
+            quantity=kwargs["quantity"] 
+
+        cart_item=CartItem.objects.filter(shop_id=shop_id).filter(customer_id=me_customer.id).first()
+        if cart_item is None:
+            cart_item=CartItem(shop_id=shop_id,customer_id=me_customer.id,quantity=0)
+        cart_item.quantity=quantity
 
         (result,message,cart_item)=cart_item.save() 
-
-        return result,message,cart_item
+        cart_items=CartItem.objects.filter(customer_id=me_customer.id)
+        return result,message,cart_item,cart_items
  
  
     def checkout(self,*args,**kwargs):
+        result,message,invoices=FAILED,"",[]
+        me_customer=CustomerRepo(request=self.request).me
+        if  me_customer is None and not self.request.user.has_perm(APP_NAME+".add_cartitem") :
+            message="دسترسی غیر مجاز"
+            return result,message,invoices
+        # if len(Product.objects.filter(product_id=kwargs["product_id"]).filter(unit_name=kwargs["unit_name"]).filter(level=kwargs["level"]).filter(customer_id=kwargs["customer_id"]))>0:
+        #     message="نام تکراری برای کالای جدید"
+        #     return result,message,cart_item
+        if me_customer is None:
+            message=" 22دسترسی غیر مجاز"
+            return result,message,invoices
+        customer_id=me_customer.id
+        invoices=[]
+        cart_items=kwargs['cart_items']
+        suppliers_ids=[]
+        for cart_item in cart_items:
+            shop=Shop.objects.filter(pk=cart_item['shop_id']).first()
+            if shop is not None:
+                supplier_id=shop.supplier.id
+                if supplier_id not in suppliers_ids:
+                    suppliers_ids.append(supplier_id)
+        customer=CustomerRepo(request=self.request).customer(pk=customer_id)
+        if customer is None:
+            return FAILED,"مشتری نادرست انتخاب شده است",[]
+        for supplier_id in suppliers_ids:
+
+            supplier=SupplierRepo(request=self.request).supplier(pk=supplier_id)    
+            from accounting.repo import InvoiceRepo,Invoice,InvoiceLine
+            from django.utils import timezone
+            invoice_data={}
+            invoice_data['bedehkar_id']=customer.person_account.id
+            invoice_data['bestankar_id']=supplier.person_account.id
+            invoice_data['title']="فاکتور جدید"
+            invoice_data['amount']=0
+            invoice_data['event_datetime']=timezone.now()
+            # invoice=Invoice(invoice_data)
+            invoice=Invoice(**invoice_data)
+            invoice.save()
+
+            # invoice.save()
+            invoices.append(invoice)
+            for cart_item in cart_items:
+                shop=Shop.objects.filter(pk=cart_item['shop_id']).first()
+                if shop.supplier.id==supplier_id:
+                    invoice_line=InvoiceLine()
+                    invoice_line.invoice_id=invoice.id
+                    invoice_line.invoice_line_item_id=shop.product_id
+                    invoice_line.quantity=cart_item['quantity'] 
+                    invoice_line.unit_price=shop.unit_price
+                    invoice_line.unit_name=shop.unit_name
+                    invoice_line.save() 
+                    CartItem.objects.filter(shop_id=shop.id).filter(customer_id=customer.id).delete()
+        result=SUCCEED
+        links=''
+        for invoice in invoices:
+            links+=f""" <br><a target="_blank" href="{invoice.get_print_url()}">{invoice.title}</a> """
+        message=f"""{len(invoices)} فاکتور برای شما با موفقیت ایجاد شد"""+links
+        return result,message,invoices
+ 
+
+    def checkout_old_temp_must_be_deleted(self,*args,**kwargs):
         result,message,invoices=FAILED,"",[]
         me_customer=CustomerRepo(request=self.request).me
         if  me_customer is None and not self.request.user.has_perm(APP_NAME+".add_cartitem") :

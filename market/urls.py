@@ -30,6 +30,7 @@ urlpatterns = [
     path('menu/add/ ',login_required(apis.AddMenuApi.as_view()),name="add_menu"),
     path('add-cart-item/',login_required(apis.AddCartItemApi.as_view()),name="add_cart_item"),
 
+    path("change-cart-item/",login_required(apis.ChangeCartItemApi.as_view()),name="change_cart_item"),
 
     
     path("add-supplier/",login_required(apis.AddSupplierApi.as_view()),name="add_supplier"),

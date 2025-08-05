@@ -1,8 +1,20 @@
 from rest_framework import serializers
 from .models import Asset,Category,InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
-from .models import FinancialDocument,ProductSpecification,FinancialYear,PersonAccount,BankAccount
+from .models import FinancialDocument,ProductSpecification,FinancialYear,PersonAccount
+from .models import BankAccount,Bank
 from .models import Brand,PersonCategory
-from authentication.serializers import PersonSerializer
+from authentication.serializers import Person
+class PersonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Person
+        fields=['id','full_name','image','username','user_id','get_absolute_url','get_accounting_absolute_url', 'get_edit_url','get_delete_url']
+ 
+class AccountSerializer(serializers.ModelSerializer):
+       class Meta:
+        model = Account
+        fields = ['id','title','name','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+
+
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -23,6 +35,12 @@ class AssetSerializer(serializers.ModelSerializer):
        class Meta:
         model = Asset
         fields = ['id','title','owner',  'get_absolute_url','get_edit_url','get_delete_url']
+
+
+class BankSerializer(serializers.ModelSerializer):
+       class Meta:
+        model = Bank
+        fields = ['id','name','get_absolute_url','get_edit_url','get_delete_url']
 
 
 class BrandSerializer(serializers.ModelSerializer):
@@ -142,7 +160,8 @@ class PersonAccountSerializer(serializers.ModelSerializer):
         fields = ['id','person','name','title','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
 
 class BankAccountSerializer(serializers.ModelSerializer):
+       bank=BankSerializer()
        person=PersonSerializer()
        class Meta:
         model = BankAccount
-        fields = ['id','person','name','title','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','person','bank','name','title','full_name','card_no','account_no','shaba_no','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']

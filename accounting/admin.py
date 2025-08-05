@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import Category,FinancialYear,FinancialDocumentLine,FinancialDocument,PersonAccount
 from .models import Account,FinancialEvent,InvoiceLineItemUnit,InvoiceLineItem 
-from .models import Service,Product,Invoice,InvoiceLine,Bank,BankAccount,PersonCategory,Brand
+from .models import Service,Product,Invoice,InvoiceLine,Bank,PersonCategory,Brand
+from .models import BankAccount
 from .models import ProductSpecification,Asset
 
 

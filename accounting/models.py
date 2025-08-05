@@ -48,7 +48,7 @@ class Account(CorePage,LinkHelper):
         verbose_name_plural = _("حساب ها")
 
     def __str__(self):
-        return f'{self.code}-l{self.level} - {self.type} - {self.name}'
+        return f'{self.code}-level {self.level} - {self.type} - {self.name}'
     def get_link(self):
             return f"""
                     <a href="{self.get_absolute_url()}" class="ml-2 text-{self.color}"><span>{self.code}</span> {self.name} <span class="badge badge-{self.color}">{self.type}</span></a>
@@ -75,16 +75,16 @@ class Account(CorePage,LinkHelper):
         # return f"""<span>{self.parent.get_breadcrumb_link()}</span>{ACCOUNT_NAME_SEPERATOR}<span>{self.get_link()}</span>"""
 
     def save(self,*args, **kwargs): 
+
         if self.app_name is None or self.app_name=='':
             self.app_name=APP_NAME
         if self.class_name is None or self.class_name=='':
             self.class_name='account'
-
         if self.parent is None:
             self.level=0
         else:
             self.level=self.parent_account.level+1
-    
+
         result=FAILED
         message="خطا"
         
@@ -105,11 +105,13 @@ class Account(CorePage,LinkHelper):
                 return FAILED,message,None
         if self.color is None and self.parent is not None:
             self.color=self.parent.color
+
         super(Account,self).save(*args, **kwargs)
+       
         account=self
         if self.id is not None:
             result=SUCCEED
-            message="با موفقیت اضافه گردید."
+            message="حساب با موفقیت اضافه گردید."
         return result,message,account
  
   
@@ -213,11 +215,12 @@ class PersonAccount(Account,LinkHelper):
                 is_available=False
         return self.person_category.account.code+code
     def save(self,*args, **kwargs):
+        leolog(account_ptr_id_person_account=self.account_ptr_id)
         
         result,message,person_account=FAILED,"",None
         p_a=PersonAccount.objects.filter(person_id=self.person_id).filter(person_category_id=self.person_category_id).first()
         if p_a is not None:
-            message="تکراری است"
+            message="از قبل برای این دسته بندی و شخص حساب مرتبط ایجاد شده است. "
             return result,message,person_account
 
         person_category=PersonCategory.objects.filter(id=self.person_category_id).first()
@@ -232,11 +235,11 @@ class PersonAccount(Account,LinkHelper):
             self.app_name=APP_NAME
         if self.class_name is None or self.class_name=='':
             self.class_name='personaccount'
-            
-        result,message,person_account=super(PersonAccount,self).save(*args, **kwargs)
-        if person_account.id is not None:
+        result,message,account=super(PersonAccount,self).save(*args, **kwargs)
+    
+        if self.id is not None:
             result=SUCCEED
-            message="حساب شخص با موفقیت اضافه شد."
+            message="حساب شخص با موفقیت ذخیره شد."
             person_account=self
         return result,message,person_account
 
@@ -806,6 +809,9 @@ class InvoiceLine(models.Model,LinkHelper):
 
 class Bank(models.Model,LinkHelper):
     name=models.CharField(_("name"),max_length=50)
+    branch=models.CharField(_("branch"),null=True,blank=True,max_length=50)
+    tel=models.CharField(_("tel"),null=True,blank=True,max_length=50)
+    address=models.CharField(_("address"),null=True,blank=True,max_length=50)
     class_name="bank"
     app_name=APP_NAME 
 
@@ -820,11 +826,12 @@ class Bank(models.Model,LinkHelper):
         super(Bank,self).save()
 
 
-class BankAccount(PersonAccount,LinkHelper):
+class BankAccount(Account):
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
     bank=models.ForeignKey("bank", verbose_name=_("bank"), on_delete=models.PROTECT)
-    card_no=models.CharField(_("card_no"),max_length=20)
-    shaba_no=models.CharField(_("shaba_no"),max_length=20)
-    account_nooo=models.CharField(_("account_no"),max_length=20)
+    card_no=models.CharField(_("card_no"),max_length=20,null=True,blank=True)
+    shaba_no=models.CharField(_("shaba_no"),max_length=50,null=True,blank=True)
+    account_no=models.CharField(_("account_no"),max_length=20,null=True,blank=True)
      
     class_name='bankaccount'
     app_name=APP_NAME
@@ -834,8 +841,15 @@ class BankAccount(PersonAccount,LinkHelper):
         verbose_name_plural = _("حساب های بانکی")
  
     def save(self,*args, **kwargs):
-        result,message,bank_account=FAILED,'',self
-        result,message,bank_account=super(BankAccount,self).save(*args, **kwargs)
+        
+        if self.app_name is None or self.app_name=='':
+            self.app_name=APP_NAME
+        if self.class_name is None or self.class_name=='':
+            self.class_name='bankaccount'
+              
+        result,message,bank_account=FAILED,'',self 
+        # result,message,bank_account=
+        super(BankAccount,self).save(*args, **kwargs)
         if result==SUCCEED:
             message='حساب بانکی با موفقیت اضافه شد'
         return result,message,bank_account

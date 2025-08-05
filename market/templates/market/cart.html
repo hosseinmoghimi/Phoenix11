@@ -1,80 +1,12 @@
 {% extends "market/layout.html" %} {% block content %}
-<div class="row rtl farsi">
+
+<div class="row">
   <div class="col-md-12">
-    <h6 class="text-center">سبد خرید</h6>
-
-    <h6 class="text-center">
-      مشتری :
-      <a href="{{customer.get_absolute_url}}"> {{customer.title}} </a>
-    </h6>
+    {% include 'market/includes/cart-app/template.html' %}
   </div>
-
-  <div class="col-md-12">
-    {% include "market/includes/cart-items-app/template.html" %}
-  </div>
-  {% if checkout_cart_form %}
-  <div class="col-md-12">
-    <div class="card" id="checkout-cart-app">
-      <div class="card-body">
-        <div class="row rtl">
-          <div class="col-md-12">
-            <div class="form-group">
-              <label for="">آدرس</label>
-              <input type="text" class="form-control" v-model="address" />
-            </div>
-          </div>
-
-           <div class="col-md-12">
-            <div class="form-group">
-              <label for="">کد پستی</label>
-              <input type="text" class="form-control" v-model="postal_code" />
-            </div>
-          </div>
-
-        </div>
-        <div class="col-md-12">
-          {% include "utility/includes/message-app/alert.html" %}
-        </div>
-        <button @click="checkout_cart()" class="btn btn-info">
-          checkout
-        </button>
-      </div>
-    </div>
-  </div>
-  {% endif %}
 </div>
-{% endblock content %} {% block script %} {% if checkout_cart_form %}
 
-<script>
-  let checkout_cart_app = new Vue({
-    el: "#checkout-cart-app",
-    data: {
-      address: `{{customer.person_account.peron.address}}`,
-      postal_code: `{{customer.person_account.peron.postal_code}}`,
-      message:{show:false},
-      waiting:false,
-    },
-    methods: {
-      checkout_cart: function () {
-        let payload = { 
-          address: this.address,
-          postal_code: this.postal_code,
-          csrfmiddlewaretoken: csrfmiddlewaretoken,
-        };
-        console.log(payload);
-        let url = "{% url 'market:checkout_cart' %}";
-        $.post(url, payload).done((data) => {
-          if(data.result==="SUCCEED"){
-            show_message(checkout_cart_app,'موفق',data.message,'success',10000)
-          }
-          else{
-
-            show_message(checkout_cart_app,'خطا',data.message,'danger',3000)
-          }
-        });
-      },
-    },
-  });
-</script>
-{% endif %} {% include "market/includes/cart-items-app/script.html" %} 
+{% endblock content %}
+{% block script %}  
+  {% include "market/includes/cart-app/script.html" %} 
 {% endblock script %}

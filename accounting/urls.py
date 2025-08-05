@@ -31,16 +31,17 @@ urlpatterns = [
     path("add-person-category/",login_required(apis.AddPersonCategoryApi.as_view()),name="add_person_category"),
     path("select-person-account/",login_required(apis.SelectPersonAccountApi.as_view()),name="select_person_account"),
     
-    
     path("get-invoice-line-item-units/",login_required(apis.GetInvoiceLineItemUnitsApi.as_view()),name="get_invoice_line_item_units"),
-    
-    
-    
-    
     
     path("add-bank-account/",login_required(apis.AddBankAccountApi.as_view()),name="add_bank_account"),
     path('bank-accounts/',login_required(views.BankAccountsView.as_view()),name="bank_accounts"),
-    path('bank-account/',login_required(views.BankAccountView.as_view()),name="bankaccount"),
+    path('bank-account/<int:pk>/',login_required(views.BankAccountView.as_view()),name="bankaccount"),
+
+
+
+    path("add-bank/",login_required(apis.AddBankApi.as_view()),name="add_bank"),
+    path('banks/',login_required(views.BanksView.as_view()),name="banks"),
+    path('bank/<int:pk>/',login_required(views.BankView.as_view()),name="bank"),
 
     path('accounts/',login_required(views.AccountsView.as_view()),name="accounts"),
     path('account/<int:pk>/',login_required(views.AccountView.as_view()),name="account"),

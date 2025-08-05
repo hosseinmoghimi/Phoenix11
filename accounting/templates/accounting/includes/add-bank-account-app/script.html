@@ -1,7 +1,13 @@
 
 <script>
+    let bank_id=0
     // const colors_for_add_account_app = JSON.parse("{a{colors_s|escapejs}}")
 </script>
+{% if bank %}
+  <script>
+    bank_id=parseInt("{{bank.id}}")
+  </script>
+{% endif %}
 {% include 'authentication/includes/person-app/select-script.html' %}
 {% include 'accounting/includes/account-app/select-script.html' %}
 <script>
@@ -13,8 +19,9 @@
             person_id:0,
             priority: 100,
             type: "",
-            bank_id:0,
+            bank_id:bank_id,
             shaba_no:'',
+            code:'',
             title:'',
             card_no:'',
             account_no:'',
@@ -66,6 +73,7 @@
                     bank_id: parseInt(this.bank_id),
                     shaba_no: this.shaba_no,
                     account_no: this.account_no,
+                    code: this.code,
                     title: this.title,
                     card_no: this.card_no,
                     nature: this.nature,

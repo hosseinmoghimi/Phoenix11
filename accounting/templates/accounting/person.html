@@ -17,6 +17,9 @@
    <div class="col-md-12">
      {% include 'accounting/includes/person-accounts-app/template.html' %}
    </div>
+   <div class="col-md-12">
+     {% include 'accounting/includes/bank-accounts-app/template.html' %}
+   </div>
 
 
 </div>
@@ -24,6 +27,7 @@
 
 
 {% block script %}
+     {% include 'accounting/includes/bank-accounts-app/script.html' %}
      {% include 'accounting/includes/person-accounts-app/script.html' %}
    {% if add_person_account_form %}
      
