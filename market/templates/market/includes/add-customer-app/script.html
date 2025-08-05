@@ -1,29 +1,18 @@
 <script>
-    let persons_for_add_customer_app = JSON.parse("{{persons_s_for_add_customer_app|escapejs}}")
-
-    let customer_category_id = 0
+    let person_accounts_s = JSON.parse("{{person_accounts_s|escapejs}}")
+ 
 </script>
 
 <script>
     let add_customer_app = new Vue({
         el: "#add-customer-app",
         data: {
-            code: "",
-            prefix: "",
-            first_name: "",
-            level:"",
-            last_name: "",
-            address: "",
-            mobile: "",
-            level: "",
-            email: "",
-            person_id: 0,
-            persons: persons_for_add_customer_app,
-            bio: "",
+            level: "", 
+            person_account_id:0,
+            person_accounts: person_accounts_s,
             waiting: false,
             message: { show: false },
             show_form: false, 
-            type: "",
 
         },
         methods: {
@@ -35,27 +24,11 @@
 
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    code:this.code,
-                    customer_account_categories: JSON.stringify(this.customer_account_categories),
-                    person_id: this.person_id,
+                    person_account_id: this.person_account_id,
                     level: this.level,
                 }
+ 
 
-                if (this.person_id != 0) {
-                    payload.person_id= this.person_id
-                }
-                if (this.person_id == 0) {
-                    payload.first_name= this.first_name
-                    payload.last_name= this.last_name
-                    payload.address= this.address
-                    payload.mobile= this.mobile
-                    payload.prefix= this.prefix
-                    payload.bio= this.bio
-                    payload.type= this.type
-                    payload.email= this.email
-                }
-
-                leolog(payload)
                 let url = "{% url 'market:add_customer' %}"
                 $.post(url, payload).done(data => {
                     leolog(data)
@@ -64,7 +37,7 @@
                             customers_app.customers.push(data.customer)
                         }
                         show_message(add_customer_app, "موفقیت آمیز", data.message, "success", 10000)
-                        add_customer_app.persons=add_customer_app.persons.filter(person=>person.id!=data.customer.person.id)
+                        add_customer_app.persons=add_customer_app.person_accounts.filter(person_account=>person_account.id!=data.customer.person_account.id)
                     }
                     else {
                         show_message(add_customer_app, "خطا", data.message, "danger", 10000)

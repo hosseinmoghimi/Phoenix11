@@ -1,7 +1,26 @@
+
+<div id="accordion-add-meal-item" class="rtl text-right farsi">
+
 <div class="card" id="add-meal-item-app">
   <div class="card-header">
-    <h4>افزودن آیتم وعده</h4>
+    <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-add-meal-item"
+          aria-expanded="true"
+          aria-controls="collapse-add-meal-item"
+        >
+        افزودن آیتم وعده          
+        </button>
+      </h5>
   </div>
+   <div
+      id="collapse-add-meal-item"
+      class="collapse {% if expand_add_meal_item %} show {% endif %}"
+      aria-labelledby="heading-add-meal-item"
+      data-parent="#accordion-add-meal-item"
+    >
   <div class="card-body">
     <form @submit.prevent="add_meal_item()">
       <div class="row">
@@ -104,4 +123,6 @@
       </div>
     </form>
   </div>
+</div>
+</div>
 </div>

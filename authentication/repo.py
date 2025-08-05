@@ -1,20 +1,32 @@
-from .models import Profile,Person,FAILED,SUCCEED,APP_NAME
+from .models import Person,FAILED,SUCCEED,APP_NAME
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.models import User
 from utility.log import leolog
 
  
 class PersonRepo():
+    def user(self,*args, **kwargs):
+        user_id=0
+        if 'user_id' in kwargs:
+            user_id=kwargs['user_id']
+            return User.objects.filter(pk=user_id).first()
+        return User.objects.filter(pk=0).first()
     def __init__(self,request,*args, **kwargs):
-        self.request=request
         self.me=None
-        # profile=ProfileRepo(request=request).me
-        self.objects=Person.objects
+        self.request=request
+        if request.user.is_authenticated:
+            if self.request.user.has_perm(APP_NAME+'.view_person'):
+                self.objects=Person.objects.all()
+            else:
+                self.objects=Person.objects.filter(user_id=request.user.id) 
+        self.me=Person.objects.filter(user_id=request.user.id).first()
+        # person=PersonRepo(request=request).me
 
         
        
 
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
+        # if person is not None:
+        #     self.me=self.objects.filter(person=person).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         from django.db.models import Q
@@ -33,6 +45,8 @@ class PersonRepo():
     def person(self,*args, **kwargs):
         if "person_id" in kwargs and kwargs["person_id"] is not None:
             return self.objects.filter(pk=kwargs['person_id']).first()
+        if "person" in kwargs:
+            return kwargs['person'] 
         if "pk" in kwargs and kwargs["pk"] is not None:
             return self.objects.filter(pk=kwargs['pk']).first() 
         if "id" in kwargs and kwargs["id"] is not None:
@@ -74,8 +88,8 @@ class PersonRepo():
         categories=[]
         person_account_categories=[]
 
-        # if 'profile_id' in kwargs:
-        #     if Person.objects.filter(profile_id=kwargs['profile_id']).first() is not None:
+        # if 'person_id' in kwargs:
+        #     if Person.objects.filter(person_id=kwargs['person_id']).first() is not None:
         #         message="کد پروفایل وارد شده تکراری است."
         #         person=None
         #         return result,message,person
@@ -97,9 +111,9 @@ class PersonRepo():
         if 'title' in kwargs:
             person.title=kwargs["title"]
             
-        if 'profile_id' in kwargs and kwargs['profile_id']>0:
-            profile=ProfileRepo(request=self.request).profile(profile_id=kwargs['profile_id'])
-            person.profile=profile
+        if 'person_id' in kwargs and kwargs['person_id']>0:
+            person=PersonRepo(request=self.request).person(person_id=kwargs['person_id'])
+            person.person=person
         if 'color' in kwargs:
             person.color=kwargs["color"]
         if 'first_name' in kwargs:
@@ -131,16 +145,6 @@ class PersonRepo():
         return result,message,person
 
 
-
-
-class ProfileRepo():
-    def __init__(self,request,*args, **kwargs):
-        self.request=request 
-        self.me=None
-        self.objects=Profile.objects
-        if self.request.user.is_authenticated:
-            self.me=Profile.objects.filter(user=request.user).first()
-    
     def logout(self,*args, **kwargs):
         if 'request' in kwargs:
             logout(request=kwargs['request'])
@@ -161,20 +165,11 @@ class ProfileRepo():
             if user is not None:
                 login(request,user)
                 if user.is_authenticated:
-                    profile=Profile.objects.filter(user=user).first()
+                    person=Person.objects.filter(user=user).first()
                     description='لاگین با موفقیت انجام شد.'
                     title='لاگین'
-                    LogRepo(request=self.request).add_log(title=title,profile=profile,app_name=APP_NAME,description=description)
+                    LogRepo(request=self.request).add_log(title=title,person=person,app_name=APP_NAME,description=description)
                     return (request,user)
         LogRepo(request=self.request).add_log(title="try to login",app_name=APP_NAME,description="try to login username:"+kwargs['username']+" , password : "+kwargs['password'])
     
-            
-    def profile(self,*args, **kwargs):
-        if "profile_id" in kwargs and kwargs["profile_id"] is not None:
-            return self.objects.filter(pk=kwargs['profile_id']).first()
-        if "pk" in kwargs and kwargs["pk"] is not None:
-            return self.objects.filter(pk=kwargs['pk']).first() 
-        if "id" in kwargs and kwargs["id"] is not None:
-            return self.objects.filter(pk=kwargs['id']).first() 
-        if "code" in kwargs and kwargs["code"] is not None:
-            return self.objects.filter(code=kwargs['code']).first()
+ 

@@ -1,0 +1,47 @@
+<script>
+    let add_drug_app = new Vue({
+        el: "#add-drug-app",
+        data: {
+            unit_price: 0,
+            unit_name: "عدد",
+            title: "",
+            barcode: "",
+            coef:1,
+            show_form: false,
+            message: { show: false },
+        },
+        methods: {
+            add_drug: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    unit_name: this.unit_name,
+                    coef: this.coef,
+                    barcode: this.barcode,
+                    unit_price: parseInt(this.unit_price),
+                }
+                console.log(payload)
+                let url = "{% url 'health:add_drug' %}"
+                let posting = $.post(url, payload)
+                posting.done(data => {
+                    
+                    if (data.result === "SUCCEED") {
+                        if (typeof drugs_app != "undefined") {
+                            drugs_app.drugs.push(data.drug)
+                        }
+                        show_message(add_drug_app, "موفقیت آمیز", data.message, "success", 5000)
+                    }
+
+
+                    if (data.result != "SUCCEED") {
+                        show_message(add_drug_app, "خطا", data.message, "danger", 5000)
+                    }
+
+                })
+            },
+            to_price: function (vall) {
+                return to_price(vall)
+            }
+        }
+    })
+</script>

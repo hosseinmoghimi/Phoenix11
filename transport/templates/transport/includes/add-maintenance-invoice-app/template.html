@@ -1,0 +1,206 @@
+<div id="accordion-add-maintenance-invoice" class="rtl text-right farsi">
+
+
+
+  
+
+
+  <div class="card" id="add-maintenance-invoice-app">
+    <div class="card-header">
+       <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-maintenance-invoice"
+                    aria-expanded="true" aria-controls="collapse-add-maintenance-invoice">
+                افزودن فاکتور  تعمیر و نگهداری
+                </button>
+            </h5>
+    </div>
+
+     <div id="collapse-add-maintenance-invoice" class="collapse "
+            aria-labelledby="heading-add-maintenance-invoice" data-parent="#accordion-add-maintenance-invoice">
+
+
+    <div class="card-body">
+      <form @submit.prevent="add_invoice()">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="">عنوان</label>
+              <input v-model="title" type="text" class="form-control" />
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-6">
+                <div class="form-group">
+                  <label for="bedehkar_code">بدهکار</label>
+                  <input type="text" placeholder="" class="form-control" id="bedehkar_code" @input="select_bedehkar()"
+                    v-model="bedehkar_code" />
+                </div>
+              </div>
+
+              <div class="col-6 mt-3">
+                <hr />
+                <a :href="bedehkar.get_absolute_url" v-if="bedehkar">
+                  <div class="media">
+                    <img :src="bedehkar.logo" width="64" alt="" />
+                    <div class="mr-2 media-body">
+                      <h5 class="my-2">
+                        <span :class="'text-'+bedehkar.color" v-text="bedehkar.name"></span>
+                      </h5>
+                      <h6>
+                        <span :class="'text-'+bedehkar.color" v-text="bedehkar.code"></span>
+                      </h6>
+
+                      <h6>
+                        <span v-html="to_price_colored(bedehkar.balance)"></span>
+                      </h6>
+
+                      <h6>
+                        <small :class="'text-'+bedehkar.color" v-text="bedehkar.full_name"></small>
+                      </h6>
+                    </div>
+                  </div>
+                </a>
+                <div v-if="!bedehkar">
+                  <h5 class="text-danger">بدهکار انتخاب نشده است.</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-6">
+                <div class="form-group">
+                  <label for="bestankar_code">بستانکار</label>
+                  <input type="text" placeholder="" class="form-control" id="bestankar_code" @input="select_bestankar()"
+                    v-model="bestankar_code" />
+                </div>
+              </div>
+              <div class="col-6 mt-3">
+                <hr />
+                <a :href="bestankar.get_absolute_url" v-if="bestankar">
+                  <div class="media">
+                    <img :src="bestankar.logo" width="64" alt="" />
+                    <div class="mr-2 media-body">
+                      <h5 class="my-2">
+                        <span :class="'text-'+bestankar.color" v-text="bestankar.name"></span>
+                      </h5>
+                      <h6>
+                        <span :class="'text-'+bestankar.color" v-text="bestankar.code"></span>
+                      </h6>
+                      <h6>
+                        <span v-html="to_price_colored(bestankar.balance)"></span>
+                      </h6>
+
+                      <h6>
+                        <small :class="'text-'+bestankar.color" v-text="bestankar.full_name"></small>
+                      </h6>
+                    </div>
+                  </div>
+                </a>
+                <div v-if="!bestankar">
+                  <h5 class="text-danger">بستانکار انتخاب نشده است.</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="exampleInputDate">تاریخ</label>
+              <date-picker v-model="event_date"></date-picker>
+
+              <input type="text" required class="form-control" v-model="event_date" />
+            </div>
+          </div>
+
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="exampleInputDate">زمان</label>
+
+              <input type="text" required class="form-control" v-model="event_time" />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="exampleInputDate">هزینه حمل</label>
+
+              <input type="number" required class="form-control" v-model="shipping_fee" />
+            </div>
+          </div>
+
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="exampleInputDate">کیلومتر</label>
+
+              <input type="number" required class="form-control" v-model="kilometer" />
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="exampleInputDate">تعمیرکار</label>
+
+              <select   required class="form-control" v-model="service_man_id" >
+                {% for service_man in service_mans %}
+                  
+                <option value="{{service_man.id}}">{{service_man.person_account.person.full_name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="exampleInputDate">نوع</label>
+
+              <select required class="form-control" v-model="maintenance_type" >
+                {% for typeee in maintenance_types %}
+                  
+                <option value="{{typeee}}">{{typeee}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="exampleInputDate">توضیحات</label>
+
+              <input type="text"  required class="form-control" v-model="description" />
+            </div>
+
+          <div class="col-md-4"></div>
+
+          <div class="col-md-12">
+            <button class="btn btn-success" type="submit">
+              <i class="fa fa-plus"></i>
+              افزودن
+            </button>
+          </div>
+
+           <div class="col-md-12" v-if="message.show">
+           <div :class="'alert alert-' + message.color">
+            <h5 v-text="message.title">
+
+            </h5>
+            <div v-html="message.body">
+
+            </div>
+           </div>
+          </div>
+
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>

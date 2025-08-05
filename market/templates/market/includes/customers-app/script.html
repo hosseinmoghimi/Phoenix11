@@ -1,35 +1,14 @@
 <script>
-    let url_add_customer = ("{% url 'market:add_customer' %}")
     let customers = JSON.parse("{{customers_s|escapejs}}")
     // let links=JSON.parse(`{{links_s|escapejs}}`)
     let customers_app = new Vue({
         el: "#customers-app",
         data: {
-            new_link_title: "",
-            new_link_url: "",
             customers: customers,
-            show_add_link: false,
         },
         methods: {
             to_price:vall=>to_price(vall),
-            add_customer: function () {
-                let url = url_add_customer
-                let payload = {
-                    csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    page_id: page_id,
-                    title: this.new_link_title,
-                    url: this.new_link_url,
-                }
-                let posting = $.post(url, payload)
-                posting.done((data) => {
-                    if (data.result === 'SUCCEED') {
-
-                        customers_app.links.push(data.customer)
-                        customers_app.new_link_title = ""
-                        customers_app.new_link_url = ""
-                    }
-                })
-            },
+              
         }
     })
 </script>

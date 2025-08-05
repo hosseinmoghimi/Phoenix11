@@ -1,0 +1,124 @@
+{% include "accounting/includes/account-app/select-script.html" %}
+<script>
+  let add_maintenance_invoice_app = new Vue({
+    el: "#add-maintenance-invoice-app",
+    data: {
+    title: "",
+    event_date: current_date,
+    event_time: current_time,
+    event_datetime: current_datetime,
+    bedehkar: false ,
+    bestankar: false ,  
+    bedehkar_code: "0", 
+    bestankar_code: "0",   
+    kilometer:0,  
+    shipping_fee:0,
+    vehicle_id:parseInt('{{vehicle.id}}'),
+    maintenance_type:'',
+    description:'',
+    amount:0,
+    service_man_id:0,
+    message:{show:false},
+    waiting:false,
+    },
+
+    components: {
+      DatePicker: VuePersianDatetimePicker,
+    },
+    methods: {
+      
+
+      swap: function () {
+        let bed = add_maintenance_invoice_app.bedehkar;
+        let bes = add_maintenance_invoice_app.bestankar;
+        add_maintenance_invoice_app.bedehkar = bes;
+        add_maintenance_invoice_app.bestankar = bed;
+      },
+      to_price_colored: function (vall) {
+        let colorr = "primary";
+        if (vall > 0) {
+          colorr = "success";
+        }
+
+        if (vall < 0) {
+          colorr = "danger";
+        }
+
+        return `<span class="text-${colorr}">${to_price(
+          vall
+        )} {{CURRENCY}}</span>`;
+      },
+
+      to_price: function (vall) {
+        return to_price(vall) + " {{CURRENCY}}";
+      },
+
+      select_bedehkar: function () {
+          console.log(add_maintenance_invoice_app.bedehkar);
+          select_account_by_code(add_maintenance_invoice_app.bedehkar_code).done((data) => {
+              add_maintenance_invoice_app.bedehkar = data.account;
+              
+              if (data.result === "SUCCEED") {
+                  console.log(data.account);
+            if (data.account.nature === "{{ONLY_BESTANKAR}}") {
+                return;
+            }
+            add_maintenance_invoice_app.bedehkar = data.account;
+        } else {
+            add_maintenance_invoice_app.bedehkar = false
+        }
+        });
+    },
+
+    select_bestankar: function () {
+          console.log(add_maintenance_invoice_app.bestankar);
+        select_account_by_code(add_maintenance_invoice_app.bestankar_code).done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+              console.log(data.account);
+              if (data.account.nature === "{{ONLY_BEDEHKAR}}") {
+                  return;
+                }
+                
+                add_maintenance_invoice_app.bestankar = data.account;
+          } else {
+            add_maintenance_invoice_app.bestankar = false
+          }
+        });
+      },
+
+      add_invoice: function () {
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          title: this.title,
+          event_datetime: this.event_date+" "+this.event_time,
+          bedehkar_id: parseInt(this.bedehkar.id),
+          amount: parseInt(this.amount),
+          service_man_id: parseInt(this.service_man_id),
+          bestankar_id: parseInt(this.bestankar.id),
+          kilometer:parseInt(this.kilometer),
+          shipping_fee:parseInt(this.shipping_fee),
+          description:this.description,
+          vehicle_id:parseInt('{{vehicle.id}}'),
+          maintenance_type:this.maintenance_type,
+        };
+
+        console.log(payload);
+        let url = "{% url 'transport:add_maintenance_invoice' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            if (typeof maintenance_invoices_app != "undefined") {
+              maintenance_invoices_app.maintenance_invoices.push(data.maintenance_invoice);
+            }
+          }
+          else{
+            show_message(add_maintenance_invoice_app,'موفق',data.message,'danger',3000)
+          }
+
+        });
+      },
+    },
+  });
+</script>

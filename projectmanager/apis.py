@@ -102,3 +102,24 @@ class AddProjectApi(APIView):
         context['log']=log
         return JsonResponse(context)
  
+class AddSubProjectApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_sub_project_form=AddSubProjectForm(request.POST)
+        if add_sub_project_form.is_valid():
+            log=333
+            cd=add_sub_project_form.cleaned_data
+            result,message,project=ProjectRepo(request=request).add_project(**cd)
+            if project is not None:
+                context['project']=ProjectSerializer(project).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 

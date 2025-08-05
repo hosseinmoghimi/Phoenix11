@@ -11,12 +11,12 @@ class LogRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         self.objects = Log.objects.order_by('-date_added') 
-        from authentication.repo import ProfileRepo
-        self.profile=ProfileRepo(request=self.request).me
+        from authentication.repo import PersonRepo
+        self.person=PersonRepo(request=self.request).me
         if self.user.has_perm(APP_NAME+".view_log"):
             self.objects = Log.objects
-        elif self.profile is not None:
-            self.objects=Log.objects.filter(profile_id=self.profile.id)
+        elif self.person is not None:
+            self.objects=Log.objects.filter(profile_id=self.person.id)
         else:
             self.objects = Log.objects.filter(pk=0)
 
@@ -46,6 +46,8 @@ class LogRepo():
             log.url=kwargs['url']
         if 'app_name' in kwargs:     
             log.app_name=kwargs['app_name']
+        if 'person' in kwargs:            
+            log.person=kwargs['person']
         if 'profile' in kwargs:            
             log.profile=kwargs['profile']
         if 'profile_id' in kwargs:            

@@ -1,0 +1,68 @@
+<script>
+  let edit_invoice_app = new Vue({
+    el: "#edit_invoice-app",
+    data: {
+      title: "{{invoice.title}}",
+      status: "{{invoice.status}}",
+      payment_method: "{{invoice.payment_method}}",
+      discount_percentage: parseInt("{{invoice.discount_percentage}}"),
+      tax_percentage: parseInt("{{invoice.tax_percentage}}"),
+      amount: parseInt("{{invoice.amount}}"),
+      shipping_fee: parseInt("{{invoice.shipping_fee}}"),
+      bedehkar_code: `{{invoice.bedehkar.code}}`,
+      bestankar_code: `{{invoice.bestankar.code}}`,
+      waiting: false,
+      message: { show: false },
+    },
+    methods: {
+      to_price: function (VALL) {
+        return to_price(VALL)
+      },
+      edit_invoice: function () {
+        edit_invoice_app.waiting = true;
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          invoice_id: parseInt("{{invoice.id}}"),
+          financial_event_id:parseInt("{{invoice.id}}"),
+          title: edit_invoice_app.title,
+          discount_percentage: parseInt(
+            edit_invoice_app.discount_percentage
+          ),
+          payment_method: edit_invoice_app.payment_method,
+          amount: parseInt(edit_invoice_app.amount),
+          tax_percentage: parseInt(edit_invoice_app.tax_percentage),
+          shipping_fee: parseInt(edit_invoice_app.shipping_fee),
+          status: edit_invoice_app.status,
+          bedehkar_code: edit_invoice_app.bedehkar_code,
+          bestankar_code: edit_invoice_app.bestankar_code,
+        };
+
+        console.log(payload);
+        let url = "{% url 'accounting:edit_invoice' %}";
+        console.log(url);
+        $.post(url, payload).done((data) => {
+          edit_invoice_app.waiting = false;
+          if (data.result === "SUCCEED") {
+            show_message(
+              edit_invoice_app,
+              "موفقیت آمیز",
+              data.message,
+              "success",
+              3000
+            );
+          }
+
+          if (data.result != "SUCCEED") {
+            show_message(
+              edit_invoice_app,
+              "خطا",
+              data.message,
+              "danger",
+              3000
+            );
+          }
+        });
+      },
+    },
+  });
+</script>

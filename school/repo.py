@@ -4,7 +4,7 @@ from .enums import *
 from log.repo import LogRepo 
 from django.db.models import Q
 from django.shortcuts import reverse
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo
 from accounting.repo import InvoiceLineItemUnitRepo
 from utility.num import filter_number
 from utility.calendar import PersianCalendar
@@ -19,7 +19,7 @@ class SchoolRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=School.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_account"):
                 self.objects=School.objects
@@ -45,15 +45,21 @@ class SchoolRepo():
         
     def add_school(self,*args,**kwargs):
         result,message,school=FAILED,"",None
+        if len(School.objects.filter(name=kwargs["name"]))>0:
+            message='نام تکراری برای آموزشگاه جدید'
+            return FAILED,message,None
+        if len(School.objects.filter(person_account_id=kwargs["person_account_id"]))>0:
+            message='حساب تکراری برای آموزشگاه جدید'
+            return FAILED,message,None
         if not self.request.user.has_perm(APP_NAME+".add_school"):
             message="دسترسی غیر مجاز"
             return result,message,school
 
-        school=School()
+        school=School() 
+        if 'person_account_id' in kwargs:
+            school.person_account_id=kwargs["person_account_id"]
         if 'name' in kwargs:
             school.name=kwargs["name"]
-        if 'account_id' in kwargs:
-            school.account_id=kwargs["account_id"]
           
         (result,message,school)=school.save()
         return result,message,school
@@ -65,7 +71,7 @@ class CourseRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=Course.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_account"):
                 self.objects=Course.objects
@@ -129,7 +135,7 @@ class CourseClassRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=CourseClass.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_account"):
                 self.objects=CourseClass.objects

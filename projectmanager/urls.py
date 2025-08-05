@@ -7,9 +7,11 @@ urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),  
 
+    path('project/add/sub/',login_required(apis.AddSubProjectApi.as_view()),name="add_sub_project"),  
     path('project/add/',login_required(apis.AddProjectApi.as_view()),name="add_project"),  
     path('projects/',login_required(views.ProjectsView.as_view()),name="projects"),  
     path('project/<int:pk>/',login_required(views.ProjectView.as_view()),name="project"),  
+    path('tree_chart/<int:pk>/',login_required(views.ProjectTreeChartView.as_view()),name="tree_chart"),  
     path('project/',login_required(views.ProjectView.as_view()),name="project_null"),  
     path('edit-project/',login_required(apis.EditProjectApi.as_view()),name="edit_project"),  
 

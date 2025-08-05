@@ -1,0 +1,110 @@
+{% load static %}
+{% load to_price %}
+
+
+<div id="accordion-organization-units">
+
+
+    <div class="card" id="sub-organization-units-app">
+        <div class="card-header" id="heading-organization-units">
+            <div class="row rtl">
+                <div class="col-3">
+
+                </div>
+
+                <div class="col-6">
+                    <h5 class="card-title text-center farsi">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-organization-units"
+                            aria-expanded="true" aria-controls="collapse-organization-units">
+                            واحد های زیرمجموعه
+                            <span v-if="organization_units.length>0">
+                                <small class="text-danger mx-2">
+                                    <span v-text="organization_units.length"></span>
+                                </small>
+                            </span>
+
+                        </button>
+                    </h5>
+                </div>
+
+                 
+            </div>
+
+
+
+        </div>
+        <div id="collapse-organization-units" class="collapse {% if expand_organization_units %} show {% endif %}"
+            aria-labelledby="heading-organization-units" data-parent="#accordion-organization-units">
+
+            <div class="card-body rtl">
+
+                <div v-for="organization_unit in organization_units" class="farsi mx-2 mb-3">
+
+                    <a title="جزئیات" :href="organization_unit.get_absolute_url">
+                        <div class="media">
+
+                            <img :src="organization_unit.thumbnail" class="rounded" width="32" alt="">
+
+                            <div class="media-body farsi">
+
+                                <h5 v-text="organization_unit.title" class="rtl mx-2">
+                                    <span v-text="organization_unit.title"></span>
+                                   
+
+                                </h5>
+                                <h6 v-if="organization_unit.sub_title">
+                                    <span class="text-secondary rtl" v-html="organization_unit.sub_title"></span>
+
+                                </h6>
+                                {% if not organization_unit %}
+                                <h6 class="text-secondary">
+                                
+
+                                        <span v-text="organization_unit.employer.title"></span> 
+                                        <!-- <span v-text="organization_unit.employer.title"></span> -->
+                                        
+                                        
+                                </h6>
+                                {% endif %}
+
+
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% if add_organization_unit_form %}
+            <div class="card-footer ">
+
+
+                <form v-cloak @submit.prevent="add_organization_unit()">
+                    <div class="row">
+                        <div class="col-8">
+                            <input required type="text" v-model="new_organization_unit_title" class="farsi form-control"
+                                placeholder="پروژه جدید">
+
+                        </div>
+                        <div class="col-4">
+                            <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+
+
+
+                            <button v-if="!waiting" class="btn btn-primary btn-link text-light" type="submit">
+
+                                <i class="material-icons">
+                                    add
+                                </i>
+                            </button>
+
+
+                        </div>
+                    </div>
+
+                </form>
+
+
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

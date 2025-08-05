@@ -28,22 +28,40 @@
       <div class="card-body">
         <div class="table-responsive">
           <table class="table table-striped">
-            <thead> 
-              <th>منو</th> 
-              <th>
-
-              </th>
+            <thead>
+              <th>وسیله نقلیه</th>
+              <th>مالک</th>
+              <th></th>
             </thead>
             <tbody>
               <tr v-for="vehicle in vehicles">
-               
                 <td>
-                  <a :href="vehicle.get_absolute_url">
-                    <span v-text="vehicle.title"></span>
-                  </a>
- 
+                 <div class="media">
+                    <a :href="vehicle.get_absolute_url">
+                      <img :src="vehicle.thumbnail" width="32" class="rounded-circle" alt="">
+                    </a>
+                    <div class="media-body mr-2">
+                      <a :href="vehicle.get_absolute_url">
+                        <span v-text="vehicle.title"></span>
+                      </a>
+                    </div>
+                  </div>
                 </td>
-                
+
+                <td>
+                  <div class="media">
+                    <a :href="vehicle.owner.get_absolute_url">
+                      <img :src="vehicle.owner.logo" width="48" class="rounded-circle" alt="">
+                    </a>
+                    <div class="media-body mr-2">
+                      <a :href="vehicle.owner.get_absolute_url">
+                        <h6 v-text="vehicle.owner.name"></h6>
+                        <h6 v-text="vehicle.owner.code"></h6>
+                      </a>
+                    </div>
+                  </div>
+                </td>
+
                 <td>
                   <a
                     target="_blank"

@@ -19,7 +19,11 @@
                     <div>{% include "market/includes/product-app/main-shop.html" %}</div>
 
                 </div>
-                
+                {% if product.short_description %}
+                  <div class="rtl text-right">
+                    {{product.short_description|safe}}
+                  </div>
+                {% endif %}
             </div>
         </div>
     </div>

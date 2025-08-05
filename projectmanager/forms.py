@@ -1,4 +1,9 @@
 from accounting.forms import AddProductForm,forms,AddInvoiceForm
+
+class AddSubProjectForm(forms.Form):
+    title=forms.CharField(max_length=50,required=True)
+    parent_id=forms.IntegerField(required=True)
+     
  
 class AddProjectForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)

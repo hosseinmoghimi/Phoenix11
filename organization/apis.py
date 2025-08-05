@@ -31,6 +31,7 @@ class AddEmployeeApi(APIView):
         context['log']=log
         return JsonResponse(context)
  
+
 class AddOrganizationUnitApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -53,10 +54,6 @@ class AddOrganizationUnitApi(APIView):
         return JsonResponse(context)
  
 
-
-
- 
- 
 class SelectOrganizationUnitApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -79,9 +76,6 @@ class SelectOrganizationUnitApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-
-
- 
 
  
 class SelectEmployeeApi(APIView):

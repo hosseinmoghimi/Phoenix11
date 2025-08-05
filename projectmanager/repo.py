@@ -4,7 +4,7 @@ from .enums import *
 from log.repo import LogRepo 
 from django.db.models import Q
 from django.shortcuts import reverse
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo
 from accounting.repo import InvoiceLineItemUnitRepo
 from utility.num import filter_number
 from utility.calendar import PersianCalendar
@@ -20,7 +20,7 @@ class ProjectRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=Project.objects.filter(id=0)
-        profile=ProfileRepo(request=request).me
+        profile=PersonRepo(request=request).me
         if profile is not None:
             if request.user.has_perm(APP_NAME+".view_account"):
                 self.objects=Project.objects
@@ -90,7 +90,12 @@ class ProjectRepo():
             if year=="13" or year=="14":
                 kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
             project.event_datetime=kwargs['event_datetime']
+            
+        if project.parent is not None and project.contractor_id is None:
+            project.contractor_id=project.parent_project.contractor_id
 
+        if project.parent is not None and project.employer_id is None:
+            project.employer_id=project.parent_project.employer_id
  
         
         (result,message,project)=project.save()
@@ -190,7 +195,7 @@ class RemoteClientRepo():
             self.user = kwargs['user']
         
         self.objects=RemoteClient.objects.all().order_by("-id")
-        self.profile=ProfileRepo(*args, **kwargs).me
+        self.person=PersonRepo(*args, **kwargs).me
        
 
     def remote_client(self, *args, **kwargs):

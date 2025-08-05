@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from .forms import *
 # from .repo import ContactMessageRepo, PageCommentRepo, PageLinkRepo, PagePermissionRepo, PageRepo, PageTagRepo,  ParameterRepo,PageDownloadRepo,PageImageRepo
 from .repo import  PageRepo 
-from .serializer import  PageSerializer
+from .serializers import  PageSerializer
 from utility.constants import SUCCEED, FAILED
 from utility.utils import str_to_html
 from core.views import PageBriefSerializer

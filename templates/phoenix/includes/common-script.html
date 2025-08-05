@@ -69,3 +69,14 @@
         $(".notification-divider:last").addClass("d-none")
     })
 </script>
+
+
+
+{% if PUSHER_IS_ENABLE %}
+{% include "phoenix/includes/pusher-script.html" %}
+{% endif %}
+
+{% if APP_SCRIPT %}
+
+{% include APP_SCRIPT %}
+{% endif %}

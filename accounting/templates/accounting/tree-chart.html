@@ -101,7 +101,7 @@
   {% if account.parent %}
   <a class="btn btn-primary farsi" href="{% url 'accounting:tree_chart' pk=account.parent.pk %}" >
     
-  {{account.parent.name}}
+  {{account.parent.title}}
   </a>
 
   {% endif %}
@@ -109,7 +109,7 @@
   {% if account.parent %}
   <a class="btn btn-primary farsi" href="{% url 'accounting:tree_chart' pk=account.parent.pk %}" >
     
-  {{account.parent.name}}
+  {{account.parent.title}}
   </a>
 
   {% endif %} 

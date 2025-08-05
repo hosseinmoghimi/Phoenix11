@@ -2,52 +2,8 @@
 {% block content %}
 <div class="row rtl farsi">
   <div class="col-md-4">
-    <div class="card">
-      <div class="card-header">
-        <h5>{{organization_unit.title}}</h5>
-      </div>
-      <div class="card-body">
-        <h5>
-          <a
-            href="{% url 'organization:organizationunit' pk=organization_unit.pk %}"
-          >
-            organization_unit: {{organization_unit.title}}
-          </a>
-        </h5>
-        <img src="{{organization_unit.thumbnail}}" width="128" alt="" />
-        <div class="my-3">
-          <h5>{{organization_unit.title}}</h5>
+    {% include "organization/includes/organization-unit-app/card.html" %}
 
-          <small class="text-muted">{{organization_unit.class_title}}</small>
-        </div>
-
-        {% if perms.core.change_organization_unit %}
-        <div>
-          <a
-            href="{{organization_unit.get_edit_url}}"
-            class="my-2 text-warning mx-2"
-            title="ویرایش"
-            target="_blank"
-          >
-            <i class="fa fa-edit text-warning"></i>
-            ویرایش
-          </a>
-        </div>
-        {% endif %} {% if perms.core.delete_organization_unit %}
-        <div>
-          <a
-            href="{{organization_unit.get_delete_url}}"
-            class="my-2 text-danger mx-2"
-            title="حذف"
-            target="_blank"
-          >
-            <i class="fa fa-trash text-danger"></i>
-            حذف
-          </a>
-        </div>
-        {% endif %}
-      </div>
-    </div>
   </div>
   <div class="col-md-12">
     <div class="text-center"></div>
@@ -56,9 +12,27 @@
   <div class="col-12">
     {% include "organization/includes/employees-app/template.html" %}
   </div>
+  <div class="col-12">
+    {% include "organization/includes/sub-organization-units-app/template.html" %}
+  </div>
+
+  {% if add_employee_form %}
+      <div class="col-md-12">
+          {% include "organization/includes/add-employee-app/template.html" %}
+
+      </div>
+    {% endif %}
+
 </div>
 {% endblock content %} {% block script %}
 <script>
   let organization_unit_id = parseInt("{{organization_unit.id}}");
 </script>
-{% include "organization/includes/employees-app/script.html" %} {% endblock script %}
+  {% include "organization/includes/sub-organization-units-app/script.html" %}
+{% include "organization/includes/employees-app/script.html" %} 
+{% if add_employee_form %}
+          {% include "organization/includes/add-employee-app/script.html" %}
+
+    {% endif %}
+
+{% endblock script %}

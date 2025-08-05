@@ -10,7 +10,7 @@ from projectmanager.models import Request
 
 class WareHouse(models.Model,LinkHelper):
     name=models.CharField(_("نام"), max_length=50)
-    account=models.ForeignKey("accounting.account", verbose_name=_("account"),null=True,blank=True, on_delete=models.PROTECT)
+    person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"),null=True,blank=True, on_delete=models.PROTECT)
     organization_unit=models.ForeignKey("organization.organizationunit", verbose_name=_("organization_unit"),null=True,blank=True, on_delete=models.PROTECT)
 
     app_name=APP_NAME
@@ -33,7 +33,7 @@ class WareHouse(models.Model,LinkHelper):
  
 
 class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
     source=models.ForeignKey("warehouse",related_name="material_from", verbose_name=_("source"), on_delete=models.PROTECT)
     destination=models.ForeignKey("warehouse",related_name="material_to", verbose_name=_("destination"), on_delete=models.PROTECT)
     product=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.CASCADE)
@@ -49,7 +49,7 @@ class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
         verbose_name_plural = _("MaterialPorts")
 
     def __str__(self):
-        return f"{self.profile}  {self.product}  {self.status}"
+        return f"{self.person}  {self.product}  {self.direction}"
 
 
 class WareHouseMaterialSheet(models.Model,LinkHelper):
@@ -57,7 +57,7 @@ class WareHouseMaterialSheet(models.Model,LinkHelper):
     material=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.PROTECT)
     direction=models.CharField(_("direction"),max_length=50,choices=MaterialPortDirectionEnum.choices)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.PROTECT)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD,max_length=100)
     quantity=models.IntegerField(_("quantity"))
     shelf=models.CharField(_("shelf"),max_length=50)
@@ -90,8 +90,9 @@ class MaterialTerminal(models.Model):
         verbose_name_plural = _("MaterialTerminals")
 
     def __str__(self):
-        if self.profile is None:
-            return f"{self.profile}"
-        if self.ware_house is None:
-            return f"{self.ware_house}"
-        return "___"
+        employee=ware_house=''
+        if self.employee is not None:
+            employee= f"{self.employee}"
+        if self.ware_house is not None:
+            ware_house= f"{str(self.ware_house)}"
+        return ware_house+"___"+employee

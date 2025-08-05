@@ -1,11 +1,14 @@
 <script>
-    let suppliers_for_suppliers_app = JSON.parse("{{suppliers_s|escapejs}}")
-    suppliers_app = new Vue({
+    let suppliers = JSON.parse("{{suppliers_s|escapejs}}")
+    // let links=JSON.parse(`{{links_s|escapejs}}`)
+    let suppliers_app = new Vue({
         el: "#suppliers-app",
         data: {
-            suppliers:suppliers_for_suppliers_app
+            suppliers: suppliers,
         },
         methods: {
-        },
+            to_price:vall=>to_price(vall),
+              
+        }
     })
 </script>

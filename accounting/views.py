@@ -3,6 +3,7 @@ from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_UR
 from utility.log import leolog
 from .constants import EXCEL_PRODUCTS_DATA_START_ROW,EXCEL_SERVICES_DATA_START_ROW
 
+
 from django.http import Http404,HttpResponse
 from django.views import View
 from .enums import *
@@ -12,29 +13,45 @@ from phoenix.server_apps import phoenix_apps
 from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
-from .repo import FinancialDocumentRepo,CategoryRepo,BrandRepo
-from .repo import PersonCategoryRepo,ProfileRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo,ProductRepo,InvoiceRepo,FinancialEventRepo,BankAccountRepo,PersonAccountRepo
+from .repo import FinancialDocumentRepo,CategoryRepo,BrandRepo,AssetRepo
+from .repo import PersonCategoryRepo,PersonRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo
+from .repo import ProductRepo,InvoiceRepo,FinancialEventRepo,PersonAccountRepo
+from .repo import  BankAccountRepo
+from .serializers import BankAccountSerializer
 from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer,BrandSerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
-from .repo import FinancialYearRepo
+from .serializers import PersonCategorySerializer,AssetSerializer,BankSerializer
+from .repo import FinancialYearRepo,BankRepo
+from authentication.views import PersonContext
 from utility.currency import to_price_colored
 import json 
 from core.views import MessageView
 from .models import UnitNameEnum
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='accounting/'
-WIDE_LAYOUT=False
+WIDE_LAYOUT=True
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
 
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
-    context['WIDE_LAYOUT']=WIDE_LAYOUT
- 
+    # context['WIDE_LAYOUT']=WIDE_LAYOUT
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
  
+def AddBrandContext(request,*args, **kwargs):
+    context={}
+    context['add_brand_form']=AddBrandForm()
+    return context
+
+def AddBankAccountContext(request,*args, **kwargs):
+    context=AddAccountContext(request=request,*args, **kwargs)
+    context['add_bank_account_form']=AddBankAccountForm()
+    banks_for_add_bank_account=BankRepo(request=request).list(*args, **kwargs)
+    context['banks_for_add_bank_account']=banks_for_add_bank_account
+    return context
+
 def AddAccountContext(request,*args, **kwargs):
     context={}
     if request.user.has_perm(APP_NAME+".add_account"):
@@ -43,10 +60,23 @@ def AddAccountContext(request,*args, **kwargs):
         context['add_account_form']=AddAccountForm()
     return context
 
+def AddAssetContext(request,*args, **kwargs):
+    context={}
+    context['add_asset_form']=AddAssetForm()
+    return context
+
 def AddInvoiceLineItemContext(request,*args, **kwargs):
     context={}
     unit_names=(i[0] for i in UnitNameEnum.choices)
     context['unit_names_for_add_invoice_line_item']=unit_names
+    return context
+
+def AssetContext(request,asset,*args, **kwargs):
+    context={}
+    context.update(PageContext(request=request,page=asset))
+    context['asset']=asset
+    asset_s=json.dumps(AssetSerializer(asset).data)
+    context['asset_s']=asset_s
     return context
 
 def AddProductContext(request,*args, **kwargs):
@@ -71,6 +101,7 @@ def AddInvoiceLineContext(request,*args, **kwargs):
     context={}
     unit_names=(i[0] for i in UnitNameEnum.choices)
     context["unit_names_for_add_invoice_line"]=unit_names
+    context["unit_names_for_edit_invoice_line"]=unit_names
     context["add_invoice_line_form"]=AddInvoiceLineForm
     invoice_line_items=InvoiceLineItemRepo(request=request).list()
     invoice_line_items_s=json.dumps(InvoiceLineItemSerializer(invoice_line_items,many=True).data)
@@ -123,7 +154,7 @@ def AccountContext(request,account,*args, **kwargs):
 
 
     
-    financial_events=FinancialEventRepo(request=request).list(account_code=account.code)
+    financial_events=FinancialEventRepo(request=request).list(account_id=account.id)
     financial_events_s=json.dumps(FinancialEventSerializer(financial_events,many=True).data)
     context['financial_events']=financial_events
     context['financial_events_s']=financial_events_s 
@@ -194,8 +225,12 @@ def FinancialEventContext(request,financial_event):
     financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
  
     context["financial_document_lines_s"]=financial_document_lines_s
-    
-
+    if request.user.has_perm(APP_NAME+'.change_financialevent'):
+        payment_methods=(i[0] for i in PaymentMethodEnum.choices)
+        financial_event_statuses=(i[0] for i in FinancialEventStatusEnum.choices)
+        context['financial_event_statuses']=financial_event_statuses
+        context['payment_methods_for_edit_financial_event_form']=payment_methods
+        context['edit_financial_event_form']=EditFinancialEventForm()
     return context
 
 def InvoiceContext(request,invoice,*args, **kwargs):
@@ -212,6 +247,13 @@ def InvoiceContext(request,invoice,*args, **kwargs):
         invoice_lines_s=json.dumps(InvoiceLineSerializer(invoice_lines,many=True).data)
         context['invoice_lines_s']=invoice_lines_s
     
+    if request.user.has_perm(APP_NAME+'.change_invoice'):
+        payment_methods=(i[0] for i in PaymentMethodEnum.choices)
+        invoice_statuses=(i[0] for i in FinancialEventStatusEnum.choices)
+        context['invoice_statuses']=invoice_statuses
+        context['payment_methods_for_edit_invoice_form']=payment_methods
+        context['edit_invoice_form']=EditFinancialEventForm()
+        
     (total,discount,total_after_discount,tax,amount)=invoice.statistics
     context['total']=total
     context['total_after_discount']=total_after_discount
@@ -223,8 +265,7 @@ def InvoiceContext(request,invoice,*args, **kwargs):
 def ProductContext(request,product,*args, **kwargs):
     context=InvoiceLineItemContext(request=request,invoice_line_item=product)
     context['product']=product
-    base_price=product.base_price
-    context['base_price']=base_price
+    
 
  
     
@@ -240,37 +281,7 @@ def ProductContext(request,product,*args, **kwargs):
         context['all_product_categories_s']=all_product_categories_s
 
     return context
-
-def AddPersonContext(request):
-    context={}
-    if not request.user.has_perm(APP_NAME+".add_person"):
-        return {}
-
-    context['person_account_categories']=PersonCategoryRepo(request=request).list()
-    context['add_person_form']=AddPersonForm()
-
-    persons_ids=PersonRepo(request=request).list().values('profile_id')
-    profiles=ProfileRepo(request=request).list().exclude(id__in=persons_ids)
-    profiles_s=json.dumps(ProfileSerializer(profiles,many=True).data)
-    context['profiles_s_for_add_person_app']=profiles_s
-    context['person_prefixs']=(i[0] for i in PersonPrefixEnum.choices)
-    context['person_types']=(i[0] for i in PersonTypeEnum.choices)
-    context['person_types2']=(i[0] for i in PersonType2Enum.choices)
-    return context
-    
-def PersonContext(request,person):
-    context={} 
-    context['person']=person
-    if person.profile:
-        context['profile']=person.profile
-    return context
-
-def ProductContext(request,product,*args, **kwargs):
-    context={}
-    context.update(InvoiceLineItemContext(request=request,invoice_line_item=product))
-    context["product"]=product
-    return context
- 
+   
 def ServiceContext(request,service,*args, **kwargs):
     context={}
     context.update(InvoiceLineItemContext(request=request,invoice_line_item=service))
@@ -315,8 +326,45 @@ def AddProductToCategoryContext(request,product,*args, **kwargs):
     context['product_categories_s']=product_categories_s
     return context
 
+def EditFinancialDocumentContext(request,financial_document,*args, **kwargs):
+    context={}
+    context['edit_financial_document_form']=EditFinancialDocumentForm()
+    context['statuses_for_edit_financial_document_form']=(i[0] for i in FinancialDocumentStatusEnum.choices)
+    return context
+
+def AddPersonCategoryContext(request,*args, **kwargs):
+    context={}
+    context['add_person_category_form']=AddPersonCategoryForm()
+    return context
+
+def AddPersonAccountContext(request,*args, **kwargs):
+    context=AddAccountContext(request=request)
+    person_categories=PersonCategoryRepo(request=request).list()
+    context['person_categories']=person_categories
+    context['add_person_account_form']=AddPersonAccountForm()
+    return context
+
+def PersonAccountContext(request,person_account,*args, **kwargs):
+    context=AccountContext(request=request,account=person_account,*args, **kwargs)
+    context['person_account']=person_account
+    person_account_s=json.dumps(PersonAccountSerializer(person_account).data)
+    context['person_account_s']=person_account_s
+    return context
+
+def BankAccountContext(request,bank_account,*args, **kwargs):
+    context=AccountContext(request=request,account=bank_account,*args, **kwargs)
+    context['bank_account']=bank_account
+    bank_account_s=json.dumps(PersonAccountSerializer(bank_account).data)
+    context['bank_account_s']=bank_account_s
+    return context
 
 
+def BankContext(request,bank,*args, **kwargs):
+    context={}
+    context['bank']=bank
+    bank_s=json.dumps(BankSerializer(bank).data)
+    context['bank_s']=bank_s
+    return context
 
 
 class IndexView(View):
@@ -370,6 +418,14 @@ class SearchView(View):
 
                 
 
+            services=ServiceRepo(request=request).list(search_for=search_for)
+            if len(services)>0:
+                context['services']=services
+                context['services_s']=json.dumps(ServiceSerializer(services,many=True).data)
+                WAS_FOUND=True
+
+                
+
             categories=CategoryRepo(request=request).list(search_for=search_for)
             if len(categories)>0:
                 context['categories']=categories
@@ -381,7 +437,7 @@ class SearchView(View):
         context['message']=message
         context['log']=log
         context['result']=result
-        return render(request,TEMPLATE_ROOT+"search.html",context)
+        return render(request,"utility/search.html",context)
 
 
 class SettingsView(View):
@@ -389,6 +445,8 @@ class SettingsView(View):
         context=getContext(request=request)
         # accounts =AccountRepo(request=request).roots(*args, **kwargs)
         # context['accounts']=accounts
+        if request.user.has_perm(APP_NAME+'.view_product'):
+            context['import_from_excel_form']=ImportFromExcelForm()
         return render(request,TEMPLATE_ROOT+"settings.html",context) 
 
 
@@ -420,7 +478,7 @@ class InvoiceToExcelView(View):
                  'فی',
                  'مبلغ'
         ]
-        report_work_book=ReportWorkBook()
+        
         report_work_book=ReportWorkBook(origin_file_name=f'Invoice.xlsx')
         style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
         # sheet1=ReportSheet(
@@ -539,15 +597,22 @@ class TreeListView(View):
         context[WIDE_LAYOUT]=True
         return render(request,TEMPLATE_ROOT+"tree-list.html",context) 
 
+
 class FinancialDocumentView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         financial_document=FinancialDocumentRepo(request=request).financial_document(*args, **kwargs)
+        if financial_document is None:
+            mv=MessageView()
+            title='سند پیدا نشد.'
+            body='سند پیدا نشد.'
+            mv.message={'title':title,'body':body}
+            return mv.get(request=request)
         context['financial_document']=financial_document
         financial_document_s=json.dumps(FinancialDocumentSerializer(financial_document).data)
         context['financial_document_s']=financial_document_s
 
-        
+
         financial_document_lines=financial_document.financialdocumentline_set.all()
 
         context['financial_document_lines']=financial_document_lines
@@ -556,6 +621,10 @@ class FinancialDocumentView(View):
 
         if request.user.has_perm(APP_NAME+'.add_financialdocumentline'):
             context.update(AddFinancialDocumentLineContext(request=request,financial_document=financial_document))
+             
+
+        if request.user.has_perm(APP_NAME+'.edit_financialdocumentline'):
+            context.update(EditFinancialDocumentContext(request=request,financial_document=financial_document))
              
 
         return render(request,TEMPLATE_ROOT+"financial-document.html",context)
@@ -596,8 +665,9 @@ class FinancialDocumentLineView(View):
         context=getContext(request=request) 
         financial_document_line=FinancialDocumentLineRepo(request=request).financial_document_line(*args, **kwargs)
         context['financial_document_line']=financial_document_line
+        financial_document_line_s=json.dumps(FinancialDocumentLineSerializer(financial_document_line).data)
+        context['financial_document_line_s']=financial_document_line_s
 
-        context.update(PageContext(request=request,page=financial_document_line))
 
         return render(request,TEMPLATE_ROOT+"financial-document-line.html",context)
 
@@ -613,6 +683,42 @@ class AccountsView(View):
         context['accounts_s']=accounts_s
         context.update(AddAccountContext(request=request))
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
+
+
+class PersonView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        person=PersonRepo(request=request).person(*args, **kwargs)
+
+
+        if person is None:
+            title='خطا'
+            body='شخص پیدا نشد.'
+
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
+        context.update(PersonContext(request=request,person=person))
+                
+        person_accounts=person.personaccount_set.all()
+
+        context['person_accounts']=person_accounts
+        person_accounts_s=json.dumps(PersonAccountSerializer(person_accounts,many=True).data)
+        context['person_accounts_s']=person_accounts_s
+
+
+
+        bank_accounts=person.bankaccount_set.all()
+
+        context['bank_accounts']=bank_accounts
+        bank_accounts_s=json.dumps(BankAccountSerializer(bank_accounts,many=True).data)
+        context['bank_accounts_s']=bank_accounts_s
+
+
+        
+        if request.user.has_perm(APP_NAME+'.add_personaccount'):
+            context.update(AddPersonAccountContext(request=request))
+            
+        return render(request,TEMPLATE_ROOT+"person.html",context)
 
 
 class AccountView(View):
@@ -730,7 +836,7 @@ class InvoiceLineView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
     
-    
+
 class ServiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -756,61 +862,213 @@ class ServicesView(View):
         return render(request,TEMPLATE_ROOT+"services.html",context)
 
 
-class ExportProductsToExcelView(View):   
+class AssetView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        asset=AssetRepo(request=request).asset(*args, **kwargs)
+        if asset is None:
+            raise Http404
+        
+
+        context.update(AssetContext(request=request,asset=asset))
+
+        return render(request,TEMPLATE_ROOT+"asset.html",context)   
+
+
+class AssetsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        assets=AssetRepo(request=request).list(*args, **kwargs)
+        assets_s=json.dumps(AssetSerializer(assets,many=True).data)
+        context['assets']=assets
+        context['assets_s']=assets_s
+        if request.user.has_perm(APP_NAME+'.add_asset'):
+            context.update(AddAssetContext(request=request))
+        return render(request,TEMPLATE_ROOT+"assets.html",context)
+
+
+class ServiceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        service=ServiceRepo(request=request).service(*args, **kwargs)
+        if service is None:
+            raise Http404
+        
+
+        context.update(ServiceContext(request=request,service=service))
+
+        return render(request,TEMPLATE_ROOT+"service.html",context)   
+
+
+class ServicesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        services=ServiceRepo(request=request).list(*args, **kwargs)
+        services_s=json.dumps(ServiceSerializer(services,many=True).data)
+        context['services']=services
+        context['services_s']=services_s
+        if request.user.has_perm(APP_NAME+'.add_service'):
+            context.update(AddServiceContext(request=request))
+        return render(request,TEMPLATE_ROOT+"services.html",context)
+
+
+class ExportProductsToExcelView(View):
+    def get(self,request,*args, **kwargs):
+        
+        EXPORT_PRODUCTS=True
+        EXPORT_SERVICES=False
+        EXPORT_ACCOUNTS=False
+        return ExportToExcelView().get(request=request,
+                                       EXPORT_PRODUCTS=EXPORT_PRODUCTS,
+                                       EXPORT_SERVICES=EXPORT_SERVICES,
+                                       EXPORT_ACCOUNTS=EXPORT_ACCOUNTS)
+         
+
+class ExportToExcelView(View):
     def get(self,request,*args, **kwargs):
         now=PersianCalendar().date
-        
-        data=[]  
-        headers=["id","title","barcode","unit_name","unit_price","thumbnail"]
-        
-        products=ProductRepo(request=request).list()
-         
-            
-        
         date=PersianCalendar().from_gregorian(now)
-        lines=[]
-        for i,product in enumerate(products,start=1):
-            line={
-                'row':i,
-                'title':product.title,
-                'barcode':product.barcode,      
-                'unit_name':product.unit_name,      
-                'unit_price':product.unit_price,       
-            }
-            lines.append(line)
-        headers=['ردیف',
-                 'عنوان',
-                 'بارکد', 
-                 'واحد',
-                 'فی',
-        ]
-        report_work_book=ReportWorkBook()
-        report_work_book=ReportWorkBook(origin_file_name=f'products.xlsx')
-        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
-        # sheet1=ReportSheet(
-        #     data=lines,
-        #     start_row=3,
-        #     start_col=1,
-        #     table_has_header=False,
-        #     table_headers=None,
-        #     style=style,
-        #     sheet_name='links',
-            
-        # )
+
         
-        start_row=EXCEL_PRODUCTS_DATA_START_ROW
-        if start_row>2:
-            start_row-=1
-        report_work_book.add_sheet(
-            data=lines,
-            start_row=start_row,
-            table_has_header=False,
-            table_headers=headers,
-            style=style,
-            sheet_name='products',
-        )
+        report_work_book=ReportWorkBook(origin_file_name=f'accounting.xlsx')
+        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
+        
+        EXPORT_PRODUCTS=True
+        EXPORT_SERVICES=True
+        EXPORT_ACCOUNTS=True
+
+        if 'EXPORT_PRODUCTS' in kwargs:
+            EXPORT_PRODUCTS=kwargs['EXPORT_PRODUCTS']
+
+        if 'EXPORT_SERVICES' in kwargs:
+            EXPORT_SERVICES=kwargs['EXPORT_SERVICES']
+
+        if 'EXPORT_ACCOUNTS' in kwargs:
+            EXPORT_ACCOUNTS=kwargs['EXPORT_ACCOUNTS']
+
+        if EXPORT_PRODUCTS:
             
-        file_name=f"""Phoenix Products {date.replace('/','').replace(':','')}.xlsx"""
+            
+            products=ProductRepo(request=request).list()
+            
+                
+            lines=[]
+            for i,product in enumerate(products,start=1):
+                line={
+                    'row':i,
+                    'id':product.id,
+                    'title':product.title,
+                    'barcode':product.barcode,      
+                    'unit_name':product.unit_name,      
+                    'unit_price':product.unit_price,       
+                    'thumbnail_origin':str(product.thumbnail_origin),       
+                }
+                lines.append(line)
+            headers=['ردیف',
+                    'شناسه',
+                    'عنوان',
+                    'بارکد', 
+                    'واحد',
+                    'فی',
+                    'تصویر',
+            ]
+          
+            
+            start_row=EXCEL_PRODUCTS_DATA_START_ROW
+            if start_row>2:
+                start_row-=1
+            report_work_book.add_sheet(
+                data=lines,
+                start_row=start_row,
+                table_has_header=False,
+                table_headers=headers,
+                style=style,
+                sheet_name='products',
+                title='products',
+            )
+
+            
+        if EXPORT_SERVICES:
+            
+            
+            services=ServiceRepo(request=request).list()
+            
+                
+            lines=[]
+            for i,service in enumerate(services,start=1):
+                line={
+                    'row':i,
+                    'id':service.id,
+                    'title':service.title,
+                    'unit_name':service.unit_name,      
+                    'unit_price':service.unit_price,       
+                    'thumbnail_origin':str(service.thumbnail_origin),       
+                }
+                lines.append(line)
+            headers=['ردیف',
+                    'شناسه',
+                    'عنوان',
+                    'واحد',
+                    'فی',
+                    'تصویر',
+            ]
+         
+            start_row=EXCEL_SERVICES_DATA_START_ROW
+            if start_row>2:
+                start_row-=1
+            report_work_book.add_sheet(
+                data=lines,
+                start_row=start_row,
+                table_has_header=False,
+                table_headers=headers,
+                style=style,
+                sheet_name='services',
+                title='services',
+            )
+
+        
+     
+        if EXPORT_ACCOUNTS:
+            
+            
+            accounts=AccountRepo(request=request).list()
+            
+                
+            lines=[]
+            for i,account in enumerate(accounts,start=1):
+                line={
+                    'row':i,
+                    'parent_code':account.parent_account.code if account.parent_account is not None else '',      
+                    'id':account.id,
+                    'code':account.code,      
+                    'title':account.title,
+                    'color':account.color,
+                    'logo_origin':str(account.logo_origin),       
+                }
+                lines.append(line)
+            headers=['ردیف',
+                    'کد والد',
+                    'شناسه',
+                    'کد',
+                    'عنوان',
+                    'رنگ',
+                    'تصویر',
+            ]
+         
+            start_row=EXCEL_SERVICES_DATA_START_ROW
+            if start_row>2:
+                start_row-=1
+            report_work_book.add_sheet(
+                data=lines,
+                start_row=start_row,
+                table_has_header=False,
+                table_headers=headers,
+                style=style,
+                sheet_name='accounts',
+                title='accounts',
+            )
+        
+        file_name=f"""Phoenix accounting {date.replace('/','').replace(':','')}.xlsx"""
         
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
@@ -823,65 +1081,15 @@ class ExportProductsToExcelView(View):
 class ExportServicesToExcelView(View):
   
     def get(self,request,*args, **kwargs):
-        now=PersianCalendar().date
         
-        data=[]  
-        headers=["id","title","barcode","unit_name","unit_price","thumbnail"]
-        
-        services=ServiceRepo(request=request).list()
-         
-            
-        
-        date=PersianCalendar().from_gregorian(now)
-        lines=[]
-        for i,service in enumerate(services,start=1):
-            line={
-                'row':i,
-                'title':service.title,
-                'unit_name':service.unit_name,      
-                'unit_price':service.unit_price,       
-            }
-            lines.append(line)
-        headers=['ردیف',
-                 'عنوان',
-                 'واحد',
-                 'فی',
-        ]
-        report_work_book=ReportWorkBook()
-        report_work_book=ReportWorkBook(origin_file_name=f'services.xlsx')
-        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
-        # sheet1=ReportSheet(
-        #     data=lines,
-        #     start_row=3,
-        #     start_col=1,
-        #     table_has_header=False,
-        #     table_headers=None,
-        #     style=style,
-        #     sheet_name='links',
-            
-        # )
-        
-        start_row=EXCEL_SERVICES_DATA_START_ROW
-        if start_row>2:
-            start_row-=1
-        report_work_book.add_sheet(
-            data=lines,
-            start_row=start_row,
-            table_has_header=False,
-            table_headers=headers,
-            style=style,
-            sheet_name='services',
-        )
-            
-        file_name=f"""Phoenix Services {date.replace('/','').replace(':','')}.xlsx"""
-        
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
-        response["Content-disposition"]=f"attachment; filename={file_name}"
-        report_work_book.work_book.save(response)
-        report_work_book.work_book.close()
-        return response
- 
+        EXPORT_PRODUCTS=False
+        EXPORT_SERVICES=True
+        EXPORT_ACCOUNTS=False
+        return ExportToExcelView().get(request=request,
+                                       EXPORT_PRODUCTS=EXPORT_PRODUCTS,
+                                       EXPORT_SERVICES=EXPORT_SERVICES,
+                                       EXPORT_ACCOUNTS=EXPORT_ACCOUNTS)
+          
 
 class FinancialEventView(View):
     def get(self,request,*args, **kwargs):
@@ -889,6 +1097,7 @@ class FinancialEventView(View):
         financial_event=FinancialEventRepo(request=request).financial_event(*args, **kwargs)
         context.update(FinancialEventContext(request=request,financial_event=financial_event))
         context['financial_event']=financial_event
+
         context['WIDE_LAYOUT']=True 
         return render(request,TEMPLATE_ROOT+"financial-event.html",context)
 
@@ -939,6 +1148,11 @@ class InvoiceView(View):
         context=getContext(request=request)
         context['WIDE_LAYOUT']=True
         invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        if invoice is None:
+            title='فاکتور پیدا نشد.'
+            message='فاکتور پیدا نشد.'
+            mv=MessageView(title=title,message=message)
+            return mv.get(request=request)
         context['invoice']=invoice
         invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)
         context['invoice_s']=invoice_s
@@ -954,10 +1168,33 @@ class InvoiceView(View):
         return render(request,TEMPLATE_ROOT+"invoice.html",context)
 
 
+class InvoiceEditView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['WIDE_LAYOUT']=True
+        invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        context['invoice']=invoice
+        invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)
+        context['invoice_s']=invoice_s
+        context.update(InvoiceContext(request=request,invoice=invoice))
+        context['bedehkar_s']=json.dumps(AccountBriefSerializer(invoice.bedehkar).data)
+        context['bestankar_s']=json.dumps(AccountBriefSerializer(invoice.bestankar).data)
+        return render(request,TEMPLATE_ROOT+"invoice-edit.html",context)
+
+    def post(self,request,*args, **kwargs):
+        from .apis import EditInvoiceApi
+        return EditInvoiceApi().post(request,*args, **kwargs)
+
+
 class InvoicePrintView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        if invoice is None:
+            title='فاکتور پیدا نشد.'
+            message='فاکتور پیدا نشد.'
+            mv=MessageView(title=title,message=message)
+            return mv.get(request=request)
         context['invoice']=invoice
         context['NOT_REPONSIVE']=True
         context['NOT_NAVBAR']=True
@@ -988,7 +1225,6 @@ class CategoryView(View):
             categories=category_repo.list(parent_id=category.id)
             products=category.products.all()
             context['category_id']=category.id
-            # leolog(all_childs_products=category.all_childs_products())
 
         context['categories']=categories
         categories_s=json.dumps(CategorySerializer(categories,many=True).data)
@@ -1013,8 +1249,6 @@ class CategoriesView(View):
         return CategoryView().get(request=request,pk=0)
       
 
-
-
 class PersonAccountsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -1027,10 +1261,8 @@ class PersonAccountsView(View):
 
         
         if request.user.has_perm(APP_NAME+'.add_personaccount'):
-            context.update(AddAccountContext(request=request))
-            person_categories=PersonCategoryRepo(request=request).list()
-            context['person_categories']=person_categories
-            context['add_person_account_form']=AddPersonAccountForm()
+            context.update(AddPersonAccountContext(request=request))
+            
         return render(request,TEMPLATE_ROOT+"person-accounts.html",context)
 
 
@@ -1046,23 +1278,115 @@ class PersonAccountView(View):
          
         return render(request,TEMPLATE_ROOT+"person-account.html",context)
 
+
+class BankAccountsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+       
+        bank_accounts=BankAccountRepo(request=request).list(*args, **kwargs)
+
+        context['bank_accounts']=bank_accounts
+        bank_accounts_s=json.dumps(BankAccountSerializer(bank_accounts,many=True).data)
+        context['bank_accounts_s']=bank_accounts_s
+
+        
+        if request.user.has_perm(APP_NAME+'.add_bankaccount'):
+            context.update(AddBankAccountContext(request=request))
+            
+        return render(request,TEMPLATE_ROOT+"bank-accounts.html",context)
+
+def AddBankContext(request,*args, **kwargs):
+    context={}
+    return context
+
+class BanksView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+       
+        banks=BankRepo(request=request).list(*args, **kwargs)
+
+        context['banks']=banks
+        banks_s=json.dumps(BankSerializer(banks,many=True).data)
+        context['banks_s']=banks_s
+
+        
+        if request.user.has_perm(APP_NAME+'.add_bank'):
+            context.update(AddBankContext(request=request))
+            
+        return render(request,TEMPLATE_ROOT+"banks.html",context)
+
+class BankAccountView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        bank_account=BankAccountRepo(request=request).bank_account(*args, **kwargs)
+        context['bank_account']=bank_account
+
+        if bank_account is None:
+            raise Http404
+        context.update(BankAccountContext(request=request,bank_account=bank_account))
+        context.update(BankContext(request=request,bank=bank_account.bank))
+         
+        return render(request,TEMPLATE_ROOT+"bank-account.html",context)
+
+
+class BankView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        bank=BankRepo(request=request).bank(*args, **kwargs)
+        context['bank']=bank
+
+        if bank is None:
+            raise Http404
+        context.update(BankContext(request=request,bank=bank))
+        bank_accounts=bank.bankaccount_set.all()
+        context['bank_accounts']=bank_accounts
+        bank_accounts_s=json.dumps(BankAccountSerializer(bank_accounts,many=True).data)
+        context['bank_accounts_s']=bank_accounts_s
+        if request.user.has_perm(APP_NAME+'.add_bankaccount'):
+            context.update(AddBankAccountContext(request=request,bank=bank))
+        return render(request,TEMPLATE_ROOT+"bank.html",context)
+
+
+class PersonAccountView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        person_account=PersonAccountRepo(request=request).person_account(*args, **kwargs)
+        context['person_account']=person_account
+
+        if person_account is None:
+            raise Http404
+        context.update(PersonAccountContext(request=request,person_account=person_account))
+         
+        return render(request,TEMPLATE_ROOT+"person-account.html",context)
+
+
 class PersonCategoryView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        person_category=PersonAccountRepo(request=request).person_category(*args, **kwargs)
+        person_category=PersonCategoryRepo(request=request).person_category(*args, **kwargs)
         context['person_category']=person_category
-        return render(request,TEMPLATE_ROOT+"person-category.html",context)
 
+        person_accounts=person_category.personaccount_set.all()
+
+        context['person_accounts']=person_accounts
+        person_accounts_s=json.dumps(PersonAccountSerializer(person_accounts,many=True).data)
+        context['person_accounts_s']=person_accounts_s
+
+
+
+        return render(request,TEMPLATE_ROOT+"person-category.html",context)
 
 
 class PersonCategoriesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        person_category=PersonAccountRepo(request=request).person_category(*args, **kwargs)
-        context['person_category']=person_category
+        person_categories=PersonCategoryRepo(request=request).list(*args, **kwargs)
+        context['person_categories']=person_categories
+        person_categories_s=json.dumps(PersonCategorySerializer(person_categories,many=True).data)
+        context['person_categories_s']=person_categories_s
+        if request.user.has_perm(APP_NAME+'.add_personcategory'):
+            context.update(AddPersonCategoryContext(request=request))
         return render(request,TEMPLATE_ROOT+"person-categories.html",context)
-
-
 
     
 class BrandView(View):
@@ -1089,7 +1413,7 @@ class BrandsView(View):
         context['brands']=brands
         context['brands_s']=brands_s
         if request.user.has_perm(APP_NAME+'.add_brand'):
-            context.update(AddServiceContext(request=request))
+            context.update(AddBrandContext(request=request))
         return render(request,TEMPLATE_ROOT+"brands.html",context)
 
 

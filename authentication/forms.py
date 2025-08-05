@@ -1,5 +1,5 @@
 from django import forms
-
+from core.forms import SearchForm
 class LoginForm(forms.Form):
     username=forms.CharField(max_length=50,required=True)
     password=forms.CharField(max_length=50,required=True)
@@ -7,9 +7,20 @@ class LoginForm(forms.Form):
 class ChangePersonImageForm(forms.Form):
     person_id=forms.IntegerField(required=False)
 
+class ChangeProfileImageForm(forms.Form):
+    profile_id=forms.IntegerField(required=False)
+
 class SelectProfileForm(forms.Form):
     profile_id=forms.IntegerField(required=False)
 
+
+class AddProfileForm(forms.Form):
+    first_name=forms.CharField(max_length=11,required=False)
+    last_name=forms.CharField(max_length=11,required=False)
+
+
+class SelectUserForm(forms.Form):
+    user_id=forms.IntegerField(required=False)
 
 
 class SelectPersonForm(forms.Form):

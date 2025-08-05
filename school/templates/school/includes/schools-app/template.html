@@ -51,16 +51,16 @@
                 </td>
 
                  <td>
-                  <a :href="school.account.get_absolute_url">
-                    <span v-text="school.account.name"></span>
+                  <a :href="school.person_account.get_absolute_url">
+                    <span v-text="school.person_account.name"></span>
                     <div>
 
-                      <small class="text-muted" v-text="school.account.full_name"></small>
+                      <small class="text-muted" v-text="school.person_account.full_name"></small>
                     </div>
 
                      <div>
 
-                      <small class="text-muted" v-text="to_price(school.account.balance)"></small>
+                      <small class="text-muted" v-text="to_price(school.person_account.balance)"></small>
                     </div>
                   </a>
 

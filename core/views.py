@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,CURRENCY,VUE_VERSION_3,VUE_VERSION_2
-from authentication.repo import ProfileRepo
+from authentication.repo import PersonRepo,PersonRepo
 from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
 from .enums import *
@@ -10,10 +10,11 @@ from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from utility.log import leolog
+from utility.views import MessageView
 from django.utils import timezone
 import json
 from .repo import PageRepo,FAILED,SUCCEED
-from .serializer import PageSerializer,PageBriefSerializer
+from .serializers import PageSerializer,PageBriefSerializer
 
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='core/'
@@ -31,10 +32,13 @@ def CoreContext(request,*args, **kwargs):
     context['VUE_VERSION_3']=VUE_VERSION_3
     context['VUE_VERSION_2']=VUE_VERSION_2
     context['DEBUG']=DEBUG
-    me_profile=ProfileRepo(request=request).me
-    if me_profile is not None:
-        context['me_profile']=me_profile
-        context['profile']=me_profile
+    context['APP_NAVBAR']=app_name+'/includes/navbar.html'
+    context['APP_SCRIPT']=app_name+'/includes/script.html'
+    context['APP_FOOTER']=app_name+'/includes/footer.html'
+    me_person=PersonRepo(request=request).me
+    if me_person is not None:
+        context['me_person']=me_person
+        context['person']=me_person
     context['ADMIN_URL']=ADMIN_URL
     context['SITE_URL']=SITE_URL
     context['STATIC_URL']=STATIC_URL
@@ -53,6 +57,7 @@ def CoreContext(request,*args, **kwargs):
 
     context['phoenix_apps']=phoenix_apps
     parameter_repo=ParameterRepo(request=request,app_name=app_name)
+    context['WIDE_LAYOUT']=parameter_repo.parameter(name=PARAMETER_NAME_ENUM.WIDE_LAYOUT,default="0").boolean_value
     context['farsi_font_name']=parameter_repo.parameter(name=PARAMETER_NAME_ENUM.FARSI_FONT,default="Tanha").value
     # app_has_background=parameter_repo.parameter(name=ParameterNameEnum.HAS_APP_BACKGROUND,default=False).boolean_value
     # app_background_image=PictureRepo(request=request,app_name=app_name).picture(name=PictureNameEnum.APP_BACKGROUND_IMAGE)
@@ -64,7 +69,8 @@ def CoreContext(request,*args, **kwargs):
             # context['current_app']={'name':appp['name'],'title':appp['title'],'url':appp['url'],'logo':appp['logo']}
             context['current_app']=appp
             context['app_title']=appp['title']
- 
+    from messenger.views import MessengerContext
+    context.update(MessengerContext(request=request,person=me_person))
     return context
 
         
@@ -77,19 +83,19 @@ def getContext(request,*args, **kwargs):
 def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
-    me_profile=ProfileRepo(request=request).me
+    me_person=PersonRepo(request=request).me
     from attachments.views import PageTagsContext,PageLocationsContext,PageImagesContext,PageRelatedContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
-
-    context.update(PageLikesContext(request=request,page=page,profile=me_profile))
-    context.update(PageCommentsContext(request=request,page=page,profile=me_profile))
-    context.update(PageLinksContext(request=request,page=page,profile=me_profile))
-    context.update(PageDownloadsContext(request=request,page=page,profile=me_profile))
-    context.update(PageImagesContext(request=request,page=page,profile=me_profile))
-    context.update(PageRelatedContext(request=request,page=page,profile=me_profile))
-    context.update(PageLocationsContext(request=request,page=page,profile=me_profile))
-    context.update(PageTagsContext(request=request,page=page,profile=me_profile))
+    if request.user.has_perm(APP_NAME+'.change_page'):
+        context['set_page_thumbnail_header_form']=SetPageThumbnailHeaderForm()
+    context.update(PageLikesContext(request=request,page=page,person=me_person))
+    context.update(PageCommentsContext(request=request,page=page,person=me_person))
+    context.update(PageLinksContext(request=request,page=page,person=me_person))
+    context.update(PageDownloadsContext(request=request,page=page,person=me_person))
+    context.update(PageImagesContext(request=request,page=page,person=me_person))
+    context.update(PageRelatedContext(request=request,page=page,person=me_person))
+    context.update(PageLocationsContext(request=request,page=page,person=me_person))
+    context.update(PageTagsContext(request=request,page=page,person=me_person))
     return context
-
 
 
 class SearchView(View):
@@ -103,6 +109,7 @@ class SearchView(View):
 
     def post(self,request,*args, **kwargs):
         result=FAILED
+        search_for=''
         message=''
         log=1
         context=getContext(request=request) 
@@ -110,17 +117,26 @@ class SearchView(View):
         if search_form.is_valid():
             log=2
             search_for=search_form.cleaned_data['search_for']
-            pages=PageRepo(request=request).list(search_for=search_for)
             result=SUCCEED
 
-            context['pages']=pages
-            context['pages_s']=json.dumps(PageSerializer(pages,many=True).data)
+            
+            pages=PageRepo(request=request).list(search_for=search_for)
+            if len(pages)>0:
+                context['pages']=pages
+                context['pages_s']=json.dumps(PageBriefSerializer(pages,many=True).data)
+            
+            from attachments.views import TagRepo,TagSerializer
+            tags=TagRepo(request=request).list(search_for=search_for)
+            if len(tags)>0:
+                context['tags']=tags
+                context['tags_s']=json.dumps(TagSerializer(tags,many=True).data)
+
 
         context['message']=message
+        context['search_for']=search_for
         context['log']=log
         context['result']=result
         return render(request,TEMPLATE_ROOT+"search.html",context)
-
 
 
 class PageView(View):
@@ -135,7 +151,7 @@ class PageView(View):
             return mv.get(request=request)
         context.update(PageContext(request=request,page=page))
         return render(request,TEMPLATE_ROOT+"page.html",context)
-# Create your views here.
+ 
 
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -147,45 +163,4 @@ class IndexView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
-# Create your views here.
-
-class MessageView(View):
-    def __init__(self,*args,**kwargs):
-        self.links =[]
-        self.message ={}
-        self.back_url =""
-        if 'links' in kwargs:
-            self.links=kwargs['links']
-        if 'title' in kwargs:
-            self.message['title']=kwargs['title']
-        if 'body' in kwargs:
-            self.message['body']=kwargs['body']
-
-        if 'message' in kwargs:
-            self.message=kwargs['message']
-
-        if 'back_url' in kwargs:
-            self.back_url=kwargs['back_url']
-            
-
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        self.back_url = request.META.get('HTTP_REFERER') 
-        if 'title' in kwargs:
-            self.message['title']=kwargs['title']
-        if 'body' in kwargs:
-            self.message['body']=kwargs['body']
-
-        if 'message' in kwargs:
-            self.message=kwargs['message']
-
-        if 'back_url' in kwargs:
-            self.back_url=kwargs['back_url']
-        
-        context['message']=self.message     
-        context['back_url']=self.back_url     
-        context['links']=self.links   
-        return render(request,TEMPLATE_ROOT+"message.html",context)
-# Create your views here.
-    def response(self,request,*args,**kwargs):
-        return self.get(request,*args,**kwargs)
+ 

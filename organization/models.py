@@ -1,15 +1,16 @@
 from django.db import models
-from core.models import Page,LinkHelper,FAILED,SUCCEED
+from core.models import Page,LinkHelper,FAILED,SUCCEED,reverse
 from django.utils.translation import gettext as _
 from .apps import APP_NAME
 from utility.models import DateTimeHelper
-# Create your models here.
+
+
 class OrganizationUnit(Page,LinkHelper):
-    my_account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person account"), on_delete=models.CASCADE)
     # account_code=models.CharField(_("account_code"), max_length=50)
     @property
     def account(self):
-        return self.my_account
+        return self.person_account
     #     from accounting.models import Account
     #     return Account.objects.filter(code=self.account_code).first()
 
@@ -28,9 +29,22 @@ class OrganizationUnit(Page,LinkHelper):
         message="سازمان با موفقیت اضافه شد."
         return (result,message,organization_unit)
     
-
-
+    def get_tree_chart_url(self):
+        return reverse(APP_NAME+':tree_chart',kwargs={'pk':self.pk})
     
+    @property
+    def children(self):
+        return OrganizationUnit.objects.filter(parent_id=self.id)
+    
+    def all_sub_organization_units(self):
+        ids=[]
+        for organization_unit in self.children.all():
+            ids.append(organization_unit.id)
+            for i in organization_unit.all_sub_organization_units():
+                ids.append(i.id)
+        return OrganizationUnit.objects.filter(id__in=ids)
+    
+
 class Employee(models.Model,LinkHelper,DateTimeHelper):
     person=models.ForeignKey("authentication.person",related_name="employees", verbose_name=_("person"), on_delete=models.CASCADE)
     organization_unit=models.ForeignKey("organizationunit",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)

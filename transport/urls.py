@@ -8,7 +8,18 @@ urlpatterns = [
     path('settings/',login_required(views.IndexView.as_view()),name="settings"),
     path('vehicles/',login_required(views.VehiclesView.as_view()),name="vehicles"),
     path('vehicle/<int:pk>/',login_required(views.VehicleView.as_view()),name="vehicle"),
-    path('add-vehicle/ ',login_required(apis.AddVehicleApi.as_view()),name="add_vehicle"),
+    path('add-vehicle/',login_required(apis.AddVehicleApi.as_view()),name="add_vehicle"),
+
+
+    
+    path('maintenance-invoices/',login_required(views.MaintenanceInvoicesView.as_view()),name="maintenance_invoices"),
+    path('maintenance-invoice/<int:pk>/',login_required(views.MaintenanceInvoiceView.as_view()),name="maintenanceinvoice"),
+    path('add-maintenance-invoice/',login_required(apis.AddMaintenanceInvoiceApi.as_view()),name="add_maintenance_invoice"),
+
+    path('service-mans/',login_required(views.ServiceMansView.as_view()),name="service_mans"),
+    path('service-man/<int:pk>/',login_required(views.ServiceManView.as_view()),name="serviceman"),
+    path('add-service-man/',login_required(apis.AddServiceManApi.as_view()),name="add_service_man"),
+
 
 
 ]

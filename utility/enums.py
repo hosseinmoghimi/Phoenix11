@@ -12,7 +12,10 @@ class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")
     KILOGERAM="کیلوگرم",_("کیلوگرم")
     METER="متر",_("متر")
+    LITER="لیتر",_("لیتر")
+    CC="سی سی ",_("سی سی ")
     SHAKHEH="شاخه",_("شاخه")
+    Node="نود شبکه",_("نود شبکه")
     SHISHEH="شیشه",_("شیشه")
     DASTGAH="دستگاه",_("دستگاه")
     GERAM="گرم",_("گرم")
@@ -126,6 +129,8 @@ class PersonPrefixEnum(TextChoices):
     DR="دکتر",_("دکتر")
     ENGINEER="مهندس",_("مهندس")
     COMPLEX=" مجتمع",_(" مجتمع")
+    SHOP="فروشگاه",_("فروشگاه")
+    UNIVERSITY="دانشگاه",_("دانشگاه")
   
 class AppNameEnum(TextChoices):
     projectmanager='projectmanager',_('projectmanager')
@@ -187,12 +192,20 @@ def class_title(*args, **kwargs):
         app_name=kwargs['app_name']
 
     class_title = "صفحه"
+
+
+    if class_name == "maintenanceinvoice":
+        class_title = "فاکتور تعمیر و نگهداری"
     if class_name == "exam":
         class_title = "آزمون"
     if class_name == "pricingpage":
         class_title = "لیست قیمت"
+    if class_name == "drug":
+        class_title = "دارو"
     if class_name == "poll":
         class_title = "پرسش"
+    if class_name == "account":
+        class_title = "حساب"
     if class_name == "payment":
         class_title = "پرداخت"
     if class_name == "property":

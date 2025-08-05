@@ -19,6 +19,22 @@
                 {% include "attachments/includes/comments-app/template.html" %}
 
             </div>  
+            {% if add_maintenance_invoice_form %}
+            <div class="col-12">
+                {% include "transport/includes/add-maintenance-invoice-app/template.html" %}
+
+              </div>
+            {% endif %}
+            
+            <div class="col-md-12">
+                {% include "transport/includes/maintenance-invoices-app/template.html" %}
+
+            </div>  
+            
+            <div class="col-md-12">
+                {% include "attachments/includes/comments-app/template.html" %}
+
+            </div>  
             
             <div class="col-md-12">
                 {% include "attachments/includes/links-app/template.html" %}
@@ -55,6 +71,6 @@
 
 
 {% block script %}
-{% include "core/includes/page-app/script.html" %}
+{% include "transport/includes/vehicle-app/script.html" %}
 
 {% endblock script %}

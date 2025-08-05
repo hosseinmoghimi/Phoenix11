@@ -1,7 +1,7 @@
-from core.repo import PageRepo,ProfileRepo,FAILED,SUCCEED
+from core.repo import PageRepo,PersonRepo,FAILED,SUCCEED
 from .models import Like,Comment,Link,Download,Image,Location,Area, Tag
 from .apps import APP_NAME
-
+from django.db.models import Q
 
 class ImageRepo():
 
@@ -23,9 +23,12 @@ class ImageRepo():
     def add_image(self,*args, **kwargs):
         result,message,image=FAILED,"",None
         title=''
-        profile_me=ProfileRepo(request=self.request).me
+        if not self.request.user.has_perm(APP_NAME+'.add_image'):
+            message='دسترسی غیر مجاز'
+            return FAILED,message,None
+        me_person=PersonRepo(request=self.request).me
         page=PageRepo(request=self.request).page(*args, **kwargs)
-        if profile_me is None:
+        if me_person is None:
             return None
         if page is None:
             return None
@@ -36,17 +39,17 @@ class ImageRepo():
             image_text=kwargs['image']
         if image_text is None:
             return result,message,image
-        image=Image(creator_id=profile_me.id,page_id=page.id,image_main_origin=image_text,title=title)
+        image=Image(creator_id=me_person.id,page_id=page.id,image_main_origin=image_text,title=title)
         image.save()
         result=SUCCEED
         message='تصویر با موفقیت اضافه شد.'
         return result,message,image
     
     def delete_image(self,*args, **kwargs):
-        profile_me=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         if 'image_id' in kwargs:
             image_id=kwargs['image_id']
-        # images=Image.objects.filter(profile_id=profile_me.id).filter(pk=image_id)
+        # images=Image.objects.filter(person_id=me_person.id).filter(pk=image_id)
         images=Image.objects.filter(pk=image_id)
         images.delete()
         result=SUCCEED
@@ -67,9 +70,9 @@ class CommentRepo():
 
     def add_comment(self,*args, **kwargs):
         result,message,comment=FAILED,"",None
-        profile_me=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         page=PageRepo(request=self.request).page(*args, **kwargs)
-        if profile_me is None:
+        if me_person is None:
             return None
         if page is None:
             return None
@@ -77,17 +80,17 @@ class CommentRepo():
             comment_text=kwargs['comment']
         if comment_text is None:
             return result,message,comment
-        comment=Comment(profile_id=profile_me.id,page_id=page.id,comment=comment_text)
+        comment=Comment(person_id=me_person.id,page_id=page.id,comment=comment_text)
         comment.save()
         result=SUCCEED
         message='کامنت با موفقیت اضافه شد.'
         return result,message,comment
     
     def delete_page_comment(self,*args, **kwargs):
-        profile_me=ProfileRepo(request=self.request).me
+        me_person=PersonRepo(request=self.request).me
         if 'comment_id' in kwargs:
             comment_id=kwargs['comment_id']
-        # comments=Comment.objects.filter(profile_id=profile_me.id).filter(pk=comment_id)
+        # comments=Comment.objects.filter(person_id=me_person.id).filter(pk=comment_id)
         comments=Comment.objects.filter(pk=comment_id)
         comments.delete()
         from utility.log import leolog
@@ -117,6 +120,11 @@ class TagRepo():
             if page is not None:
                 return page.tag_set.all()
             objects=objects.filter(page_id=page_id)
+             
+
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects=objects.filter(title__contains=search_for)
         return objects.all()
     def add_tag(self,*args, **kwargs):
         result,message,tags=FAILED,'',[]
@@ -156,13 +164,13 @@ class LikeRepo():
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is None:
             return None
-        me_profile=ProfileRepo(request=self.request).me
-        if me_profile is None:
+        me_person=PersonRepo(request=self.request).me
+        if me_person is None:
             return None
-        likes=Like.objects.filter(page_id=page.id).filter(profile_id=me_profile.id)
+        likes=Like.objects.filter(page_id=page.id).filter(person_id=me_person.id)
         my_like=False
         if len(likes)==0:
-            my_like=Like(page=page,profile=me_profile)
+            my_like=Like(page=page,person=me_person)
             my_like.save()
             my_like=True
         else:
@@ -172,12 +180,12 @@ class LikeRepo():
     
 
     def my_like(self,page,*args, **kwargs):
-        profile_me=ProfileRepo(request=self.request).me
-        if profile_me is None:
+        me_person=PersonRepo(request=self.request).me
+        if me_person is None:
             return None
         if page is None:
             return None
-        likes=Like.objects.filter(profile_id=profile_me.id).filter(page_id=page.id)
+        likes=Like.objects.filter(person_id=me_person.id).filter(page_id=page.id)
         return len(likes)>0
     
     def likes_count(self,*args, **kwargs):
@@ -246,15 +254,15 @@ class DownloadRepo():
             is_open=True
         else:
             is_open=False
-        me_profile=ProfileRepo(request=self.request).me
-        if me_profile is None:
+        me_person=PersonRepo(request=self.request).me
+        if me_person is None:
             message='پروفایل وجود ندارد.'
             return result,message,download
-        download=Download(icon_fa="fa fa-download",title=title,is_open=is_open,file=file,priority=priority,page_id=page.id,profile_id=me_profile.id)
+        download=Download(icon_fa="fa fa-download",title=title,is_open=is_open,file=file,priority=priority,page_id=page.id,person_id=me_person.id)
         download.save()
         result=SUCCEED
         message='دانلود با موفقیت اضافه شد.'
-        download.profiles.add(me_profile)
+        download.persons.add(me_person)
         return result,message,download
 
 
@@ -267,7 +275,7 @@ class LocationRepo():
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        self.profile=ProfileRepo(*args, **kwargs).me
+        self.person=PersonRepo(*args, **kwargs).me
         self.objects = Location.objects
     def list(self,*args, **kwargs):
         objects= self.objects
@@ -304,6 +312,8 @@ class LocationRepo():
             
 
     def add_location(self,*args, **kwargs):
+        from utility.log import leolog
+        leolog(kwargs=kwargs)
         result,message,location=FAILED,'',self
         if not self.user.has_perm(APP_NAME+".add_location"):
             return result,message,None
@@ -314,14 +324,17 @@ class LocationRepo():
             location.title=kwargs['title']
         if 'location' in kwargs:
             location.location=kwargs['location']
-        if 'page_id' in kwargs:
-            location.page_id=kwargs['page_id']
         if 'latitude' in kwargs:
             location.latitude=kwargs['latitude']
         if 'longitude' in kwargs:
             location.longitude=kwargs['longitude']
-        location.creator=self.profile
+        location.creator=self.person
         (result,message,location)=location.save()
+        if 'page_id' in kwargs and kwargs['page_id'] is not None:
+            page_id=kwargs['page_id']
+            page=PageRepo(request=self.request).page(pk=page_id)
+            if page is not None and location is not None:
+                page.locations.add(location.id)
         return result,message,location
     
     def search(self,search_for):
@@ -339,7 +352,7 @@ class AreaRepo():
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        self.profile=ProfileRepo(*args, **kwargs).me
+        self.person=PersonRepo(*args, **kwargs).me
         self.objects = Area.objects
     def list(self,*args, **kwargs):
         objects= self.objects

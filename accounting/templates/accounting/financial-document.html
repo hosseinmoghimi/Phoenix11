@@ -1,11 +1,27 @@
-{% extends "accounting/layout.html" %} {% block content %}
+{% extends "accounting/layout.html" %}
+ {% block content %}
 <div class="row rtl farsi">
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
-        <h5>{{financial_document.title}}</h5>
+        <h5>سند مالی</h5>
       </div>
+      <div class="card-body">
+        <h5>{{financial_document.title}} 
+          <span class="badge badge-{{financial_document.status_color}}">{{financial_document.status}}</span>
 
+        </h5>
+         {% if perms.accounting.change_financialdocument %}
+            <a href="{{financial_document.get_edit_url}}" class="my-2 text-warning mx-2" title="ویرایش" target="_blank">
+                <i class="fa fa-edit text-warning"></i>  
+            </a>
+            {% endif %}
+            {% if perms.accounting.delete_financialdocument %}
+            <a href="{{financial_document.get_delete_url}}" class="my-2 text-danger mx-2" title="حذف" target="_blank">
+                <i class="fa fa-trash text-danger"></i>  
+            </a>
+            {% endif %}
+      </div>
       
     </div>
   </div>
@@ -14,6 +30,13 @@
     {% include "accounting/includes/add-financial-document-line-app/template.html" %}
   </div>
   {% endif %}
+  
+  {% if edit_financial_document_form %}
+  <div class="col-md-12">
+    {% include "accounting/includes/edit-financial-document-app/template.html" %}
+  </div>
+  {% endif %}
+
   <div class="col-md-12">
     {% include "accounting/includes/financial-document-lines-app/template.html" %}
   </div>
@@ -24,8 +47,6 @@
 {% block script %}
     {% include "accounting/includes/financial-document-app/script.html" %}
 
-    {% if add_financial_document_line_form %}
-        {% include "accounting/includes/add-financial-document-line-app/script.html" %}
-    {% endif %}
+     
     {% include "accounting/includes/financial-document-lines-app/script.html" %}
 {% endblock script %}

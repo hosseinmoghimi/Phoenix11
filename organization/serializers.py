@@ -8,6 +8,7 @@ class OrganizationUnitSerializer(FinancialEventSerializer):
         model = OrganizationUnit
         fields = ['id','title','account', 'get_absolute_url','get_edit_url','get_delete_url']
  
+ 
 class EmployeeSerializer(FinancialEventSerializer):
        organization_unit=OrganizationUnitSerializer()
        person=PersonSerializer()

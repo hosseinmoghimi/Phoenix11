@@ -1,3 +1,5 @@
+{% load to_price %}
+
 <div class="card">
     <div class="card-header">
         <h6>
@@ -6,8 +8,22 @@
         <h5>
             {{project.title}}
         </h5>
+
+         
     </div>
     <div class="card-body">
+      
+         <h5>
+            {{project.title}}
+        </h5>
+
+         <h5>
+            برآورد : 
+            {{project.amount|to_price}} {{CURRENCY}}
+        </h5>
         {% include "core/includes/page-app/card-contents.html" %}
+        <div>
+            <a href="{% url 'projectmanager:tree_chart' pk=project.pk %}">نمودار درختی</a>
+        </div>
     </div>
 </div>

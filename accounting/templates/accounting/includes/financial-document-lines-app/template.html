@@ -58,20 +58,23 @@
                   ردیف
                 </th>
                 <th>شرح</th>
+
                 {% if not financial_document %}
                 <th>سند</th>
                 {% endif %}
 
+                {% if not account %}
                 <th>حساب</th>
+                {% endif %}
+
+                {% if not financial_event %}
+                <th>رویداد</th>
+                {% endif %}
+
 
                 <th>تاریخ</th>
 
                 <th>مبلغ</th>
-
-                {% if not financial_event %}
-
-                <th>رویداد</th>
-                {% endif %}
 
                 <th>بدهکار</th>
 
@@ -95,6 +98,7 @@
 
                     
                   </td>
+
                   {% if not financial_document %}
                   <td>
                     <a
@@ -107,6 +111,7 @@
                   </td>
                   {% endif %} 
 
+                  {% if not account %}
                   <td>
                     <a :href="financial_document_line.account.get_absolute_url">
                       <div class="media">
@@ -133,6 +138,19 @@
                       </div>
                     </a>
                   </td>
+                  {% endif %}
+
+
+                  {% if not financial_event %}
+                  <td>
+                    <a
+                      v-if="financial_document_line.financial_event"
+                      :href="financial_document_line.financial_event.get_absolute_url"
+                    >
+                      <span v-text="financial_document_line.financial_event.title"></span>
+                    </a>
+                  </td>
+                  {% endif %}
 
                   <td>
                     <span
@@ -144,18 +162,6 @@
                       v-text="to_price(financial_document_line.amount)"
                     ></span>
                   </td>
-
-                  {% if not financial_event %}
-
-                  <td>
-                    <a
-                      v-if="financial_document_line.financial_event"
-                      :href="financial_document_line.financial_event.get_absolute_url"
-                    >
-                      <span v-text="financial_document_line.financial_event.title"></span>
-                    </a>
-                  </td>
-                  {% endif %}
                   <td>
                     <span
                       class="text-danger"
@@ -201,18 +207,23 @@
               </tbody>
               <tfoot>
                 <th></th>
-                <th
-                  colspan="5"
-                >
-                {% if financial_event %}
+                <th></th>
+                 
+                {% if not financial_document %}
                   <th></th>
                 {% endif %}
-
                 
-                {% if financial_document %}
+                {% if not account %}
                   <th></th>
                 {% endif %}
 
+                {% if not financial_event %}
+                  <th></th>
+                {% endif %}
+                <th>
+                  
+                </th>
+                <th>
                   <div class="text-left farsi">جمع</div>
                 </th>
                 <th>

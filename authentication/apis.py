@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import PersonRepo,ProfileRepo
-from .serializer import PersonSerializer,ProfileSerializer
+from .repo import PersonRepo,PersonRepo
+from .serializers import PersonSerializer,ProfileSerializer
 from django.http import JsonResponse
 from .forms import *
    
@@ -55,6 +55,30 @@ class SelectPersonApi(APIView):
         context['log']=log
         return JsonResponse(context)
  
+
+class SelectUserApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        select_person_form=SelectUserForm(request.POST)
+        if select_person_form.is_valid():
+            log=333
+            cd=select_person_form.cleaned_data
+            user=PersonRepo(request=request).user(**cd)
+            if user is not None:
+                context['username']=user.username
+                result=SUCCEED
+                message='موفق'
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
 class SelectProfileApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -68,7 +92,7 @@ class SelectProfileApi(APIView):
         if select_profile_form.is_valid():
             log=333
             cd=select_profile_form.cleaned_data
-            profile=ProfileRepo(request=request).profile(**cd)
+            profile=PersonRepo(request=request).profile(**cd)
             if profile is not None:
                 context['profile']=ProfileSerializer(profile).data
                 message='موفق'

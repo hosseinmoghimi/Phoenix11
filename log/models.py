@@ -11,7 +11,7 @@ from django.utils.translation import gettext as _
 class Log(models.Model,DateTimeHelper):
     title=models.CharField(_("title"), max_length=500)
     # user=models.ForeignKey(settings.AUTH_USER_MODEL,null=True,blank=True ,verbose_name=_("user"), on_delete=models.SET_NULL)
-    profile=models.ForeignKey("authentication.profile",null=True,blank=True ,related_name="logs",verbose_name=_("profile"), on_delete=models.SET_NULL)
+    person=models.ForeignKey("authentication.person",null=True,blank=True ,related_name="logs",verbose_name=_("person"), on_delete=models.SET_NULL)
     url=models.CharField(_("url"),null=True,blank=True, max_length=50000)
     description=models.CharField(_("description"),null=True,blank=True, max_length=50000)
     app_name=models.CharField(_("app_name"),choices=AppNameEnum.choices,null=True,blank=True, max_length=50)

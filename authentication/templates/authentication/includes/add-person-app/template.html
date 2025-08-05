@@ -62,17 +62,16 @@
 
             <div class="col-md-6">
               <div class="form-group">
-                <label for="">پروفایل</label>
-                <input @input="select_profile()" v-model="profile_id" required type="text" class="form-control" />
+                <label for="">کاربر</label>
+                <input @input="select_user()" v-model="user_id" required type="number" class="form-control" />
               </div>
             </div>
 
             <div class="col-md-6">
               <div class="form-group">
                 <div class="media">
-                  <img :src="profile.image" width="32" alt="">
                   <div class="media-body mr-2">
-                    <span v-text="profile.full_name"></span>
+                    <span v-text="username"></span>
                   </div>
                 </div>
               </div>

@@ -2,17 +2,47 @@
 from django import forms
 from utility.forms import SearchForm
 class GetInvoiceLineItemUnitsForm(forms.Form):
-    invoice_line_item_id=forms.IntegerField( required=True)
+    invoice_line_item_id=forms.IntegerField(required=True)
+
+
+class EditFinancialEventForm(forms.Form):
+    title=forms.CharField(required=True,max_length=100)
+    financial_event_id=forms.IntegerField(required=True)
+    discount_percentage=forms.IntegerField(required=False)
+    tax_percentage=forms.IntegerField(required=False)
+    shipping_fee=forms.IntegerField(required=False)
+    amount=forms.IntegerField(required=False)
+    event_datetime=forms.CharField(max_length=50, required=False)
+    payment_method=forms.CharField(max_length=50, required=False)
+    bedehkar_id=forms.IntegerField(required=False)
+    bestankar_id=forms.IntegerField(required=False)
+    description=forms.CharField(max_length=1000,required=False)
+    status=forms.CharField(max_length=50,required=False)
+
+class EditFinancialDocumentForm(forms.Form):
+    financial_document_id=forms.IntegerField(required=True)
+    title=forms.CharField(required=True,max_length=100)
+    status=forms.CharField(max_length=50, required=False)
+
+
+class AddBrandForm(forms.Form):
+    name=forms.CharField(required=True,max_length=100)
+
+
+class AddAssetForm(forms.Form):
+    title=forms.CharField(required=True,max_length=100)
+    owner_id=forms.IntegerField(required=False)
 
 
 class AddAccountForm(forms.Form):
-    parent_code=forms.IntegerField( required=False)
-    parent_id=forms.IntegerField( required=False)
-    priority=forms.IntegerField( required=False)
+    parent_code=forms.IntegerField(required=False)
+    parent_id=forms.IntegerField(required=False)
+    priority=forms.IntegerField(required=False)
     title=forms.CharField( max_length=100, required=False)
     code=forms.CharField( max_length=100, required=False)
     color=forms.CharField( max_length=100, required=False)
     nature=forms.CharField( max_length=100, required=False)
+
 
 class AddPersonAccountForm(AddAccountForm):
     person_id=forms.IntegerField(required=True)
@@ -50,18 +80,18 @@ class SetParentCodeForm(forms.Form):
     
 
 class AddInvoiceLineItemForm(forms.Form):
-    priority=forms.IntegerField( required=False)
+    priority=forms.IntegerField(required=False)
     title=forms.CharField( max_length=100, required=True)
     barcode=forms.CharField( max_length=100, required=False) 
-    unit_price=forms.IntegerField( required=False)
+    unit_price=forms.IntegerField(required=False)
     unit_name=forms.CharField( max_length=100, required=False) 
-    coef=forms.IntegerField( required=False)
-    category_id=forms.IntegerField( required=False)
+    coef=forms.IntegerField(required=False)
+    category_id=forms.IntegerField(required=False)
 
 
 class AddProductForm(AddInvoiceLineItemForm):
     barcode=forms.CharField( max_length=100, required=False) 
-    brand_id=forms.IntegerField( required=False)
+    brand_id=forms.IntegerField(required=False)
     model=forms.CharField( max_length=100, required=False) 
 
 
@@ -70,8 +100,8 @@ class AddServiceForm(AddInvoiceLineItemForm):
 
 
 class AddProductToCategoryForm(forms.Form):
-    product_id=forms.IntegerField( required=True)
-    category_id=forms.IntegerField( required=True)
+    product_id=forms.IntegerField(required=True)
+    category_id=forms.IntegerField(required=True)
 
 
 class AddCategoryForm(forms.Form):
@@ -79,23 +109,7 @@ class AddCategoryForm(forms.Form):
     parent_id=forms.IntegerField(required=False)
     priority=forms.IntegerField(required=False)
     color=forms.CharField( max_length=100, required=False) 
-
-
-class AddPersonForm(forms.Form):
-    code=forms.CharField(max_length=100, required=True)
-    melli_code=forms.CharField(max_length=10, required=True)
-    first_name=forms.CharField(max_length=100, required=False)
-    last_name=forms.CharField(max_length=100, required=False)
-    email=forms.CharField(max_length=100, required=False)
-    bio=forms.CharField(max_length=100, required=False)
-    mobile=forms.CharField(max_length=100, required=False)
-    prefix=forms.CharField(max_length=100, required=False)
-    address=forms.CharField(max_length=100, required=False)
-    type=forms.CharField(max_length=100, required=False)
-    type2=forms.CharField(max_length=20, required=False)
-    person_account_categories=forms.CharField(max_length=200, required=False)
-    balance=forms.IntegerField(required=False) 
-
+ 
 
 class AddAccountToPersonForm(forms.Form):
     person_category_id=forms.IntegerField(required=True)
@@ -104,9 +118,14 @@ class AddAccountToPersonForm(forms.Form):
     
 class AddPersonCategoryForm(forms.Form):
     title=forms.CharField(max_length=100, required=True)
-    account_code=forms.IntegerField(required=True)
+    account_id=forms.IntegerField(required=True)
+    code_length=forms.IntegerField(required=False)
 
  
+class EditInvoiceForm(EditFinancialEventForm):
+    invoice_id=forms.IntegerField(required=True)
+    invoice_lines=forms.CharField(max_length=2000, required=False)
+
 class AddProductSpecificationForm(forms.Form):
     priority=forms.IntegerField(required=False)
     product_id=forms.IntegerField(required=True)
@@ -151,8 +170,9 @@ class AddFinancialEventForm(forms.Form):
     bedehkar_id=forms.IntegerField(required=True)
     bestankar_id=forms.IntegerField(required=True)
     amount=forms.IntegerField(required=True)
+    payment_method=forms.CharField(max_length=100,required=False)
     description=forms.CharField(max_length=1000,required=False)
-
+    shipping_fee=forms.IntegerField(required=False)
 
 class AddInvoiceForm(AddFinancialEventForm):
     pass
@@ -170,18 +190,12 @@ class AddBankForm(forms.Form):
     name=forms.CharField(max_length=100, required=True)
 
 
-class AddBankAccountForm(forms.Form):
-    parent_code=forms.CharField(max_length=100, required=True)
-    title=forms.CharField(max_length=100, required=True)
-    person_id=forms.IntegerField(required=True)
-    bank_id=forms.IntegerField(required=True)
-    code=forms.CharField(max_length=50, required=False)
-    shaba_no=forms.CharField(max_length=50, required=False)
-    account_no=forms.CharField(max_length=50, required=False)
-    card_no=forms.CharField(max_length=20, required=False)
-
-
 class ImportProductsFromExcelForm(forms.Form):
+    is_open=forms.BooleanField(required=False)
+    count=forms.IntegerField(required=True)
+
+
+class ImportFromExcelForm(forms.Form):
     is_open=forms.BooleanField(required=False)
     count=forms.IntegerField(required=True)
 
@@ -213,7 +227,7 @@ class AddInvoiceLineForm(forms.Form):
     invoice_line_item_id=forms.IntegerField(required=True)
     invoice_id=forms.IntegerField(required=True)
     discount_percentage=forms.IntegerField(required=False)
-    quantity=forms.IntegerField(required=True)
+    quantity=forms.FloatField(required=True)
     unit_price=forms.IntegerField(required=True)
     coef=forms.IntegerField(required=False)
     save=forms.BooleanField(required=False)
@@ -227,13 +241,13 @@ class SearchInvoiceLineItemForm(forms.Form):
     barcode=forms.CharField(max_length=100, required=False)
     code=forms.CharField(max_length=100, required=False)
 
+
 class SelectPersonAccountForm(forms.Form):
     pk=forms.IntegerField(required=False)
     person_account_id=forms.IntegerField(required=False)
     id=forms.IntegerField(required=False)
     code=forms.CharField(max_length=100, required=False)
     title=forms.CharField(max_length=100, required=False)
-
 
 
 class SelectAccountForm(forms.Form):
@@ -253,3 +267,11 @@ class AddCostForm(AddFinancialEventForm):
 
 class AddTaxForm(AddFinancialEventForm):
     priority=forms.IntegerField(required=False)
+
+
+class AddBankAccountForm(AddAccountForm):
+    person_id=forms.IntegerField(required=True)
+    bank_id=forms.IntegerField(required=True)
+    shaba_no=forms.CharField(max_length=50, required=False)
+    account_no=forms.CharField(max_length=50, required=False)
+    card_no=forms.CharField(max_length=20, required=False)

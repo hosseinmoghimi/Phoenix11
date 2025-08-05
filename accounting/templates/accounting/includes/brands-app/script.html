@@ -6,34 +6,13 @@
     }
     let brands_app_methods = {}
 </script>
-{% if add_brand_form %}
 <script>
-    brands_app_methods.add_brand= function () {
-            let payload = {
-                csrfmiddlewaretoken: csrfmiddlewaretoken,
-                title: this.new_brand_title,
-                category_id: parseInt(this.category_id),
-            }
-            console.log(payload)
-            let url = "{% url 'accounting:add_brand' %}"
-            let posting = $.post(url, payload)
-            posting.done(data => {
-                if (data.result === "SUCCEED") {
-
-                    brands_app.new_brand_title = ""
-                    brands_app.brands.push(data.brand)
-                }
-
-                if (data.result != "SUCCEED") {
-                    show_message(brands_app, "خطا", data.message, "danger", 5000)
-                }
-
-            })
-        }
-     
+    brands_app_methods.filter= function () {
+        brands_app.brands=brands_for_brands_app.filter(brand=>brand.name.indexOf(brands_app.search_for)>-1)
+    }
+    
 </script> 
  
-{% endif %}
 <script>
     let brands_app = new Vue({
         el: "#brands-app",
@@ -41,7 +20,6 @@
             brands: brands_for_brands_app,
             search_for: "",
         waiting: false,
-        new_brand_title:"",
         message: { show: false },
         },
         methods: brands_app_methods,

@@ -5,6 +5,13 @@ from khayyam import *
 HOURS_OFFSET=3
 MINUTES_OFFSET=30
 
+def to_gregorian(date):
+    date=str(date)
+    year=str(date)[:2]
+    if year=="13" or year=="14":
+        date=PersianCalendar().to_gregorian(date)
+    return date
+            
 
 DAY_LIGHT_SAVING=False
 def to_persian_datetime_tag(value,*args, **kwargs):
@@ -180,7 +187,7 @@ class PersianCalendar:
             sec_=0
             
         sss=TehranTimezone()
-        delta=datetime.timedelta(hours=HOURS_OFFSET,minutes=MINUTES_OFFSET)
+        delta=datetime.timedelta(days=-1,hours=HOURS_OFFSET,minutes=MINUTES_OFFSET)
         # delta=datetime.timedelta(hours=4,minutes=30)
         a=JalaliDatetime(datetime.datetime(year_, month_, day_, hour_, min_, sec_, 0, TehranTimezone())+delta)
         

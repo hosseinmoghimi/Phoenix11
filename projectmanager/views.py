@@ -9,6 +9,7 @@ from organization.views import OrganizationUnitRepo,OrganizationUnitSerializer
 from .apps import APP_NAME
 from core.views import CoreContext,PageContext,MessageView
 from utility.calendar import PersianCalendar
+from utility.currency import to_price
 import json
 from utility.enums import UnitNameEnum
 from utility.log import leolog
@@ -30,6 +31,14 @@ def ProjectContext(request,project,*args, **kwargs):
     context=PageContext(request=request,page=project)
     context['project']=project
     project_s=json.dumps(ProjectSerializer(project).data)
+
+
+    projects=project.childs.all()
+    context['projects']=projects
+    projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
+    context['projects_s']=projects_s
+    if request.user.has_perm(APP_NAME+'.add_project'):
+        context['add_sub_project_form']=AddSubProjectForm()
     context['project_s']=project_s
     context['WIDE_LAYOUT']=True
     if request.user.has_perm(APP_NAME+'.change_project'):
@@ -56,8 +65,11 @@ class ProjectView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         project=ProjectRepo(request=request).project(*args, **kwargs)
+        project.normalize()
         if project is None:
-            mv=MessageView()
+            title='پروژه وجود ندارد'
+            body='پروژه وجود ندارد'
+            mv=MessageView(title=title,body=body)
             return mv.get(request=request)
         
         context.update(ProjectContext(request=request,project=project))
@@ -87,11 +99,64 @@ class ProjectView(View):
 # Create your views here. 
 
 
+class ProjectTreeChartView(View):
+    
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        project=ProjectRepo(request=request).project(*args, **kwargs)
+        if project is None:
+            title='پروژه وجود ندارد'
+            body='پروژه وجود ندارد'
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
+        
+        context['project']=project  
+
+
+        projects=project.all_sub_projects()
+        context['projects']=projects
+        projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
+        context['projects_s']=projects_s
+
+        
+        context['WIDE_LAYOUT']=True 
+         
+        
+        pages=[{
+                'title': f"""{project.title}""",
+                'parent_id': project.parent_id,
+                'parent': 0,
+                'get_absolute_url': project.get_absolute_url(),
+                'id': project.id,
+                'pre_title': "",
+                'color': project.color,
+                'sub_title':to_price(project.total_price),
+                }]
+          
+        for project in projects:
+            pages.append({
+                'title': f"""{project.title}""",
+                'parent_id': project.parent_id,
+                'parent': 0,
+                'get_absolute_url': project.get_absolute_url(),
+                'id': project.id,
+                'pre_title': "",
+                'color': project.color,
+                'sub_title':to_price(project.amount),
+                })
+
+        context['pages_s'] = json.dumps(pages)
+        return render(request,TEMPLATE_ROOT+"tree-chart.html",context) 
+
+ 
+# Create your views here. 
+
+
 class ProjectsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context['name3']="name 3333"
-        projects = ProjectRepo(request=request).list(*args, **kwargs)
+        projects = ProjectRepo(request=request).list(parent_id=None,*args, **kwargs)
 
         context['projects']=projects
         projects_s=json.dumps(ProjectSerializer(projects,many=True).data)

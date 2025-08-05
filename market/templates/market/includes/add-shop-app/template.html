@@ -12,7 +12,7 @@
                     <label for="dsrse6544">موجود
                         
                     </label>
-                    <input v-model="available" type="number" id="dsrse6544" class="form-control">
+                    <input v-model="available" type="number" id="dsrse658944" class="form-control">
 
                 </div>
             </div>
@@ -21,7 +21,7 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="asdsadfweqe2343">نام واحد فروش</label>
-                    <select v-model="unit_name" id="asdsadfweqe2343" class="form-control">
+                    <select v-model="unit_name" id="asdsxc36adfweqe2343" class="form-control">
                         {% for unit_name in unit_names_for_add_shop_app %}
 
                         <option value="{{unit_name}}">{{unit_name}}</option>
@@ -35,7 +35,7 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="asdsadfw34eqe2343">سطح فروش</label>
-                    <select v-model="level" id="asdsadfw34eqe2343" class="farsi form-control">
+                    <select v-model="level" id="asdsadfw34eqrweee2343" class="farsi form-control">
                         {% for level in levels_for_add_shop_app %}
 
                         <option value="{{level}}">{{level}}</option>
@@ -50,7 +50,26 @@
                         <small class="text-muted" v-text="to_price(unit_price)"></small>
                         <small class="text-muted" v-text="'{{CURRENCY}}'"></small>
                     </label>
-                    <input v-model="unit_price" type="number" id="dsrse6544" class="form-control">
+                    <input v-model="unit_price" type="number" id="dsrsgrehsfe6544" class="form-control">
+
+                </div>
+            </div>
+
+               <div class="col-md-3">
+                <div class="form-group">
+                    <label for="dsrse6544">ضریب
+                         
+                    </label>
+                    <input v-model="coef" type="number" id="dsrse6ddv544" class="form-control">
+
+                </div>
+            </div>
+
+               <div class="col-md-3">
+                <div class="form-group">
+                    <label for="dsrse6544">درصد تخفیف
+                    </label>
+                    <input max="100" min="0" v-model="discount_percentage" type="number" id="dsrswdwe6544" class="form-control">
 
                 </div>
             </div>

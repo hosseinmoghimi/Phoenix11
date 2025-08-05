@@ -21,52 +21,51 @@
 <div class="row rtl" style="background-color: #F2F3F5;">
     <div class="col-md-12">
         {% include 'market/includes/product-app/navbar.html' %}
-
     </div>
     <div class="col-md-12">
         {% include 'market/includes/product-app/main.html' %}
-
-
     </div>
-
     {% if shops %}
-    <div class="col-md-6">
-        {% include 'market/includes/product-app/shops.html' %}
-
-
+    <div class="col-lg-9">
+        {% include 'market/includes/product-shops-app/template.html' %}
     </div>
     {% endif %}
-
     {% if related_pages %}
     <div class="col-md-12">
         <h5 class="text-right mt-3">
             محصولات مشابه
         </h5>
         {% include "market/includes/product-app/relateds.html" %}
-
     </div>
     {% endif %}
 
+    
+    {% if add_shop_form %}
+    <div class="col-md-12">
+        <h5 class="text-right mt-3">
+            افزودن قیمت برای کالای موجود
+        </h5>
+        {% include "market/includes/add-shop-app/template.html" %}
+    </div>
+    {% endif %}
+
+    <div class="col-lg-6">
+        {% include "attachments/includes/comments-app/template.html" %}
+    </div>
     <div class="col-md-12">
         {% include "accounting/includes/product-app/card.html" %}
-
     </div>
 </div>
 {% endblock content %}
-
-
 {% block script %}
-
 {% include "accounting/includes/product-app/script.html" %}
-
-
-
-
 {% if shops %}
-   {% include 'market/includes/shops-app/script.html' %} 
+   {% include 'market/includes/product-shops-app/script.html' %} 
 {% endif %}
     
-
+{% if add_shop_form %}
+{% include "market/includes/add-shop-app/script.html" %}
+{% endif %}
 
 
 

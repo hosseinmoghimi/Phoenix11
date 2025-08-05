@@ -1,4 +1,6 @@
 {% load static %}
+{% if set_page_thumbnail_header_form %}
+  
 <div id="accordion-set-page-thumbnail" class="rtl text-right farsi">
   <div class="card" id="set-page-thumbnail-app">
     <div class="card-header" id="heading-set-page-thumbnail">
@@ -23,6 +25,27 @@
       <div class="card-body">
         <div id="set-page-thumbnail-header-app" v-cloak>
           <div class="row">
+            <div class="col-md-12">
+              <div class="my-3">
+                <form
+                  action="https://www.google.com/search"
+                  method="get"
+                  target="_blank"
+                  id="search-form"
+                >
+                  <input name="q" type="hidden" value="{{page.title}}" />
+                  <button type="submit" class="btn btn-link p-0">
+                    <img
+                      src="{% static 'img/icons/google.png' %}"
+                      width="32"
+                      alt=""
+                    />
+
+                    جستجوی گوگل
+                  </button>
+                </form>
+              </div>
+            </div>
             <div class="col-md-12">
               <form
                 id="set-page-thumbnail-header-form"
@@ -100,3 +123,4 @@
     </div>
   </div>
 </div>
+{% endif %}

@@ -45,32 +45,19 @@
         </div>
       </li>
       
-      {% if accounting_navbar %}
-      {% include "accounting/includes/navbar.html" %}
-      {% endif %}
-      
-      {% if projectmanager_navbar %}
-      {% include "projectmanager/includes/navbar.html" %}
+      {% if APP_NAVBAR %}
+       
+      {% include APP_NAVBAR %}
       {% endif %}
 
-      
-      {% if me_supplier %}
-      {% include "market/includes/supplier-app/navbar.html" %}
-      {% endif %}
  
-      {% include "authentication/includes/navbar.html" %}
+       
+
  
-
-        
-      {% if me_customer %}
-      {% include "market/includes/customer-app/navbar.html" %}
-      {% endif %}
-      
-
-
-      {% if warehouse_navbar %}
-      {% include "warehouse/includes/navbar.html" %}
-      {% endif %}
+      {% include "authentication/includes/common-navbar.html" %}
+ 
+ 
+ 
       
     </ul>
     <form class="form-inline my-2 my-lg-0" method="POST" action="{{SITE_URL}}{{APP_NAME}}/search/">

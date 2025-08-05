@@ -12,6 +12,7 @@ from django.core.files.storage import FileSystemStorage
 from utility.constants import FAILED,SUCCEED
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_URL,MEDIA_URL,ADMIN_URL,FULL_SITE_URL
 IMAGE_FOLDER = "images/"
+PAGE_TITLE_SEPERATOR=' / '
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 from utility.enums import class_title
 
@@ -32,6 +33,29 @@ class Page(models.Model,LinkHelper,ImageHelper):
     locations=models.ManyToManyField("attachments.location", blank=True,verbose_name=_("locations"))
     
        
+    def get_breadcrumb_link(self):
+        aaa=f"""
+                    <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">
+                    <span class="farsi">
+                    {self.title}
+                    </span>
+                    </a></li> 
+                    
+                    
+                    """
+        if self.parent is None:
+            return aaa
+        return self.parent.get_breadcrumb_link()+aaa
+    def get_breadcrumb(self):
+        return f"""
+        
+                <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    {self.get_breadcrumb_link()}
+                </ol>
+                </nav>
+        """
+    
     def set_priority(self,request,*args, **kwargs):
         result,message,priority=FAILED,"",100
         if not request.user.has_perm(APP_NAME+".change_page"):
@@ -45,8 +69,11 @@ class Page(models.Model,LinkHelper,ImageHelper):
         result=SUCCEED
         return result,message,priority
 
-    def save(self):
-        if self.class_name is None or self.class_name=="":
+    def save(self,*args, **kwargs):
+        from django.utils import timezone
+        now=timezone.now()
+        self.date_added=now
+        if not bool(self.class_name)  :
             self.class_name="page"
         if self.app_name is None or self.app_name=="":
             self.app_name="core"
@@ -56,6 +83,18 @@ class Page(models.Model,LinkHelper,ImageHelper):
     #     return len(PageLike.objects.filter(page_id=self.id))
 
      
+
+    def get_qrcode_url(self):
+        if self.pk is None:
+            super(Page,self).save()
+        import os
+        file_path = QRCODE_ROOT
+        file_name=self.class_name+str(self.pk)+".svg"
+        file_address=os.path.join(QRCODE_ROOT,file_name)
+        if not os.path.exists(file_address):
+            content=FULL_SITE_URL[0:-1]+self.get_absolute_url()
+            generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
+        return f"{QRCODE_URL}{file_name}"
 
     def class_title(self):
         return class_title(app_name=self.app_name,class_name=self.class_name)
@@ -87,6 +126,13 @@ class Page(models.Model,LinkHelper,ImageHelper):
     def get_absolute_url(self):
         return reverse(self.app_name+":"+self.class_name,kwargs={'pk':self.pk})
 
+    @property  
+    def full_title(self):
+        if self.parent is None:
+            return self.title
+        return self.parent.full_title+PAGE_TITLE_SEPERATOR+self.title
+ 
+
 
 class EventCategory(models.Model,LinkHelper):
     class_name="eventcategory"
@@ -116,9 +162,19 @@ class Event(Page,DateTimeHelper):
         _("start_datetime"),null=True,blank=True, auto_now=False, auto_now_add=False)
     end_datetime = models.DateTimeField(
         _("end_datetime"),null=True,blank=True, auto_now=False, auto_now_add=False)
-    # adder=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    # adder=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
+        
+        from django.utils import timezone
+        now =timezone.now()
+        if self.event_datetime is None:
+            self.event_datetime=now
+        if self.start_datetime is None:
+            self.start_datetime=now
+        if self.end_datetime is None:
+            self.end_datetime=now
+
         if self.app_name is None:
             self.app_name = APP_NAME
         if self.class_name is None:

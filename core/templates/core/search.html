@@ -3,7 +3,10 @@
 
 {% block content %}
 <div class="row rtl" id="selection-app">
-    
+    <div   class="col-12">
+        <h6  class="text-center">جستجوی</h6>
+        <h5  class="text-center">{{search_for}}</h5>
+    </div>
     {% if accounts %}
     <div class="col-md-12">
         {% include "accounting/includes/accounts-app/template.html" %}
@@ -14,6 +17,15 @@
     {% if pages %}
     <div class="col-md-12">
         {% include "core/includes/pages-app/template.html" %}
+    </div>
+    {% endif %}
+
+
+    
+    
+    {% if tags %}
+    <div class="col-md-12">
+        {% include "attachments/includes/tags-app/template.html" %}
     </div>
     {% endif %}
 
@@ -31,6 +43,11 @@
     
     {% if pages %}
         {% include "core/includes/pages-app/script.html" %}
+    {% endif %}
+
+    
+    {% if tags %}
+        {% include "attachments/includes/tags-app/script.html" %}
     {% endif %}
 
     <script>

@@ -4,8 +4,9 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import MenuRepo,ShopRepo,SupplierRepo,CustomerRepo
-from .serializers import MenuSerializer,ShopSerializer,SupplierSerializer,CustomerSerializer
+from .repo import MenuRepo,ShopRepo,SupplierRepo,CustomerRepo,ShipperRepo,CartItemRepo
+from accounting.apis import InvoiceRepo,InvoiceSerializer
+from .serializers import MenuSerializer,ShopSerializer,CartItemSerializer,SupplierSerializer,CustomerSerializer,ShipperSerializer
 from django.http import JsonResponse
 from .enums import *
 from .forms import *
@@ -34,6 +35,74 @@ class AddMenuApi(APIView):
   
 
   
+class AddShopPackageApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_menu_form=AddMenuForm(request.POST)
+        if add_menu_form.is_valid():
+            log=333
+            cd=add_menu_form.cleaned_data
+            result,message,menu=MenuRepo(request=request).add_menu(**cd)
+            if menu is not None:
+                context['menu']=MenuSerializer(menu).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+
+  
+class AddCartItemApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_to_cart_form=AddCartItemForm(request.POST)
+        if add_to_cart_form.is_valid():
+            log=333
+            cd=add_to_cart_form.cleaned_data
+            result,message,cart_item,cart_items=CartItemRepo(request=request).add_cart_item(**cd)
+            if result==SUCCEED:
+                context['cart_item']=CartItemSerializer(cart_item).data
+                context['cart_items']=CartItemSerializer(cart_items,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+  
+class ChangeCartItemApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_to_cart_form=ChangeCartItemForm(request.POST)
+        if add_to_cart_form.is_valid():
+            log=333
+            cd=add_to_cart_form.cleaned_data
+            result,message,cart_item,cart_items=CartItemRepo(request=request).change_cart_item(**cd)
+            if result==SUCCEED:
+                context['cart_item']=CartItemSerializer(cart_item).data
+                context['cart_items']=CartItemSerializer(cart_items,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
 class AddShopApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -56,6 +125,29 @@ class AddShopApi(APIView):
         return JsonResponse(context)
   
 
+class CheckoutCartApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        checkout_cart_form=CheckoutCartForm(request.POST)
+        if checkout_cart_form.is_valid():
+            log=333
+            cd=checkout_cart_form.cleaned_data
+            cd['cart_items']=json.loads(cd['cart_items'])
+            result,message,invoices=CartItemRepo(request=request).checkout(**cd)
+            
+            if result == SUCCEED:
+                context['invoices']=InvoiceSerializer(invoices,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
   
 class AddCustomerApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -103,6 +195,29 @@ class AddSupplierApi(APIView):
                     result,message,supplier=SupplierRepo(request=request).add_supplier(**cd)
                     if result==SUCCEED:
                         context['supplier']=SupplierSerializer(supplier).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+class AddShipperApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_shipper_form=AddShipperForm(request.POST)            
+            if add_shipper_form.is_valid():
+                log=333
+                cd=add_shipper_form.cleaned_data
+                result,message,shipper=ShipperRepo(request=request).add_shipper(**cd)
+                if result==SUCCEED:
+                    context['shipper']=ShipperSerializer(shipper).data
+            
         context['message']=message
         context['result']=result
         context['log']=log

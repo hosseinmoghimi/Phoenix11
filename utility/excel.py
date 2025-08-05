@@ -35,7 +35,7 @@ from django.http import HttpResponse
 from .calendar import PersianCalendar
 from datetime import datetime
 from openpyxl import load_workbook
-
+from utility.log import leolog
 import os
 def get_style(size=11,font_name='Calibri',bold=False,locked=True,color='FF000000',start_color='FFFFFF',end_color='FF000000',*args, **kwargs):
     font = Font(name=font_name,
@@ -100,6 +100,7 @@ class ReportWorkBook:
             self.work_book = Workbook()
             for sheet in self.sheets:
                 self.work_book.create_sheet(sheet.sheet_name)
+                ffff
         else:
             REPORT_ROOT=os.path.join(STATIC_ROOT,'report')
             filename =os.path.join(REPORT_ROOT,self.origin_file_name)   
@@ -121,7 +122,7 @@ class ReportWorkBook:
     #         sheet.get_worksheet(worksheet,blank_sheet=True)
     #     work_book.save(response)
     #     return response
-    def add_sheet(self,style=None,data=None,start_row=1,start_col=1,sheet_name='گزارش',title=None,blank_sheet=None,table_headers=None,*args, **kwargs):
+    def add_sheet(self,style=None,data=None,start_row=1,start_col=1,sheet_name='گزارش',title='sheet1',blank_sheet=None,table_headers=None,*args, **kwargs):
         sheet=ReportSheet()
         sheet.data=data
         sheet.blank_sheet=blank_sheet
@@ -136,18 +137,20 @@ class ReportWorkBook:
         sheet.table_headers=table_headers
 
 
-        sheet_counter=self.sheet_counter
-        if self.origin_file_name is None:
-            self.work_book.create_sheet(sheet.sheet_name)
-        else:
-            for i,worksheet in enumerate(self.work_book.worksheets):
-                if worksheet.title==sheet_name:
-                    # sheet=worksheet
-                    worksheet=self.work_book.worksheets[i]
+        worksheet=self.work_book.create_sheet(sheet.sheet_name)
+        # sheet_counter=self.sheet_counter
+        # if self.origin_file_name is None:
+        #     self.work_book.create_sheet(sheet.sheet_name)
+        # else:
+        #     for i,worksheet in enumerate(self.work_book.worksheets):
+        #         if worksheet.title==sheet_name:
+        #             # sheet=worksheet
+        #             worksheet=self.work_book.worksheets[i]
+        #             leolog(sss=worksheet)
         current_row=sheet.start_row
         start_col=sheet.start_col
-        
         worksheet.sheet_name = sheet.sheet_name
+        worksheet.title = sheet.title
         worksheet.sheet_view.rightToLeft = True
         if len(sheet.data)<1:
             return None
@@ -172,6 +175,8 @@ class ReportWorkBook:
                     cell.border=sheet.style['border']
             current_row+=1
         # Iterate through all movies
+        worksheet.cell(row=1, column=1).value='تعداد'
+        worksheet.cell(row=1, column=2).value=len(data)
         for data_item in sheet.data:
             
             col_num=0

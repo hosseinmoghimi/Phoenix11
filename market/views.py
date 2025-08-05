@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from accounting.repo import ProductRepo
-from .serializers import ProductSerializer,MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
-from .repo import MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo,CustomerRepo,ShipperRepo
+from accounting.views import ProductRepo,PersonAccountRepo,AddPersonAccountContext,PersonAccountSerializer
+from .serializers import CartItemSerializer,ShopPackageSerializer,ProductSerializer,MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
+from .repo import CartItemRepo,ShopPackageRepo,MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo,CustomerRepo,ShipperRepo
 from .forms import *
 from .apps import APP_NAME
+from .serializers import ShipperSerializer
+from .repo import ShipperRepo
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 from accounting.views import CategoryRepo
@@ -14,71 +16,93 @@ from django.views import View
 from core.views import CoreContext,leolog
 from authentication.views import PersonRepo,PersonSerializer,AddPersonContext
 from utility.enums import PersonPrefixEnum
+from .serializers import CustomerSerializer
+from utility.views import MessageView
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='market/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
- 
         
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
     context[WIDE_LAYOUT]=False 
- 
+    me_supplier=SupplierRepo(request=request).me
+    me_customer=CustomerRepo(request=request).me
+    context['market_navbar']=False
+    if me_supplier is not None:
+        context['market_navbar']=True
+        context['me_supplier']=me_supplier
+    if me_customer is not None:
+        context['market_navbar']=True
+        context['me_customer']=me_customer
+        context.update(CartItemContext(request=request,customer=me_customer))
+
     context['LAYOUT_PARENT']=LAYOUT_PARENT
+    return context
+
+def CartItemContext(request,customer,*args, **kwargs):
+    context={}
+    cart_items=CartItemRepo(request=request).list(customer_id=customer.id)
+    cart_items_s=json.dumps(CartItemSerializer(cart_items,many=True).data)
+    context['cart_items']=cart_items
+    context['cart_items_s']=cart_items_s
+    context['cart_items_navbar_s']=cart_items_s
     return context
 
 def AddMarketPersonContext(request):
     context={}
-    context['customer_levels']=(i[0] for i in ShopLevelEnum.choices)
-    context=AddPersonContext(request=request)
-    context['person_prefixs_for_add_supplier_app']=(i[0] for i in PersonPrefixEnum.choices)
-    persons=PersonRepo(request=request).list()
-    context['persons']=persons
-    context['customer_levels']=(i[0] for i in ShopLevelEnum.choices)
- 
+    context=AddPersonAccountContext(request=request)
+    person_accounts=PersonAccountRepo(request=request).list()
+    person_accounts_s=json.dumps(PersonAccountSerializer(person_accounts,many=True).data)
+    context['person_accounts']=person_accounts
+    context['person_accounts_s']=person_accounts_s
+
+    context['levels']=(i[0] for i in ShopLevelEnum.choices)
     return context
+
 def AddSupplierContext(request,*args, **kwargs):
     if not request.user.has_perm(APP_NAME+".add_supplier"):
         return context
     context=AddMarketPersonContext(request=request)
-  
-    ids=(SupplierRepo(request=request).list().values('person_id'))
-    persons=context['persons']
-    persons=persons.exclude(id__in=ids)
-    persons_s_for_add_supplier_app=json.dumps(PersonSerializer(persons,many=True).data)
-    context['persons_s_for_add_supplier_app']=persons_s_for_add_supplier_app
     context['add_supplier_form']=AddSupplierForm()
     return context
 
 def AddCustomerContext(request,*args, **kwargs): 
     if not request.user.has_perm(APP_NAME+".add_customer"):
         return {}
-    
     context=AddMarketPersonContext(request=request) 
-    persons=context['persons']
-    ids=(CustomerRepo(request=request).list().values('person_id'))
-    persons=persons.exclude(id__in=ids)
-    persons_s_for_add_customer_app=json.dumps(PersonSerializer(persons,many=True).data)
-    context['persons_s_for_add_customer_app']=persons_s_for_add_customer_app
     context['add_customer_form']=AddCustomerForm()
     return context
 
+def AddShipperContext(request,*args, **kwargs): 
+    if not request.user.has_perm(APP_NAME+".add_shipper"):
+        return {}
+    context=AddMarketPersonContext(request=request) 
+    context['add_shipper_form']=AddShipperForm()
+    return context
+       
+def AddShopPackageContext(request,*args, **kwargs):
+    context={}
+    return context
+    
+def AddShopContext(request,*args, **kwargs):
  
+    context={}
+    context['add_shop_form']=AddShopForm()
+    context['unit_names_for_add_shop_app']=(i[0] for i in UnitNameEnum.choices)
+    context['unit_names_for_add_shop_app']=(i[0] for i in UnitNameEnum.choices)
+    context['levels_for_add_shop_app']=(i[0] for i in ShopLevelEnum .choices)
+    return context
+
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
-
-        context['phoenix_apps']=phoenix_apps
+        context=getContext(request=request) 
         return render(request,TEMPLATE_ROOT+"index.html",context)
 # Create your views here.
 
  
-
 class ProductsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -89,7 +113,6 @@ class ProductsView(View):
  
         context[WIDE_LAYOUT]=True
         return render(request,TEMPLATE_ROOT+"products.html",context) 
-    
     
 
 class CategoryView(View):
@@ -124,8 +147,6 @@ class CategoryView(View):
  
         return render(request,TEMPLATE_ROOT+"category.html",context)
 
- 
-
     
 class ProductView(View):
     def get(self,request,*args, **kwargs):
@@ -143,6 +164,18 @@ class ProductView(View):
         shops_s=json.dumps(ShopSerializer(shops,many=True).data)
         context['shops']=shops
         context['shops_s']=shops_s
+
+
+        me_supplier=SupplierRepo(request=request).me
+        if me_supplier is not None:
+            context.update(AddShopContext(request=request))
+
+            
+        me_customer=CustomerRepo(request=request).me
+        if me_customer is not None:
+            context['add_cart_line_form']=AddCartLineForm()
+            # context.update(AddShopContext(request=request))
+            pass
 
         return render(request,TEMPLATE_ROOT+"product.html",context) 
     
@@ -162,9 +195,7 @@ class MenusView(View):
             context['suppliers']=suppliers
         return render(request,TEMPLATE_ROOT+"menus.html",context) 
     
-    
 
-    
 class MenuView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -183,9 +214,6 @@ class MenuView(View):
         return render(request,TEMPLATE_ROOT+"menu.html",context) 
     
     
-
-    
-
 class SuppliersView(View):
     def get(self,request,*args,**kwargs):
         context=getContext(request=request)
@@ -198,6 +226,38 @@ class SuppliersView(View):
             context.update(AddSupplierContext(request=request))
         return render(request,TEMPLATE_ROOT+"suppliers.html",context) 
 
+
+class ShopPackagesView(View):
+    def get(self,request,*args,**kwargs):
+        context=getContext(request=request)
+        shop_packages=ShopPackageRepo(request=request).list(*args,**kwargs)
+        shop_packages_s=json.dumps(ShopPackageSerializer(shop_packages,many=True).data)
+        context['shop_packages']=shop_packages
+        context['shop_packages_s']=shop_packages_s
+        
+        if request.user.has_perm(APP_NAME+".add_shoppackage"):
+            context.update(AddShopPackageContext(request=request))
+        return render(request,TEMPLATE_ROOT+"shop-packages.html",context) 
+
+
+class ShopPackageView(View):
+    def get(self,request,*args,**kwargs):
+        context=getContext(request=request)
+        shop_package=ShopPackageRepo(request=request).shop_package(*args,**kwargs)
+        shop_package_s=json.dumps(ShopPackageSerializer(shop_package).data)
+        context['shop_package']=shop_package
+        context['shop_package_s']=shop_package_s
+
+
+        shops=shop_package.shops.all()
+        shops_s=json.dumps(ShopSerializer(shops,many=True).data)
+        context['shops']=shops
+        context['shops_s']=shops_s
+
+        if 'me_supplier' in kwargs and context['me_supplier'] is not None:
+            context.update(AddShopContext(request=request))
+        return render(request,TEMPLATE_ROOT+"shop-package.html",context) 
+
         
 class SupplierView(View):
     def get(self,request,*args,**kwargs):
@@ -206,8 +266,9 @@ class SupplierView(View):
         supplier_s=json.dumps(SupplierSerializer(supplier,many=False).data)
         context['supplier']=supplier
         context['supplier_s']=supplier_s
-        context['person']=supplier.person
-        context['account']=supplier.account
+        context['person_account']=supplier.person_account
+        context['person']=supplier.person_account.person
+        context['account']=supplier.person_account
 
         
         shops=ShopRepo(request=request).list(supplier_id=supplier.id)
@@ -215,9 +276,16 @@ class SupplierView(View):
         context['shops']=shops
         context['shops_s']=shops_s
 
-        return render(request,TEMPLATE_ROOT+"supplier.html",context) 
 
-       
+
+        
+        shop_packages=ShopPackageRepo(request=request).list(supplier_id=supplier.id)
+        shop_packages_s=json.dumps(ShopPackageSerializer(shop_packages,many=True).data)
+        context['shop_packages']=shop_packages
+        context['shop_packages_s']=shop_packages_s
+
+
+        return render(request,TEMPLATE_ROOT+"supplier.html",context) 
 
     
 class DeskView(View):
@@ -235,9 +303,6 @@ class DeskView(View):
         context['NOT_NAVBAR']=True
         context['NOT_FOOTER']=True
         return render(request,TEMPLATE_ROOT+"desk.html",context) 
-    
-    
-
     
     
 class DeskMenuView(View):
@@ -268,9 +333,6 @@ class DeskMenuView(View):
         context['NOT_NAVBAR']=True
         context['NOT_FOOTER']=True
         return render(request,TEMPLATE_ROOT+"desk-menu.html",context) 
-    
-    
-
 
     
 class DesksView(View):
@@ -286,4 +348,86 @@ class DesksView(View):
         return render(request,TEMPLATE_ROOT+"desks.html",context) 
     
     
+class ShippersView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        shippers =ShipperRepo(request=request).list(*args, **kwargs)
+        context['shippers']=shippers
+        
+        shippers_s=json.dumps(ShipperSerializer(shippers,many=True).data)
+        context['shippers_s']=shippers_s
+        if request.user.has_perm(APP_NAME+'.add_shipper'):
+            context.update(AddShipperContext(request=request))
+ 
+        return render(request,TEMPLATE_ROOT+"shippers.html",context) 
+    
+   
+class ShipperView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        shipper =ShipperRepo(request=request).shipper(*args, **kwargs)
+        context['shipper']=shipper
+        
+        shipper_s=json.dumps(ShipperSerializer(shipper,many=False).data)
+        context['shipper_s']=shipper_s
+ 
+ 
+        return render(request,TEMPLATE_ROOT+"shipper.html",context) 
+    
+    
+class CustomerView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        customer =CustomerRepo(request=request).customer(*args, **kwargs)
+        context['customer']=customer
+        if customer is None:
+            msg={}
+            msg['title']='خطا'
+            msg['body']='خریداری پیدا نشد.'
+            mv=MessageView(**msg)
+            return mv.get(request=request)   
+        customer_s=json.dumps(CustomerSerializer(customer,many=False).data)
+        context['customer_s']=customer_s
+ 
 
+
+ 
+ 
+        return render(request,TEMPLATE_ROOT+"customer.html",context) 
+       
+    
+class CustomersView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        customers =CustomerRepo(request=request).list(*args, **kwargs)
+        context['customers']=customers
+        
+        customers_s=json.dumps(CustomerSerializer(customers,many=True).data)
+        context['customers_s']=customers_s
+        if request.user.has_perm(APP_NAME+'.add_customer'):
+            context.update(AddCustomerContext(request=request))
+ 
+        return render(request,TEMPLATE_ROOT+"customers.html",context) 
+    
+   
+    
+class CartView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        customer =CustomerRepo(request=request).customer(*args, **kwargs)
+        context['customer']=customer
+        if customer is None:
+            msg={}
+            msg['title']='خطا'
+            msg['body']='خریداری پیدا نشد.'
+            mv=MessageView(**msg)
+            return mv.get(request=request)   
+        customer_s=json.dumps(CustomerSerializer(customer,many=False).data)
+        context['customer_s']=customer_s
+ 
+
+        context['checkout_cart_form']=CheckoutCartForm()
+ 
+ 
+        return render(request,TEMPLATE_ROOT+"cart.html",context) 
+       

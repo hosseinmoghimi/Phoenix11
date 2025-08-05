@@ -1,23 +1,5 @@
 from django.contrib import admin
-from .models import Vehicle,VehicleEvent,Trip,TripCategory,Truck,Client,Driver,Cycle,FuelSell,Hazine,Luggage,Maintenance,Passenger,ServiceMan
-from .models import Transport,TripPath,Barname,Variz,WorkShift,VehicleWorkEvent
+from .models import Vehicle,MaintenanceInvoice,ServiceMan
 admin.site.register(Vehicle) 
-admin.site.register(VehicleEvent)
-admin.site.register(Trip)
-admin.site.register(TripCategory)
-admin.site.register(Truck)
-admin.site.register(Client)
-admin.site.register(Driver)
-admin.site.register(Cycle)
-admin.site.register(FuelSell)
-admin.site.register(Hazine)
-admin.site.register(Luggage)
-admin.site.register(Maintenance)
-admin.site.register(Passenger)
+admin.site.register(MaintenanceInvoice)
 admin.site.register(ServiceMan)
-admin.site.register(Transport)
-admin.site.register(TripPath)
-admin.site.register(Barname)
-admin.site.register(Variz)
-admin.site.register(WorkShift)
-admin.site.register(VehicleWorkEvent)

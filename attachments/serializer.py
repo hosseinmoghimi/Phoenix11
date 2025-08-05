@@ -1,5 +1,5 @@
 from .models import Like,Comment,Link,Download,Image, Tag
-from core.serializer import ProfileSerializer,serializers,PageSerializer
+from core.serializers import PersonSerializer,serializers,PageSerializer
 from .models import Area, Location
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -18,19 +18,19 @@ class AreaSerializer(serializers.ModelSerializer):
           
 
 class LikeSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    person=PersonSerializer()
     class Meta:
         model=Like
-        fields=['id', 'profile']
+        fields=['id', 'person']
  
  
 
 class CommentSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    person=PersonSerializer()
     page=PageSerializer()
     class Meta:
         model=Comment
-        fields=['id','page', 'profile','comment','persian_datetime_added']
+        fields=['id','page','person','comment','persian_datetime_added']
  
 
 class TagSerializer(serializers.ModelSerializer):
@@ -40,7 +40,7 @@ class TagSerializer(serializers.ModelSerializer):
  
 class LinkSerializer(serializers.ModelSerializer):
     page=PageSerializer()
-    # profile=ProfileSerializer()
+    # person=ProfileSerializer()
     class Meta:
         model=Link
         fields=['id','page', 'url','priority','title','get_edit_url','get_delete_url']
@@ -49,7 +49,7 @@ class LinkSerializer(serializers.ModelSerializer):
  
 class ImageSerializer(serializers.ModelSerializer):
     page=PageSerializer()
-    # profile=ProfileSerializer()
+    # person=ProfileSerializer()
     class Meta:
         model=Image
         fields=['id','page','title', 'thumbnail','get_absolute_url','image','persian_date_added','priority','title','get_edit_url','get_delete_url']
@@ -57,8 +57,8 @@ class ImageSerializer(serializers.ModelSerializer):
 
 class DownloadSerializer(serializers.ModelSerializer):
     page=PageSerializer()
-    profile=ProfileSerializer()
+    person=PersonSerializer()
     class Meta:
         model=Download
-        fields=['id','page','get_download_url', 'profile','title','get_edit_url','get_delete_url']
+        fields=['id','page','get_download_url', 'person','title','get_edit_url','get_delete_url']
  

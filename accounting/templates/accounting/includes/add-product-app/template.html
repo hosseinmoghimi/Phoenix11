@@ -26,6 +26,7 @@
                                     <option value="{{category.id}}">{{category.full_title}}</option>
                                     {% endfor %}
                                 </select>
+                                <a target="_blank" href="{% url 'accounting:category' pk=0 %}">همه دسته بندی ها</a>
                             </div>
                         </div>
 
@@ -37,6 +38,8 @@
                                     <option value="{{brand.id}}">{{brand.name}}</option>
                                     {% endfor %}
                                 </select>
+                                <a target="_blank" href="{% url 'accounting:brands' %}">همه برند ها</a>
+
                             </div>
                         </div>
 

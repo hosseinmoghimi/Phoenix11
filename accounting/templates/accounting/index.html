@@ -10,6 +10,14 @@
             </h6>
         </a>
     </div>
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'accounting:person_categories' %}">
+            <img src="{% static 'core/img/logo.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                دسته بندی اشخاص
+            </h6>
+        </a>
+    </div>
 
 
     <div class="col-6 col-md-3 col-lg-2 text-center my-3">
@@ -20,6 +28,34 @@
             </h6>
         </a>
     </div>
+
+     <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'accounting:bank_accounts' %}">
+            <img src="{% static 'core/img/logo.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                حساب های بانکی
+            </h6>
+        </a>
+    </div>
+     <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'accounting:banks' %}">
+            <img src="{% static 'core/img/logo.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                بانک ها
+            </h6>
+        </a>
+    </div>
+
+    
+    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+        <a href="{% url 'accounting:assets' %}">
+            <img src="{% static 'core/img/logo.png' %}" width="64em" class="mb-2" alt="">
+            <h6 class="text-center">
+                    دارایی ها
+            </h6>
+        </a>
+    </div>
+
 
     <div class="col-6 col-md-3 col-lg-2 text-center my-3">
         <a href="{% url 'accounting:tree_chart' pk=0 %}">

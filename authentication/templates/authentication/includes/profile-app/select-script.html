@@ -1,24 +1,24 @@
 <script>
-    select_profile_by_id = function (profile_id) {
-        let payload2 = { csrfmiddlewaretoken: csrfmiddlewaretoken, profile_id: profile_id  }
-        return $.post("{% url 'authentication:select_profile' %}", payload2)
+    select_user_by_id = function (user_id) {
+        let payload2 = { csrfmiddlewaretoken: csrfmiddlewaretoken, user_id: user_id  }
+        return $.post("{% url 'authentication:select_user' %}", payload2)
     }
 </script>
 <script>
-    let select_profile_app=new Vue({
-        el:"#select-profile-app",
+    let select_user_app=new Vue({
+        el:"#select-user-app",
         data:{
-            profile_id:0,
-            profile:{},
+            user_id:0,
+            user:{},
         },
         methods:{
-            select_profile:function(){
-                select_profile_by_id(select_profile_app.profile_id).done(data=>{
+            select_user:function(){
+                select_user_by_id(select_user_app.user_id).done(data=>{
                     if(data.result==='SUCCEED'){
-                        select_profile_app.profile=data.profile
+                        select_user_app.user=data.user
                     }
                     else{
-                        select_profile_app.profile={}
+                        select_user_app.user={}
 
                     }
                 })

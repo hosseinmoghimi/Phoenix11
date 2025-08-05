@@ -1,26 +1,25 @@
 from django.shortcuts import render,redirect,reverse
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import ProfileRepo
 from django.views import View
-from .serializer import PersonSerializer
+from .serializers import PersonSerializer
 from .repo import PersonRepo,FAILED,SUCCEED
 from .forms import *
 from django.http import HttpResponseRedirect
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
-from core.views import CoreContext,ParameterRepo,PictureRepo,leolog
+from core.views import MessageView,CoreContext,ParameterRepo,PictureRepo,leolog
 import json
 
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='authentication/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
-NO_NAVBAR="NO_NAVBAR"
+NO_NAVBAR="NO_NAVBAR" 
 
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
- 
+  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
  
@@ -36,6 +35,16 @@ def AddPersonContext(request,*args, **kwargs):
     return context
 
 
+def PersonContext(request,*args, **kwargs):
+    context={}
+    person=PersonRepo(request=request).person(*args, **kwargs)
+    if request.user.has_perm('authentication.change_person'):
+        if person.user is not None: 
+            context['login_as_form']=True 
+    context['person']=person
+    return context
+     
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -48,11 +57,50 @@ class IndexView(View):
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
 
+
+class SearchView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        phoenix_apps=context["phoenix_apps"]
+        phoenix_apps=phoenix_apps 
+         
+        return render(request,TEMPLATE_ROOT+"search.html",context)
+
+    def post(self,request,*args, **kwargs):
+        result=FAILED
+        message=''
+        log=1
+        context=getContext(request=request) 
+        search_form=SearchForm(request.POST)
+        WAS_FOUND=False
+        search_for=''   
+        if search_form.is_valid():
+            log=2
+            search_for=search_form.cleaned_data['search_for']
+            result=SUCCEED
+
+            persons=PersonRepo(request=request).list(search_for=search_for)
+            if len(persons)>0:
+                context['persons']=persons
+                context['persons_s']=json.dumps(PersonSerializer(persons,many=True).data)
+                WAS_FOUND=True
+
+ 
+
+        context['WAS_FOUND']=WAS_FOUND
+        context['search_for']=search_for
+        context['message']=message
+        context['log']=log
+        context['result']=result
+        return render(request,"utility/search.html",context)
+
+
 class ChangePersonImageView(View):
     def post(self,request,*args, **kwargs):
-        profile_id=0
+        person_id=0
         if 'pk' in kwargs:
-            profile_id=kwargs['pk']
+            person_id=kwargs['pk']
         log=1
         if request.method=='POST':
             log=2
@@ -66,6 +114,16 @@ class ChangePersonImageView(View):
                 )
         return redirect(reverse(APP_NAME+":person",kwargs={'pk':person_id}))
 
+
+class LoginAsViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        if request.user.has_perm(APP_NAME+".change_person"):
+            selected_person=PersonRepo(request=request).person(*args, **kwargs)
+            if selected_person is not None:
+                PersonRepo(request=request).login(request=request,user=selected_person.user)
+                return redirect('core:index')
+        return redirect(APP_NAME+":login")
 
 
 class PersonsView(View):
@@ -86,13 +144,21 @@ class PersonView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         person=PersonRepo(request=request).person(*args, **kwargs)
+        if person is None:
+            title='شخص پیدا نشد.'
+            body='شخص پیدا نشد.'
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
+        context.update(PersonContext(request=request,person=person))
         context['person']=person
         person_s=json.dumps(PersonSerializer(person).data)
         context['person_s']=person_s
+        context['title']=person.full_name
         if request.user.has_perm(APP_NAME+'.change_person'):
             context['change_person_image_form']=ChangePersonImageForm()
         return render(request,TEMPLATE_ROOT+"person.html",context)
-
+ 
+ 
 class LoginView(View):
     def get(self,request,*args, **kwargs): 
         messages=[]
@@ -106,7 +172,7 @@ class LoginView(View):
         else:
             context['next']=SITE_URL
 
-        ProfileRepo(request=request).logout(request)
+        PersonRepo(request=request).logout(request)
         context['login_form']=LoginForm()
         context['build_absolute_uri']=request.build_absolute_uri()
         build_absolute_uri=request.build_absolute_uri()
@@ -121,13 +187,14 @@ class LoginView(View):
 
         messages=[]
         login_form=LoginForm(request.POST)
+        next=request.POST['next']
         if login_form.is_valid():
             username=login_form.cleaned_data['username']
             password=login_form.cleaned_data['password']
             if 'next' in login_form.cleaned_data:
                 next=login_form.cleaned_data['next']
             
-            a=ProfileRepo(request=request).login(request=request,username=username,password=password)
+            a=PersonRepo(request=request).login(request=request,username=username,password=password)
             if a is not None:
                 (request,user)=a
                 return HttpResponseRedirect(next)
@@ -141,8 +208,9 @@ class ChangePasswordView(View):
            
         return render(request,TEMPLATE_ROOT+"login.html",context)
 
+
 class LogoutView(View):
     def get(self,request,*args, **kwargs):
-        ProfileRepo(request=request).logout(request)
+        PersonRepo(request=request).logout(request)
         message='شما با موفقیت از سیستم خارج شدید.'
         return LoginView().get(request=request,messages=[message])

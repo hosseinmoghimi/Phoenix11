@@ -1,11 +1,13 @@
-{% include "accounting/includes/account-app/select-script.html" %}
+{% include "accounting/includes/person-account-app/select-script.html" %}
 <script>
   let add_school_app = new Vue({
     el: "#add-school-app",
     data: {
-    name: "", 
-    account_code:'0',
-    account:{},
+      name:"",
+      person_account_code:'0',
+      person_account:{},
+      message:{show:false},
+      waiting:false,
     },
 
     components: {
@@ -30,22 +32,21 @@
       to_price: function (vall) {
         return to_price(vall) + " {{CURRENCY}}";
       },
-      select_account: function () {
-          console.log(add_school_app.account);
-          select_account_by_code(add_school_app.account_code).done((data) => {
-              add_school_app.account = data.account;
+      select_person_account: function () {
+          select_person_account_by_code(add_school_app.person_account_code).done((data) => {
+              add_school_app.person_account = data.person_account;
               if (data.result === "SUCCEED") {
-                  add_school_app.account = data.account;
+                  add_school_app.person_account = data.person_account;
               } else {
-                  add_school_app.account = {}
+                  add_school_app.person_account = {}
               }
         });
       },
       add_school: function () {
         let payload = {
           csrfmiddlewaretoken: csrfmiddlewaretoken,
+          person_account_id: this.person_account.id,
           name: this.name,
-          account_id: this.account.id,
         };
 
         console.log(payload);
@@ -56,7 +57,12 @@
           if (data.result === "SUCCEED") {
             if (typeof schools_app != "undefined") {
               schools_app.schools.push(data.school);
+              show_message(add_school_app,'موفق',data.message,'success',2000)
             }
+          }
+          else{
+
+            show_message(add_school_app,'خطا',data.message,'danger',2000)
           }
         });
       },
