@@ -1,7 +1,7 @@
 # Phoenix11
 
 
-Version 0.2.0
+Version 1.0.0 beta
 
 
 copy phoenix/local_settings.py to phoenix/server_settings.py and reconfig
