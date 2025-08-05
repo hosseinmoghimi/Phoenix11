@@ -675,7 +675,7 @@ class FinancialDocumentLineView(View):
 class AccountsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request) 
-        
+        context['expand_accounts']=True
         accounts=AccountRepo(request=request).list(*args, **kwargs)
 
         context['accounts']=accounts
