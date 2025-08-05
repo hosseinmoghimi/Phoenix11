@@ -8,7 +8,7 @@
 </script>
 <script>
     brands_app_methods.filter= function () {
-        brands_app.brands=brands_for_brands_app.filter(brand=>brand.name.indexOf(brands_app.search_for)>-1)
+        brands_app.brands=brands_for_brands_app.filter(brand=>brand.name.toUpperCase().indexOf(brands_app.search_for.toUpperCase())>-1)
     }
     
 </script> 
