@@ -27,7 +27,7 @@ class PersonCategorySerializer(serializers.ModelSerializer):
        account=AccountSerializer()
        class Meta:
         model = PersonCategory
-        fields = ['id','title','account','code_length' , 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','count_of_accounts','account','code_length' , 'get_absolute_url','get_edit_url','get_delete_url']
 
 
 class AssetSerializer(serializers.ModelSerializer):
@@ -155,9 +155,10 @@ class ProductSpecificationSerializer(serializers.ModelSerializer):
 
 class PersonAccountSerializer(serializers.ModelSerializer):
        person=PersonSerializer()
+       person_category=PersonCategorySerializer()
        class Meta:
         model = PersonAccount
-        fields = ['id','person','name','title','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','person','person_category','name','title','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
 
 class BankAccountSerializer(serializers.ModelSerializer):
        bank=BankSerializer()

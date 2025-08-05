@@ -1,16 +1,35 @@
 
 <script>
+    let person={}
+    let person_id=0
+    let person_category={}
+    let person_category_id=0
     // const colors_for_add_account_app = JSON.parse("{a{colors_s|escapejs}}")
 </script>
+{% if person %}
+  <script>
+    person=JSON.parse("{{person_s|escapejs}}")
+    person_id=person.id
+  </script>
+{% endif %}
+
+
+{% if person_category %}
+  <script>
+    person_category=JSON.parse("{{person_category_s|escapejs}}")
+    person_category_id=parseInt("{{person_category.id}}")
+  </script>
+{% endif %}
+
 {% include 'authentication/includes/person-app/select-script.html' %}
 {% include 'accounting/includes/account-app/select-script.html' %}
 <script>
     let add_person_account_app = new Vue({
         el: "#add-person-account-app",
         data: { 
-            person_category_id:0,
-            person:{},
-            person_id:0,
+            person_category_id:person_category_id,
+            person:person,
+            person_id:person_id,
             priority: 100,
             type: "",
             nature: "بدون کنترل",

@@ -13,6 +13,16 @@
     </div>
   
     {% endif %}
+
+    
+   {% if add_bank_account_form %}
+     
+    <div class="col-md-12">
+        {% include "accounting/includes/add-bank-account-app/template.html" %}
+    </div>
+  
+    {% endif %}
+
      
    <div class="col-md-12">
      {% include 'accounting/includes/person-accounts-app/template.html' %}
@@ -32,6 +42,12 @@
    {% if add_person_account_form %}
      
         {% include "accounting/includes/add-person-account-app/script.html" %}
+  
+    {% endif %}
+
+      {% if add_bank_account_form %}
+     
+        {% include "accounting/includes/add-bank-account-app/script.html" %}
   
     {% endif %}
      

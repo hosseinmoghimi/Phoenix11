@@ -38,8 +38,20 @@
     </div>
   </div>
 
+{% if add_person_account_form %}
+  
+
+<div class="col-md-12">
+  {% include 'accounting/includes/add-person-account-app/template.html' %}
+</div>
+{% endif %}
   <div class="col-md-12">
     {% include 'accounting/includes/person-accounts-app/template.html' %}
   </div>
+
 </div>
-{% endblock content %} {% block script %} {% include 'accounting/includes/person-accounts-app/script.html' %} {% endblock script %}
+{% endblock content %} {% block script %} 
+{% if add_person_account_form %}
+  {% include 'accounting/includes/add-person-account-app/script.html' %}
+{% endif %}
+{% include 'accounting/includes/person-accounts-app/script.html' %} {% endblock script %}

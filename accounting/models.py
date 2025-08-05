@@ -442,11 +442,14 @@ class PersonCategory(models.Model,LinkHelper):
     title=models.CharField(_("title"),choices=PersonCategoryEnum.choices,default=PersonCategoryEnum.DEFAULT, max_length=50)
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
     code_length=models.IntegerField(_("code_length"),default=5)
-    
+   
     class_name="personcategory"
     app_name=APP_NAME
 
-
+    @property
+    def count_of_accounts(self):
+        return len(self.personaccount_set.all())
+    
     @property
     def count(self):
         return len(PersonAccount.objects.filter(category=self.category))
@@ -847,9 +850,8 @@ class BankAccount(Account):
         if self.class_name is None or self.class_name=='':
             self.class_name='bankaccount'
               
-        result,message,bank_account=FAILED,'',self 
-        # result,message,bank_account=
-        super(BankAccount,self).save(*args, **kwargs)
+              
+        result,message,bank_account= super(BankAccount,self).save(*args, **kwargs)
         if result==SUCCEED:
             message='حساب بانکی با موفقیت اضافه شد'
         return result,message,bank_account

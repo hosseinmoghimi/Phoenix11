@@ -717,6 +717,8 @@ class PersonView(View):
         
         if request.user.has_perm(APP_NAME+'.add_personaccount'):
             context.update(AddPersonAccountContext(request=request))
+        if request.user.has_perm(APP_NAME+'.add_bankaccount'):
+            context.update(AddBankAccountContext(request=request))
             
         return render(request,TEMPLATE_ROOT+"person.html",context)
 
@@ -1365,6 +1367,8 @@ class PersonCategoryView(View):
         context=getContext(request=request)
         person_category=PersonCategoryRepo(request=request).person_category(*args, **kwargs)
         context['person_category']=person_category
+        person_category_s=json.dumps(PersonCategorySerializer(person_category).data)
+        context['person_category_s']=person_category_s
 
         person_accounts=person_category.personaccount_set.all()
 
@@ -1374,6 +1378,9 @@ class PersonCategoryView(View):
 
 
 
+        if request.user.has_perm(APP_NAME+'.add_personaccount'):
+            context.update(AddPersonAccountContext(request=request))
+            
         return render(request,TEMPLATE_ROOT+"person-category.html",context)
 
 

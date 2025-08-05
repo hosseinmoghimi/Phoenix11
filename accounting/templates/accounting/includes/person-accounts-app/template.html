@@ -36,6 +36,9 @@
                                 نام شخص
                             </th>
                             <th>
+                                دسته بندی
+                            </th>
+                            <th>
                                 مانده
                             </th>
                             <th>
@@ -59,6 +62,13 @@
                                  <td>
                                     <a :href="person_account.person.get_accounting_absolute_url">
                                         <span   v-text="person_account.person.full_name"></span>
+                                    </a>
+
+                                </td>
+
+                                  <td>
+                                    <a :href="person_account.person_category.get_absolute_url">
+                                        <span   v-text="person_account.person_category.title"></span>
                                     </a>
 
                                 </td>

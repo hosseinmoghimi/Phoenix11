@@ -42,6 +42,8 @@ def PersonContext(request,*args, **kwargs):
         if person.user is not None: 
             context['login_as_form']=True 
     context['person']=person
+    person_s=json.dumps(PersonSerializer(person).data)
+    context['person_s']=person_s
     return context
      
 
