@@ -46,7 +46,7 @@ class BankSerializer(serializers.ModelSerializer):
 class BrandSerializer(serializers.ModelSerializer):
        class Meta:
         model = Brand
-        fields = ['id','name', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','name','logo', 'get_absolute_url','get_edit_url','get_delete_url']
 
 
 class InvoiceSerializer(serializers.ModelSerializer):

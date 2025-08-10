@@ -212,19 +212,55 @@
 
 
 
+                    {% if remote_client.product %}
+                    <tr>
+                        <td class="client-param-name">
+                            product
+                        </td>
+                        <td class="client-param-value">
+                             
+                            <div class="media"> 
+                                    <a href="{{remote_client.product.get_absolute_url}}">
+                                    <img src="{{remote_client.product.thumbnail}}" width="48" class="rounded" alt="">
+                                    </a>
+                                <div class="media-body mr-2">
+                                    <a href="{{remote_client.product.get_absolute_url}}">
+
+                                    {{remote_client.product.title}}
+                                    </a>
+                                </div>
+                            </div>
+                          
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    
                     {% if remote_client.brand %}
                     <tr>
                         <td class="client-param-name">
                             brand
                         </td>
                         <td class="client-param-value">
-                            <a href="{{remote_client.brand.get_absolute_url}}">
 
-                                {{remote_client.brand}}
-                            </a>
+                             <div class="media"> 
+                                    <a href="{{remote_client.brand.get_absolute_url}}">
+                                    <img src="{{remote_client.brand.logo}}" width="48" class="rounded" alt="">
+                                    </a>
+                                <div class="media-body mr-2">
+                                    <a href="{{remote_client.brand.get_absolute_url}}">
+
+                                    {{remote_client.brand.name}}
+                                    </a>
+                                </div>
+                            </div>
+
+
+                             
                         </td>
                     </tr>
                     {% endif %}
+
 
 
 

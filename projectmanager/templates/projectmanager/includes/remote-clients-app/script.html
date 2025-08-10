@@ -10,7 +10,7 @@
             status: "",
             show_form: false,
             message: { show: false },
-
+            product_id:0,
 
             name: "",
             active_directory: "",
@@ -91,6 +91,7 @@
                     id_name: this.id_name,
                     model_name: this.model_name,
                     brand_id: parseInt(this.brand_id),
+                    product_id: parseInt(this.product_id),
                     mac_address: this.mac_address,
                 }
                 console.log(payload)

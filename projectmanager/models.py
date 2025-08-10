@@ -164,6 +164,7 @@ class RemoteClient(models.Model,LinkHelper):
     dorsan_desk_address=models.CharField(_("dorsan_desk_address"),null=True,blank=True, max_length=50)
     dorsan_desk_password=models.CharField(_("dorsan_desk_password"),null=True,blank=True, max_length=50)
     brand=models.ForeignKey("accounting.brand",null=True,blank=True, verbose_name=_("brand"), on_delete=models.SET_NULL)
+    product=models.ForeignKey("accounting.product",null=True,blank=True, verbose_name=_("product"), on_delete=models.SET_NULL)
     model_name=models.CharField(_("model name"),null=True,blank=True, max_length=50)
     id_name=models.CharField(_("id_name"),null=True,blank=True, max_length=50)
     mac_address=models.CharField(_("mac_address"),null=True,blank=True, max_length=50)

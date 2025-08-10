@@ -221,6 +221,7 @@ class RemoteClientRepo():
         return objects.all() 
 
     def add_remote_client(self,*args, **kwargs):
+        leolog(kwargs=kwargs)
         result,message,remote_client=None,FAILED,""
         if not self.user.has_perm(APP_NAME+'.add_remoteclient'):
             message="شما مجوز لازم را برای افزودن سیستم کلاینت ندارید."
@@ -230,6 +231,8 @@ class RemoteClientRepo():
         remote_client=RemoteClient(*args, **kwargs)
         if remote_client.brand_id==0 or remote_client.brand_id is None:
             remote_client.brand=None
+        if remote_client.product_id==0 or remote_client.product_id is None:
+            remote_client.product=None
         remote_client.save()
         project=Project.objects.filter(pk=project_id).first()
         if project is not None:

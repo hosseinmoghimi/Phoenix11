@@ -100,8 +100,9 @@ class ProjectView(View):
         remote_clients_s = json.dumps(RemoteClientSerializer(remote_clients, many=True).data)
         context['remote_clients_s'] = remote_clients_s
         if request.user.has_perm(APP_NAME+".add_remoteclient"):
-            operating_systems=(i[0] for i in OperatingSystemNameEnum.choices)
-            context['operating_systems']=operating_systems
+            context['operating_systems']=(i[0] for i in OperatingSystemNameEnum.choices)
+            from accounting.repo import BrandRepo
+            context['brands']=BrandRepo(request=request).list()
             context['add_remote_client_form'] = AddRemoteClientForm()
         return render(request,TEMPLATE_ROOT+"project.html",context)
 # Create your views here. 

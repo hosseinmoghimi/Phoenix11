@@ -303,9 +303,9 @@ class FinancialDocument(models.Model,LinkHelper):
         self.save()
 
 
-class Brand(models.Model,LinkHelper):
+class Brand(models.Model,LinkHelper,ImageHelper):
     name=models.CharField(_("name"),max_length=100)
-
+    logo_origin=models.ImageField(_("logo"),blank=True,null=True, upload_to=IMAGE_FOLDER+"account", height_field=None, width_field=None, max_length=None)
     class_name="brand"
     app_name=APP_NAME
 
