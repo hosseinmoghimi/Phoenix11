@@ -107,7 +107,7 @@ def PageRelatedContext(request,page,*args, **kwargs):
 
 
 
-def PageImagesContext(request,page,person,*args, **kwargs):
+def PageImagesContext(request,page,*args, **kwargs):
     context={}
     image_repo = ImageRepo(request=request) 
     images=image_repo.list(page_id=page.id)
@@ -115,9 +115,7 @@ def PageImagesContext(request,page,person,*args, **kwargs):
     context['images']=images  
     context['images_s']=images_s  
     if request.user.has_perm(APP_NAME+'.add_image') :
-        context['add_image_form']=AddImageForm()
-    if person is not None :
-        context['add_image_form']=False
+        context['add_image_form']=AddImageForm() 
     return context
 
 
