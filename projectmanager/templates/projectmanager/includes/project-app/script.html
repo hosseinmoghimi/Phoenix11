@@ -12,3 +12,14 @@
 {% include "projectmanager/includes/project-edit-app/script.html" %}
 {% include "projectmanager/includes/sub-projects-app/script.html" %}
 {% include "accounting/includes/invoice-lines-app/script.html" %}
+<script>
+    $(document).ready(()=>{
+        
+        if(typeof add_invoice_app != 'undefined'){
+            add_invoice_app.bestankar_code= "{{project.employer.person_account.code}}"
+            add_invoice_app.bestankar = {code:"{{project.employer.person_account.code}}",get_absolute_url:"{{project.employer.person_account.get_absolute_url}}",color:"{{project.employer.person_account.color}}",balance:to_price_colored("{{project.employer.person_account.balance}}"),name:"{{project.employer.person_account.name}}",logo:"{{project.employer.person_account.logo}}"}
+            add_invoice_app.bedehkar_code= "{{project.contractor.person_account.code}}"
+            add_invoice_app.bedehkar = {code:"{{project.employer.person_account.code}}",get_absolute_url:"{{project.contractor.person_account.get_absolute_url}}",color:"{{project.contractor.person_account.color}}",balance:to_price_colored("{{project.contractor.person_account.balance}}"),name:"{{project.contractor.person_account.name}}",logo:"{{project.contractor.person_account.logo}}"}
+        }
+    })
+</script>

@@ -1,33 +1,88 @@
 {% load to_price %}
 
 <div class="card">
-    <div class="card-header">
-        <h6>
-            پروژه
-        </h6>
-        <h5>
-            {{project.title}}
-        </h5>
+  <div class="card-header">
+    <h6>پروژه</h6>
+    <h5>{{project.title}}</h5>
+  </div>
+  <div class="card-body">
+    <h5>{{project.title}}</h5>
 
-         
+    <div class="btn btn-primary my-2">
+
+        <h5>برآورد : {{project.amount|to_price}} {{CURRENCY}}</h5>
     </div>
-    <div class="card-body">
-      
-         <h5>
-            {{project.title}}
-        </h5>
 
-         <h5>
-            برآورد : 
-            {{project.amount|to_price}} {{CURRENCY}}
-        </h5>
         {% include "core/includes/page-app/card-contents.html" %}
-        <div class="my-2">
-            <a href="{% url 'projectmanager:tree_chart' pk=project.pk %}">نمودار درختی</a>
-        </div>
+        
+<hr>
+    <div class="my-2">
+      <small class="text-muted"> کارفرما : </small>
+      <div class="media">
+        <a href="{{project.contractor.get_absolute_url}}">
+          <img
+            class="rounded"
+            width="64"
+            src="{{project.contractor.thumbnail}}"
+            alt=""
+          />
+        </a>
+        <div class="media-body mr-2">
+          <a href="{{project.contractor.get_absolute_url}}">
+            <h6>{{project.contractor.title}}</h6>
 
-        <div class="my-2">
-            <a href="{% url 'projectmanager:project_guantt' pk=project.pk %}">نمودار گانت</a>
+            <h6>
+                <small>
+
+                    <a href="{{project.contractor.person_account.get_absolute_url}}">
+                        {{project.contractor.person_account.name}}
+                    </a>
+                </small>
+            </h6>
+          </a>
         </div>
+      </div>
     </div>
+
+    <hr>
+    <div class="my-2">
+      <small class="text-muted"> پیمانکار : </small>
+      <div class="media">
+        <a href="{{project.employer.get_absolute_url}}">
+          <img
+            class="rounded"
+            width="64"
+            src="{{project.employer.thumbnail}}"
+            alt=""
+          />
+        </a>
+        <div class="media-body mr-2">
+          <a href="{{project.employer.get_absolute_url}}">
+            <h6>{{project.employer.title}}</h6>
+
+            <h6>
+                <small>
+
+                    <a href="{{project.employer.person_account.get_absolute_url}}">
+                        {{project.employer.person_account.name}}
+                    </a>
+                </small>
+            </h6>
+          </a>
+        </div>
+      </div>
+    </div>
+<hr>
+    <div class="my-2">
+      <a href="{% url 'projectmanager:tree_chart' pk=project.pk %}"
+        >نمودار درختی</a
+      >
+    </div>
+
+    <div class="my-2">
+      <a href="{% url 'projectmanager:project_guantt' pk=project.pk %}"
+        >نمودار گانت</a
+      >
+    </div>
+  </div>
 </div>
