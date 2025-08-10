@@ -28,6 +28,11 @@ def SearchContext(request,app_name,search_for,*args, **kwargs):
     return context
 
 
+def NoPersmissionView(request,*args, **kwargs):
+        mv=MessageView(request=request)
+        mv.body="اکانت شما مجوز دسترسی لازم را دارا نمی باشد."
+        mv.title="عدم دسترسی"
+        return mv.response()
 
 class SearchView(View):
     def get(self,request,*args, **kwargs):

@@ -11,7 +11,7 @@ from django.core.files.storage import FileSystemStorage
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT
 IMAGE_FOLDER = "images/"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
-
+from .enums import StatusColor
 # Create your models here.
 class Project(Event,LinkHelper,DateHelper): 
     employer=models.ForeignKey("organization.organizationunit", verbose_name=_("employer"),related_name="project_employed", on_delete=models.CASCADE)
@@ -85,7 +85,8 @@ class Project(Event,LinkHelper,DateHelper):
                 invoice_ids.append(inv.id)
         from accounting.models import InvoiceLine
         return InvoiceLine.objects.filter(invoice_id__in=invoice_ids)
-
+    def get_status_color(self):
+        return StatusColor(self)
 class Request(InvoiceLine):
     ware_house=models.ForeignKey("warehouse.warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
 

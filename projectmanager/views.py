@@ -3,7 +3,7 @@ from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_UR
 from django.views import View
 from .forms import *
 from utility.enums import *
-from .serializers import ProjectSerializer,RemoteClientSerializer
+from .serializers import ProjectSerializer,RemoteClientSerializer,ProjectSerializerForGuantt
 from .repo import ProjectRepo,RemoteClientRepo
 from organization.views import OrganizationUnitRepo,OrganizationUnitSerializer
 from .apps import APP_NAME
@@ -12,6 +12,7 @@ from utility.calendar import PersianCalendar
 from utility.currency import to_price
 import json
 from utility.enums import UnitNameEnum
+from utility.views import NoPersmissionView
 from utility.log import leolog
 from accounting.views import ProductContext,PageContext,AddInvoiceContext,InvoiceSerializer,InvoiceLineWithInvoiceSerializer
 from .enums import *
@@ -59,6 +60,20 @@ class IndexView(View):
 
         return render(request,TEMPLATE_ROOT+"index.html",context)
 # Create your views here. 
+
+
+
+class ProjectGuanttView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        if context is None:
+            return NoPersmissionView(request=request)
+        project = ProjectRepo(request=request).project(*args, **kwargs)
+        context['project'] = project
+        projects=ProjectRepo(request=request).list(parent_id=project.pk).order_by('priority')
+        context['projects'] = projects
+        context['projects_s'] = json.dumps(ProjectSerializerForGuantt(projects, many=True).data)
+        return render(request, TEMPLATE_ROOT+"guantt.html", context)
 
 
 class ProjectView(View):

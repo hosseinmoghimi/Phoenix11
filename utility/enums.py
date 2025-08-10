@@ -1,7 +1,10 @@
 from django.utils.translation import gettext as _
 from django.db.models import TextChoices
  
- 
+def StatusColor(page): 
+    if page.status=='ss':
+        return 'success'
+    return 'primary'
  
 class WeightUnitEnum(TextChoices):
     KILO_GRAM="کیلوگرم",_("کیلوگرم")

@@ -4,6 +4,7 @@ from django.utils.translation import gettext as _
 from utility.qrcode import generate_qrcode
 from utility.enums import *
 from .enums import *
+from utility.enums import StatusColor
 from utility.calendar import PersianCalendar
 from utility.models import LinkHelper,ImageHelper,DateTimeHelper
 from tinymce.models import HTMLField
@@ -31,7 +32,8 @@ class Page(models.Model,LinkHelper,ImageHelper):
     header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'ImageBase/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
     color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY,max_length=50)
     locations=models.ManyToManyField("attachments.location", blank=True,verbose_name=_("locations"))
-    
+    def get_status_color(self):
+        return StatusColor(self)
        
     def get_breadcrumb_link(self):
         aaa=f"""

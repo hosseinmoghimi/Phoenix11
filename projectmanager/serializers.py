@@ -12,6 +12,12 @@ class ProjectSerializer(FinancialEventSerializer):
  
 
   
+class ProjectSerializerForGuantt(serializers.ModelSerializer):
+    class Meta:
+        model=Project
+        fields=['id','title','get_status_color','color','start_datetime','end_datetime','status','amount','get_absolute_url','short_description','thumbnail','percentage_completed']
+
+
 
 class RemoteClientSerializer(serializers.ModelSerializer):
     brand=BrandSerializer()
