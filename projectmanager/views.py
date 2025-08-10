@@ -13,7 +13,7 @@ from utility.currency import to_price
 import json
 from utility.enums import UnitNameEnum
 from utility.log import leolog
-from accounting.views import ProductContext,PageContext,AddInvoiceContext,InvoiceSerializer
+from accounting.views import ProductContext,PageContext,AddInvoiceContext,InvoiceSerializer,InvoiceLineWithInvoiceSerializer
 from .enums import *
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='projectmanager/'
@@ -81,6 +81,14 @@ class ProjectView(View):
         invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
         context['invoices']=invoices
         context['invoices_s']=invoices_s
+
+        
+        invoice_lines=project.all_invocie_lines()
+        invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
+        context['invoice_lines']=invoice_lines
+        context['invoice_lines_s']=invoice_lines_s
+
+
         context['WIDE_LAYOUT']=True
         if request.user.has_perm(APP_NAME+".add_invoice"):
             context.update(AddInvoiceContext(request=request))

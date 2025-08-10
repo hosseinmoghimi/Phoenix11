@@ -71,7 +71,21 @@ class Project(Event,LinkHelper,DateHelper):
     @property    
     def total_price(self):
         return self.amount
-    
+
+    def all_invocie_lines(self):
+        ids=[self.id]
+        for proj in self.children.all():
+            ids.append(proj.id)
+            for i in proj.all_sub_projects():
+                ids.append(i.id)
+        projects=Project.objects.filter(id__in=ids)
+        invoice_ids=[]
+        for proj in projects:
+            for inv in proj.invoices.all():
+                invoice_ids.append(inv.id)
+        from accounting.models import InvoiceLine
+        return InvoiceLine.objects.filter(invoice_id__in=invoice_ids)
+
 class Request(InvoiceLine):
     ware_house=models.ForeignKey("warehouse.warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
 
@@ -104,8 +118,6 @@ class ServiceRequest(Request):
         super(ServiceRequest,self).save()
 
 
-
-
 class Ticket(models.Model,DateTimeHelper,LinkHelper):
     parent=models.ForeignKey("ticket",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
     title=models.CharField(_("title"),max_length=500)
@@ -136,8 +148,6 @@ class Ticket(models.Model,DateTimeHelper,LinkHelper):
  
     def save(self,*args, **kwargs):
         return super(Ticket,self).save()
-
-
  
 
 class RemoteClient(models.Model,LinkHelper):
