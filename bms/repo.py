@@ -10,7 +10,7 @@ class FeederRepo():
      
     def __init__(self,request, *args, **kwargs):
         self.request = request
-        self.person=PersonRepo(*args, **kwargs).me
+        self.person=PersonRepo(request=request,*args, **kwargs).me
         self.objects = Feeder.objects
     def list(self,*args, **kwargs):
         objects= self.objects
@@ -80,7 +80,7 @@ class CommandRepo():
     def __init__(self,request, *args, **kwargs):
         self.request = request
          
-        self.person=PersonRepo(*args, **kwargs).me
+        self.person=PersonRepo(request=request,*args, **kwargs).me
         self.objects = Command.objects
     def list(self,*args, **kwargs):
         objects= self.objects

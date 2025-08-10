@@ -3,14 +3,15 @@ from django.shortcuts import render
 from bms.apps import APP_NAME
 from bms.repo import CommandRepo, FeederRepo,LogRepo
 from core.views import CoreContext
-from bms.serializers import CommandSerializer, FeederFullSerializer, FeederSerializer, RelaySerializer,LogSerializer
+from bms.serializers import CommandSerializer,RelayFullSerializer, FeederSerializer, RelaySerializer,LogSerializer
 from django.views import View
-
+from utility.log import leolog
 TEMPLATE_ROOT="bms/"
 LAYOUT_PARENT="phoenix/layout.html"
 
 def getContext(request,*args, **kwargs):
     context=CoreContext(request=request,app_name=APP_NAME)
+    context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 class HomeView(View):
     def get(self,request,*args, **kwargs):
@@ -54,13 +55,13 @@ class FeederView(View):
         context=getContext(request=request)
         feeder=FeederRepo(request=request).feeder(*args, **kwargs)
         context['feeder']=feeder
-        feeder_s=json.dumps(FeederFullSerializer(feeder).data)
+        feeder_s=json.dumps(FeederSerializer(feeder).data)
         context['feeder_s']=feeder_s
 
         
-        # relays=feeder.relay_set.all()
-        # context['relays']=relays
-        # relays_s=json.dumps(RelaySerializer(relays,many=True).data)
-        # context['relays_s']=relays_s
+        relays=feeder.relay_set.all()
+        context['relays']=relays
+        relays_s=json.dumps(RelayFullSerializer(relays,many=True).data)
+        context['relays_s']=relays_s
 
         return render(request,TEMPLATE_ROOT+"feeder.html",context)

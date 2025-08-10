@@ -5,12 +5,12 @@ from authentication.serializers import ProfileSerializer
 class FeederSerializer(serializers.ModelSerializer):
     class Meta:
         model=Feeder
-        fields=['id','name','get_absolute_url']
+        fields=['id','name','get_absolute_url','get_delete_url','get_edit_url']
         
 class RelaySerializer(serializers.ModelSerializer):
     class Meta:
         model=Relay
-        fields=['id','name','state','color','get_absolute_url']
+        fields=['id','name','state','color','get_absolute_url','get_delete_url','get_edit_url']
         
 class CommandSerializer(serializers.ModelSerializer):
     class Meta:
