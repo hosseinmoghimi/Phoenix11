@@ -123,6 +123,21 @@
             </div>
 
             <div class="col-4 text-right mb-3">
+              <span class="farsi text-right"> رنگ </span>
+              <select
+                required
+                name=""
+                id=""
+                class="form-control"
+                v-model="color"
+              >
+                {% for project_color in colors_for_change_project %}
+                <option value="{{project_color}}">{{project_color}}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-4 text-right mb-3">
               <span class="farsi text-right"> شناسه ی سوپر پروژه </span>
               <input
                 required
@@ -168,14 +183,15 @@
               </div>
             </div>
 
-            <div class="col-4 text-right">
+            <div class="col-md-12 text-right">
+            </div>
+            <div class="col-md-4 text-right">
               <img
                 v-if="waiting"
                 width="32"
                 src="{% static 'leo/img/loading.gif' %}"
                 alt=""
-              />
-
+              /> 
               <button
                 v-if="!waiting"
                 class="btn btn-outline-success btn-block"

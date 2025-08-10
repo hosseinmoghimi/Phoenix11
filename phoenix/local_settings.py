@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'health',
     'messenger',
     'bms',
+    'resume',
 ]
  
 

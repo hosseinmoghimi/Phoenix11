@@ -42,8 +42,10 @@ def ProjectContext(request,project,*args, **kwargs):
         context['add_sub_project_form']=AddSubProjectForm()
     context['project_s']=project_s
     context['WIDE_LAYOUT']=True
+
     if request.user.has_perm(APP_NAME+'.change_project'):
         context['edit_project_form']=EditProjectForm()
+        context['colors_for_change_project']=(i[0] for i in ColorEnum.choices)
         all_organization_units=OrganizationUnitRepo(request=request).list()
         context['all_organization_units']=all_organization_units
         

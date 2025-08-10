@@ -3,6 +3,15 @@ from django import forms
 class TogglePageLikeForm(forms.Form):
     page_id=forms.IntegerField(required=True)
 
+
+class EditPageFoem(forms.Form):
+    page_id=forms.IntegerField(required=False)
+    parent_id=forms.IntegerField(required=False)
+    title=forms.CharField(max_length=100, required=False)
+    priority=forms.IntegerField(required=True)
+    color=forms.CharField(max_length=50, required=False)
+    status=forms.CharField(max_length=50, required=False)
+
 class SetPageThumbnailHeaderForm(forms.Form):
     page_id=forms.IntegerField(required=True)
     clear_thumbnail=forms.BooleanField(required=False)

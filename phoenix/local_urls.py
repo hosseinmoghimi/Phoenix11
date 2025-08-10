@@ -26,6 +26,7 @@ urlpatterns = [
     path('health/', include('health.urls')),
     path('messenger/', include('messenger.urls')),
     path('bms/', include('bms.urls')),
+    path('resume/', include('resume.urls')),
     
     
     

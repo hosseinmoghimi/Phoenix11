@@ -154,8 +154,10 @@ class ProjectRepo():
                 project.start_datetime=kwargs['start_datetime']
             if 'end_datetime' in kwargs:
                 project.end_datetime=kwargs['end_datetime']
-            if 'status' in kwargs:
+            if 'status' in kwargs and kwargs['status'] is not None and not kwargs['status']=='':
                 project.status=kwargs['status']
+            if 'color' in kwargs and kwargs['color'] is not None and not kwargs['color']=='': 
+                project.color=kwargs['color']
             if 'contractor_id' in kwargs:
                 project.contractor_id=kwargs['contractor_id']
             if 'percentage_completed' in kwargs:
@@ -170,7 +172,7 @@ class ProjectRepo():
                     project.parent_id=parent_id
             if 'employer_id' in kwargs:
                 project.employer_id=kwargs['employer_id']
-            if 'title' in kwargs:
+            if 'title' in kwargs and kwargs['title'] is not None and not kwargs['title']=='':
                 project.title=kwargs['title']
             if 'weight' in kwargs:
                 project.weight=kwargs['weight']
