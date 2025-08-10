@@ -178,7 +178,7 @@ class LoginView(View):
         context['login_form']=LoginForm()
         context['build_absolute_uri']=request.build_absolute_uri()
         build_absolute_uri=request.build_absolute_uri()
-        ONLY_HTTPS=ParameterRepo(request=request,app_name=APP_NAME).parameter(name="فقط HTTPS",default=False).boolean_value
+        ONLY_HTTPS=ParameterRepo(request=request,app_name=APP_NAME).parameter(name="فقط HTTPS",default=True).boolean_value
         if ONLY_HTTPS and "http://" in build_absolute_uri :
             build_absolute_uri=build_absolute_uri.replace("http:","https:")
             return redirect(build_absolute_uri)
