@@ -83,7 +83,7 @@ class ParameterRepo:
         if 'force' in kwargs and kwargs['force']:
             self.objects=Parameter.objects.all()
     
-    def change_parameter(self,*args, **kwargs):
+    def change_parameter_temp_deleted(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+'.change_parameter'):
             return None
         parameter_id=kwargs['parameter_id'] if 'parameter_id' in kwargs else None
@@ -114,6 +114,9 @@ class ParameterRepo:
         value=kwargs['value']
         name=kwargs['name']
         app_name=kwargs['app_name']
+        if not self.request.user.has_perm(APP_NAME+'.change_parameter'):
+            message='مجوز دسترسی شما برای این کار کافی نمی باشد. '
+            return FAILED,message,None
         Parameter.objects.filter(app_name=app_name).filter(name=name).delete()
         if value is None:
             value=name
@@ -122,7 +125,8 @@ class ParameterRepo:
         parameter.app_name=app_name
         parameter.origin_value=value
         parameter.save()
-        return parameter
+        message="پارامتر با موفقیت تغییر یافت."
+        return SUCCEED,message,parameter
      
     
     

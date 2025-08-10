@@ -29,10 +29,10 @@ def SearchContext(request,app_name,search_for,*args, **kwargs):
 
 
 def NoPersmissionView(request,*args, **kwargs):
-        mv=MessageView(request=request)
-        mv.body="اکانت شما مجوز دسترسی لازم را دارا نمی باشد."
-        mv.title="عدم دسترسی"
-        return mv.response()
+        body="اکانت شما مجوز دسترسی لازم را دارا نمی باشد."
+        title="عدم دسترسی"
+        mv=MessageView(title=title,body=body)
+        return mv.get(request=request)
 
 class SearchView(View):
     def get(self,request,*args, **kwargs):
@@ -165,6 +165,8 @@ class ParametersView(View):
         context['WIDE_LAYOUT']=True
         context['phoenix_apps']=phoenix_apps
 
+        if not self.request.user.has_perm(APP_NAME+'.change_parameter'):
+            return NoPersmissionView(request=request)
         return render(request,TEMPLATE_ROOT+"parameters.html",context) 
 
  

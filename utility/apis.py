@@ -10,7 +10,8 @@ class SetParameterApi(APIView):
     def post(self, request, *args, **kwargs):
         log = 1
         context = {}
-        context['result'] = FAILED
+        result = FAILED
+        message=''
         if request.method == 'POST':
             log += 1
             set_parameter_form = SetParameterForm(request.POST)
@@ -21,15 +22,16 @@ class SetParameterApi(APIView):
                 name = cd['name']
                 value = cd['value']
                 
-                parameter = ParameterRepo(request=request,app_name=app_name).set_parameter(
+                result,message,parameter = ParameterRepo(request=request,app_name=app_name).set_parameter(
                     name=name,
                     app_name=app_name,
                     value=value,
                     )
-                if parameter is not None:
+                if result==SUCCEED:
                     context['parameter'] = ParameterSerializer(parameter).data
-                    context['result'] = SUCCEED
         context['log'] = log
+        context['message'] = message
+        context['result'] = result
         return JsonResponse(context)
 
 

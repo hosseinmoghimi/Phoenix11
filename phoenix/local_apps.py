@@ -18,10 +18,6 @@ phoenix_apps=[
     {'priority':10,'name':'transport','url':SITE_URL+'transport/','title':'حمل و نقل','logo':STATIC_URL+'transport'+'/img/'+'logo.png','color':'primary',},
     {'priority':11,'name':'bms','url':SITE_URL+'bms/','title':'هوشمند سازی','logo':STATIC_URL+'bms'+'/img/'+'logo.png','color':'info',},
     {'priority':4,'name':'resume','url':SITE_URL+'resume/','title':'رزومه','logo':STATIC_URL+'resume'+'/img/'+'logo.png','color':'success',},
-    # {'priority':7,'name':'map','url':SITE_URL+'map/','title':'نقشه','logo':STATIC_URL+'map'+'/img/'+'logo.png','color':'danger',},
-    # {'priority':8,'name':'warehouse','url':SITE_URL+'warehouse/','title':'انبارداری','logo':STATIC_URL+'warehouse'+'/img/'+'logo.png','color':'success',},
     # {'priority':12,'name':'library','url':SITE_URL+'library/','title':'کتابخانه','logo':STATIC_URL+'library'+'/img/'+'logo.png','color':'success',},
     
-    # {'priority':6,'name':'accounting','url':SITE_URL+'accounting/','title':'حسابداری','logo':STATIC_URL+'accounting'+'/img/'+'logo.png','color':'success',},
-    # {'priority':7,'name':'accounting','url':SITE_URL+'accounting/','title':'حسابداری','logo':STATIC_URL+'accounting'+'/img/'+'logo.png','color':'success',},
 ]
