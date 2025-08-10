@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from .repo import CourseRepo,SchoolRepo,CourseClassRepo
-from .serializers import CourseClassSerializer,SchoolSerializer,CourseSerializer
+from .serializers import CourseClassSerializer,SchoolSerializer,CourseSerializer,TeacherSerializer,StudentSerializer
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
@@ -115,6 +115,23 @@ class CourseClassView(View):
         context["course_class"]=course_class
         course_class_s=json.dumps(CourseClassSerializer(course_class,many=False).data)
         context["course_class_s"]=course_class_s
+
+
+        
+        teachers=course_class.teachers.all()
+        context["teachers"]=teachers
+        teachers_s=json.dumps(TeacherSerializer(teachers,many=True).data)
+        context["teachers_s"]=teachers_s
+ 
+
+
+
+        
+        students=course_class.students.all()
+        context["students"]=students
+        students_s=json.dumps(StudentSerializer(students,many=True).data)
+        context["students_s"]=students_s
+ 
 
         return render(request,TEMPLATE_ROOT+"course-class.html",context)
 # Create your views here. 

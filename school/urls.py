@@ -11,6 +11,22 @@ urlpatterns = [
     path('add-school/',login_required(apis.AddSchoolApi.as_view()),name="add_school"),
     path('school/<int:pk>/',login_required(views.SchoolView.as_view()),name="school"), 
 
+
+    
+
+    path('students/',login_required(views.SchoolsView.as_view()),name="students"),  
+    path('add-student/',login_required(apis.AddSchoolApi.as_view()),name="add_student"),
+    path('student/<int:pk>/',login_required(views.SchoolView.as_view()),name="student"), 
+
+
+
+
+    path('teachers/',login_required(views.SchoolsView.as_view()),name="teachers"),  
+    path('add-teacher/',login_required(apis.AddSchoolApi.as_view()),name="add_teacher"),
+    path('teacher/<int:pk>/',login_required(views.SchoolView.as_view()),name="teacher"), 
+
+
+
     path('courses/',login_required(views.CoursesView.as_view()),name="courses"),  
     path('add-course/',login_required(apis.AddCourseApi.as_view()),name="add_course"),
     path('course/<int:pk>/',login_required(views.CourseView.as_view()),name="course"),  
