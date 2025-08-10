@@ -30,7 +30,7 @@ class Course(CorePage,LinkHelper):
  
     class Meta:
         verbose_name = _("Course")
-        verbose_name_plural = _("Courses")
+        verbose_name_plural = _("واحد های درسی")
  
     
     def save(self):
@@ -55,7 +55,7 @@ class CourseClass(models.Model,LinkHelper):
     class_name="courseclass"
     class Meta:
         verbose_name = _("CourseClass")
-        verbose_name_plural = _("CourseClasses")
+        verbose_name_plural = _("واحد های درسی جاری")
 
     def __str__(self):
         return f"{self.school} : {self.course} @ {self.room} " 
@@ -67,8 +67,8 @@ class Student(models.Model,LinkHelper):
     class_name="student"
     app_name=APP_NAME
     class Meta:
-        verbose_name = _("Student")
-        verbose_name_plural = _("Students")
+        verbose_name = _("دانش آموز")
+        verbose_name_plural = _("دانش آموزان")
 
     def __str__(self):
         return self.person.full_name
@@ -80,8 +80,8 @@ class Teacher(models.Model,LinkHelper):
     class_name="teacher"
     app_name=APP_NAME
     class Meta:
-        verbose_name = _("Teacher")
-        verbose_name_plural = _("Teachers")
+        verbose_name = _("مربی")
+        verbose_name_plural = _("مربی ها")
 
     def __str__(self):
         return self.person.full_name 
