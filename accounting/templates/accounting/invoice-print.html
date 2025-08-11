@@ -1,48 +1,29 @@
-{% extends "phoenix/print-layout.html" %}
-
-{% block content %}
+{% extends "phoenix/print-layout.html" %} {% block content %}
 <div class="row rtl farsi">
   <div class="col-md-12">
     <div class="card">
       {% load to_price %}
       <div class="card-body">
         <div class="text-center">
-          <img src="{{invoice.bestankar.logo}}" class="mb-2" width="96" alt="">
+          <img
+            src="{{invoice.bestankar.logo}}"
+            class="mb-2"
+            width="96"
+            alt=""
+          />
         </div>
         <h5 class="text-center">{{invoice.title}}</h5>
-        <div class="text-center">
-
-        </div>
+        <div class="text-center"></div>
         <div class="row rtl">
           <div class="col-8">
-            <div>
+            <div>فروشنده : {{invoice.bestankar.name}}</div>
 
-              فروشنده
-              :
-              {{invoice.bestankar.name}}
-            </div>
-
-            <div>
-
-              خریدار
-              :
-              {{invoice.bedehkar.name}}
-            </div>
+            <div>خریدار : {{invoice.bedehkar.name}}</div>
           </div>
           <div class="col-4">
-            <div>
-              تاریخ :
+            <div>تاریخ : {{invoice.persian_event_datetime}}</div>
 
-              {{invoice.persian_event_datetime}}
-            </div>
-
-
-            <div>
-              شماره :
-
-              {{invoice.id}}
-
-            </div>
+            <div>شماره : {{invoice.id}}</div>
           </div>
         </div>
       </div>
@@ -50,24 +31,17 @@
   </div>
 
   <div class="col-md-12">
-
     {% include "accounting/includes/invoice-lines-app/print-template.html" %}
-
   </div>
 
   <div class="col-6">
     <div class="card">
       <div class="card-body">
-
-
-
         <p class="text-center">
           فروشنده
-          <br>
+          <br />
           {{invoice.bestankar.title}}
         </p>
-
-
 
         <div class="mb-5">&nbsp;</div>
       </div>
@@ -77,50 +51,43 @@
   <div class="col-6">
     <div class="card farsi">
       <div class="card-body">
-
-
         <p class="text-center">
           خریدار
-          <br>
+          <br />
           {{invoice.bedehkar.title}}
         </p>
 
-
-
         <div class="mb-5">&nbsp;</div>
-
       </div>
     </div>
   </div>
   <div class="col-12">
     <div class="card">
-
       <div class="card-body">
-        توضیحات:
-        <br>
-        کلیه اقلام فاکتور سالم بوده ، تست شده و تحویل خریدار گردید.
-        <br>
-        تا تسویه کامل مبلغ فاکتور اجناس متعلق به فروشنده و به صورت امانت نزد خریدار می باشد.
-        <br>
-        به علت نوسانات قیمت ، فاکتور فوق از لحاظ استعلام قیمت تا بیست و چهار ساعت معتبر می باشد.
-
-
-        {% if invoice.description %}
-        {{invoice.description|safe}}
-        {% endif %}
+        <div class="media">
+          <img src="{{invoice.get_qrcode_url}}" width="128" alt="" />
+          <div class="media-body mr-2">
+            <div class="description">
+              توضیحات:
+              <br />
+              کلیه اقلام فاکتور سالم بوده ، تست شده و تحویل خریدار گردید.
+              <br />
+              تا تسویه کامل مبلغ فاکتور اجناس متعلق به فروشنده و به صورت امانت
+              نزد خریدار می باشد.
+              <br />
+              به علت نوسانات قیمت ، فاکتور فوق از لحاظ استعلام قیمت تا بیست و
+              چهار ساعت معتبر می باشد. {% if invoice.description %}
+              {{invoice.description|safe}} {% endif %}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="col-12 rtl text-right">
-    <img src="{{invoice.get_qrcode_url}}" width="128" alt="">
-  </div>
+  <div class="col-12 rtl text-right"></div>
 </div>
-{% endblock content %}
-{% block script %}
-<script>
-
-</script>
+{% endblock content %} {% block script %}
+<script></script>
 
 {% include "accounting/includes/invoice-lines-app/script.html" %}
-{% include "accounting/includes/invoice-app/script.html" %}
-{% endblock script %}
+ {% include "accounting/includes/invoice-app/script.html" %} {% endblock script %}
