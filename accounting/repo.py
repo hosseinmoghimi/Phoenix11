@@ -1154,12 +1154,12 @@ class BankAccountRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
-        self.objects=BankAccount.objects
-       
-
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
+        # profile=PersonRepo(request=request).me 
+        me_person=PersonRepo(request=request).me
+        if request.user.has_perm(APP_NAME+'.view_bankaccount'):
+            self.objects=BankAccount.objects.all()
+        else:
+            self.objects=BankAccount.objects.filter(id=0)
     def list(self,*args, **kwargs):
         objects=self.objects
   
@@ -1545,6 +1545,11 @@ class BankRepo():
         # profile=PersonRepo(request=request).me
         self.objects=Bank.objects
        
+        me_person=PersonRepo(request=request).me
+        if request.user.has_perm(APP_NAME+'.view_bank'):
+            self.objects=Bank.objects.all()
+        else:
+            self.objects=Bank.objects.filter(id=0)
 
         # if profile is not None:
         #     self.me=self.objects.filter(profile=profile).first()

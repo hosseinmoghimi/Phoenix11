@@ -698,8 +698,8 @@ class PersonView(View):
             mv=MessageView(title=title,body=body)
             return mv.get(request=request)
         context.update(PersonContext(request=request,person=person))
-                
-        person_accounts=person.personaccount_set.all()
+                 
+        person_accounts=PersonAccountRepo(request=request).list(person_id=person.id)
 
         context['person_accounts']=person_accounts
         person_accounts_s=json.dumps(PersonAccountSerializer(person_accounts,many=True).data)
@@ -1338,9 +1338,13 @@ class BankView(View):
         context['bank']=bank
 
         if bank is None:
-            raise Http404
+            title='خطا'
+            body='بانک مورد نظر پیدا نشد.'
+            mv=MessageView(title=title,body=body)
+
+            return mv.get(request=request)
         context.update(BankContext(request=request,bank=bank))
-        bank_accounts=bank.bankaccount_set.all()
+        bank_accounts=BankAccountRepo(request=request).list(bank_id=bank.id)
         context['bank_accounts']=bank_accounts
         bank_accounts_s=json.dumps(BankAccountSerializer(bank_accounts,many=True).data)
         context['bank_accounts_s']=bank_accounts_s
