@@ -35,5 +35,5 @@ class AddPersonForm(forms.Form):
     economic_no=forms.CharField(max_length=50,required=False)
     melli_code=forms.CharField(max_length=20,required=False)
     postal_code=forms.CharField(max_length=20,required=False)
-    tel=forms.CharField(max_length=11,required=False)
+    tel=forms.CharField(max_length=50,required=False)
  
