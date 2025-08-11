@@ -165,11 +165,18 @@
             </div>
 
             <div class="col-md-4"></div>
-            <div class="col-md-12">
+            <div class="col-md-12  text-muted">
               <span v-text="to_price(unit_price)+'*'+quantity+'='+to_price(unit_price*quantity)"></span>
 
               {{CURRENCY}}
             </div>
+
+             <div class="col-md-12">
+              <span v-text="to_price(unit_price)+'*'+quantity+'='+to_price(unit_price*quantity*(100-discount_percentage))"></span>
+
+              {{CURRENCY}}
+            </div>
+
             <div class="col-md-12" v-if="show_add_btn && quantity>0 && unit_price>0">
               <button class="btn btn-success" type="submit">
                 <i class="fa fa-plus"></i>
