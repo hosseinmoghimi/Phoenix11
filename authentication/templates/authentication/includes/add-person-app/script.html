@@ -18,7 +18,9 @@
     type2:'حقیقی',
     email:'',
     gender:'مرد',
-
+    postal_code:'',
+    economic_no:'',
+    tel:'',
     username:'',
     user_id:0,
     message:{show:false},
@@ -47,16 +49,7 @@
       to_price: function (vall) {
         return to_price(vall) + " {{CURRENCY}}";
       },
-      select_user: function () { 
-          select_user_by_id(user_id=add_person_app.user_id).done((data) => {
-            console.log(data)
-              if (data.result === "SUCCEED") {
-                  add_person_app.username = data.username;
-              } else {
-                  add_person_app.username = ""
-              }
-        });
-      },
+       
        
       add_person: function () {
         add_person_app.waiting=true
@@ -70,6 +63,10 @@
           address: this.address,
           type: this.type,
           title: this.title,
+          postal_code:this.postal_code,
+          user_id:parseInt(this.user_id),
+          economic_no:this.economic_no,
+          tel:this.tel,
           type2: this.type2,
           gender: this.gender,
           email: this.email,

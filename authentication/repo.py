@@ -110,10 +110,26 @@ class PersonRepo():
             person.melli_code=kwargs["melli_code"]
         if 'title' in kwargs:
             person.title=kwargs["title"]
+
+        if 'postal_code' in kwargs:
+            person.postal_code=kwargs["postal_code"]
+        if 'melli_code' in kwargs:
+            person.melli_code=kwargs["melli_code"]
+        if 'economic_no' in kwargs:
+            person.economic_no=kwargs["economic_no"]
+        if 'tel' in kwargs:
+            person.tel=kwargs["tel"]
             
-        if 'person_id' in kwargs and kwargs['person_id']>0:
-            person=PersonRepo(request=self.request).person(person_id=kwargs['person_id'])
-            person.person=person
+ 
+
+
+        if 'user_id' in kwargs :
+            user_id=kwargs['user_id']
+            if user_id is not None and user_id>0:
+                if len(Person.objects.filter(user_id=user_id))>0:
+                    message='این یوزر قبلا به شخصی واگذار شده است.'
+                    return FAILED,message,None
+                person.user_id=user_id
         if 'color' in kwargs:
             person.color=kwargs["color"]
         if 'first_name' in kwargs:

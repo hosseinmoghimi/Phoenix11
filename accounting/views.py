@@ -463,11 +463,12 @@ class InvoiceToExcelView(View):
             return mv.response()
         date=PersianCalendar().from_gregorian(now)
         lines=[]
+        from utility.templatetags.to_normal_number import to_normal_number
         for i,invoice_line in enumerate(invoice.invoiceline_set.all(),start=1):
             line={
                 'row':i,
                 'title':invoice_line.invoice_line_item.title,
-                'quantity':str(invoice_line.quantity) + invoice_line.unit_name,      
+                'quantity':str(to_normal_number(invoice_line.quantity)) +' '+ invoice_line.unit_name,      
                 'discount':invoice_line.discount,      
                 'unit_price':invoice_line.unit_price,      
                 'line_total':invoice_line.line_total,      
@@ -1186,6 +1187,27 @@ class InvoiceEditView(View):
     def post(self,request,*args, **kwargs):
         from .apis import EditInvoiceApi
         return EditInvoiceApi().post(request,*args, **kwargs)
+
+class InvoiceOfficialPrintView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        if invoice is None:
+            title='فاکتور پیدا نشد.'
+            message='فاکتور پیدا نشد.'
+            mv=MessageView(title=title,message=message)
+            return mv.get(request=request)
+        context['invoice']=invoice
+        context['NOT_REPONSIVE']=True
+        context['NOT_NAVBAR']=True
+        context['WIDE_LAYOUT']=False
+        context['title']=invoice.title
+        context['NOT_FOOTER']=True
+        invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)
+        context['invoice_s']=invoice_s
+        context.update(InvoiceContext(request=request,invoice=invoice))
+        return render(request,TEMPLATE_ROOT+"invoice-official-print.html",context)
+
 
 
 class InvoicePrintView(View):

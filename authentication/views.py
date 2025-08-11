@@ -31,6 +31,9 @@ def AddPersonContext(request,*args, **kwargs):
     context['genders']=(i[0] for i in GenderEnum.choices)
     context['types']=(i[0] for i in PersonTypeEnum.choices)
     context['types2']=(i[0] for i in PersonType2Enum.choices)
+    from django.contrib.auth.models import User
+    users_for_add_person_app=User.objects.filter(pk__gt=0)
+    context['users_for_add_person_app']=users_for_add_person_app
 
     return context
 
@@ -57,7 +60,6 @@ class IndexView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
-
 
 
 class SearchView(View):

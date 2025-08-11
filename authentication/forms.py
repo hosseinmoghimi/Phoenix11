@@ -29,9 +29,11 @@ class AddPersonForm(forms.Form):
     mobile=forms.CharField(max_length=50,required=False)
     email=forms.CharField(max_length=50,required=False)
     bio=forms.CharField(max_length=2000,required=False)
-    address=forms.CharField(max_length=100,required=False)
+    address=forms.CharField(max_length=200,required=False)
     type=forms.CharField(max_length=11,required=False)
     type2=forms.CharField(max_length=11,required=False)
-    melli_code=forms.CharField(max_length=11,required=False)
+    economic_no=forms.CharField(max_length=50,required=False)
+    melli_code=forms.CharField(max_length=20,required=False)
+    postal_code=forms.CharField(max_length=20,required=False)
     tel=forms.CharField(max_length=11,required=False)
  

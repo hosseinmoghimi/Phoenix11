@@ -16,6 +16,7 @@
     <a class="text-info mx-2" href="{% url 'accounting:invoice_edit' pk=invoice.id%}"> تغییر </a>
 
     <a class="text-info mx-2" href="{% url 'accounting:invoice_print' pk=invoice.id%}"> چاپ </a>
+    <a class="text-info mx-2" href="{% url 'accounting:invoice_official_print' pk=invoice.id%}"> چاپ رسمی </a>
 
     <a class="text-success mx-2" href="{% url 'accounting:invoice_to_excel' pk=invoice.id%}"> اکسل </a>
 

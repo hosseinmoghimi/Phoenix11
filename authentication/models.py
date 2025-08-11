@@ -21,13 +21,18 @@ class Person(models.Model,ImageHelper,LinkHelper):
     mobile=models.CharField(_("شماره همراه"),null=True,blank=True, max_length=50)
     email=models.CharField(_("email"),null=True,blank=True, max_length=50)
     bio=models.CharField(_("بیو"),null=True,blank=True, max_length=50)
-    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=50)
+    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=200)
     full_name=models.CharField(_("full_name"),null=True,blank=True, max_length=150)
     image_origin=models.ImageField(_("تصویر"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/", height_field=None, width_field=None, max_length=None)
     gender=models.CharField(_("جنسیت"),choices=GenderEnum.choices,default=GenderEnum.MALE, max_length=50)
     type=models.CharField(_("ماهیت"),choices=PersonTypeEnum.choices,default=PersonTypeEnum.FREE, max_length=50)
     type2=models.CharField(_("نوع"),choices=PersonType2Enum.choices,default=PersonType2Enum.HAGHIGHI, max_length=50)
+    economic_no=models.CharField(_("شماره اقنصادی"),null=True,blank=True, max_length=20)
     melli_code=models.CharField(_("کد ملی"),null=True,blank=True, max_length=10)
+    tel=models.CharField(_("تلفن"),null=True,blank=True, max_length=50)
+    postal_code=models.CharField(_("کد پستی"),null=True,blank=True, max_length=20)
+    
+    
     class_name='person'
     app_name=APP_NAME
 

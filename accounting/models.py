@@ -26,8 +26,59 @@ try:
     from accounting.settings_on_server import DELETE_OLD_ITEM_UNIT
 except:
     DELETE_OLD_ITEM_UNIT=True
+
+class PersonAccountHelper:
+
+    @property
+    def economic_no(self):
+        economic_no=''
+        person_account=PersonAccount.objects.filter(pk=self.pk).first()
+        if person_account is not None:
+            economic_no=person_account.person.economic_no
+        return economic_no
     
-class Account(CorePage,LinkHelper):
+    
+    @property
+    def melli_id(self):
+        return self.melli_code
+    
+    @property
+    def melli_code(self):
+        melli_code=''
+        person_account=PersonAccount.objects.filter(pk=self.pk).first()
+        if person_account is not None:
+            melli_code=person_account.person.melli_code
+        return melli_code
+    
+
+    
+    @property
+    def tel(self):
+        tel=''
+        person_account=PersonAccount.objects.filter(pk=self.pk).first()
+        if person_account is not None:
+            tel=person_account.person.tel
+        return tel
+    
+    @property
+    def postal_code(self):
+        postal_code=''
+        person_account=PersonAccount.objects.filter(pk=self.pk).first()
+        if person_account is not None:
+            postal_code=person_account.person.postal_code
+        return postal_code
+    
+
+    @property
+    def address(self):
+        address=''
+        person_account=PersonAccount.objects.filter(pk=self.pk).first()
+        if person_account is not None:
+            address=person_account.person.address
+        return address
+    
+
+class Account(CorePage,LinkHelper,PersonAccountHelper):
     code=models.CharField(_("code"),null=True,blank=True, max_length=50)
     type=models.CharField(_("نوع"),choices=AccountTypeEnum.choices, max_length=50)
     nature=models.CharField(_("ماهیت"),choices=AccountNatureEnum.choices,default=AccountNatureEnum.FREE, max_length=50)
@@ -182,7 +233,7 @@ class Account(CorePage,LinkHelper):
             return self.name
         return self.parent_account.full_name+ACCOUNT_NAME_SEPERATOR+self.title
  
- 
+    
 class PersonAccount(Account,LinkHelper):
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
     person_category=models.ForeignKey("personcategory", verbose_name=_("person_category"), on_delete=models.PROTECT)
@@ -215,7 +266,6 @@ class PersonAccount(Account,LinkHelper):
                 is_available=False
         return self.person_category.account.code+code
     def save(self,*args, **kwargs):
-        leolog(account_ptr_id_person_account=self.account_ptr_id)
         
         result,message,person_account=FAILED,"",None
         p_a=PersonAccount.objects.filter(person_id=self.person_id).filter(person_category_id=self.person_category_id).first()
