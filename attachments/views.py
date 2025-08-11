@@ -159,15 +159,16 @@ class DownloadView(View):
         #     return document.download_response()
         # from utility.views import MessageView
         from core.views import MessageView
-        message_view = MessageView(request=request)
+        message_view = MessageView()
         message_view.links = []
         message_view.message_color = 'warning'
         message_view.has_home_link = True
         message_view.header_color = "rose"
         message_view.message_icon = ''
         message_view.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
-        message_view.body = ' شما مجوز دسترسی به این صفحه را ندارید.'
-        message_view.title = 'دسترسی غیر مجاز'
+        body = ' شما مجوز دسترسی به این صفحه را ندارید.'
+        title = 'دسترسی غیر مجاز'
+        message_view = MessageView(title=title,body=body)
         if download is None:
             message_view.body = 'دانلود مورد نظر شما پیدا نشد.'
             message_view.title = 'دانلود مورد نظر پیدا نشد.'
@@ -176,7 +177,7 @@ class DownloadView(View):
             message_view.links.append(Link(title='تلاش مجدد', color="warning",
                                   icon_material="apartment", url=download.get_download_url))
 
-        return message_view.response()
+        return message_view.get(request=request)
         
       
 class IndexView(View):

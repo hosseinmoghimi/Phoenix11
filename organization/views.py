@@ -115,11 +115,18 @@ class OrganizationUnitsView(View):
 class EmployeeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
+        employee=EmployeeRepo(request=request).employee(*args, **kwargs)
+        if employee is None:
+            cc={
+                'title':'',
+                'body':'',
+            }
+            mv=MessageView(**cc)
+            return mv.get(request=request)
+        context['employee']=employee
         phoenix_apps=context["phoenix_apps"]
         phoenix_apps=phoenix_apps
         phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
-
         return render(request,TEMPLATE_ROOT+"employee.html",context)
 
 

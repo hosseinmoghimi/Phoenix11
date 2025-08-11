@@ -181,13 +181,13 @@ class AccountRepo():
         self.me=None
         self.request=request
         self.objects=Account.objects.filter(id=0)
-        person=PersonRepo(request=request).me
-        self.my_accounts=Account.objects.filter(pk=0)
-        if person is not None:
-            self.my_accounts=PersonAccount.objects.filter(person_id=person.id)
+        me_person=PersonRepo(request=request).me
+        self.my_accounts=PersonAccount.objects.filter(person_id=me_person.id)
+        if me_person is not None:
+            self.my_accounts=PersonAccount.objects.filter(person_id=me_person.id)
         if request.user.has_perm(APP_NAME+".view_account"):
-            self.objects=Account.objects
-        elif person is not None:
+            self.objects=Account.objects.all()
+        elif me_person is not None:
             self.objects=self.my_accounts
     def list(self,*args, **kwargs):
         objects=self.objects
@@ -2125,12 +2125,10 @@ class FinancialEventRepo():
         self.request=request
         self.objects=FinancialEvent.objects.filter(id=0)
         person=PersonRepo(request=request).me
-        if person is not None:
-                self.objects=FinancialEvent.objects
 
 
         if request.user.has_perm(APP_NAME+".view_financialevent"):
-            self.objects=FinancialEvent.objects
+            self.objects=FinancialEvent.objects 
         elif person is not None:
             my_accounts=AccountRepo(request=request).my_accounts
             ids=[]

@@ -168,6 +168,8 @@ def AccountContext(request,account,*args, **kwargs):
     accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
     context['accounts_s']=accounts_s
  
+    if request.user.has_perm(APP_NAME+".add_account"):
+        context.update(AddAccountContext(request=request))
     return context
 
 def InvoiceLineItemContext(request,invoice_line_item,*args, **kwargs):
@@ -732,8 +734,6 @@ class AccountView(View):
         if account is None:
             raise Http404
         context.update(AccountContext(request=request,account=account))
-        if request.user.has_perm(APP_NAME+".add_account"):
-            context.update(AddAccountContext(request=request))
          
 
         return render(request,TEMPLATE_ROOT+"account.html",context)

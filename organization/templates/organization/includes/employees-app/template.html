@@ -42,7 +42,7 @@
               <tr v-for="employee in employees">
 
                 <td>
-                  <a :href="employee.person.get_absolute_url">
+                  <a :href="employee.get_absolute_url">
                     <span v-text="employee.person.full_name"></span>
                   </a>
 
