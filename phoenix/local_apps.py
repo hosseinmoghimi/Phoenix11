@@ -1,6 +1,6 @@
 from .server_settings import SITE_URL,STATIC_URL
-
 phoenix_apps=[
+    
     {'priority':1,'name':'core','url':SITE_URL+'','title':'خانه','logo':STATIC_URL+'core'+'/img/'+'logo.png','color':'warning',},
     {'priority':2,'name':'accounting','url':SITE_URL+'accounting/','title':'حسابداری','logo':STATIC_URL+'accounting'+'/img/'+'logo.png','color':'success',},
     {'priority':2,'name':'projectmanager','url':SITE_URL+'pm/','title':'مدیریت پروژه','logo':STATIC_URL+'projectmanager'+'/img/'+'logo.png','color':'info',},
@@ -18,6 +18,6 @@ phoenix_apps=[
     {'priority':10,'name':'transport','url':SITE_URL+'transport/','title':'حمل و نقل','logo':STATIC_URL+'transport'+'/img/'+'logo.png','color':'primary',},
     {'priority':11,'name':'bms','url':SITE_URL+'bms/','title':'هوشمند سازی','logo':STATIC_URL+'bms'+'/img/'+'logo.png','color':'info',},
     {'priority':4,'name':'resume','url':SITE_URL+'resume/','title':'رزومه','logo':STATIC_URL+'resume'+'/img/'+'logo.png','color':'success',},
-    # {'priority':12,'name':'library','url':SITE_URL+'library/','title':'کتابخانه','logo':STATIC_URL+'library'+'/img/'+'logo.png','color':'success',},
-    
+    {'priority':4,'name':'tax','url':SITE_URL+'tax/','title':'مالیات','logo':STATIC_URL+'tax'+'/img/'+'logo.png','color':'warning',},
+
 ]

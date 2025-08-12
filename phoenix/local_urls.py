@@ -27,6 +27,7 @@ urlpatterns = [
     path('messenger/', include('messenger.urls')),
     path('bms/', include('bms.urls')),
     path('resume/', include('resume.urls')),
+    path('tax/', include('tax.urls')),
     
     
     
