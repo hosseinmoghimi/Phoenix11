@@ -11,11 +11,13 @@ class WeightUnitEnum(TextChoices):
     GRAM="گرم",_("گرم")
     TON="تن",_("تن")
 
+
 class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")
     KILOGERAM="کیلوگرم",_("کیلوگرم")
     METER="متر",_("متر")
     LITER="لیتر",_("لیتر")
+    MILI_LITER="میلی لیتر",_("میلی لیتر")
     CC="سی سی ",_("سی سی ")
     SHAKHEH="شاخه",_("شاخه")
     Node="نود شبکه",_("نود شبکه")
@@ -50,6 +52,7 @@ class UnitNameEnum(TextChoices):
     SABAD="سبد",_("سبد")
     RAS="راس",_("راس")
     BOTTLE="بطری",_("بطری")
+    JELD="جلد",_("جلد")
 
 
 class OperatingSystemNameEnum(TextChoices):

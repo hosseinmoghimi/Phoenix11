@@ -538,7 +538,7 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
     creator=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
     tax_percentage=models.IntegerField(_("درصد مالیات"),default=0)
     amount=models.IntegerField(_("مبلغ"),default=0)
-    discount_percentage=models.IntegerField(_("درصد تخفیف"),default=0)
+    discount=models.IntegerField(_("تخفیف"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
     shipping_fee=models.IntegerField(_("هزینه حمل"),default=0)
     # status=models.CharField(_("status"),choices=FinancialEventStatusEnum.choices,default=FinancialEventStatusEnum.DRAFT, max_length=50)

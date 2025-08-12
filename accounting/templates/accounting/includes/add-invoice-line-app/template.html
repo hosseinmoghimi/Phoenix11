@@ -112,12 +112,9 @@
             </div>
             <div class="col-md-4">
               <div class="form-group">
-                <label for="">واحد</label>
+                <label for="">واحد</label>  
                 <select v-model="unit_name" class="form-control">
-                  {% for unit_name in unit_names_for_add_invoice_line %}
-
-                  <option value="{{unit_name}}">{{unit_name}}</option>
-                  {% endfor %}
+                  <option v-for="unit_name11 in unit_names" :nalue="unit_name11" v-text="unit_name11"></option>
                 </select>
               </div>
             </div>

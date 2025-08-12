@@ -1,7 +1,8 @@
 <script>
-  let invoice_line_items_for_add_invoice_line_items_app = JSON.parse(
-    "{{invoice_line_items_s|escapejs}}"
-  );
+  let invoice_line_items_for_add_invoice_line_items_app = JSON.parse("{{invoice_line_items_s|escapejs}}")
+  
+  let unit_names = JSON.parse("{{unit_names_for_edit_invoice_line_s|escapejs}}")
+  console.log(unit_names)
   let add_invoice_line_app = new Vue({
     el: "#add-invoice-line-app",
     data: {
@@ -13,6 +14,7 @@
       default11: false,
       coef: 1,
       unit_name: "عدد",
+      unit_names:unit_names,
       discount_percentage: 0,
       quantity: 0,
       save: false,
@@ -222,7 +224,12 @@
             show_message(add_invoice_line_app, title, body, 'success', 2000)
             if (typeof invoice_lines_app != "undefined") {
               invoice_lines_app.invoice_lines.push(data.invoice_line);
-              invoice_lines_app.calculate_total();
+              // invoice_lines_app.calculate_total();
+            } 
+            
+            if (typeof invoice_edit_app != "undefined") {
+              console.log("invoice_edit_app.invoice_lines.push(data.invoice_line);")
+              invoice_edit_app.invoice_lines.push(data.invoice_line);
             }
           }
         });
