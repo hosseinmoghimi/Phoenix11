@@ -794,7 +794,6 @@ class PersonCategoryRepo():
             person_category.priority=kwargs["priority"] 
         if 'code_length' in kwargs:
             person_category.code_length=kwargs["code_length"] 
-        leolog(kwargs=kwargs)
         person_category.save()
         result=SUCCEED
         message="دسته بندی جدید برای اشخاص با موفقیت اضافه گردید."
@@ -1030,7 +1029,6 @@ class ProductRepo():
                 unit_name=(ws['E'+i].value)
                 unit_price=int(ws['F'+i].value)
                 thumbnail_origin=(ws['G'+i].value)
-                # leolog(product='product',i=i,id=id,title=title,barcode=barcode,unit_name=unit_name,unit_price=unit_price,thumbnail_origin=thumbnail_origin)                      
                 product['id']=id
                 product['title']=title
                 product['barcode']=barcode

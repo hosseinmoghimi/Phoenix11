@@ -1,0 +1,71 @@
+{% include "accounting/includes/person-account-app/select-script.html" %}
+<script>
+  let add_tax_app = new Vue({
+    el: "#add-tax-app",
+    data: {
+      name:"",
+      person_account_code:'0',
+      person_account:{},
+      message:{show:false},
+      waiting:false,
+    },
+
+    components: {
+      DatePicker: VuePersianDatetimePicker,
+    },
+    methods: {
+      to_price_colored: function (vall) {
+        let colorr = "primary";
+        if (vall > 0) {
+          colorr = "success";
+        }
+
+        if (vall < 0) {
+          colorr = "danger";
+        }
+
+        return `<span class="text-${colorr}">${to_price(
+          vall
+        )} {{CURRENCY}}</span>`;
+      },
+
+      to_price: function (vall) {
+        return to_price(vall) + " {{CURRENCY}}";
+      },
+      select_person_account: function () {
+          select_person_account_by_code(add_tax_app.person_account_code).done((data) => {
+              add_tax_app.person_account = data.person_account;
+              if (data.result === "SUCCEED") {
+                  add_tax_app.person_account = data.person_account;
+              } else {
+                  add_tax_app.person_account = {}
+              }
+        });
+      },
+      add_tax: function () {
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          person_account_id: this.person_account.id,
+          name: this.name,
+        };
+
+        console.log(payload);
+        let url = "{% url 'tax:add_tax' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            if (typeof taxs_app != "undefined") {
+              taxs_app.taxs.push(data.tax);
+              show_message(add_tax_app,'موفق',data.message,'success',2000)
+            }
+          }
+          else{
+
+            show_message(add_tax_app,'خطا',data.message,'danger',2000)
+          }
+        });
+      },
+    },
+  });
+</script>

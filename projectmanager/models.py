@@ -37,7 +37,6 @@ class Project(Event,LinkHelper,DateHelper):
             sum+=inv.amount
         self.amount=sum
         from utility.log import leolog
-        leolog(project=self,sum=sum)
         super(Project,self).save()
         if self.parent_project is not None:
             self.parent_project.normalize()

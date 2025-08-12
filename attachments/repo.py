@@ -313,7 +313,6 @@ class LocationRepo():
 
     def add_location(self,*args, **kwargs):
         from utility.log import leolog
-        leolog(kwargs=kwargs)
         result,message,location=FAILED,'',self
         if not self.user.has_perm(APP_NAME+".add_location"):
             return result,message,None
