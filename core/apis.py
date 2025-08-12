@@ -86,6 +86,8 @@ class SetPageThumbnailHeaderApi(APIView):
         context['log'] = log
         return JsonResponse(context)
 
+
+
 class TogglePageLikeApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

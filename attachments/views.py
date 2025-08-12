@@ -4,7 +4,7 @@ from authentication.repo import PersonRepo
 from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
 from .forms import *
-from .serializer import CommentSerializer,LinkSerializer,DownloadSerializer
+from .serializer import CommentSerializer,LinkSerializer,DownloadSerializer,PagePrintSerializer
 from .apps import APP_NAME
 from django.http import Http404
 from phoenix.server_apps import phoenix_apps
@@ -12,7 +12,7 @@ from utility.calendar import PersianCalendar
 from utility.log import leolog
 from django.utils import timezone
 from core.views import MessageView,CoreContext,PageBriefSerializer,AddRelatedPageForm
-from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo, TagRepo
+from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo, TagRepo,PagePrintRepo
 import json
 
 
@@ -54,6 +54,18 @@ def PageCommentsContext(request,page,person,*args, **kwargs):
         if request.user.has_perm(APP_NAME+'.add_comment'):
             context['add_comment_form']=AddPageCommentForm()
             context['delete_comment_form']=DeletePageCommentForm()
+    return context
+ 
+def PagPrintsContext(request,page,person,*args, **kwargs):
+    context={}
+    page_print_repo = PagePrintRepo(request=request) 
+    page_prints=page_print_repo.list(page_id=page.id)
+    page_prints_s=json.dumps(PagePrintSerializer(page_prints,many=True).data)
+    context['page_prints']=page_prints  
+    context['page_prints_s']=page_prints_s  
+    # if person is not None:
+    #     if request.user.has_perm(APP_NAME+'.add_pageprint'):
+    #         context['add_page_print_form']=AddPagePrintForm()
     return context
  
 def PageLinksContext(request,page,person,*args, **kwargs):

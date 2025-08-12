@@ -17,8 +17,8 @@ class PageRepo():
             page=self.objects.filter(pk=kwargs['pk']).first()
         if 'id' in kwargs:
             page=self.objects.filter(pk=kwargs['id']).first()
-        return page
-    
+        return page 
+
     def list(self,*args, **kwargs):
         objects=self.objects
         if 'meta_data' in kwargs:

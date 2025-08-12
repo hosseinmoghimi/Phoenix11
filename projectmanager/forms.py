@@ -1,5 +1,5 @@
 from accounting.forms import AddProductForm,forms,AddInvoiceForm
-from core.forms import EditPageFoem
+from core.forms import EditPageForm
 class AddSubProjectForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)
     parent_id=forms.IntegerField(required=True)
@@ -16,7 +16,7 @@ class AddProjectForm(forms.Form):
     type=forms.CharField(max_length=50,required=False)
     weight=forms.IntegerField(required=False)
 
-class EditProjectForm(EditPageFoem):
+class EditProjectForm(EditPageForm):
     project_id=forms.IntegerField(required=True)
     weight=forms.IntegerField(required=False)
     percentage_completed=forms.IntegerField(required=True)

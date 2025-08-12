@@ -1,5 +1,5 @@
 from core.repo import PageRepo,PersonRepo,FAILED,SUCCEED
-from .models import Like,Comment,Link,Download,Image,Location,Area, Tag
+from .models import Like,Comment,Link,Download,Image,Location,Area, Tag,PagePrint
 from .apps import APP_NAME
 from django.db.models import Q
 
@@ -55,8 +55,59 @@ class ImageRepo():
         result=SUCCEED
         message="کامنت با موفقیت حذف گردید."
         return result,message
-     
 
+
+   
+class PagePrintRepo():
+
+    def __init__(self,request,*args, **kwargs):
+        self.objects=PagePrint.objects
+        self.request=request
+    def list(self,*args, **kwargs):
+        objects=PagePrint.objects
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        if 'person_id' in kwargs:
+            objects=objects.filter(person_id=kwargs['person_id'])
+        return objects.all()
+
+    def add_page_print(self,*args, **kwargs):
+        result,message,page_print=FAILED,"",None
+        me_person=PersonRepo(request=self.request).me
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if me_person is None:
+            return result,message,page_print
+        if page is None:
+            return result,message,page_print
+        page_print=PagePrint(person_id=me_person.id,page_id=page.id)
+        if 'page_print' in kwargs:
+            page_print_text=kwargs['page_print']
+            
+        if 'printed' in kwargs:
+            printed=kwargs['printed']
+            page_print.printed=kwargs['printed']
+
+        from .enums import PagePrintTypeEnum        
+        if 'draft' in kwargs:
+            draft=kwargs['draft']
+            if draft:
+                page_print.type=PagePrintTypeEnum.DRAFT
+        
+        
+
+        
+        if 'official' in kwargs:
+            official=kwargs['official']
+            if official:
+                page_print.type=PagePrintTypeEnum.OFFICIAL
+        
+        
+        page_print.save()
+
+        result=SUCCEED
+        message='پرینت صفحه با موفقیت اضافه شد.'
+         
+        return result,message,page_print
 class CommentRepo():
 
     def __init__(self,request,*args, **kwargs):

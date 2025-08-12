@@ -3,12 +3,41 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
 # from .repo import ContactMessageRepo, PageCommentRepo, PageLinkRepo, PagePermissionRepo, PageRepo, PageTagRepo,  ParameterRepo,PageDownloadRepo,PageImageRepo
-from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo,ImageRepo, TagRepo
-from .serializer import  CommentSerializer,LinkSerializer,DownloadSerializer,ImageSerializer, TagSerializer
+from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo,ImageRepo, TagRepo,PagePrintRepo
+from .serializer import  CommentSerializer,LinkSerializer,DownloadSerializer,ImageSerializer, TagSerializer,PagePrintSerializer
 from utility.constants import SUCCEED, FAILED
 from utility.utils import str_to_html
 from .views import AreaRepo,AreaSerializer,LocationRepo,LocationSerializer
  
+
+ 
+
+class AddPagePrintApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        result=FAILED
+        message=''
+        if request.method == 'POST':
+            log += 1
+            add_page_print_form = AddPagePrintForm(request.POST)
+            if add_page_print_form.is_valid():
+                log += 1
+                cd=add_page_print_form.cleaned_data
+                page_id = cd['page_id']
+                
+                
+                result,message,page_print = PagePrintRepo(request=request).add_page_print(
+                    page_id=page_id,
+                     printed=True
+                    )
+                if result==SUCCEED:
+                    context['page_print'] = PagePrintSerializer(page_print).data
+        context['message'] = message
+        context['result'] = result
+        context['log'] = log
+        return JsonResponse(context)
+    
 class AddLocationApi(APIView):
     def post(self,request,*args, **kwargs):
         log=1

@@ -15,8 +15,7 @@ urlpatterns = [
     path("init_all_accounts/",login_required(apis.InitALLAccountsApi.as_view()),name="init_all_accounts"),
     path("delete_all_accounts/",login_required(apis.DeleteALLAccountsApi.as_view()),name="delete_all_accounts"),
     
-    path("person/<int:pk>/",login_required(views.PersonView.as_view()),name="person"),
-    path("print-financial-event/",login_required(apis.FinancialEventPrintApi.as_view()),name="print_financial_event"),
+    path("person/<int:pk>/",login_required(views.PersonView.as_view()),name="person"), 
 
     
     path("financial-year/<int:pk>/",login_required(views.FinancialYearView.as_view()),name="financialyear"),

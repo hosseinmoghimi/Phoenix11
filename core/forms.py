@@ -1,10 +1,11 @@
 from django import forms
+from attachments.forms import AddPagePrintForm
 
 class TogglePageLikeForm(forms.Form):
     page_id=forms.IntegerField(required=True)
 
 
-class EditPageFoem(forms.Form):
+class EditPageForm(forms.Form):
     page_id=forms.IntegerField(required=False)
     parent_id=forms.IntegerField(required=False)
     title=forms.CharField(max_length=100, required=False)

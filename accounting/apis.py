@@ -420,28 +420,6 @@ class AddFinancialYearApi(APIView):
         # context['result2']=result2
         context['log']=log
         return JsonResponse(context)
-
-class FinancialEventPrintApi(APIView):
-    def post(self,request,*args, **kwargs):
-        context={}
-        result=FAILED
-        message=""
-        log=111
-        context['result']=FAILED
-        add_financial_year_form=AddFinancialYearForm(request.POST)
-        if add_financial_year_form.is_valid():
-            cd=add_financial_year_form.cleaned_data
-            (result,message,financial_year,financial_years)=FinancialYearRepo(request=request).add_financial_year(**cd) 
-            if result==SUCCEED:
-                context["financial_years"]=FinancialYearSerializer(financial_years,many=True).data
-                context["financial_year"]=FinancialYearSerializer(financial_year).data
-            # (result2,message2)=PersonRepo(request=request).initial_default_persons() 
-        context['message']=message
-        context['result']=result
-        # context['message2']=message2
-        # context['result2']=result2
-        context['log']=log
-        return JsonResponse(context)
  
 class SetAccountParentApi(APIView): 
     def post(self,request,*args, **kwargs):

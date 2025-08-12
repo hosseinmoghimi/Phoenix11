@@ -14,6 +14,21 @@ from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_UR
 IMAGE_FOLDER = "attachments/images/"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
  
+class PagePrint(models.Model,DateTimeHelper):
+    page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
+    datetime_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    type=models.CharField(_("type"),choices=PagePrintTypeEnum.choices,default=PagePrintTypeEnum.DRAFT, max_length=50)
+    printed=models.BooleanField(_("printed"), default=False)
+
+    class Meta:
+        verbose_name = _("PagePrint")
+        verbose_name_plural = _("PagePrints")
+
+    def __str__(self):
+        return f"{self.person} : {self.page}"
+     
+    
 class Comment(models.Model,DateTimeHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)

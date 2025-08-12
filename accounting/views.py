@@ -1203,6 +1203,11 @@ class InvoiceOfficialPrintView(View):
             message='فاکتور پیدا نشد.'
             mv=MessageView(title=title,message=message)
             return mv.get(request=request)
+        
+        from attachments.repo import PagePrintRepo
+        PagePrintRepo(request=request).add_page_print(page_id=invoice.id,official=True,printed=False)
+        context['add_page_print_form']=True
+
         context['invoice']=invoice
         context['NOT_REPONSIVE']=True
         context['NOT_NAVBAR']=True
@@ -1225,6 +1230,9 @@ class InvoicePrintView(View):
             message='فاکتور پیدا نشد.'
             mv=MessageView(title=title,message=message)
             return mv.get(request=request)
+        from attachments.repo import PagePrintRepo
+        PagePrintRepo(request=request).add_page_print(page_id=invoice.id,draft=True,printed=False)
+        context['add_page_print_form']=True
         context['invoice']=invoice
         context['NOT_REPONSIVE']=True
         context['NOT_NAVBAR']=True

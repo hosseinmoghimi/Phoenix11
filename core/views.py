@@ -83,8 +83,10 @@ def getContext(request,*args, **kwargs):
 def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
+    page_s=json.dumps(PageSerializer(page).data)
+    context['page_s']=page_s
     me_person=PersonRepo(request=request).me
-    from attachments.views import PageTagsContext,PageLocationsContext,PageImagesContext,PageRelatedContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
+    from attachments.views import PageTagsContext,PageLocationsContext,PageImagesContext,PageRelatedContext,PagPrintsContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
     if request.user.has_perm(APP_NAME+'.change_page'):
         context['set_page_thumbnail_header_form']=SetPageThumbnailHeaderForm()
     context.update(PageLikesContext(request=request,page=page,person=me_person))
@@ -95,6 +97,7 @@ def PageContext(request,page,*args, **kwargs):
     context.update(PageRelatedContext(request=request,page=page,person=me_person))
     context.update(PageLocationsContext(request=request,page=page,person=me_person))
     context.update(PageTagsContext(request=request,page=page,person=me_person))
+    context.update(PagPrintsContext(request=request,page=page,person=me_person))
     return context
 
 

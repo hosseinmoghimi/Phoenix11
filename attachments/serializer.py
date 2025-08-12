@@ -1,5 +1,5 @@
-from .models import Like,Comment,Link,Download,Image, Tag
-from core.serializers import PersonSerializer,serializers,PageSerializer
+from .models import Like,Comment,Link,Download,Image, Tag,PagePrint
+from core.serializers import PersonSerializer,serializers,PageSerializer 
 from .models import Area, Location
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -8,7 +8,15 @@ class LocationSerializer(serializers.ModelSerializer):
         fields=['id','title','longitude','location','latitude','title','get_absolute_url']
 
 
-         
+  
+class PagePrintSerializer(serializers.ModelSerializer):
+    page=PageSerializer()
+    person=PersonSerializer()
+    class Meta:
+        model=PagePrint
+        fields=['id','page','person','type','printed', 'persian_datetime_added']
+
+       
 class AreaSerializer(serializers.ModelSerializer):
     class Meta:
         model=Area

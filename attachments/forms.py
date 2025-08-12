@@ -1,5 +1,9 @@
 from django import forms
 
+class AddPagePrintForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+
+
 class TogglePageLikeForm(forms.Form):
     page_id=forms.IntegerField(required=True)
  

@@ -14,6 +14,8 @@ urlpatterns = [
     path('add-comment/',apis.AddCommentApi.as_view(),name="add_comment"),
     path('comments/',views.CommentsView.as_view(),name="comments"),
     path('delete-comment/',apis.DeleteCommentApi.as_view(),name="delete_comment"),
+    
+    path('add-page-print/',apis.AddPagePrintApi.as_view(),name="add_page_print"),
 
 
     path('add-link/',apis.AddLinkApi.as_view(),name="add_link"),
