@@ -24,6 +24,77 @@
       show_add_btn: true,
     },
     methods: {
+      add_product:()=>{
+        
+        add_invoice_line_app.waiting=true
+        let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: add_invoice_line_app.search_for,
+                    unit_name: add_invoice_line_app.unit_name,
+                    coef: add_invoice_line_app.coef,
+                    barcode: '',
+                    unit_price: parseInt(add_invoice_line_app.unit_price),
+                }
+                console.log(payload)
+                let url = "{% url 'accounting:add_product' %}"
+                let posting = $.post(url, payload)
+                posting.done(data => {
+                    add_invoice_line_app.waiting=false
+                    
+                    if (data.result === "SUCCEED") {
+                      add_invoice_line_app.invoice_line_items.push(data.product)
+                      add_invoice_line_app.select_item(data.product)
+                        if (typeof products_app != "undefined") {
+                            products_app.products.push(data.product)
+                        }
+
+                        show_message(add_invoice_line_app, "موفقیت آمیز", data.message, "success", 5000)
+                    }
+
+
+                    if (data.result != "SUCCEED") {
+                        show_message(add_invoice_line_app, "خطا", data.message, "danger", 5000)
+                    }
+
+                })
+      },
+      add_service:()=>{
+        console.log("add_service!")
+
+        
+        add_invoice_line_app.waiting=true
+        let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: add_invoice_line_app.search_for,
+                    unit_name: add_invoice_line_app.unit_name,
+                    coef: add_invoice_line_app.coef,
+                    unit_price: parseInt(add_invoice_line_app.unit_price),
+                }
+                console.log(payload)
+                let url = "{% url 'accounting:add_service' %}"
+                let posting = $.post(url, payload)
+                posting.done(data => {
+                    add_invoice_line_app.waiting=false
+                    
+                    if (data.result === "SUCCEED") {
+                      add_invoice_line_app.invoice_line_items.push(data.service)
+                      add_invoice_line_app.select_item(data.service)
+                        if (typeof services_app != "undefined") {
+                            services_app.services.push(data.service)
+                        }
+
+                        show_message(add_invoice_line_app, "موفقیت آمیز", data.message, "success", 5000)
+                    }
+
+
+                    if (data.result != "SUCCEED") {
+                        show_message(add_invoice_line_app, "خطا", data.message, "danger", 5000)
+                    }
+
+                })
+
+
+      },
       select_invoice_line_item_unit: function (invoice_line_item_unit) {
         add_invoice_line_app.unit_price = invoice_line_item_unit.unit_price
         add_invoice_line_app.unit_name = invoice_line_item_unit.unit_name
@@ -55,6 +126,8 @@
         })
       },
       filter: function (count = 6) {
+         add_invoice_line_app.invoice_line_item_units=[]
+
         add_invoice_line_app.list_length = count
         // if (add_invoice_line_app.search_for.length < 1) return;
         let search_for = add_invoice_line_app.search_for.toUpperCase();
@@ -70,6 +143,12 @@
             return false;
           });
         if (add_invoice_line_app.invoice_line_items.length == 0) {
+          add_invoice_line_app.invoice_line_item_id =0
+
+        add_invoice_line_app.unit_name = 'عدد'
+        add_invoice_line_app.unit_price = 0
+        add_invoice_line_app.invoice_line_items = []
+         add_invoice_line_app.invoice_line_item_units=[]
           add_invoice_line_app.buffer_items = []
         }
         if (add_invoice_line_app.invoice_line_items.length > 0) {
@@ -104,6 +183,7 @@
         let payload = {
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           invoice_id: invoice_id,
+          search_for: this.search_for,
           invoice_line_item_id: this.invoice_line_item_id,
           quantity: parseFloat(this.quantity),
           unit_price: parseInt(this.unit_price),

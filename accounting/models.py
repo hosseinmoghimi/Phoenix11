@@ -867,8 +867,12 @@ class InvoiceLine(models.Model,LinkHelper):
     def save(self,*args, **kwargs):
 
         super(InvoiceLine,self).save()
+        result,message=FAILED,''
         self.invoice.normalize()
-
+        if self.id is not None and self.id>0:
+            result=SUCCEED
+            message='سطر فاکتور با موفقیت اضافه شد.'
+        return result,message,self
     def __str__(self):
         return f'{self.invoice}>{self.invoice_line_item}*{self.quantity}'
 

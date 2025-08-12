@@ -131,6 +131,7 @@ class InvoiceLineRepo:
             
         
     def add_invoice_line(self,*args,**kwargs):
+        leolog(kwargs=kwargs)
         result,message,meal=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_invoiceline"):
             message="دسترسی غیر مجاز"
@@ -140,7 +141,7 @@ class InvoiceLineRepo:
         if 'invoice_line_item_id' in kwargs:
             invoice_line_item_id=kwargs["invoice_line_item_id"]
             invoice_line.invoice_line_item_id=invoice_line_item_id
- 
+
         if 'invoice_id' in kwargs:
             invoice_line.invoice_id=kwargs["invoice_id"]
         if 'discount_percentage' in kwargs:
@@ -169,10 +170,8 @@ class InvoiceLineRepo:
                     unit_price=unit_price,
                     )
 
-        result=SUCCEED
-        message="سطر فاکتور با موفقیت اضافه شد."     
+        result,message,invoice_line=invoice_line.save()
  
-        invoice_line.save()
         return result,message,invoice_line
            
 
@@ -984,8 +983,8 @@ class ProductRepo():
                  
 
         if 'category_id' in kwargs:
-            if kwargs['category_id']>0:
-                category_id=kwargs["category_id"]
+            category_id=kwargs['category_id']
+            if category_id is not None and category_id>0:
                 category=Category.objects.filter(pk=category_id).first()
                 if category is not None:
                     category.products.add(product.id)
