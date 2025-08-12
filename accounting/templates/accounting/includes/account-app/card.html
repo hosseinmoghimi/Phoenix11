@@ -1,11 +1,7 @@
-{% load static %} 
-{% load to_price %} 
-{% load to_persian_date %}
-{% load account_code_seperator %}
-{% load to_price_color_btn %}
+{% load static %} {% load to_price %} {% load to_persian_date %} {% load account_code_seperator %} {% load to_price_color_btn %}
 <div class="card rtl text-right" id="account-app">
   <div class="card-header">
-    <h5 class="text-center"> حساب </h5>
+    <h5 class="text-center">حساب</h5>
   </div>
   <div class="card-body">
     <div class="text-center">
@@ -13,57 +9,69 @@
     </div>
 
     <h5 class="text-center mt-2">
-      {{account.name}}
+      {{account.title}}
       <span class="badge badge-{{account.color}}">{{account.type}}</span>
     </h5>
 
-    <div class="text-center">
-      <a href="{{account.get_absolute_url}}">
+    <a href="{{account.get_absolute_url}}">
+      <div class="text-center">
         <img width="128" src="{{account.get_qrcode_url}}" alt="" />
-      </a>
-    </div>
+        <h5 class="text-center text-{{account.color}}">{{account.id}}</h5>
+      </div>
+    </a>
     <div>
-<div class="my-2">
-    <button  @click="copy_code()" class="my-2 btn btn-{{account.color}}">
-        <small class=""> کد : </small>
-        {{account.code}}
-        <i class="fa fa-copy"></i>
-        <span v-if="show_code_copied">
-          کپی شد
-        </span>
-      </button>
-</div>
-    
-      
+      <div class="text-center">
+      <div class="my-2">
+          <button @click="copy_code()" class="my-2 btn btn-{{account.color}}">
+            <small class=""> کد : </small>
+            {{account.code}}
+            <i class="fa fa-copy"></i>
+            <span v-if="show_code_copied"> کپی شد </span>
+          </button>
+        </div>
+      </div>
     </div>
 
+    <div>
+      <div class="text-center">
+        <button
+          @click="copy_balance()"
+          class="my-2 btn btn-{{account.balance_color}}"
+        >
+          <small class=""> مانده : </small>
+          {{account.balance|to_price}}
+          <i class="fa fa-copy"></i>
 
-<div>
+          <span v-if="show_balance_copied"> کپی شد </span>
+        </button>
+      </div>
+    </div>
 
-  <button  @click="copy_balance()" class="my-2 btn btn-{{account.balance_color}}">
-    <small class=""> مانده : </small>
-    {{account.balance|to_price}}
-        <i class="fa fa-copy"></i>
-    
-    <span v-if="show_balance_copied">
-      کپی شد
-    </span>
-  </button>
-</div>
+    <h6>
+      <small class="text-muted"> تاریخ ایجاد </small>
 
-
-    
-<h6>
-  <small class="text-muted">
-    تاریخ ایجاد
-  </small>
-  
-
-  {{page.date_added|to_persian_datetime|safe}}
-</h6>
+      {{page.date_added|to_persian_datetime|safe}}
+    </h6>
     <h5 class="text-center mt-4">
       <small class="text-muted"> مانده : </small>
       {{account.balance|to_price_color|safe}} {{CURRENCY}}
     </h5>
+ <div class="my-2">
+            <a href="{% url 'accounting:tree_chart' pk=account.id %}" target="_blank">
+                <img src="{% static 'accounting/img/tree-chart.png' %}" width="32" alt="">
+                نمودار درختی</a>
+        </div>
+     <div>
+            {% if perms.accounting.change_account %}
+            <a href="{{account.get_edit_url}}" class="my-2 text-warning mx-2" title="ویرایش" target="_blank">
+                <i class="fa fa-edit text-warning"></i> ویرایش
+            </a>
+            {% endif %}
+            {% if perms.accounting.delete_account %}
+            <a href="{{account.get_delete_url}}" class="my-2 text-danger mx-2" title="حذف" target="_blank">
+                <i class="fa fa-trash text-danger"></i> حذف
+            </a>
+            {% endif %}
+        </div>
   </div>
 </div>

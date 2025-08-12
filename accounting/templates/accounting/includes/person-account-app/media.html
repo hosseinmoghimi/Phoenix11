@@ -1,0 +1,41 @@
+{% load to_price %}
+<div class="media">
+    <img :src="person_account.thumbnail" class="rounded" width="64" alt="">
+    <div class="media-body mr-2">
+        <h5 :class="'text-'+person_account.color">
+            <a :href="person_account.get_absolute_url">
+                <span :class="'text-'+person_account.color" v-text="person_account.title"></span>
+                <span :class="'badge badge-'+person_account.color" v-text="person_account.type"></span>
+            </a>
+        </h5>
+
+
+        <div>
+            <h6 :class="'text-'+person_account.color">
+                <small class="text-muted">
+                    <span v-text="person_account.code"></span>
+
+
+                </small>
+
+            </h6>
+        </div>
+        <div>
+            <h6 :class="'text-'+person_account.color">
+
+                <small>
+                    <span v-html="to_price(person_account.balance)"></span>
+                    {{CURRENCY}}
+
+                </small>
+            </h6>
+        </div>
+
+        <a :href="person_account.get_absolute_url">
+
+            <h6>
+                <span v-text="person_account.full_title"></span>
+            </h6>
+        </a>
+    </div>
+</div>

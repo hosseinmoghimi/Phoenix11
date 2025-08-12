@@ -38,7 +38,8 @@ class Page(models.Model,LinkHelper,ImageHelper):
     def get_breadcrumb_link(self):
         aaa=f"""
                     <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">
-                    <span class="farsi">
+                    <span class="farsi mx-2">
+                    <img class="rounded-circle" width="32" src="{self.thumbnail}">
                     {self.title}
                     </span>
                     </a></li> 

@@ -25,9 +25,7 @@
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
-                            <th>
-                                کد
-                            </th>
+                          
                             <th>
                                 نام حساب
                             </th>
@@ -47,23 +45,18 @@
                         <tbody>
                             <tr v-for="person_account in person_accounts">
                                 <td>
-                                    <a :href="person_account.get_absolute_url">
-                                        <span :class="'text-'+person_account.color" v-text="person_account.code"></span>
-                                    </a>
+                                    {% include "accounting/includes/person-account-app/media.html" %}
+                                    
                                 </td>
-                                <td>
-                                    <a :href="person_account.get_absolute_url">
-                                        <span :class="'text-'+person_account.color" v-text="person_account.name"></span>
-                                        <span :class="'badge badge-'+person_account.color" v-text="person_account.type"></span>
-                                    </a>
-
-                                </td>
+                                
 
                                  <td>
-                                    <a :href="person_account.person.get_accounting_absolute_url">
-                                        <span   v-text="person_account.person.full_name"></span>
-                                    </a>
+                                   
+                                      
+                                <div v-for="person in [person_account.person]">
+                                    {% include "authentication/includes/person-app/media.html" %}
 
+                                </div>
                                 </td>
 
                                   <td>

@@ -96,8 +96,13 @@ class Account(CorePage,LinkHelper,PersonAccountHelper):
         if self.balance<0:
             return 'danger'
     @property
-    def logo(self):
+    def logo2222(self):
         return self.thumbnail 
+    
+    @property
+    def thumbnail222(self):
+        if self.thumbnail_origin is None or self.thumbnail_origin=='':
+            return self.person.image
     
     @property
     def name(self):
@@ -277,7 +282,7 @@ class PersonAccount(Account,LinkHelper):
         
         result,message,person_account=FAILED,"",None
         p_a=PersonAccount.objects.filter(person_id=self.person_id).filter(person_category_id=self.person_category_id).first()
-        if p_a is not None:
+        if p_a is not None and self.id is None:
             message="از قبل برای این دسته بندی و شخص حساب مرتبط ایجاد شده است. "
             return result,message,person_account
 

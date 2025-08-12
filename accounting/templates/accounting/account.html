@@ -2,6 +2,10 @@
 
 
 {% block content %}
+    {% if account.parent %} 
+    <div class="rtl my-2">{{account.parent.get_breadcrumb|safe}}</div>
+    {% endif %} 
+
 <div class="row rtl farsi">
     <div class="col-md-4">
         {% include "accounting/includes/account-app/card.html" %}
@@ -72,7 +76,7 @@
   
     {% endif %}
 
-    
+
 </div>
 {% endblock content %}
 

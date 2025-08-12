@@ -1,5 +1,10 @@
 {% extends "accounting/layout.html" %} 
 {% block content %}
+
+
+   {% if page.parent %} 
+    <div class="rtl my-2">{{page.parent.get_breadcrumb|safe}}</div>
+    {% endif %} 
 <div class="row rtl farsi">
   <div class="col-md-3">
     {% include "accounting/includes/invoice-app/card.html" %}

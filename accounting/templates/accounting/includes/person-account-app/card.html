@@ -14,11 +14,19 @@
 
         <div class="text-center">
 
-            <img src="{{account.logo}}" width="64" alt="">
+            <img src="{{account.thumbnail}}" width="128" alt="">
         </div>
+        <a href="{{account.get_absolute_url}}">
+                <div class="text-center">
+                <img width="128" src="{{account.get_qrcode_url}}" alt="" />
+                <h5 class="text-center text-{{account.color}}">
+                {{account.id}}
 
+                </h5>
+            </div>
+            </a>
         <h5 class="text-center mt-2">
-            {{account.name}}
+            {{account.title}}
             <span class="badge badge-{{account.color}}">{{account.type}}</span>
 
         </h5>
@@ -29,35 +37,33 @@
     {{page.date_added|to_persian_datetime|safe}}
 </h6>
         
- 
- 
-          <div>
-
-      <button  @click="copy_code()" class="my-2 btn btn-{{account.color}}">
-        <small class=""> کد : </small>
-        {{account.code}}
-        <i class="fa fa-copy"></i>
-        
-        <span v-if="show_code_copied">
-          کپی شد
-        </span>
-      </button>
-      
+  <div>
+      <div class="text-center">
+      <div class="my-2">
+          <button @click="copy_code()" class="my-2 btn btn-{{account.color}}">
+            <small class=""> کد : </small>
+            {{account.code}}
+            <i class="fa fa-copy"></i>
+            <span v-if="show_code_copied"> کپی شد </span>
+          </button>
+        </div>
+      </div>
     </div>
 
+    <div>
+      <div class="text-center">
+        <button
+          @click="copy_balance()"
+          class="my-2 btn btn-{{account.balance_color}}"
+        >
+          <small class=""> مانده : </small>
+          {{account.balance|to_price}}
+          <i class="fa fa-copy"></i>
 
-<div>
-
-  <button  @click="copy_balance()" class="my-2 btn btn-{{account.balance_color}}">
-    <small class=""> مانده : </small>
-    {{account.balance|to_price}}
-        <i class="fa fa-copy"></i>
-    
-    <span v-if="show_balance_copied">
-      کپی شد
-    </span>
-  </button>
-</div>
+          <span v-if="show_balance_copied"> کپی شد </span>
+        </button>
+      </div>
+    </div>
 
 
         <h5 class="text-center mt-4">
@@ -104,28 +110,12 @@
                 <img src="{% static 'accounting/img/tree-chart.png' %}" width="32" alt="">
                 نمودار درختی</a>
         </div>
-        <div>
-            {% if perms.accounting.change_account %}
-            <a href="{{account.get_edit_url}}" class="my-2 text-warning mx-2" title="ویرایش" target="_blank">
-                <i class="fa fa-edit text-warning"></i> ویرایش
-            </a>
-            {% endif %}
-            {% if perms.accounting.delete_account %}
-            <a href="{{account.get_delete_url}}" class="my-2 text-danger mx-2" title="حذف" target="_blank">
-                <i class="fa fa-trash text-danger"></i> حذف
-            </a>
-            {% endif %}
-        </div>
+       
         <div>
             <small class="text-muted">مانده : </small>
             {{account.balance }}
         </div>
-        <div id="account-balance-app">
-            <small class="text-muted">مانده : </small>
-            {{account.balance|to_price_color_btn|safe}}
-            <small class="text-muted"  v-show="show_balance_copied">کپی شد.</small>
-
-        </div>
+         
         <div>
             <small class="text-muted">شخص : </small>
             <a href="{{person_account.person.get_absolute_url}}">
@@ -137,14 +127,7 @@
             <small class="text-muted">سطح : </small>
             {{account.level}}
         </div>
-        {% if person %}
-        <div>
-            <small class="text-muted">شخص : </small>
-            <a href="{{person.get_absolute_url}}">
-                {{person.full_name}}
-            </a>
-        </div>
-        {% endif %}
+        
         <div>
             <small class="text-muted">نوع : </small>
             {{account.type}}

@@ -8,6 +8,13 @@
       sort_field: "",
     },
     methods: {
+      copy_code:function(account){
+                navigator.clipboard.writeText(account.code);
+                setTimeout(() => {
+                    accounts_app.show_code_copied = false
+                }, 2000);
+            },
+
       sort: function (field) {
         console.log(field);
         console.log(this.sort_field);
