@@ -250,15 +250,15 @@ class AccountRepo():
                 code=(ws['D'+i].value)
                 title=(ws['E'+i].value)
                 color=(ws['F'+i].value)
-                logo_origin=(ws['G'+i].value)
-                # leolog(account='account',i=i,id=id,title=title,code=code,parent_id=parent_id,logo_origin=logo_origin)  
+                thumbnail_origin=(ws['G'+i].value)
+                # leolog(account='account',i=i,id=id,title=title,code=code,parent_id=parent_id,thumbnail_origin=thumbnail_origin)  
 
                 account['id']=id
                 account['parent_code']=parent_code
                 account['code']=code
                 account['title']=title
                 account['color']=color
-                account['logo_origin']=logo_origin
+                account['thumbnail_origin']=thumbnail_origin
                 if account['title'] is not None and not account['title']=="":
                     accounts_to_import.append(account) 
         modified=added=0
@@ -267,7 +267,7 @@ class AccountRepo():
             if old_account is not None:
                 old_account.title=account["title"]
                 # old_account.unit_name=account["unit_name"]
-                old_account.logo_origin=account["logo_origin"]
+                old_account.thumbnail_origin=account["thumbnail_origin"]
                 # old_account.unit_price=account["unit_price"] 
                 # old_account.thumbnail_origin=account["thumbnail_origin"] 
                 old_account.save()
@@ -279,7 +279,7 @@ class AccountRepo():
                                                                 parent_code=account["parent_code"],
                                                                 id=account["id"],
                                                                 color=account["color"],
-                                                                logo_origin=account["logo_origin"] ,
+                                                                thumbnail_origin=account["thumbnail_origin"] ,
                                                                 )
                     accounts.append(new_account)
                 except:

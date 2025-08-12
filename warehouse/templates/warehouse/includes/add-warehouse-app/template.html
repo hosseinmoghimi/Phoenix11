@@ -49,7 +49,7 @@
                 <div class="col-6 mt-3">
                   <a :href="account.get_absolute_url" v-if="account.id">
                     <div class="media">
-                      <img :src="account.logo" width="64" alt="" />
+                      <img :src="account.thumbnail" width="64" alt="" />
                       <div class="mr-2 media-body">
                         <h5 class="my-2">
                           <span
@@ -124,7 +124,7 @@
                 <div class="col-6 mt-3">
                   <a :href="organization_unit.get_absolute_url" v-if="organization_unit.id">
                     <div class="media">
-                      <img :src="organization_unit.logo" width="64" alt="" />
+                      <img :src="organization_unit.thumbnail" width="64" alt="" />
                       <div class="mr-2 media-body">
                         
                         <span v-text="organization_unit.title">

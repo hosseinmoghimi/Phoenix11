@@ -1046,7 +1046,7 @@ class ExportToExcelView(View):
                     'code':account.code,      
                     'title':account.title,
                     'color':account.color,
-                    'logo_origin':str(account.logo_origin),       
+                    'thumbnail_origin':str(account.thumbnail_origin),       
                 }
                 lines.append(line)
             headers=['ردیف',
