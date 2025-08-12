@@ -1,6 +1,6 @@
 {% load to_price %}
 <div class="media">
-    <img :src="account.logo" width="64" alt="">
+    <img :src="account.thumbnail" class="rounded" width="64" alt="">
     <div class="media-body mr-2">
         <h5 :class="'text-'+account.color">
             <a :href="account.get_absolute_url">

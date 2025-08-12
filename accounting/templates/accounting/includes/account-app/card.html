@@ -3,13 +3,13 @@
 {% load to_persian_date %}
 {% load account_code_seperator %}
 {% load to_price_color_btn %}
-<div class="card rtl text-right">
+<div class="card rtl text-right" id="account-app">
   <div class="card-header">
-    <h5 class="text-center">حساب</h5>
+    <h5 class="text-center"> حساب </h5>
   </div>
   <div class="card-body">
     <div class="text-center">
-      <img src="{{account.logo}}" width="64" alt="" />
+      <img src="{{account.thumbnail}}" width="64" alt="" />
     </div>
 
     <h5 class="text-center mt-2">
@@ -22,11 +22,37 @@
         <img width="128" src="{{account.get_qrcode_url}}" alt="" />
       </a>
     </div>
+    <div>
+<div class="my-2">
+    <button  @click="copy_code()" class="my-2 btn btn-{{account.color}}">
+        <small class=""> کد : </small>
+        {{account.code}}
+        <i class="fa fa-copy"></i>
+        <span v-if="show_code_copied">
+          کپی شد
+        </span>
+      </button>
+</div>
+    
+      
+    </div>
 
-    <h5 class="text-center mt-4">
-      <small class="text-muted"> کد : </small>
-      {{account.code}}
-    </h5>
+
+<div>
+
+  <button  @click="copy_balance()" class="my-2 btn btn-{{account.balance_color}}">
+    <small class=""> مانده : </small>
+    {{account.balance|to_price}}
+        <i class="fa fa-copy"></i>
+    
+    <span v-if="show_balance_copied">
+      کپی شد
+    </span>
+  </button>
+</div>
+
+
+    
 <h6>
   <small class="text-muted">
     تاریخ ایجاد

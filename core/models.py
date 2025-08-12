@@ -72,6 +72,8 @@ class Page(models.Model,LinkHelper,ImageHelper):
         return result,message,priority
 
     def save(self,*args, **kwargs):
+        if self.parent_id is not None and self.parent_id==self.id:
+            self.parent_id=None
         from django.utils import timezone
         now=timezone.now()
         self.date_added=now

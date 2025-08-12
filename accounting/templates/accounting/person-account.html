@@ -8,6 +8,10 @@
     </div>
     
     <div class="col-md-4">
+        {% include "accounting/includes/account-app/card.html" %}
+    </div>
+
+    <div class="col-md-4">
         {% include "accounting/includes/account-app/card-full.html" %}
     </div>
 
@@ -35,6 +39,18 @@
     </div>
   
     {% endif %}
+
+    
+     
+    {% if set_page_thumbnail_header_form %}
+     
+    <div class="col-md-12">
+        {% include "core/includes/page-thumbnail-header-app/template.html" %}
+
+    </div>
+  
+    {% endif %}
+    
      
     
 

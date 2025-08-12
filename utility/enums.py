@@ -215,6 +215,8 @@ def class_title(*args, **kwargs):
         class_title = "ملک"
     if class_name == "book":
         class_title = "کتاب"
+    if class_name == "personaccount":
+        class_title = "حساب شخصی"
     if class_name == "page":
         class_title = "صفحه"
     if class_name == "appointment":

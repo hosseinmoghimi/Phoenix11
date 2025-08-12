@@ -82,11 +82,23 @@ class Account(CorePage,LinkHelper,PersonAccountHelper):
     code=models.CharField(_("code"),null=True,blank=True, max_length=50)
     type=models.CharField(_("نوع"),choices=AccountTypeEnum.choices, max_length=50)
     nature=models.CharField(_("ماهیت"),choices=AccountNatureEnum.choices,default=AccountNatureEnum.FREE, max_length=50)
-    logo_origin=models.ImageField(_("logo"),blank=True,null=True, upload_to=IMAGE_FOLDER+"account", height_field=None, width_field=None, max_length=None)
     level=models.IntegerField(_("level"))
     bedehkar=models.IntegerField(_("bedehkar"),default=0)
     bestankar=models.IntegerField(_("bestankar"),default=0)
     balance=models.IntegerField("balance",default=0)
+
+    @property
+    def balance_color(self):
+        if self.balance==0:
+            return 'primary'
+        if self.balance>0:
+            return 'success'
+        if self.balance<0:
+            return 'danger'
+    @property
+    def logo(self):
+        return self.thumbnail 
+    
     @property
     def name(self):
         return self.title    
@@ -99,10 +111,10 @@ class Account(CorePage,LinkHelper,PersonAccountHelper):
         verbose_name_plural = _("حساب ها")
 
     def __str__(self):
-        return f'{self.code}-level {self.level} - {self.type} - {self.name}'
+        return f'{self.code}-level {self.level} - {self.type} - {self.title}'
     def get_link(self):
             return f"""
-                    <a href="{self.get_absolute_url()}" class="ml-2 text-{self.color}"><span>{self.code}</span> {self.name} <span class="badge badge-{self.color}">{self.type}</span></a>
+                    <a href="{self.get_absolute_url()}" class="ml-2 text-{self.color}"><span>{self.code}</span> {self.title} <span class="badge badge-{self.color}">{self.type}</span></a>
                     """
      
 
@@ -209,11 +221,7 @@ class Account(CorePage,LinkHelper,PersonAccountHelper):
             parent=Account.objects.filter(id=self.parent.id).first()
             if parent is not None:
                 parent.normalize()
-    @property
-    def logo(self):
-        if not self.logo_origin :
-            return f"{STATIC_URL}{APP_NAME}/img/pages/thumbnail/account.png"
-        return f"{MEDIA_URL}{self.logo_origin}"
+     
    #test
     @property
     def balance_colored(self):
@@ -230,7 +238,7 @@ class Account(CorePage,LinkHelper,PersonAccountHelper):
     @property  
     def full_name(self):
         if self.parent is None:
-            return self.name
+            return self.title
         return self.parent_account.full_name+ACCOUNT_NAME_SEPERATOR+self.title
  
     

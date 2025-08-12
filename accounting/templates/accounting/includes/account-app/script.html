@@ -6,19 +6,30 @@
 
 </script>
 <script>
-    let account_code_app=new Vue({
-        el:"#account-code-app",
+    let account_app=new Vue({
+        el:"#account-app",
         data:{
             show_code_copied: false,
+            show_balance_copied: false,
+
         },
         methods:{
             copy_code:function(){
                 navigator.clipboard.writeText("{{account.code}}");
                 this.show_code_copied = true
                 setTimeout(() => {
-                    account_code_app.show_code_copied = false
+                    account_app.show_code_copied = false
                 }, 2000);
             },
+
+            copy_balance:function(){
+                navigator.clipboard.writeText("{{account.balance}}");
+                this.show_balance_copied = true
+                setTimeout(() => {
+                    account_app.show_balance_copied = false
+                }, 2000);
+            },
+
 
             
         }
@@ -29,7 +40,6 @@
     let account_balance_app=new Vue({
         el:"#account-balance-app",
         data:{
-            show_balance_copied: false,
         },
         methods:{
             copy_balance:function(){

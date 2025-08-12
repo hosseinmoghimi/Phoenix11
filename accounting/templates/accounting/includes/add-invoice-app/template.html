@@ -20,7 +20,7 @@
 
 
     <div class="card-body">
-      <form @submit.prevent="add_invoice()">
+       
         <div class="row">
           <div class="col-md-12">
             <div class="form-group">
@@ -34,6 +34,10 @@
               <div class="col-6">
                 <div class="form-group">
                   <label for="bedehkar_code">بدهکار</label>
+                  <button class="btn btn-info btn-sm" @click="paste_bedehkar()">
+                    <i class="fa fa-paste"></i>
+                  </button>
+
                   <input type="text" placeholder="" class="form-control" id="bedehkar_code" @input="select_bedehkar()"
                     v-model="bedehkar_code" />
                 </div>
@@ -43,7 +47,7 @@
                 <hr />
                 <a :href="bedehkar.get_absolute_url" v-if="bedehkar">
                   <div class="media">
-                    <img :src="bedehkar.logo" width="64" alt="" />
+                    <img :src="bedehkar.thumbnail" width="64" alt="" />
                     <div class="mr-2 media-body">
                       <h5 class="my-2">
                         <span :class="'text-'+bedehkar.color" v-text="bedehkar.name"></span>
@@ -68,12 +72,21 @@
               </div>
             </div>
           </div>
-
+<div class="col-12">
+  <button class="my-2 btn btn-info" @click="swap()">
+    {% load static %}
+    <img width="32" src="{% static 'img/icons/exchange3.png' %}" alt="">
+  </button>
+</div>
           <div class="col-md-12">
             <div class="row">
               <div class="col-6">
                 <div class="form-group">
                   <label for="bestankar_code">بستانکار</label>
+                  <button class="btn btn-info btn-sm" @click="paste_bestankar()">
+                    <i class="fa fa-paste"></i>
+                    
+                  </button>
                   <input type="text" placeholder="" class="form-control" id="bestankar_code" @input="select_bestankar()"
                     v-model="bestankar_code" />
                 </div>
@@ -82,7 +95,7 @@
                 <hr />
                 <a :href="bestankar.get_absolute_url" v-if="bestankar">
                   <div class="media">
-                    <img :src="bestankar.logo" width="64" alt="" />
+                    <img :src="bestankar.thumbnail" width="64" alt="" />
                     <div class="mr-2 media-body">
                       <h5 class="my-2">
                         <span :class="'text-'+bestankar.color" v-text="bestankar.name"></span>
@@ -135,13 +148,13 @@
                 <div v-html="message.body"></div>
               </div>
             </div>
-            <button class="btn btn-success" type="submit">
+            <button class="btn btn-success" @click="add_invoice()">
               <i class="fa fa-plus"></i>
               افزودن
             </button>
           </div>
         </div>
-      </form>
+       
     </div>
   </div>
 </div>

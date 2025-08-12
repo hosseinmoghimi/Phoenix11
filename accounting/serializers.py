@@ -12,7 +12,7 @@ class PersonSerializer(serializers.ModelSerializer):
 class AccountSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
-        fields = ['id','title','name','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','name','full_name','thumbnail','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
 
 
 
@@ -20,7 +20,7 @@ class AccountSerializer(serializers.ModelSerializer):
 class AccountSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
-        fields = ['id','title','name','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','name','full_name','thumbnail','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
 
 
 class PersonCategorySerializer(serializers.ModelSerializer):
@@ -46,7 +46,7 @@ class BankSerializer(serializers.ModelSerializer):
 class BrandSerializer(serializers.ModelSerializer):
        class Meta:
         model = Brand
-        fields = ['id','name','logo', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','name','thumbnail', 'get_absolute_url','get_edit_url','get_delete_url']
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
@@ -124,7 +124,7 @@ class InvoiceLineItemUnitBriefSerializer(serializers.ModelSerializer):
 class AccountBriefSerializer(serializers.ModelSerializer):
        class Meta:
         model = Account
-        fields = ['id','parent_id','full_name','logo','title','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','parent_id','full_name','thumbnail','title','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
 
 
 class FinancialDocumentSerializer(serializers.ModelSerializer):
@@ -160,11 +160,11 @@ class PersonAccountSerializer(serializers.ModelSerializer):
        person_category=PersonCategorySerializer()
        class Meta:
         model = PersonAccount
-        fields = ['id','person','person_category','name','title','full_name','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','person','person_category','name','title','full_name','thumbnail','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
 
 class BankAccountSerializer(serializers.ModelSerializer):
        bank=BankSerializer()
        person=PersonSerializer()
        class Meta:
         model = BankAccount
-        fields = ['id','person','bank','name','title','full_name','card_no','account_no','shaba_no','logo','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','person','bank','name','title','full_name','card_no','account_no','shaba_no','thumbnail','code','balance', 'type','color', 'get_absolute_url','get_edit_url','get_delete_url']

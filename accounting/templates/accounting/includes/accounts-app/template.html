@@ -57,12 +57,9 @@
             <tbody>
               <tr v-for="account in accounts">
                 <td>
-                  <a :href="account.get_absolute_url">
-                    <span
-                      :class="'text-'+account.color"
-                      v-text="account.code"
-                    ></span>
-                  </a>
+
+                  {% include "accounting/includes/account-app/media.html" %}
+                 
                 </td>
                 <td>
                   <a :href="account.get_absolute_url">
