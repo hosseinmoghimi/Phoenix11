@@ -1,27 +1,38 @@
 {% extends "phoenix/print-layout.html" %} {% block content %}
+{% load to_persian_date %}
 <div class="row rtl farsi">
   <div class="col-md-12">
     <div class="card">
       {% load to_price %}
       <div class="card-body">
         <div class="text-center">
-          <img
+          {% if invoice.thumbnail_origin %}
+              <img
+            src="{{invoice.thumbnail}}"
+            class="mb-2"
+            width="96"
+            alt=""
+          />
+          {% else %}
+            <img
             src="{{invoice.bestankar.thumbnail}}"
             class="mb-2"
             width="96"
             alt=""
           />
+          {% endif %}
+         
         </div>
         <h5 class="text-center">{{invoice.title}}</h5>
         <div class="text-center"></div>
         <div class="row rtl">
           <div class="col-8">
-            <div>فروشنده : {{invoice.bestankar.name}}</div>
+            <div>فروشنده : {{invoice.bestankar.title}}</div>
 
-            <div>خریدار : {{invoice.bedehkar.name}}</div>
+            <div>خریدار : {{invoice.bedehkar.title}}</div>
           </div>
           <div class="col-4">
-            <div>تاریخ : {{invoice.persian_event_datetime}}</div>
+            <div>تاریخ : {{invoice.event_datetime|to_persian_datetime|safe}}</div>
 
             <div>شماره : {{invoice.id}}</div>
           </div>
@@ -84,10 +95,15 @@
       </div>
     </div>
   </div>
-  <div class="col-12 rtl text-right"></div>
+  <div class="col-12 rtl text-right">
+      {% include "accounting/includes/invoice-app/print-template.html" %}
+
+
+  </div>
 </div>
 {% endblock content %} {% block script %}
 <script></script>
+{% include "accounting/includes/invoice-app/print-script.html" %}
 
 {% include "accounting/includes/invoice-lines-app/script.html" %}
  {% include "accounting/includes/invoice-app/script.html" %} {% endblock script %}

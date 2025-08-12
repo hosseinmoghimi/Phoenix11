@@ -1,0 +1,34 @@
+<script>
+    let invoice_print_app=new Vue({
+        el:"#invoice-print-app",
+        data:{
+            printing:false,
+        },
+        methods:{
+            print:function(){
+                console.log("print print print print print print print print print print")
+
+                 let url = "{% url 'accounting:print_financial_event' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    transaction_id: parseInt("{{financial_event.id}}")
+                }
+                $.post(url, payload).done(data => {
+
+                })
+
+                this.printing = true
+                setTimeout(() => { 
+                    window.print()
+                }, 200);
+
+
+                setTimeout(() => {
+                    invoice_print_app.printing = false
+                }, 5000);
+
+
+            },
+        }
+    })
+</script>
