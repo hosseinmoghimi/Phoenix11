@@ -2,7 +2,7 @@ from core.repo import PageRepo,PersonRepo,FAILED,SUCCEED
 from .models import Like,Comment,Link,Download,Image,Location,Area, Tag,PagePrint
 from .apps import APP_NAME
 from django.db.models import Q
-
+from .enums import PagePrintTypeEnum
 class ImageRepo():
 
     def __init__(self,request,*args, **kwargs):
@@ -95,6 +95,8 @@ class PagePrintRepo():
         
         
 
+        if 'type' in kwargs: 
+            page_print.type=kwargs['type']
         
         if 'official' in kwargs:
             official=kwargs['official']

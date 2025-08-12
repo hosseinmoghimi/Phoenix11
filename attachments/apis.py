@@ -25,10 +25,12 @@ class AddPagePrintApi(APIView):
                 log += 1
                 cd=add_page_print_form.cleaned_data
                 page_id = cd['page_id']
+                type = cd['type']
                 
                 
                 result,message,page_print = PagePrintRepo(request=request).add_page_print(
                     page_id=page_id,
+                    type=type,
                      printed=True
                     )
                 if result==SUCCEED:

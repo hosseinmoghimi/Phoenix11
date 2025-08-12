@@ -73,8 +73,12 @@
             </td>
 
             <td>
-              <span v-if="page_print.printed">
-                <i class="fa fa-print"></i>
+              <span v-if="page_print.printed && page_print.type==='رسمی'">
+                <i class="fa fa-print text-danger"></i>
+              </span>
+
+                <span v-if="page_print.printed && page_print.type!='رسمی'">
+                <i class="fa fa-print text-success"></i>
               </span>
               <span v-text="page_print.persian_datetime_added"></span>
             </td>
@@ -84,8 +88,12 @@
             </td>
 
             <td>
-              <span v-if="page_print.printed">
-                <i class="fa fa-print"></i>
+              <span v-if="page_print.printed && page_print.type==='رسمی'">
+                <i class="fa fa-print text-danger"></i>
+              </span>
+
+                <span v-if="page_print.printed && page_print.type!='رسمی'">
+                <i class="fa fa-print text-success"></i>
               </span>
             </td>
           </tr>

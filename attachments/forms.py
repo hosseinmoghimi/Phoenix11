@@ -2,6 +2,7 @@ from django import forms
 
 class AddPagePrintForm(forms.Form):
     page_id=forms.IntegerField(required=True)
+    type=forms.CharField(max_length=50,required=False)
 
 
 class TogglePageLikeForm(forms.Form):

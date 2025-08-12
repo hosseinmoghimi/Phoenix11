@@ -31,7 +31,8 @@
                  let url = "{% url 'attachments:add_page_print' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    page_id: parseInt("{{page.id}}")
+                    page_id: parseInt("{{page.id}}"),
+                    type: ("{{add_page_print_form_type}}"),
                 }
                 $.post(url, payload).done(data => {
                     console.log(data)
