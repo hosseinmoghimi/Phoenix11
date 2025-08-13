@@ -1,6 +1,6 @@
 {% extends "projectmanager/layout.html" %} {% block content %}
     {% if project.parent %} 
-    <div class="rtl my-2">{{project.parent.get_breadcrumb|safe}}</div>
+    <div class="rtl my-2">{{project.get_breadcrumb|safe}}</div>
     {% endif %} 
 <div class="row rtl">
   <div class="col-md-3"> 
