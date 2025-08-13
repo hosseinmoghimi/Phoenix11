@@ -1,5 +1,6 @@
 from django.db import models
 from core.models import Page,LinkHelper,FAILED,SUCCEED,reverse
+from phoenix.server_settings import STATIC_URL,MEDIA_URL
 from django.utils.translation import gettext as _
 from .apps import APP_NAME
 from utility.models import DateTimeHelper
@@ -45,6 +46,21 @@ class OrganizationUnit(Page,LinkHelper):
         return OrganizationUnit.objects.filter(id__in=ids)
     
 
+    @property
+    def thumbnail(self):
+        if self.thumbnail_origin is not None and not self.thumbnail_origin=='':
+            return f"{MEDIA_URL}{self.thumbnail_origin}"
+          
+        if self.person_account.thumbnail_origin is not None and not self.person_account.thumbnail_origin=='':
+            return self.person_account.thumbnail
+        
+        if self.person_account.person.image_origin is not None and not self.person_account.person.image_origin=='':
+            return self.person_account.person.image
+        
+        try:
+            return f"{STATIC_URL}{self.app_name}/img/pages/thumbnail/{self.class_name}.png/"
+        except:
+            pass 
 class Employee(models.Model,LinkHelper,DateTimeHelper):
     person=models.ForeignKey("authentication.person",related_name="employees", verbose_name=_("person"), on_delete=models.CASCADE)
     organization_unit=models.ForeignKey("organizationunit",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)

@@ -252,6 +252,20 @@ class PersonAccount(Account,LinkHelper):
     person_category=models.ForeignKey("personcategory", verbose_name=_("person_category"), on_delete=models.PROTECT)
     
     
+    @property
+    def thumbnail(self):
+        if self.thumbnail_origin is not None and not self.thumbnail_origin=='':
+            return f"{MEDIA_URL}{self.thumbnail_origin}"
+         
+        if self.thumbnail_origin is None or str(self.thumbnail_origin)=="":
+            if self.person.image_origin is not None and not self.person.image_origin=='':
+                return self.person.image
+            try:
+                return f"{STATIC_URL}{self.app_name}/img/pages/thumbnail/{self.class_name}.png/"
+            except:
+                pass 
+
+
     class_name='personaccount'
     app_name=APP_NAME
 

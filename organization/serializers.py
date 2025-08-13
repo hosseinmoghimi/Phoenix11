@@ -3,10 +3,10 @@ from .models import OrganizationUnit,Employee
 from accounting.serializers import PersonSerializer,FinancialEventSerializer,InvoiceLineSerializer,AccountBriefSerializer
  
 class OrganizationUnitSerializer(FinancialEventSerializer):
-       account=AccountBriefSerializer()
+       person_account=AccountBriefSerializer()
        class Meta:
         model = OrganizationUnit
-        fields = ['id','title','account', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','person_account','thumbnail', 'get_absolute_url','get_edit_url','get_delete_url']
  
  
 class EmployeeSerializer(FinancialEventSerializer):
