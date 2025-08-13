@@ -126,6 +126,7 @@
         posting.done((data) => {
           console.log(data);
           if (data.result === "SUCCEED") {
+            add_invoice_app.title=''
             if (typeof invoices_app != "undefined") {
               invoices_app.invoices.push(data.invoice);
               show_message(add_invoice_app,'موفق',data.message,'success',5000)
