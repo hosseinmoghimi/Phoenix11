@@ -56,6 +56,13 @@ class UnitNameEnum(TextChoices):
 
 
 class OperatingSystemNameEnum(TextChoices):
+    WINDOWS_12='Windows 12',_('Windows 12')
+    WINDOWS_11='Windows 11',_('Windows 11')
+    WINDOWS_10='Windows 10',_('Windows 10')
+    WINDOWS_8_1='Windows 8.1',_('Windows 8.1')
+    WINDOWS_8='Windows 8',_('Windows 8')
+    WINDOWS_7='Windows 7',_('Windows 7')
+    WINDOWS_XP='Windows XP',_('Windows XP')
     WIN_SERVER_2012='Windows Server 2012',_('Windows Server 2012')
     WIN_SERVER_2018='Windows Server 2018',_('Windows Server 2018')
     WIN_SERVER_2020='Windows Server 2020',_('Windows Server 2020')
@@ -66,7 +73,6 @@ class OperatingSystemNameEnum(TextChoices):
     LINUX_UBUNTU_24='Linux Ubuntu 2024',_('Linux Ubuntu 2024')
     ANDROID='ANDROID',_('ANDROID')
     IOS='IOS',_('IOS')
-    Ltr='ltr',_('ltr')
   
 class TextDirectionEnum(TextChoices):
     Rtl='rtl',_('rtl')
