@@ -92,7 +92,7 @@ class ImageHelper:
         return thumbnail
     
 
-     @property
+    @property
     def logo(self):
         logo=""
         if self.logo_origin is None or str(self.logo_origin)=="":
