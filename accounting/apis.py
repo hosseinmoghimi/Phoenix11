@@ -583,6 +583,30 @@ class SelectAccountApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+class EditPersonCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            edit_person_category_form=EditPersonCategoryForm(request.POST)
+            if edit_person_category_form.is_valid():
+                log=333
+                cd=edit_person_category_form.cleaned_data
+                result,message,person_category=PersonCategoryRepo(request=request).edit_person_category(**cd)
+                if result==SUCCEED:
+                    result=SUCCEED
+                    message="موفقیت آمیز"
+                    context['person_category']=PersonCategorySerializer(person_category).data
+                    context['account']=AccountSerializer(person_category.account).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
 
 class SelectPersonAccountApi(APIView):
     def post(self,request,*args, **kwargs):

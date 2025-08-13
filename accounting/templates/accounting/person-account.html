@@ -9,19 +9,16 @@
 <div class="row rtl farsi">
     <div class="col-md-4">
         {% include "accounting/includes/person-account-app/card.html" %}
-    </div>
-    
-    <div class="col-md-4">
-        {% include "accounting/includes/account-app/card.html" %}
-    </div>
-
+    </div> 
     <div class="col-md-4">
         {% include "accounting/includes/account-app/card-full.html" %}
     </div>
 
+    
 
-    <div class="col-md-4">
-        {% include "accounting/includes/person-account-app/category.html" %}
+    <div class="col-md-4"> 
+        {% include "accounting/includes/person-category-app/card.html" %}
+
     </div>
     
 
@@ -63,6 +60,5 @@
 
 
 {% block script %}
-{% include "accounting/includes/person-account-app/script.html" %}  
-
+{% include "accounting/includes/person-account-app/script.html" %}   
 {% endblock script %}

@@ -725,8 +725,25 @@ class PersonCategoryRepo():
             objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(pure_code=pure_code ) )
         return objects.all()
      
+    def edit_person_category(self,*args, **kwargs):
+        result,message,person_category=FAILED,'',None
+        if not self.request.user.has_perm(APP_NAME+".change_personcategory"):
+            message="دسترسی غیر مجاز"
+            return result,message,None
 
-     
+        person_category=self.person_category(person_category_id=kwargs['person_category_id'])
+        account=AccountRepo(request=self.request).account(account_id=kwargs['account_id'])
+        leolog(kwargs=kwargs,person_category=person_category,account=account)
+        if account is None or person_category is None:
+            message="داده های مرتبط پیدا نشد."
+            return result,message,None
+        person_category.account_id=account.id
+        person_category.title=kwargs['title']
+        person_category.code_length=kwargs['code_length']
+        person_category.save()
+        message='با موفقیت اصلاح شد.'
+        return SUCCEED,message,person_category
+
     def delete_all(self,*args,**kwargs):
         result,message=FAILED,''
         if not self.request.user.has_perm(APP_NAME+".delete_personcategory"):
@@ -739,8 +756,8 @@ class PersonCategoryRepo():
         return result,message
 
     def person_category(self,*args, **kwargs):
-        if "person_id" in kwargs and kwargs["person_id"] is not None:
-            return self.objects.filter(pk=kwargs['person_id']).first()
+        if "person_category_id" in kwargs and kwargs["person_category_id"] is not None:
+            return self.objects.filter(pk=kwargs['person_category_id']).first()
         if "pk" in kwargs and kwargs["pk"] is not None:
             return self.objects.filter(pk=kwargs['pk']).first() 
         if "id" in kwargs and kwargs["id"] is not None:

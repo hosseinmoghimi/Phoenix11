@@ -5,6 +5,13 @@ class GetInvoiceLineItemUnitsForm(forms.Form):
     invoice_line_item_id=forms.IntegerField(required=True)
 
 
+class EditPersonCategoryForm(forms.Form):
+    title=forms.CharField(max_length=50, required=True)
+    person_category_id=forms.IntegerField(required=True)
+    account_id=forms.IntegerField(required=True)
+    code_length=forms.IntegerField(required=True)
+
+    
 class EditFinancialEventForm(forms.Form):
     title=forms.CharField(required=True,max_length=100)
     financial_event_id=forms.IntegerField(required=True)

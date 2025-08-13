@@ -1401,6 +1401,13 @@ class PersonAccountView(View):
             raise Http404
         context.update(PersonAccountContext(request=request,person_account=person_account))
          
+
+        person_category=person_account.person_category
+        context['person_category']=person_category
+        person_category_s=json.dumps(PersonCategorySerializer(person_category).data)
+        context['person_category_s']=person_category_s
+
+
         return render(request,TEMPLATE_ROOT+"person-account.html",context)
 
 
@@ -1412,12 +1419,24 @@ class PersonCategoryView(View):
         person_category_s=json.dumps(PersonCategorySerializer(person_category).data)
         context['person_category_s']=person_category_s
 
+
+        person_category_account=person_category.account
+        person_category_account_s=json.dumps(AccountBriefSerializer(person_category_account).data)
+        context['person_category_account']=person_category_account
+        context['person_category_account_s']=person_category_account_s
+        
+        
+
+
         person_accounts=person_category.personaccount_set.all()
 
         context['person_accounts']=person_accounts
         person_accounts_s=json.dumps(PersonAccountSerializer(person_accounts,many=True).data)
         context['person_accounts_s']=person_accounts_s
 
+        if request.user.has_perm(APP_NAME+'.change_personcategory'):
+            context['edit_person_category_form']=EditPersonCategoryForm()
+            
 
 
         if request.user.has_perm(APP_NAME+'.add_personaccount'):
