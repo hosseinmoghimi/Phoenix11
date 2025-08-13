@@ -90,6 +90,21 @@ class ImageHelper:
             thumbnail= f"{MEDIA_URL}{self.thumbnail_origin}"
 
         return thumbnail
+    
+
+     @property
+    def logo(self):
+        logo=""
+        if self.logo_origin is None or str(self.logo_origin)=="":
+            try:
+                logo= f"{STATIC_URL}{self.app_name}/img/pages/logo/{self.class_name}.png/"
+            except:
+                pass
+        else:
+            logo= f"{MEDIA_URL}{self.logo_origin}"
+
+        return logo
+    
 
     @property
     def header(self):
