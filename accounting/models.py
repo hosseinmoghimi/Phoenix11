@@ -371,8 +371,7 @@ class Brand(models.Model,LinkHelper,ImageHelper):
     logo_origin=models.ImageField(_("logo"),blank=True,null=True, upload_to=IMAGE_FOLDER+"account", height_field=None, width_field=None, max_length=None)
     class_name="brand"
     app_name=APP_NAME
-
-
+ 
     class Meta:
         verbose_name = _("برند")
         verbose_name_plural = _("برند ها")
