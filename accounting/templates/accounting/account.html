@@ -3,7 +3,7 @@
 
 {% block content %}
     {% if account.parent %} 
-    <div class="rtl my-2">{{account.parent.get_breadcrumb|safe}}</div>
+    <div class="rtl my-2">{{account.get_breadcrumb|safe}}</div>
     {% endif %} 
 
 <div class="row rtl farsi">
