@@ -12,7 +12,7 @@ from utility.constants import FAILED,SUCCEED
 from utility.log import leolog
 from .enums import *
  
-
+ 
 
 class ProjectRepo():
     def __init__(self,request,*args, **kwargs):
@@ -51,7 +51,12 @@ class ProjectRepo():
             return result,message,project
         project=Project()
         if 'title' in kwargs:
-            project.title=kwargs["title"]
+            title=kwargs["title"]
+            if len(Project.objects.filter(title=title))>0:
+                message='نام تکررای برای پروژه جدید'
+                return FAILED,message,None
+            project.title=title
+
         if 'parent_id' in kwargs:
             if kwargs["parent_id"]>0:
                 project.parent_id=kwargs["parent_id"]

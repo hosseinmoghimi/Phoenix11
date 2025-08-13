@@ -10,6 +10,7 @@
             projects: projects,
             waiting: false,
             show_detail: false,
+            message:{show:false},
         },
         methods: {
             to_price: function (value) {
@@ -32,6 +33,9 @@
 
                         sub_projects_app.projects.push(data.project)
                         sub_projects_app.new_project_title = ""
+                    }
+                    else{
+                        show_message(sub_projects_app,'خطا',data.message,'danger',3000)
                     }
                 })
             },
