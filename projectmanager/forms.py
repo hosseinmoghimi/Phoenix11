@@ -1,5 +1,6 @@
 from accounting.forms import AddProductForm,forms,AddInvoiceForm
 from core.forms import EditPageForm
+
 class AddSubProjectForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)
     parent_id=forms.IntegerField(required=True)
@@ -15,6 +16,13 @@ class AddProjectForm(forms.Form):
     end_datetime=forms.CharField(max_length=50,required=False)
     type=forms.CharField(max_length=50,required=False)
     weight=forms.IntegerField(required=False)
+
+
+class AddInvoiceToProjectForm(forms.Form):
+    invoice_id=forms.IntegerField(required=True)
+    project_id=forms.IntegerField(required=True)
+     
+ 
 
 class EditProjectForm(EditPageForm):
     project_id=forms.IntegerField(required=True)

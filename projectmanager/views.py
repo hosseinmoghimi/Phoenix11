@@ -110,6 +110,16 @@ class ProjectView(View):
         if request.user.has_perm(APP_NAME+".add_invoice"):
             context.update(AddInvoiceContext(request=request))
 
+
+            
+
+        context['WIDE_LAYOUT']=True
+        if request.user.has_perm(APP_NAME+".change_project"):
+            context['add_invoice_to_project_form']=AddInvoiceToProjectForm()
+
+
+            
+
  
         
         remote_clients = project.remote_clients.all()

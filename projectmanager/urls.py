@@ -6,6 +6,7 @@ app_name=APP_NAME
 urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),  
+    path('add_invoice_to_project/',login_required(apis.AddInvoiceToProjectApi.as_view()),name="add_invoice_to_project"), 
 
     path('project/add/sub/',login_required(apis.AddSubProjectApi.as_view()),name="add_sub_project"),  
     path('project/add/',login_required(apis.AddProjectApi.as_view()),name="add_project"),  

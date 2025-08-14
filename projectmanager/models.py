@@ -86,6 +86,8 @@ class Project(Event,LinkHelper,DateHelper):
         return InvoiceLine.objects.filter(invoice_id__in=invoice_ids)
     def get_status_color(self):
         return StatusColor(self)
+
+
 class Request(InvoiceLine):
     ware_house=models.ForeignKey("warehouse.warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
 

@@ -56,6 +56,12 @@
       <div class="col-md-12">
         {% include "core/includes/page-related-app/template.html" %}
       </div>
+      {% if add_invoice_to_project_form %}
+      <div class="col-md-12">
+          {% include "projectmanager/includes/add-invoice-to-project-app/template.html" %}
+
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>
@@ -65,5 +71,8 @@
   let project_id = parseInt("{{project.id}} ");
   let project = "{{project_s|escapejs}} ";
 </script>
+{% if add_invoice_to_project_form %}
+          {% include "projectmanager/includes/add-invoice-to-project-app/script.html" %}
 
+      {% endif %}
 {% include "projectmanager/includes/project-app/script.html" %} {% endblock script %}

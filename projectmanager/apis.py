@@ -123,3 +123,24 @@ class AddSubProjectApi(APIView):
         context['log']=log
         return JsonResponse(context)
  
+class AddInvoiceToProjectApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_invoice_to_project_form=AddInvoiceToProjectForm(request.POST)
+        if add_invoice_to_project_form.is_valid():
+            log=333
+            cd=add_invoice_to_project_form.cleaned_data
+            result,message,invoice=ProjectRepo(request=request).add_invoice_to_project(**cd)
+            if result==SUCCEED:
+                context['invoice']=InvoiceSerializer(invoice).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 

@@ -147,6 +147,23 @@ class ProjectRepo():
 
 
 
+    def add_invoice_to_project(self,*args,**kwargs):
+        result,message,invoice=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_invoice"):
+            message="دسترسی غیر مجاز"
+            return result,message,invoice
+        from accounting.repo import InvoiceRepo
+        invoice=InvoiceRepo(request=self.request).invoice(*args, **kwargs)
+        project=self.project(*args, **kwargs)
+        if project is None or invoice is None:
+            message='داده های مرتبط یافت نشد.'
+            return FAILED,message,None
+        project.invoices.add(invoice.id) 
+        result=SUCCEED
+        message='با موفقیت اضافه شد.'
+        return result,message,invoice
+
+
 
     def edit_project(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+".change_project"):
