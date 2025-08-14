@@ -28,6 +28,7 @@ urlpatterns = [
     path('bms/', include('bms.urls')),
     path('resume/', include('resume.urls')),
     path('tax/', include('tax.urls')),
+    path('blog/', include('blog.urls')),
     
     
     

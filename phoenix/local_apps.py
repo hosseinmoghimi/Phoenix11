@@ -19,5 +19,6 @@ phoenix_apps=[
     {'priority':11,'name':'bms','url':SITE_URL+'bms/','title':'هوشمند سازی','logo':STATIC_URL+'bms'+'/img/'+'logo.png','color':'info',},
     {'priority':4,'name':'resume','url':SITE_URL+'resume/','title':'رزومه','logo':STATIC_URL+'resume'+'/img/'+'logo.png','color':'success',},
     {'priority':4,'name':'tax','url':SITE_URL+'tax/','title':'مالیات','logo':STATIC_URL+'tax'+'/img/'+'logo.png','color':'warning',},
+    {'priority':12,'name':'blog','url':SITE_URL+'blog/','title':'بلاگ','logo':STATIC_URL+'blog'+'/img/'+'logo.png','color':'warning',},
 
 ]

@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'bms',
     'resume',
     'tax',
+    'blog',
 ]
  
 
