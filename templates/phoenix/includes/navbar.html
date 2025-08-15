@@ -31,13 +31,16 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           {% for phoenix_app in phoenix_apps %}
+          {% if phoenix_app.on_nav %}
+            
           <a class="dropdown-item" style="text-align: right;" href="{{phoenix_app.url}}">
             <img src="{{phoenix_app.logo}}" width="24" alt="">
             <span class="mr-2">
               {{phoenix_app.title}}
-
+              
             </span>
           </a>
+          {% endif %}
           {% endfor %}
 
           <div class="dropdown-divider"></div>
