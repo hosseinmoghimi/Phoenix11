@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import CourseRepo,SchoolRepo,CourseClassRepo
-from .serializers import CourseClassSerializer,SchoolSerializer,CourseSerializer,TeacherSerializer,StudentSerializer
+from .repo import CourseRepo,SchoolRepo,CourseClassRepo,TeacherRepo,StudentRepo,MajorRepo
+from .serializers import CourseClassSerializer,SchoolSerializer,CourseSerializer,TeacherSerializer,StudentSerializer,MajorSerializer
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
@@ -24,7 +24,10 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 
- 
+def AddCourseClassContext(request,*args, **kwargs):
+    context={}
+    context['add_course_class_form']=AddCourseClassForm()
+    return context
  
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -36,10 +39,65 @@ class IndexView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
-# Create your views here. 
 
+def AddTeacherContext(request):
+    context={}
+    context['add_teacher_form']=AddTeacherForm()
+    return context
+
+def AddMajorContext(request):
+    context={}
+    context['add_major_form']=AddMajorForm()
+    return context
+
+class TeachersView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        teachers=TeacherRepo(request=request).list(*args, **kwargs)
+        context["teachers"]=teachers
+        teachers_s=json.dumps(TeacherSerializer(teachers,many=True).data)
+        context["teachers_s"]=teachers_s
+        if request.user.has_perm(APP_NAME+'.add_teacher'):
+            context.update(AddTeacherContext(request=request))
+        return render(request,TEMPLATE_ROOT+"teachers.html",context)
+# Create your views here. 
+   
+class StudentsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        students=StudentRepo(request=request).list(*args, **kwargs)
+        context["students"]=students
+        students_s=json.dumps(StudentSerializer(students,many=True).data)
+        context["students_s"]=students_s
+        if request.user.has_perm(APP_NAME+'.add_student'):
+            context['add_student_form']=AddStudentForm()
+        return render(request,TEMPLATE_ROOT+"students.html",context)
+# Create your views here. 
+   
  
  
+class StudentView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        student=StudentRepo(request=request).student(*args, **kwargs)
+        context["student"]=student
+        student_s=json.dumps(StudentSerializer(student,many=False).data)
+        context["student_s"]=student_s
+
+        return render(request,TEMPLATE_ROOT+"student.html",context)
+ 
+ 
+class TeacherView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        teacher=TeacherRepo(request=request).teacher(*args, **kwargs)
+        context["teacher"]=teacher
+        teacher_s=json.dumps(TeacherSerializer(teacher,many=False).data)
+        context["teacher_s"]=teacher_s
+
+        return render(request,TEMPLATE_ROOT+"teacher.html",context)
 class SchoolsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -95,15 +153,47 @@ class CourseView(View):
 
 
 
+
+class MajorView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        major=MajorRepo(request=request).major(*args, **kwargs)
+        context["major"]=major
+        major_s=json.dumps(MajorSerializer(major,many=False).data)
+        context["major_s"]=major_s
+
+        return render(request,TEMPLATE_ROOT+"major.html",context)
+# Create your views here. 
+
+
+
+
 class CourseClassesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        course_classs=CourseClassRepo(request=request).list(*args, **kwargs)
-        context["course_classs"]=course_classs
-        course_classs_s=json.dumps(CourseClassSerializer(course_classs,many=True).data)
-        context["course_classs_s"]=course_classs_s
-
+        course_classes=CourseClassRepo(request=request).list(*args, **kwargs)
+        context["course_classes"]=course_classes
+        course_classes_s=json.dumps(CourseClassSerializer(course_classes,many=True).data)
+        context["course_classes_s"]=course_classes_s
+        if request.user.has_perm(APP_NAME+'.add_courseclass'):
+            context.update(AddCourseClassContext(request=request))
         return render(request,TEMPLATE_ROOT+"course-classes.html",context)
+# Create your views here. 
+   
+
+
+   
+class MajorsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        majors=MajorRepo(request=request).list(*args, **kwargs)
+        context["majors"]=majors
+        majors_s=json.dumps(MajorSerializer(majors,many=True).data)
+        context["majors_s"]=majors_s
+        if request.user.has_perm(APP_NAME+'.add_major'):
+            context.update(AddMajorContext(request=request))
+        return render(request,TEMPLATE_ROOT+"majors.html",context)
 # Create your views here. 
    
  

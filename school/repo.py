@@ -1,4 +1,4 @@
-from .models import School,Course,CourseClass
+from .models import School,Course,CourseClass,Teacher,Student,Major
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo 
@@ -63,6 +63,164 @@ class SchoolRepo():
           
         (result,message,school)=school.save()
         return result,message,school
+
+ 
+
+class StudentRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=Student.objects.filter(id=0)
+        profile=PersonRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_account"):
+                self.objects=Student.objects
+                self.my_accounts=self.objects 
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.all()
+        
+    def student(self,*args, **kwargs):
+        if "student_id" in kwargs and kwargs["student_id"] is not None:
+            return self.objects.filter(pk=kwargs['student_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_student(self,*args,**kwargs):
+        result,message,student=FAILED,"",None
+        if len(Student.objects.filter(name=kwargs["name"]))>0:
+            message='نام تکراری برای آموزشگاه جدید'
+            return FAILED,message,None
+        if len(Student.objects.filter(person_account_id=kwargs["person_account_id"]))>0:
+            message='حساب تکراری برای آموزشگاه جدید'
+            return FAILED,message,None
+        if not self.request.user.has_perm(APP_NAME+".add_student"):
+            message="دسترسی غیر مجاز"
+            return result,message,student
+
+        student=Student() 
+        if 'person_account_id' in kwargs:
+            student.person_account_id=kwargs["person_account_id"]
+        if 'name' in kwargs:
+            student.name=kwargs["name"]
+          
+        (result,message,student)=student.save()
+        return result,message,student
+
+ 
+ 
+class TeacherRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=Teacher.objects.filter(id=0)
+        profile=PersonRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_account"):
+                self.objects=Teacher.objects
+                self.my_accounts=self.objects 
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.all()
+        
+    def teacher(self,*args, **kwargs):
+        if "teacher_id" in kwargs and kwargs["teacher_id"] is not None:
+            return self.objects.filter(pk=kwargs['teacher_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_teacher(self,*args,**kwargs):
+        result,message,teacher=FAILED,"",None
+        if len(Teacher.objects.filter(person_account_id=kwargs["person_account_id"]))>0:
+            message='نام تکراری برای آموزشگاه جدید'
+            return FAILED,message,None
+        if len(Teacher.objects.filter(person_account_id=kwargs["person_account_id"]))>0:
+            message='حساب تکراری برای آموزشگاه جدید'
+            return FAILED,message,None
+        if not self.request.user.has_perm(APP_NAME+".add_teacher"):
+            message="دسترسی غیر مجاز"
+            return result,message,teacher
+
+        teacher=Teacher() 
+        if 'person_account_id' in kwargs:
+            teacher.person_account_id=kwargs["person_account_id"]
+        if 'name' in kwargs:
+            teacher.name=kwargs["name"]
+          
+        (result,message,teacher)=teacher.save()
+        return result,message,teacher
+
+ 
+
+
+ 
+class MajorRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=Major.objects.filter(id=0)
+        profile=PersonRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_account"):
+                self.objects=Major.objects
+                self.my_accounts=self.objects 
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.all()
+        
+    def major(self,*args, **kwargs):
+        if "major_id" in kwargs and kwargs["major_id"] is not None:
+            return self.objects.filter(pk=kwargs['major_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_major(self,*args,**kwargs):
+        result,message,major=FAILED,"",None
+        if len(Major.objects.filter(title=kwargs["title"]))>0:
+            message='نام تکراری برای رشته جدید'
+            return FAILED,message,None
+      
+        if not self.request.user.has_perm(APP_NAME+".add_major"):
+            message="دسترسی غیر مجاز"
+            return result,message,major
+
+        major=Major() 
+        if 'title' in kwargs:
+            major.title=kwargs["title"]
+        
+          
+        (result,message,major)=major.save()
+        return result,message,major
 
  
 class CourseRepo():

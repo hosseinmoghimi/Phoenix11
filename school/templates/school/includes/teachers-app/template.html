@@ -29,29 +29,28 @@
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
-               
               <th>مربی</th>
-             
- 
-              <th>
 
-              </th>
+              <th>حساب شخص</th>
+              <th></th>
             </thead>
             <tbody>
               <tr v-for="teacher in teachers">
-                
                 <td>
                   <a :href="teacher.get_absolute_url">
-                    <span v-text="teacher.person.full_name"></span>
+                    <span
+                      v-text="teacher.person_account.person.full_name"
+                    ></span>
                   </a>
-
-                  
-
- 
                 </td>
 
-                 
                 <td>
+                  <div v-for="person_account in [teacher.person_account]">
+                    {% include "accounting/includes/person-account-app/media.html" %}
+                  </div>
+                </td>
+                <td>
+                  {% if perms.school.change_teacher %}
                   <a
                     target="_blank"
                     :href="teacher.get_edit_url"
@@ -61,6 +60,7 @@
                     <i class="fa fa-edit text-warning"> </i>
                     ویرایش
                   </a>
+                  {% endif %} {% if perms.school.delete_teacher %}
                   <a
                     target="_blank"
                     :href="teacher.get_delete_url"
@@ -70,6 +70,7 @@
                     <i class="fa fa-trash text-danger"> </i>
                     حذف
                   </a>
+                  {% endif %}
                 </td>
               </tr>
             </tbody>

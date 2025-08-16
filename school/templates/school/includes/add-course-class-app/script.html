@@ -1,0 +1,36 @@
+{% include "accounting/includes/account-app/select-script.html" %}
+<script>
+  let add_student_app = new Vue({
+    el: "#add-student-app",
+    data: {
+    title: "", 
+    },
+
+    components: {
+      DatePicker: VuePersianDatetimePicker,
+    },
+    methods: {
+      
+ 
+      add_student: function () {
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          title: this.title, 
+        };
+
+        console.log(payload);
+        let url = "{% url 'school:add_student' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            add_student_app.title=''
+            if (typeof students_app != "undefined") {
+              students_app.students.push(data.student);
+            }
+          }
+        });
+      },
+    },
+  });
+</script>

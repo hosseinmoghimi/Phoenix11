@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import SchoolRepo,CourseRepo,CourseClassRepo
-from .serializers import SchoolSerializer,CourseSerializer,CourseClassSerializer
+from .repo import SchoolRepo,CourseRepo,CourseClassRepo,TeacherRepo,StudentRepo,MajorRepo
+from .serializers import SchoolSerializer,CourseSerializer,CourseClassSerializer,TeacherSerializer,StudentSerializer,MajorSerializer
  
 from django.http import JsonResponse
 from .forms import *
@@ -27,6 +27,73 @@ class AddSchoolApi(APIView):
             result,message,school=SchoolRepo(request=request).add_school(**cd)
             if school is not None:
                 context['school']=SchoolSerializer(school).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+ 
+ 
+class AddTeacherApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_teacher_form=AddTeacherForm(request.POST)
+        if add_teacher_form.is_valid():
+            log=333
+            cd=add_teacher_form.cleaned_data
+            result,message,teacher=TeacherRepo(request=request).add_teacher(**cd)
+            if teacher is not None:
+                context['teacher']=TeacherSerializer(teacher).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+ 
+
+class AddMajorApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_major_form=AddMajorForm(request.POST)
+        if add_major_form.is_valid():
+            log=333
+            cd=add_major_form.cleaned_data
+            result,message,major=MajorRepo(request=request).add_major(**cd)
+            if major is not None:
+                context['major']=MajorSerializer(major).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
+class AddStudentApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_student_form=AddStudentForm(request.POST)
+        if add_student_form.is_valid():
+            log=333
+            cd=add_student_form.cleaned_data
+            result,message,student=StudentRepo(request=request).add_student(**cd)
+            if student is not None:
+                context['student']=StudentSerializer(student).data
         context['message']=message
         context['result']=result
         context['log']=log

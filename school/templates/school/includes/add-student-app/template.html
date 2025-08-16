@@ -1,0 +1,42 @@
+<div id="accordion-add-student" class="rtl text-right farsi">
+  <div class="card" id="add-student-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-add-student"
+          aria-expanded="true"
+          aria-controls="collapse-add-student"
+        >
+          افزودن دانش آموز
+        </button>
+      </h5>
+    </div>
+    <div
+      id="collapse-add-student"
+      class="collapse "
+      aria-labelledby="heading-add-student"
+      data-parent="#accordion-add-student"
+    >
+      <div class="card-body">
+        <form @submit.prevent="add_student()">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">عنوان</label>
+                <input v-model="title" type="text" class="form-control" />
+              </div>
+            </div>
+            <div class="col-md-12">
+              <button class="btn btn-success" type="submit">
+                <i class="fa fa-plus"></i>
+                افزودن
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -4,7 +4,30 @@
     <div class="card">
       <div class="card-body">
         <h5>{{course_class}}</h5>
+        <h6>
+          <small class="text-muted"> آموزشگاه </small>
+          <a href="{{course_class.school.get_absolute_url}}">
+            {{course_class.school.name}}
+          </a>
+        </h6>
 
+        <h6>
+          <small class="text-muted"> واحد درسی </small>
+          <a href="{{course_class.course.get_absolute_url}}">
+            {{course_class.course.title}}
+          </a>
+        </h6>
+
+        <h6>
+          <small class="text-muted"> پایه </small>
+          {{course_class.level}}
+        </h6>
+
+        
+        <h6>
+          <small class="text-muted"> اتاق </small>
+          {{course_class.room}}
+        </h6>
         {% if perms.school.change_course_class %}
         <a
           href="{{course_class.get_edit_url}}"
@@ -33,10 +56,10 @@
 
   <div class="col-md-12">
     {% include "school/includes/teachers-app/template.html" %}
-   </div>
+  </div>
 
   <div class="col-md-12">
-       {% include "school/includes/students-app/template.html" %}
+    {% include "school/includes/students-app/template.html" %}
   </div>
 </div>
 {% endblock content %} {% block script %}
@@ -45,7 +68,4 @@
   console.log("name2: {{name2}}");
   console.log("name3: {{name3}}");
 </script>
-    {% include "school/includes/teachers-app/script.html" %}
-    {% include "school/includes/students-app/script.html" %}
-
-{% endblock script %}
+{% include "school/includes/teachers-app/script.html" %} {% include "school/includes/students-app/script.html" %} {% endblock script %}
