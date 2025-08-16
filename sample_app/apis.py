@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import SampleRepo
-from .serializers import SampleSerializer
+from .repo import SampleClassRepo
+from .serializers import SampleClassSerializer
  
 from django.http import JsonResponse
 from .forms import *
@@ -26,7 +26,7 @@ class AddSampleClassApi(APIView):
             cd=add_sample_class_form.cleaned_data
             result,message,sample_class=SampleClassRepo(request=request).add_sample_class(**cd)
             if result==SUCCEED:
-                context['sample_class']=SampleSerializer(sample_class).data
+                context['sample_class']=SampleClassSerializer(sample_class).data
         context['message']=message
         context['result']=result
         context['log']=log

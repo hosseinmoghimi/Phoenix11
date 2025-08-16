@@ -22,9 +22,9 @@ class SampleClass(models.Model):
   
 
     def save(self):
-         (result,message,sample_class)=FAILED,'',self
-         super(SampleClass,self).save()
-         result=SUCCEED
-         message='کلاس نمونه با موفقیت اضافه شد.'
-         return  (result,message,sample_class)
+        (result,message,sample_class)=FAILED,'',self
+        super(SampleClass,self).save()
+        result=SUCCEED
+        message='کلاس نمونه با موفقیت اضافه شد.'
+        return  (result,message,sample_class)
  

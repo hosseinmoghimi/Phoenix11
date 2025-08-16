@@ -8,9 +8,9 @@ urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),  
 
-    path('sample_classs/',login_required(views.sample_classsView.as_view()),name="sample_classs"),  
-    path('add-sample_class/',login_required(apis.Addsample_classApi.as_view()),name="add_sample_class"),
-    path('sample_class/<int:pk>/',login_required(views.sample_classView.as_view()),name="sample_class"), 
+    path('sample_classes/',login_required(views.SampleClassesView.as_view()),name="sample_classes"),  
+    path('add-sample_class/',login_required(apis.AddSampleClassApi.as_view()),name="add_sample_class"),
+    path('sample_class/<int:pk>/',login_required(views.SampleClassView.as_view()),name="sample_class"), 
 
 
      

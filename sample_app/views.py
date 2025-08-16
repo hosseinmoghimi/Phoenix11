@@ -13,7 +13,7 @@ from utility.enums import UnitNameEnum
 from utility.log import leolog
 from accounting.views import AddInvoiceLineContext,InvoiceContext,ProductContext
 LAYOUT_PARENT='phoenix/layout.html'
-TEMPLATE_ROOT='sample_class/'
+TEMPLATE_ROOT='sample_app/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
@@ -40,16 +40,16 @@ class IndexView(View):
 
  
  
-class SampleClasssView(View):
+class SampleClassesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        sample_classs=SampleClassRepo(request=request).list(*args, **kwargs)
-        context["sample_classs"]=sample_classs
-        sample_classs_s=json.dumps(SampleClassSerializer(sample_classs,many=True).data)
-        context["sample_classs_s"]=sample_classs_s
+        sample_classes=SampleClassRepo(request=request).list(*args, **kwargs)
+        context["sample_classes"]=sample_classes
+        sample_classes_s=json.dumps(SampleClassSerializer(sample_classes,many=True).data)
+        context["sample_classes_s"]=sample_classes_s
         if request.user.has_perm(APP_NAME+'.add_sample_class'):
             context['add_sample_class_form']=AddSampleClassForm()
-        return render(request,TEMPLATE_ROOT+"sample_classs.html",context)
+        return render(request,TEMPLATE_ROOT+"sample_classes.html",context)
 # Create your views here. 
    
  

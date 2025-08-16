@@ -1,7 +1,7 @@
 {% include "accounting/includes/account-app/select-script.html" %}
 <script>
-  let add_course_app = new Vue({
-    el: "#add-course-app",
+  let add_sample_class_app = new Vue({
+    el: "#add-sample-class-app",
     data: {
     title: "", 
     },
@@ -12,21 +12,21 @@
     methods: {
       
  
-      add_course: function () {
+      add_sample_class: function () {
         let payload = {
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           title: this.title, 
         };
 
         console.log(payload);
-        let url = "{% url 'school:add_course' %}";
+        let url = "{% url 'sample_app:add_sample_class' %}";
         let posting = $.post(url, payload);
         posting.done((data) => {
           console.log(data);
           if (data.result === "SUCCEED") {
-            add_course_app.title=''
-            if (typeof courses_app != "undefined") {
-              courses_app.courses.push(data.course);
+            add_sample_class_app.title=''
+            if (typeof sample_classes_app != "undefined") {
+              sample_classes_app.sample_classs.push(data.sample_class);
             }
           }
         });
