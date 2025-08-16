@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 
 
-APP_NAME = 'tax'
+APP_NAME = 'sample_app'
 class SampleConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'tax'
+    name = 'sample_app'

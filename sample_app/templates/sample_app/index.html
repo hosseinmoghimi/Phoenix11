@@ -1,12 +1,12 @@
-{% extends "sample/layout.html" %}
+{% extends "sample_app/layout.html" %}
 {% load static %}
 
 {% block content %}
 <div class="row rtl farsi">
   <div class="col-6 col-md-3 col-lg-2 text-center my-3">
-    <a href="{% url 'sample:taxes' %}">
+    <a href="{% url 'sample_app:taxes' %}">
       <img
-        src="{% static 'sample/img/logo.png' %}"
+        src="{% static 'sample_app/img/logo.png' %}"
         width="64em"
         class="mb-2"
         alt=""

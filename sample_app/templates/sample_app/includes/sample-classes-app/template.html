@@ -1,18 +1,18 @@
-<div id="accordion-teachers" class="rtl text-right farsi">
-  <div class="card" id="teachers-app">
+<div id="accordion-sample-classes" class="rtl text-right farsi">
+  <div class="card" id="sample_classes-app">
     <div class="card-header">
       <h5 class="text-center">
         <button
           class="btn btn-link"
           data-toggle="collapse"
-          data-target="#collapse-teachers"
+          data-target="#collapse-sample-classes"
           aria-expanded="true"
-          aria-controls="collapse-teachers"
+          aria-controls="collapse-sample-classes"
         >
-          مربی ها
-          <span v-if="teachers.length>0">
+          کلاس های نمونه
+          <span v-if="sample_classes.length>0">
             <small class="text-danger mx-2">
-              <span v-text="teachers.length"></span>
+              <span v-text="sample_classes.length"></span>
             </small>
           </span>
         </button>
@@ -20,56 +20,49 @@
     </div>
 
     <div
-      id="collapse-teachers"
-      class="collapse {% if expand_teachers %} show {% endif %}"
-      aria-labelledby="heading-teachers"
-      data-parent="#accordion-teachers"
+      id="collapse-sample-classes"
+      class="collapse {% if expand_sample_classes %} show {% endif %}"
+      aria-labelledby="heading-sample-classes"
+      data-parent="#accordion-sample-classes"
     >
       <div class="card-body">
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
-               
-              <th>مربی</th>
-             
- 
-              <th>
+              <th>کلاس نمونه</th>
 
-              </th>
+              <th></th>
             </thead>
             <tbody>
-              <tr v-for="teacher in teachers">
-                
+              <tr v-for="sample_class in sample_classes">
                 <td>
-                  <a :href="teacher.get_absolute_url">
-                    <span v-text="teacher.person.full_name"></span>
+                  <a :href="sample_class.get_absolute_url">
+                    <span v-text="sample_class.person.full_name"></span>
                   </a>
-
-                  
-
- 
                 </td>
 
-                 
                 <td>
+                  {% if perms.sample_app.change_sampleclass %}
                   <a
                     target="_blank"
-                    :href="teacher.get_edit_url"
+                    :href="sample_class.get_edit_url"
                     title="ویرایش"
                     class="text-warning mx-2"
                   >
                     <i class="fa fa-edit text-warning"> </i>
                     ویرایش
                   </a>
+                  {% endif %} {% if perms.sample_app.delete_sampleclass %}
                   <a
                     target="_blank"
-                    :href="teacher.get_delete_url"
+                    :href="sample_class.get_delete_url"
                     title="حذف"
                     class="text-danger mx-2"
                   >
                     <i class="fa fa-trash text-danger"> </i>
                     حذف
                   </a>
+                  {% endif %}
                 </td>
               </tr>
             </tbody>

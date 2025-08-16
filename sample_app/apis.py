@@ -11,7 +11,7 @@ from django.http import JsonResponse
 from .forms import *
    
  
-class AddSampleApi(APIView):
+class AddSampleClassApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         result=FAILED
@@ -20,13 +20,13 @@ class AddSampleApi(APIView):
         context['result']=FAILED 
         log=222
         message="پارامتر های ورودی صحیح نمی باشند."
-        add_school_form=AddSampleForm(request.POST)
-        if add_school_form.is_valid():
+        add_sample_class_form=AddSampleClassForm(request.POST)
+        if add_sample_class_form.is_valid():
             log=333
-            cd=add_school_form.cleaned_data
-            result,message,school=SampleRepo(request=request).add_school(**cd)
-            if school is not None:
-                context['school']=SampleSerializer(school).data
+            cd=add_sample_class_form.cleaned_data
+            result,message,sample_class=SampleClassRepo(request=request).add_sample_class(**cd)
+            if result==SUCCEED:
+                context['sample_class']=SampleSerializer(sample_class).data
         context['message']=message
         context['result']=result
         context['log']=log

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import SampleRepo
-from .serializers import SampleSerializer
+from .repo import SampleClassRepo
+from .serializers import SampleClassSerializer
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
@@ -13,7 +13,7 @@ from utility.enums import UnitNameEnum
 from utility.log import leolog
 from accounting.views import AddInvoiceLineContext,InvoiceContext,ProductContext
 LAYOUT_PARENT='phoenix/layout.html'
-TEMPLATE_ROOT='sample/'
+TEMPLATE_ROOT='sample_class/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
@@ -40,29 +40,29 @@ class IndexView(View):
 
  
  
-class SamplesView(View):
+class SampleClasssView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        samples=SampleRepo(request=request).list(*args, **kwargs)
-        context["samples"]=samples
-        samples_s=json.dumps(SampleSerializer(samples,many=True).data)
-        context["samples_s"]=samples_s
-        if request.user.has_perm(APP_NAME+'.add_sample'):
-            context['add_sample_form']=AddSampleForm()
-        return render(request,TEMPLATE_ROOT+"samples.html",context)
+        sample_classs=SampleClassRepo(request=request).list(*args, **kwargs)
+        context["sample_classs"]=sample_classs
+        sample_classs_s=json.dumps(SampleClassSerializer(sample_classs,many=True).data)
+        context["sample_classs_s"]=sample_classs_s
+        if request.user.has_perm(APP_NAME+'.add_sample_class'):
+            context['add_sample_class_form']=AddSampleClassForm()
+        return render(request,TEMPLATE_ROOT+"sample_classs.html",context)
 # Create your views here. 
    
  
-class SampleView(View):
+class SampleClassView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context['name3']="name 3333"
-        sample=SampleRepo(request=request).sample(*args, **kwargs)
-        context["sample"]=sample
-        sample_s=json.dumps(SampleSerializer(sample,many=False).data)
-        context["sample_s"]=sample_s
+        sample_class=SampleClassRepo(request=request).sample_class(*args, **kwargs)
+        context["sample_class"]=sample_class
+        sample_class_s=json.dumps(SampleClassSerializer(sample_class,many=False).data)
+        context["sample_class_s"]=sample_class_s
 
-        return render(request,TEMPLATE_ROOT+"sample.html",context)
+        return render(request,TEMPLATE_ROOT+"sample_class.html",context)
 # Create your views here. 
 
 

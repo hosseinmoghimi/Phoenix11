@@ -1,0 +1,15 @@
+<script>
+    
+    let sample_classs_for_sample_classs_app=JSON.parse("{{sample_classs_s|escapejs}}")
+    let sample_classs_app = new Vue({
+        el: "#sample-classes-app",
+        data: {
+            sample_classs: sample_classs_for_sample_classs_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>
