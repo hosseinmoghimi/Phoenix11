@@ -37,11 +37,34 @@ class PersonAccountHelper:
             economic_no=person_account.person.economic_no
         return economic_no
     
+    @property
+    def person(self):
+        pa= PersonAccount.objects.filter(pk=self.pk).first()
+        if pa is not None:
+            return pa.person
+        
     
     @property
     def melli_id(self):
         return self.melli_code
     
+    @property 
+    def thumbnail(self):
+         
+        thumbnail=""
+        if self.thumbnail_origin is None or str(self.thumbnail_origin)=="":
+            try:
+                person_account=PersonAccount.objects.filter(pk=self.pk).first()
+                if person_account is not None:
+                    person=person_account.person
+                    if person.image_origin is None or str(person.image_origin)=="":
+                        return person.image
+            except:
+                pass
+        else:
+            thumbnail= f"{MEDIA_URL}{self.thumbnail_origin}"
+
+        return thumbnail
     @property
     def melli_code(self):
         melli_code=''
@@ -86,8 +109,8 @@ class Account(CorePage,LinkHelper,PersonAccountHelper):
     bedehkar=models.IntegerField(_("bedehkar"),default=0)
     bestankar=models.IntegerField(_("bestankar"),default=0)
     balance=models.IntegerField("balance",default=0)
-
-    @property
+    
+ 
     def balance_color(self):
         if self.balance==0:
             return 'primary'
@@ -95,14 +118,8 @@ class Account(CorePage,LinkHelper,PersonAccountHelper):
             return 'success'
         if self.balance<0:
             return 'danger'
-    @property
-    def logo2222(self):
-        return self.thumbnail 
-    
-    @property
-    def thumbnail222(self):
-        if self.thumbnail_origin is None or self.thumbnail_origin=='':
-            return self.person.image
+ 
+     
     
     @property
     def name(self):
@@ -195,12 +212,6 @@ class Account(CorePage,LinkHelper,PersonAccountHelper):
                 ids.append(id)
         return ids
 
-    @property
-    def person(self):
-        pa= PersonAccount.objects.filter(pk=self.pk).first()
-        if pa is not None:
-            return pa.person
-        
         
 
     def normalize(self):

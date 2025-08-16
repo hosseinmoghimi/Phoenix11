@@ -80,6 +80,7 @@ class ImageHelper:
         return image
     @property
     def thumbnail(self):
+         
         thumbnail=""
         if self.thumbnail_origin is None or str(self.thumbnail_origin)=="":
             try:

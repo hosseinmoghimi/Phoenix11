@@ -34,7 +34,6 @@ class Page(models.Model,LinkHelper,ImageHelper):
     locations=models.ManyToManyField("attachments.location", blank=True,verbose_name=_("locations"))
     def get_status_color(self):
         return StatusColor(self)
-       
     def get_breadcrumb_link(self):
         aaa=f"""
                     <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">
