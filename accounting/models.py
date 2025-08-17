@@ -628,7 +628,25 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     default=models.BooleanField(_("default"),default=False)
     class_name="invoicelineitemunit"
     app_name=APP_NAME
+
     
+    def percentage_tag(self):
+        base=InvoiceLineItemUnit.objects.filter(invoice_line_item_id=self.invoice_line_item_id).filter(coef=1).first()
+        if base is not None:
+            base_price=base.unit_price
+            color='primary'
+            perc=(base_price-(self.unit_price/self.coef))/base_price*100
+            perc=int(perc*10)/10.0
+            if base_price>(self.unit_price/self.coef):
+                color='success'
+
+            if base_price<(self.unit_price/self.coef):
+                color='danger'
+                perc=0-perc
+            if perc==0:
+                return ""
+            return f"""<span class='text-{color}'>{perc} %</span>"""
+        return ""
     class Meta:
         verbose_name = _("InvoiceLineItemUnit")
         verbose_name_plural = _("واحد های قابل فروش")

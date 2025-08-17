@@ -112,7 +112,7 @@ class InvoiceLineItemUnitSerializer(serializers.ModelSerializer):
     invoice_line_item=InvoiceLineItemSerializer()
     class Meta:
         model = InvoiceLineItemUnit
-        fields = ['id','unit_name','default','unit_price','coef','invoice_line_item','persian_date_added', 'get_edit_url','get_delete_url']
+        fields = ['id','unit_name','percentage_tag','default','unit_price','coef','invoice_line_item','persian_date_added', 'get_edit_url','get_delete_url']
  
 
 class InvoiceLineItemUnitBriefSerializer(serializers.ModelSerializer):

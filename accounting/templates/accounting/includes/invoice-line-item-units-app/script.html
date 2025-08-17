@@ -24,6 +24,7 @@
       update_price: function () {
         this.new_item.unit_price = this.new_item.coef * this.base_price;
       },
+      
       to_price: (vall) => to_price(parseInt(vall)),
       add_invoice_line_item_unit: () => {
         let payload = {

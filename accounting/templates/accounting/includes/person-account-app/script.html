@@ -1,18 +1,18 @@
 
 {% include "accounting/includes/account-app/script.html" %} 
-{% include "accounting/includes/set-account-parent-app/script.html" %}
+
+
+
 
 <script>
-    let account_id=parseInt("{{account.id}}")
-    const account_color="{{account.color}}"
-
-</script>
-<script>
+    let person_account_id=parseInt("{{person_account.id}}")
     let person_account_app=new Vue({
         el:"#person-account-app",
         data:{
             show_code_copied: false,
             show_balance_copied: false,
+
+
 
         },
         methods:{
@@ -37,26 +37,7 @@
         }
     })
 </script>
-
-<script>
-    let account_balance_app=new Vue({
-        el:"#account-balance-app",
-        data:{
-        },
-        methods:{
-            copy_balance:function(){
-                navigator.clipboard.writeText("{{account.balance}}");
-                this.show_balance_copied = true
-                setTimeout(() => {
-                    account_balance_app.show_balance_copied = false
-                }, 2000);
-            },
-
-            
-        }
-    })
-</script>
-
+ 
  
     
     

@@ -1,0 +1,56 @@
+{% extends "school/layout.html" %} {% load static %} {% block content %}
+<div class="row rtl farsi">
+  <div class="col-3"></div>
+  <div class="col-6">
+    <div class="card">
+      <div class="card-header">
+        <h6>مربی</h6>
+      </div>
+      <div class="card-body">
+        <div class="text-center">
+          <img
+            src="{{teacher.person_account.thumbnail}}"
+            class="rounded-circle"
+            width="50%"
+            alt=""
+          />
+        </div>
+        <h5>
+          <a href="{{teacher.get_absolute_url}}">
+            {{teacher.person_account.person.full_name}}
+          </a>
+        </h5>
+
+         <h5>
+            <small class="text-muted ml-2">
+                حساب شخص
+            </small>
+          <a href="{{teacher.person_account.get_absolute_url}}">
+            {{teacher.person_account.title}}
+          </a>
+        </h5>
+
+        {% if perms.school.change_teacher %}
+          <a class="mx-2" target="_blank" title="اصلاح" href="{{teacher.get_edit_url}}">
+            <i class="fa fa-edit text-warning"></i>
+          </a>
+        {% endif %}
+
+        
+        {% if perms.school.delete_teacher %}
+            <a class="mx-2" target="_blank" title="حذف" href="{{teacher.get_delete_url}}">
+            <i class="fa fa-trash text-danger"></i>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-3"></div>
+</div>
+{% endblock content %} {% block script %}
+<script>
+  console.log("name1: {{name1}}");
+  console.log("name2: {{name2}}");
+  console.log("name3: {{name3}}");
+</script>
+{% endblock script %}

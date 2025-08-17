@@ -33,6 +33,13 @@
     <div class="col-md-12">
         {% include "attachments/includes/comments-app/template.html" %}
     </div>
+    
+    <div class="col-md-12">
+        {% include "core/includes/page-description-app/short-description.html" %}
+        {% include "core/includes/page-description-app/description.html" %}
+   
+        
+    </div>
 
     <div class="col-md-12">
         {% include "accounting/includes/financial-events-app/template.html" %}
@@ -53,11 +60,7 @@
     <div class="col-md-12">
         {% include "attachments/includes/images-app/template.html" %}
     </div>
-
-    <div class="col-md-12">
-        {% include "accounting/includes/financial-events-app/template.html" %}
-
-    </div>
+ 
 
     {% if add_financial_document_line_form %}
     <div class="col-md-12">

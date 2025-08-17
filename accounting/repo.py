@@ -2444,6 +2444,9 @@ class InvoiceRepo(FinancialEventRepo):
 
         if 'bedehkar_id' in kwargs and kwargs['bedehkar_id'] is not None:
             invoice.bedehkar_id=kwargs['bedehkar_id'] 
+            
+        if 'shipping_fee' in kwargs and kwargs['shipping_fee'] is not None:
+            invoice.shipping_fee=kwargs['shipping_fee']
 
             
         if 'bestankar_id' in kwargs and kwargs['bestankar_id'] is not None:
