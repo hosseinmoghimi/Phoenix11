@@ -1,0 +1,15 @@
+<script>
+    
+    let books_for_books_app=JSON.parse("{{books_s|escapejs}}")
+    let books_app = new Vue({
+        el: "#books-app",
+        data: {
+            books: books_for_books_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>

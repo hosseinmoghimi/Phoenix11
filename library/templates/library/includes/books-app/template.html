@@ -1,0 +1,74 @@
+<div id="accordion-books" class="rtl text-right farsi">
+  <div class="card" id="books-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-books"
+          aria-expanded="true"
+          aria-controls="collapse-books"
+        >
+          کتاب ها
+          <span v-if="books.length>0">
+            <small class="text-danger mx-2">
+              <span v-text="books.length"></span>
+            </small>
+          </span>
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-books"
+      class="collapse {% if expand_books %} show {% endif %}"
+      aria-labelledby="heading-books"
+      data-parent="#accordion-books"
+    >
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <th>کلاس نمونه</th>
+
+              <th></th>
+            </thead>
+            <tbody>
+              <tr v-for="book in books">
+                <td>
+                  <a :href="book.get_absolute_url">
+                    <span v-text="book.title"></span>
+                  </a>
+                </td>
+
+                <td>
+                  {% if perms.library.change_book %}
+                  <a
+                    target="_blank"
+                    :href="book.get_edit_url"
+                    title="ویرایش"
+                    class="text-warning mx-2"
+                  >
+                    <i class="fa fa-edit text-warning"> </i>
+                    ویرایش
+                  </a>
+                  {% endif %} {% if perms.library.delete_book %}
+                  <a
+                    target="_blank"
+                    :href="book.get_delete_url"
+                    title="حذف"
+                    class="text-danger mx-2"
+                  >
+                    <i class="fa fa-trash text-danger"> </i>
+                    حذف
+                  </a>
+                  {% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
