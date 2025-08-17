@@ -283,9 +283,6 @@ def ProductContext(request,product,*args, **kwargs):
         context["add_product_specification_form"]=AddProductSpecificationForm()
         specification_names=['رنگ','وزن','اندازه','جرم','نوع','حجم',]
         context['specification_names']=specification_names
-     
-
-    
     context['product']=product
 
  
