@@ -29,6 +29,7 @@ urlpatterns = [
     path('resume/', include('resume.urls')),
     path('tax/', include('tax.urls')),
     path('blog/', include('blog.urls')),
+    path('library/', include('library.urls')),
     
     
     

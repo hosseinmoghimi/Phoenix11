@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'resume',
     'tax',
     'blog',
+    'library',
 ]
  
 
