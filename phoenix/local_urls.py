@@ -30,6 +30,7 @@ urlpatterns = [
     path('tax/', include('tax.urls')),
     path('blog/', include('blog.urls')),
     path('library/', include('library.urls')),
+    path('traffic/', include('traffic.urls')),
     
     
     

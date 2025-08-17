@@ -26,6 +26,10 @@ class DateHelper():
 
 
 class DateTimeHelper(DateHelper):
+    def persian_enter_datetime(self):
+        return PersianCalendar().from_gregorian(self.enter_datetime)
+    def persian_exit_datetime(self):
+        return PersianCalendar().from_gregorian(self.exit_datetime)
     def persian_start_datetime(self):
         return PersianCalendar().from_gregorian(self.start_datetime)
     def persian_end_datetime(self):

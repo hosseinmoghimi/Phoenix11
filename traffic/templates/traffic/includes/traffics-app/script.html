@@ -1,0 +1,15 @@
+<script>
+    
+    let traffics_for_traffics_app=JSON.parse("{{traffics_s|escapejs}}")
+    let traffics_app = new Vue({
+        el: "#traffics-app",
+        data: {
+            traffics: traffics_for_traffics_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>
