@@ -270,8 +270,23 @@ def InvoiceContext(request,invoice,*args, **kwargs):
      
 def ProductContext(request,product,*args, **kwargs):
     context=InvoiceLineItemContext(request=request,invoice_line_item=product)
-    context['product']=product
     
+    context.update(AddProductToCategoryContext(request=request,product=product))
+
+
+    product_specifications=product.productspecification_set.all()
+    product_specifications_s=json.dumps(ProductSpecificationSerializer(product_specifications,many=True).data)
+    context['product_specifications']=product_specifications
+    context['product_specifications_s']=product_specifications_s
+    
+    if request.user.has_perm(APP_NAME+".add_productspecification"):
+        context["add_product_specification_form"]=AddProductSpecificationForm()
+        specification_names=['رنگ','وزن','اندازه','جرم','نوع','حجم',]
+        context['specification_names']=specification_names
+     
+
+    
+    context['product']=product
 
  
     
@@ -814,19 +829,6 @@ class ProductView(View):
         
 
         context.update(ProductContext(request=request,product=product))
-        context.update(AddProductToCategoryContext(request=request,product=product))
-
-
-        product_specifications=product.productspecification_set.all()
-        product_specifications_s=json.dumps(ProductSpecificationSerializer(product_specifications,many=True).data)
-        context['product_specifications']=product_specifications
-        context['product_specifications_s']=product_specifications_s
-        if request.user.has_perm(APP_NAME+".add_productspecification"):
-            context["add_product_specification_form"]=AddProductSpecificationForm()
-            specification_names=['رنگ','وزن','اندازه','جرم','نوع','حجم',]
-            context['specification_names']=specification_names
-     
-
         return render(request,TEMPLATE_ROOT+"product.html",context)
     
 
