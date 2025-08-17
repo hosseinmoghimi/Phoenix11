@@ -1,88 +1,81 @@
-{% extends "library/layout.html" %}
-
+{% extends "phoenix/layout.html" %}
 
 {% block content %}
-    {% if sample_class.parent %} 
-    <div class="rtl my-2">{{sample_class.get_breadcrumb|safe}}</div>
-    {% endif %} 
-
-<div class="row rtl farsi">
-    <div class="col-md-4">
-        {% include "library/includes/sample-class-app/card.html" %}
-    </div>
-    <div class="col-md-4">
-        {% include "library/includes/sample-class-app/card-full.html" %}
-    </div>
-
-    <div class="col-md-12">
-        {% include "library/includes/sample_classs-app/template.html" %}
-    </div>
-
-    <div class="col-md-12">
-        {% include "library/includes/financial-document-lines-app/template.html" %}
-    </div>
-
-    <div class="col-md-12">
-        {% include "library/includes/add-sample-class-app/template.html" %}
-    </div>
-    <div class="col-md-12">
-        {% include "library/includes/set-sample-class-parent-app/template.html" %}
-    </div>
-
-    
-    <div class="col-md-12">
-        {% include "attachments/includes/comments-app/template.html" %}
-    </div>
-
-    <div class="col-md-12">
-        {% include "library/includes/financial-events-app/template.html" %}
-    </div>
-
-    <div class="col-md-4">
-        {% include "attachments/includes/links-app/template.html" %}
-    </div>
-
-    <div class="col-md-4">
-        {% include "attachments/includes/downloads-app/template.html" %}
-    </div>
-
-    <div class="col-md-4">
-        {% include "attachments/includes/tags-app/template.html" %}
-    </div>
-
-    <div class="col-md-12">
-        {% include "attachments/includes/images-app/template.html" %}
-    </div>
-
-    <div class="col-md-12">
-        {% include "library/includes/financial-events-app/template.html" %}
-
-    </div>
-
-    {% if add_financial_document_line_form %}
-    <div class="col-md-12">
-        {% include "library/includes/add-financial-document-line-app/template.html" %}
-    </div>
-    {% endif %}
-
-    
-     
-    {% if set_page_thumbnail_header_form %}
-     
-    <div class="col-md-12">
+{% include "core/includes/page-app/navbar.html" %}
+<div class="row rtl">
+    <div class="col-md-3">
+        {% include "core/includes/page-app/thumbnail-card.html" %}
+        {% include "library/includes/book-app/card.html" %}
         {% include "core/includes/page-thumbnail-header-app/template.html" %}
 
+
     </div>
-  
-    {% endif %}
+    <div class="col-md-9">
+        <div class="row rtl">
+
+
+
+
+            <div class="col-md-4">
+                {% include "attachments/includes/links-app/template.html" %}
+
+            </div>
+ 
+            <div class="col-md-4">
+                {% include "attachments/includes/downloads-app/template.html" %}
+
+            </div>
+
+            <div class="col-md-4">
+                {% include "attachments/includes/tags-app/template.html" %}
+
+            </div>
+
+            <div class="col-md-12">
+                {% include "core/includes/page-description-app/short-description.html" %}
+            </div>
+
+            
+            <div class="col-md-12">
+                {% include "core/includes/page-description-app/description.html" %}
+
+            </div>
+      
+            
+            <div class="col-md-12">
+                {% include "attachments/includes/comments-app/template.html" %}
+
+            </div>
+            
+            <div class="col-md-12">
+                {% include "attachments/includes/page-like-app/page-likes.html" %}
+
+            </div>
+            <div class="col-md-12">
+                {% include "attachments/includes/images-app/template.html" %}
+
+            </div>
+
+            <div class="col-md-12">
+                {% include "core/includes/page-related-app/template.html" %}
+
+            </div>
+
+            <div class="col-md-12">
+                {% include "attachments/includes/locations-app/template.html" %}
+            </div>
+
+
+        </div>
+    </div>
 
 
 </div>
+
 {% endblock content %}
 
 
 {% block script %}
+{% include "core/includes/page-app/script.html" %}
 
-{% include "library/includes/sample-class-app/script.html" %}
- 
 {% endblock script %}

@@ -36,9 +36,16 @@
             <tbody>
               <tr v-for="book in books">
                 <td>
-                  <a :href="book.get_absolute_url">
-                    <span v-text="book.title"></span>
+                 <a :href="book.get_absolute_url">
+                    <div class="media">
+                      <img :src="book.thumbnail" width="64" class="rounded" alt="">
+                      <div class="media mr-2">
+                        <span v-text="book.title"></span>
+
+                      </div>
+                    </div>
                   </a>
+
                 </td>
 
                 <td>

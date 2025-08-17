@@ -5,7 +5,7 @@ from .serializers import BookSerializer
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
-from core.views import CoreContext
+from core.views import CoreContext,PageContext
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 import json
@@ -24,7 +24,9 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 
- 
+def BookContext(request,book,*args, **kwargs):
+    context=PageContext(request=request,page=book)
+    return context
  
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -56,8 +58,8 @@ class BooksView(View):
 class BookView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
         book=BookRepo(request=request).book(*args, **kwargs)
+        context.update(BookContext(request=request,book=book))
         context["book"]=book
         book_s=json.dumps(BookSerializer(book,many=False).data)
         context["book_s"]=book_s
