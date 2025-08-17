@@ -629,12 +629,12 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     class_name="invoicelineitemunit"
     app_name=APP_NAME
 
-    
+    @property
     def percentage_tag(self):
         base=InvoiceLineItemUnit.objects.filter(invoice_line_item_id=self.invoice_line_item_id).filter(coef=1).first()
         if base is not None:
             base_price=base.unit_price
-            if base.price==0:
+            if base_price==0:
                 return ""
             color='primary'
             perc=(base_price-(self.unit_price/self.coef))/base_price*100
