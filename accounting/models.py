@@ -634,6 +634,8 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
         base=InvoiceLineItemUnit.objects.filter(invoice_line_item_id=self.invoice_line_item_id).filter(coef=1).first()
         if base is not None:
             base_price=base.unit_price
+            if base.price==0:
+                return ""
             color='primary'
             perc=(base_price-(self.unit_price/self.coef))/base_price*100
             perc=int(perc*10)/10.0
