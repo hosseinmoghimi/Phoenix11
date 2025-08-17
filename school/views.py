@@ -9,6 +9,8 @@ from core.views import CoreContext
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 import json
+from library.serializers import BookSerializer
+
 from utility.enums import UnitNameEnum
 from utility.log import leolog
 from accounting.views import AddInvoiceLineContext,InvoiceContext,ProductContext
@@ -148,6 +150,13 @@ class CourseView(View):
         course_s=json.dumps(CourseSerializer(course,many=False).data)
         context["course_s"]=course_s
 
+
+        books=course.books.all()
+        context["books"]=books
+        books_s=json.dumps(BookSerializer(books,many=True).data)
+        context["books_s"]=books_s
+
+
         return render(request,TEMPLATE_ROOT+"course.html",context)
 # Create your views here. 
 
@@ -207,6 +216,10 @@ class CourseClassView(View):
         context["course_class_s"]=course_class_s
 
 
+        books=course_class.course.books.all()
+        context["books"]=books
+        books_s=json.dumps(BookSerializer(books,many=True).data)
+        context["books_s"]=books_s
         
         teachers=course_class.teachers.all()
         context["teachers"]=teachers

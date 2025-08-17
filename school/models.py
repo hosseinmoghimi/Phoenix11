@@ -84,7 +84,7 @@ class Major(models.Model,LinkHelper):
  
 class Course(CorePage,LinkHelper):
     # major=models.ForeignKey("major", verbose_name=_("رشته"), on_delete=models.CASCADE) 
-    
+    books=models.ManyToManyField("library.book",blank=True, verbose_name=_("books"))
     class Meta:
         verbose_name = _("Course")
         verbose_name_plural = _("واحد های درسی")

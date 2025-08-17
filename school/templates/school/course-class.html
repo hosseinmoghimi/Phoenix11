@@ -61,6 +61,9 @@
   <div class="col-md-12">
     {% include "school/includes/students-app/template.html" %}
   </div>
+  <div class="col-md-12">
+    {% include "library/includes/books-app/template.html" %}
+  </div>
 </div>
 {% endblock content %} {% block script %}
 <script>
@@ -68,4 +71,6 @@
   console.log("name2: {{name2}}");
   console.log("name3: {{name3}}");
 </script>
-{% include "school/includes/teachers-app/script.html" %} {% include "school/includes/students-app/script.html" %} {% endblock script %}
+{% include "school/includes/teachers-app/script.html" %} 
+    {% include "library/includes/books-app/script.html" %}
+{% include "school/includes/students-app/script.html" %} {% endblock script %}

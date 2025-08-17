@@ -218,6 +218,8 @@ def class_title(*args, **kwargs):
         class_title = "پرسش"
     if class_name == "account":
         class_title = "حساب"
+    if class_name == "course":
+        class_title = "واحد درسی"
     if class_name == "payment":
         class_title = "پرداخت"
     if class_name == "property":
