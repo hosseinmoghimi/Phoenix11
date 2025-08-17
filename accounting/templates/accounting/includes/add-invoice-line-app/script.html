@@ -194,7 +194,7 @@
           coef: parseInt(this.coef),
           discount_percentage: this.discount_percentage,
         };
-
+        console.log(payload)
         let url = "{% url 'accounting:add_invoice_line' %}";
         let posting = $.post(url, payload);
         posting.done((data) => {

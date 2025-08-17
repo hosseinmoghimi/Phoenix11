@@ -131,7 +131,6 @@ class InvoiceLineRepo:
             
         
     def add_invoice_line(self,*args,**kwargs):
-        leolog(kwargs=kwargs)
         result,message,meal=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_invoiceline"):
             message="دسترسی غیر مجاز"
@@ -733,7 +732,6 @@ class PersonCategoryRepo():
 
         person_category=self.person_category(person_category_id=kwargs['person_category_id'])
         account=AccountRepo(request=self.request).account(account_id=kwargs['account_id'])
-        leolog(kwargs=kwargs,person_category=person_category,account=account)
         if account is None or person_category is None:
             message="داده های مرتبط پیدا نشد."
             return result,message,None
