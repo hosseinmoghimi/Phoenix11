@@ -43,6 +43,7 @@
                     add_invoice_line_app.waiting=false
                     
                     if (data.result === "SUCCEED") {
+                      invoice_line_items_for_add_invoice_line_items_app.push(data.product)
                       add_invoice_line_app.invoice_line_items.push(data.product)
                       add_invoice_line_app.select_item(data.product)
                         if (typeof products_app != "undefined") {
@@ -78,6 +79,7 @@
                     add_invoice_line_app.waiting=false
                     
                     if (data.result === "SUCCEED") {
+                      invoice_line_items_for_add_invoice_line_items_app.push(data.service)
                       add_invoice_line_app.invoice_line_items.push(data.service)
                       add_invoice_line_app.select_item(data.service)
                         if (typeof services_app != "undefined") {
