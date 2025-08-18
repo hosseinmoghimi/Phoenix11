@@ -443,7 +443,6 @@ class CustomerRepo():
         if 'level' in kwargs:
             customer.level=kwargs["level"]
  
-        leolog(kwargs=kwargs)     
         (result,message,customer)=customer.save() 
 
         return result,message,customer
@@ -510,7 +509,6 @@ class ShipperRepo():
         if 'level' in kwargs:
             shipper.level=kwargs["level"]
  
-        leolog(kwargs=kwargs)     
         (result,message,shipper)=shipper.save() 
 
         return result,message,shipper
@@ -793,7 +791,6 @@ class SupplierRepo():
         if 'level' in kwargs:
             supplier.level=kwargs["level"]
  
-        leolog(kwargs=kwargs)     
         (result,message,supplier)=supplier.save() 
 
         return result,message,supplier

@@ -187,7 +187,7 @@ class PersianCalendar:
             sec_=0
             
         sss=TehranTimezone()
-        delta=datetime.timedelta(days=-1,hours=HOURS_OFFSET,minutes=MINUTES_OFFSET)
+        delta=datetime.timedelta(days=0,hours=HOURS_OFFSET,minutes=MINUTES_OFFSET)
         # delta=datetime.timedelta(hours=4,minutes=30)
         a=JalaliDatetime(datetime.datetime(year_, month_, day_, hour_, min_, sec_, 0, TehranTimezone())+delta)
         

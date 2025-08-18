@@ -90,7 +90,6 @@ class ServiceManRepo():
         
         
     def add_service_man(self,*args,**kwargs):
-        leolog(kwargs_add_service_man=kwargs)
         result,message,service_man=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_service_man"):
             message="دسترسی غیر مجاز"

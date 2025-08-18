@@ -904,6 +904,14 @@ class InvoiceLine(models.Model,LinkHelper):
     def discount(self):
         return self.discount_percentage*self.unit_price*self.quantity/100
     
+
+    def delete(self,*args, **kwargs):
+        invoice=self.invoice
+        super(InvoiceLine,self).delete()
+        invoice.normalize()
+
+
+
     @property
     def line_total(self):
         return (100-self.discount_percentage)*self.unit_price*self.quantity/100
