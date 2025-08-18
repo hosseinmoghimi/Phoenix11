@@ -993,7 +993,15 @@ class ProductRepo():
                     ili_unit.invoice_line_item_id=product.id
                     ili_unit.default=True
                     ili_unit.save()
-
+        else:
+            pass
+            ili_unit=InvoiceLineItemUnit()
+            ili_unit.unit_name=UnitNameEnum.ADAD
+            ili_unit.coef=1
+            ili_unit.unit_price=0
+            ili_unit.invoice_line_item_id=product.id
+            ili_unit.default=True
+            ili_unit.save()
                  
 
         if 'category_id' in kwargs:
