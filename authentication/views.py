@@ -47,6 +47,18 @@ def PersonContext(request,*args, **kwargs):
     context['person']=person
     person_s=json.dumps(PersonSerializer(person).data)
     context['person_s']=person_s
+
+    from core.views import PageBriefSerializer,PageRepo
+    from attachments.repo import LikeRepo
+    my_likes=LikeRepo(request=request).my_likes()
+    ids=[]
+    for like in my_likes:
+        ids.append(like.page.id)
+    pages=PageRepo(request=request).list(ids=ids)
+    if pages is not None and len(pages)>0:
+        pages_s=json.dumps(PageBriefSerializer(pages,many=True).data)
+        context['pages_s']=pages_s
+        context['pages']=pages
     return context
      
 

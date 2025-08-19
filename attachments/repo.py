@@ -213,6 +213,7 @@ class LikeRepo():
     def __init__(self,request,*args, **kwargs):
         self.objects=Like.objects
         self.request=request
+        self.me_person=PersonRepo(request=request).me
     def toggle_like(self,*args, **kwargs):
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is None:
@@ -246,8 +247,11 @@ class LikeRepo():
         if page is None:
             return None
         return len(Like.objects.filter(page_id=page.pk))    
+    def my_likes(self,*args, **kwargs):
+        if self.me_person is not None:
+            return Like.objects.filter(person_id=self.me_person.id)
+ 
     
-
 
 class LinkRepo():
     def __init__(self,request,*args, **kwargs):

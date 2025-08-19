@@ -24,6 +24,10 @@ class PageRepo():
         if 'meta_data' in kwargs:
             meta_data=kwargs['meta_data']
             objects=objects.filter(meta_data=meta_data)
+        if 'ids' in kwargs:
+            ids=kwargs['ids']
+            objects=objects.filter(id__in=ids)
+
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
             id=0

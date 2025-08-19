@@ -10,5 +10,20 @@
     {% include "authentication/includes/person-app/change-image.html" %}
   </div>
   {% endif %}
+  {% if pages %}
+  <div class="col-12">
+
+    {% include "core/includes/pages-app/template.html" %}
+  </div>
+    
+  {% endif %}
 </div>
-{% endblock content %} {% block script %} {% endblock script %}
+{% endblock content %} {% block script %}
+
+
+  {% if pages %}
+
+    {% include "core/includes/pages-app/script.html" %}
+    
+  {% endif %}
+  {% endblock script %}
