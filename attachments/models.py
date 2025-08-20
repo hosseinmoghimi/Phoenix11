@@ -30,6 +30,7 @@ class PagePrint(models.Model,DateTimeHelper):
      
     
 class Comment(models.Model,DateTimeHelper):
+    parent=models.ForeignKey("comment",related_name='replies',null=True,blank=True, verbose_name=_("parent"), on_delete=models.SET_NULL)
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
     comment=HTMLField(verbose_name="comment")
