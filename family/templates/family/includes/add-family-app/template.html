@@ -1,0 +1,61 @@
+<div id="accordion-add-family" class="rtl text-right farsi">
+  <div class="card" id="add-family-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-add-family"
+          aria-expanded="true"
+          aria-controls="collapse-add-family"
+        >
+          افزودن خانواده 
+        
+        </button>
+      </h5>
+    </div>
+    <div
+      id="collapse-add-family"
+      class="collapse"
+      aria-labelledby="heading-add-family"
+      data-parent="#accordion-add-family"
+    >
+      <div class="card-body">
+        <form @submit.prevent="add_family()">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">عنوان</label>
+                <input v-model="title" type="text" class="form-control" />
+              </div>
+            </div>
+            <div class="col-md-12">
+              <button v-if="!waiting" class="btn btn-success" type="submit">
+                <i class="fa fa-plus"></i>
+                افزودن
+              </button>
+              {% load static %}
+              <img
+                src="{% static 'leo/img/loading.gif' %}"
+                width="32"
+                v-if="waiting"
+                alt=""
+              />
+            </div>
+
+            <div class="col-md-12">
+              <div>
+                <div v-if="message.show" class="my-2">
+                  <div :class="'alert alert-'+message.color">
+                    <h5 v-html="message.title"></h5>
+                    <div v-html="message.body"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

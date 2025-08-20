@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'blog',
     'library',
     'traffic',
+    'family',
 
 ]
  

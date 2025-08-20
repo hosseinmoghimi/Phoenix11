@@ -23,5 +23,6 @@ phoenix_apps=[
     {'priority':12,'name':'library','url':SITE_URL+'library/','title':'کتابخانه','logo':STATIC_URL+'library'+'/img/'+'logo.png','color':'warning','on_nav':True,'on_index':True,},
     {'priority':12,'name':'traffic','url':SITE_URL+'traffic/','title':'تردد','logo':STATIC_URL+'traffic'+'/img/'+'logo.png','color':'warning','on_nav':True,'on_index':True,},
     {'priority':3,'name':'health','url':SITE_URL+'health/','title':'سلامتی','logo':STATIC_URL+'health'+'/img/'+'logo.png','color':'warning','on_nav':True,'on_index':True,},
+    {'priority':3,'name':'family','url':SITE_URL+'family/','title':'خانواده','logo':STATIC_URL+'family'+'/img/'+'logo.png','color':'warning','on_nav':True,'on_index':True,},
 
 ]
