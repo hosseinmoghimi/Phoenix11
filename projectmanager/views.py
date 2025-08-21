@@ -94,7 +94,8 @@ class ProjectView(View):
 
 
         
-        invoices=project.invoices.all()
+        invoices=project.invoices.order_by('-event_datetime')
+        invoices=project.all_invocie().order_by('-event_datetime')
         invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
         context['invoices']=invoices
         context['invoices_s']=invoices_s

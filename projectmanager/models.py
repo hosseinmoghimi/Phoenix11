@@ -71,6 +71,19 @@ class Project(Event,LinkHelper,DateHelper):
     def total_price(self):
         return self.amount
 
+    def all_invocie(self):
+        ids=[self.id]
+        for proj in self.children.all():
+            ids.append(proj.id)
+            for i in proj.all_sub_projects():
+                ids.append(i.id)
+        projects=Project.objects.filter(id__in=ids)
+        invoice_ids=[]
+        for proj in projects:
+            for inv in proj.invoices.all():
+                invoice_ids.append(inv.id) 
+        return Invoice.objects.filter(id__in=invoice_ids)
+    
     def all_invocie_lines(self):
         ids=[self.id]
         for proj in self.children.all():
