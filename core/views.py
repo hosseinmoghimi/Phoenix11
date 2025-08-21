@@ -83,6 +83,7 @@ def getContext(request,*args, **kwargs):
 def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
+    context['title']=page.title
     page_s=json.dumps(PageSerializer(page).data)
     context['page_s']=page_s
     me_person=PersonRepo(request=request).me
