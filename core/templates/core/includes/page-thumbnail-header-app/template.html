@@ -26,6 +26,17 @@
         <div id="set-page-thumbnail-header-app" v-cloak>
           <div class="row">
             <div class="col-md-12">
+              <div class="form-group">
+                <label for="">رنگ</label>
+                <select v-model="color" class="form-control">
+                  {% for color in colors_for_page_thumbnail_app %}
+                    
+                  <option value="{{color}}">{{color}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              </div>
+            <div class="col-md-12">
               <div class="my-3">
                 <form
                   action="https://www.google.com/search"

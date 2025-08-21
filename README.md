@@ -3,6 +3,7 @@
 
 Version 1.0.0
 
+WareHoues,School->zero migrations
 
 copy phoenix/local_settings.py to phoenix/server_settings.py and reconfig
 copy phoenix/local_apps.py to phoenix/server_apps.py and reconfig

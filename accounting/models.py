@@ -638,7 +638,7 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
                 return ""
             color='primary'
             perc=(base_price-(self.unit_price/self.coef))/base_price*100
-            perc=int(perc*10)/10.0
+            perc=int(perc)
             if base_price>(self.unit_price/self.coef):
                 color='success'
 

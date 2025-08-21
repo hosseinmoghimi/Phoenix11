@@ -1,4 +1,12 @@
 <script>
+    let page_color='primary'
+</script>
+{% if page %}
+  <script>
+    page_color='{{page.color}}'
+  </script>
+{% endif %}
+<script>
     let set_page_thumbnail_header_app = new Vue(
         {
             el: "#set-page-thumbnail-header-app",
@@ -10,6 +18,7 @@
                 message: { show: false },
                 clear_thumbnail: false,
                 clear_header: false,
+                color:page_color,
 
             },
             methods: {
@@ -27,12 +36,14 @@
 
                     set_page_thumbnail_header_app.waiting = true
                     let title = this.add_page_image_form_title
+                    let color = this.color
                     let formData = new FormData();
                     let thumbnail = $('#set-page-thumbnail-header-form')[0].elements[0].files[0]
                     let header = $('#set-page-thumbnail-header-form')[0].elements[1].files[0]
                     formData.append("thumbnail", thumbnail);
                     formData.append("header", header);
                     formData.append("title", title);
+                    formData.append("color", color);
                     formData.append("clear_thumbnail", set_page_thumbnail_header_app.clear_thumbnail);
                     formData.append("clear_header", set_page_thumbnail_header_app.clear_header);
                     formData.append("csrfmiddlewaretoken", csrfmiddlewaretoken);

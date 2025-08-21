@@ -31,8 +31,7 @@ class UnitNameEnum(TextChoices):
     METER2="متر مربع",_("متر مربع")
     METER3="متر مکعب",_("متر مکعب")
     PART="قطعه",_("قطعه")
-    Roll="رول",_("رول")
-    DAY="روز",_("روز")
+    Roll="رول",_("رول") 
     TAKHTE="تخته",_("تخته")
     LINK="لینک",_("لینک")
     SERVICE="سرویس",_("سرویس")
@@ -55,6 +54,10 @@ class UnitNameEnum(TextChoices):
     RAS="راس",_("راس")
     BOTTLE="بطری",_("بطری")
     JELD="جلد",_("جلد")
+    SHIFT="شیفت",_("شیفت")
+    DAY="روز",_("روز")
+    MONTH="ماه",_("ماه")
+    YEAR="سال",_("سال")
 
 
 class OperatingSystemNameEnum(TextChoices):
@@ -292,6 +295,5 @@ class ParameterNameEnum(TextChoices):
     FARSI_FONT_NAME="نام فونت فارسی",_("نام فونت فارسی")
     HOME_URL="لینک به خانه",_("لینک به خانه")
     THUMBNAIL_DIMENSION="عرض تصاویر کوچک",_("عرض تصاویر کوچک")
-    ONLY_HTTPS="فقط https",_("فقط https")
     SHOW_ARCHIVES="نمایش فایل های آرشیو شده",_("نمایش فایل های آرشیو شده")
     HAS_APP_BACKGROUND="اپ تصویر زمینه دارد؟",_("اپ تصویر زمینه دارد؟")

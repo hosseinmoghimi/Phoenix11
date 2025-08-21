@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,reverse
-from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
+from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,ONLY_HTTPS
 from django.views import View
 from .serializers import PersonSerializer
 from .repo import PersonRepo,FAILED,SUCCEED
@@ -192,7 +192,6 @@ class LoginView(View):
         context['login_form']=LoginForm()
         context['build_absolute_uri']=request.build_absolute_uri()
         build_absolute_uri=request.build_absolute_uri()
-        ONLY_HTTPS=ParameterRepo(request=request,app_name=APP_NAME).parameter(name="فقط HTTPS",default=True).boolean_value
         if ONLY_HTTPS and "http://" in build_absolute_uri :
             build_absolute_uri=build_absolute_uri.replace("http:","https:")
             return redirect(build_absolute_uri)

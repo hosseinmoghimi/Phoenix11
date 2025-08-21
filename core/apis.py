@@ -66,6 +66,7 @@ class SetPageThumbnailHeaderApi(APIView):
                 page_id = cd['page_id']
                 clear_thumbnail = cd['clear_thumbnail']
                 clear_header = cd['clear_header']
+                color = cd['color']
                 thumbnail = None
                 header = None
                 if 'thumbnail' in request.FILES:
@@ -75,6 +76,7 @@ class SetPageThumbnailHeaderApi(APIView):
                 
                 page = PageRepo(request=request).set_thumbnail_header(
                     clear_thumbnail=clear_thumbnail,
+                    color=color,
                     clear_header=clear_header,
                     page_id=page_id,
                     thumbnail=thumbnail,

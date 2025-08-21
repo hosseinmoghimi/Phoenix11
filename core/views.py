@@ -15,7 +15,7 @@ from django.utils import timezone
 import json
 from .repo import PageRepo,FAILED,SUCCEED
 from .serializers import PageSerializer,PageBriefSerializer
-
+from utility.enums import ColorEnum
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='core/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -89,6 +89,8 @@ def PageContext(request,page,*args, **kwargs):
     me_person=PersonRepo(request=request).me
     from attachments.views import PageTagsContext,PageLocationsContext,PageImagesContext,PageRelatedContext,PagPrintsContext,PageLikesContext,PageCommentsContext,PageLinksContext,PageDownloadsContext
     if request.user.has_perm(APP_NAME+'.change_page'):
+        colors=(i[0] for i in ColorEnum.choices)
+        context['colors_for_page_thumbnail_app']=colors
         context['set_page_thumbnail_header_form']=SetPageThumbnailHeaderForm()
     context.update(PageLikesContext(request=request,page=page,person=me_person))
     context.update(PageCommentsContext(request=request,page=page,person=me_person))

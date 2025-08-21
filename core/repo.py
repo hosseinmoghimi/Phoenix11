@@ -44,6 +44,11 @@ class PageRepo():
         if page is None:
             return
 
+        if 'color' in kwargs and kwargs['color']:
+            page.color=kwargs['color']
+            page.save()
+
+
         if 'clear_thumbnail' in kwargs and kwargs['clear_thumbnail']:
             page.thumbnail_origin=None
         else:
