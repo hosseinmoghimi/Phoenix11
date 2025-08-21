@@ -8,6 +8,10 @@ urlpatterns = [
     path('',login_required(views.IndexView.as_view()),name="index"),  
     path('add_invoice_to_project/',login_required(apis.AddInvoiceToProjectApi.as_view()),name="add_invoice_to_project"), 
 
+    path('ticket/add/',login_required(apis.AddTicketApi.as_view()),name="add_ticket"),  
+    path('tickets/',login_required(views.TicketsView.as_view()),name="tickets"),  
+    path('ticket/<int:pk>/',login_required(views.TicketView.as_view()),name="ticket"),  
+
     path('project/add/sub/',login_required(apis.AddSubProjectApi.as_view()),name="add_sub_project"),  
     path('project/add/',login_required(apis.AddProjectApi.as_view()),name="add_project"),  
     path('projects/',login_required(views.ProjectsView.as_view()),name="projects"),  

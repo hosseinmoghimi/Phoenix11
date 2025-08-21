@@ -1,4 +1,4 @@
-from .models import Project,RemoteClient
+from .models import Project,RemoteClient,Ticket
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo 
@@ -13,6 +13,102 @@ from utility.log import leolog
 from .enums import *
  
  
+class TicketRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=Ticket.objects.filter(id=0)
+        profile=PersonRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_ticket"):
+                self.objects=Ticket.objects
+                self.my_accounts=self.objects 
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        if "project_id" in kwargs:
+            project_id=kwargs["project_id"]
+            objects=objects.filter(project_id=project_id)  
+        return objects.all()
+        
+    def ticket(self,*args, **kwargs):
+        if "ticket_id" in kwargs and kwargs["ticket_id"] is not None:
+            return self.objects.filter(pk=kwargs['ticket_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_ticket(self,*args,**kwargs):
+        result,message,ticket=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_ticket"):
+            message="دسترسی غیر مجاز"
+            return result,message,ticket
+        ticket=Ticket()
+        if 'title' in kwargs:
+            title=kwargs["title"]
+            if len(Ticket.objects.filter(title=title))>0:
+                message='نام تکررای برای پروژه جدید'
+                return FAILED,message,None
+            ticket.title=title
+
+        if 'parent_id' in kwargs:
+            if kwargs["parent_id"]>0:
+                ticket.parent_id=kwargs["parent_id"]
+        if 'project_id' in kwargs:
+            ticket.project_id=kwargs["project_id"]
+        if 'contractor_id' in kwargs:
+            ticket.contractor_id=kwargs["contractor_id"]
+        if 'type' in kwargs:
+            ticket.type=kwargs["type"]
+        if 'weight' in kwargs:
+            ticket.weight=kwargs["weight"]
+        if 'percentage_completed' in kwargs:
+            ticket.percentage_completed=kwargs["percentage_completed"]
+        if 'start_datetime' in kwargs:
+            ticket.start_datetime=kwargs["start_datetime"]
+            ticket.start_datetime=kwargs["start_datetime"]
+            year=kwargs['start_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['start_datetime']=PersianCalendar().to_gregorian(kwargs["start_datetime"])
+            ticket.start_datetime=kwargs['start_datetime']
+
+ 
+        if 'end_datetime' in kwargs:
+            ticket.end_datetime=kwargs["end_datetime"]
+            ticket.end_datetime=kwargs["end_datetime"]
+            year=kwargs['end_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['end_datetime']=PersianCalendar().to_gregorian(kwargs["end_datetime"])
+            ticket.end_datetime=kwargs['end_datetime']
+
+ 
+        if 'event_datetime' in kwargs:
+            ticket.event_datetime=kwargs["event_datetime"]
+            ticket.event_datetime=kwargs["event_datetime"]
+            year=kwargs['event_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
+            ticket.event_datetime=kwargs['event_datetime']
+            
+        if ticket.parent is not None and ticket.contractor_id is None:
+            ticket.contractor_id=ticket.parent_ticket.contractor_id
+
+        if ticket.parent is not None and ticket.employer_id is None:
+            ticket.employer_id=ticket.parent_ticket.employer_id
+ 
+        
+        (result,message,ticket)=ticket.save()
+        return result,message,ticket
+
+  
 
 class ProjectRepo():
     def __init__(self,request,*args, **kwargs):
@@ -22,7 +118,7 @@ class ProjectRepo():
         self.objects=Project.objects.filter(id=0)
         profile=PersonRepo(request=request).me
         if profile is not None:
-            if request.user.has_perm(APP_NAME+".view_account"):
+            if request.user.has_perm(APP_NAME+".view_project"):
                 self.objects=Project.objects
                 self.my_accounts=self.objects 
     def list(self,*args, **kwargs):

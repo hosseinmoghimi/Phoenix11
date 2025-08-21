@@ -4,12 +4,32 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import ProjectRepo,RemoteClientRepo
-from .serializers import ProjectSerializer,RemoteClientSerializer
+from .repo import ProjectRepo,RemoteClientRepo,TicketRepo
+from .serializers import ProjectSerializer,RemoteClientSerializer,TicketSerializer
 from accounting.serializers import InvoiceSerializer
 from django.http import JsonResponse
 from .forms import *
    
+class AddTicketApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_ticket_form=AddTicketForm(request.POST)
+        if add_ticket_form.is_valid():
+            log=333
+            cd=add_ticket_form.cleaned_data
+            result,message,ticket=TicketRepo(request=request).add_ticket(**cd)
+            if ticket is not None:
+                context['ticket']=TicketSerializer(ticket).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
 
    
 class AddProjectInvoiceApi(APIView):
@@ -34,7 +54,6 @@ class AddProjectInvoiceApi(APIView):
         return JsonResponse(context)
 
 
-
 class EditProjectApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -54,7 +73,6 @@ class EditProjectApi(APIView):
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
-        
  
  
 class AddRemoteClientApi(APIView):
@@ -102,6 +120,7 @@ class AddProjectApi(APIView):
         context['log']=log
         return JsonResponse(context)
  
+
 class AddSubProjectApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -122,6 +141,7 @@ class AddSubProjectApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+ 
  
 class AddInvoiceToProjectApi(APIView):
     def post(self,request,*args, **kwargs):

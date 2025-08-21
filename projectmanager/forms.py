@@ -5,6 +5,12 @@ class AddSubProjectForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)
     parent_id=forms.IntegerField(required=True)
      
+class AddTicketForm(forms.Form):
+    title=forms.CharField(max_length=50,required=True)
+    parent_id=forms.IntegerField(required=True)
+    project_id=forms.IntegerField(required=True)
+    description=forms.CharField(max_length=5000,required=False)
+    
  
 class AddProjectForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)

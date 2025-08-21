@@ -47,6 +47,15 @@
       <div class="col-md-12">
         {% include "accounting/includes/invoice-lines-app/template.html" %}
       </div>
+      {% if add_ticket_form %}
+      <div class="col-md-12">
+          {% include "projectmanager/includes/add-ticket-app/template.html" %}
+      </div>
+      {% endif %}
+      <div class="col-md-12">
+          {% include "projectmanager/includes/tickets-app/template.html" %}
+      </div>
+
       <div class="col-md-12">
         {% include "projectmanager/includes/project-edit-app/template.html" %}
       </div>
@@ -72,7 +81,11 @@
   let project = "{{project_s|escapejs}} ";
 </script>
 {% if add_invoice_to_project_form %}
-          {% include "projectmanager/includes/add-invoice-to-project-app/script.html" %}
-
-      {% endif %}
-{% include "projectmanager/includes/project-app/script.html" %} {% endblock script %}
+{% include "projectmanager/includes/add-invoice-to-project-app/script.html" %}
+{% endif %}
+{% include "projectmanager/includes/project-app/script.html" %}
+{% if add_ticket_form %}
+{% include "projectmanager/includes/add-ticket-app/script.html" %}
+{% endif %}
+{% include "projectmanager/includes/tickets-app/script.html" %}
+{% endblock script %}

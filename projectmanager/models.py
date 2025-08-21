@@ -1,6 +1,6 @@
 from django.db import models
-from core.models import Event,LinkHelper,FAILED,SUCCEED,DateTimeHelper
-from utility.models import DateHelper
+from core.models import Event,FAILED,SUCCEED
+from utility.models import DateHelper,DateTimeHelper,LinkHelper
 from .enums import *
 from tinymce.models import HTMLField
 from django.utils.translation import gettext as _
@@ -97,9 +97,9 @@ class Project(Event,LinkHelper,DateHelper):
                 invoice_ids.append(inv.id)
         from accounting.models import InvoiceLine
         return InvoiceLine.objects.filter(invoice_id__in=invoice_ids)
+  
     def get_status_color(self):
         return StatusColor(self)
-
 
 class Request(InvoiceLine):
     ware_house=models.ForeignKey("warehouse.warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
@@ -145,13 +145,16 @@ class Ticket(models.Model,DateTimeHelper,LinkHelper):
     file = models.FileField(_("فایل ضمیمه"), null=True, blank=True,upload_to=APP_NAME+'/ticket-files', storage=upload_storage, max_length=100)
     class_name="ticket"
     app_name=APP_NAME
+
     class Meta:
         verbose_name = _("Ticket")
         verbose_name_plural = _("Tickets")
 
     def __str__(self):
         return self.title
-    def status_color(self):
+     
+    
+    def get_status_color(self):
         color="primary"
         if self.status==TicketStatusEnum.FINISHED:
             color="secondary"

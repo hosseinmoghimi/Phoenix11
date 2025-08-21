@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import Project,RemoteClient
+from .models import Project,RemoteClient,Ticket
 from accounting.serializers import FinancialEventSerializer,InvoiceLineSerializer,BrandSerializer,ProductSerializer
-from organization.serializers import OrganizationUnitSerializer
+from organization.serializers import OrganizationUnitSerializer,PersonSerializer
 
 class ProjectSerializer(FinancialEventSerializer):
        contractor=OrganizationUnitSerializer()
@@ -16,6 +16,15 @@ class ProjectSerializerForGuantt(serializers.ModelSerializer):
     class Meta:
         model=Project
         fields=['id','title','get_status_color','color','start_datetime','end_datetime','status','amount','get_absolute_url','short_description','thumbnail','percentage_completed']
+
+
+  
+class TicketSerializer(serializers.ModelSerializer):
+    project=ProjectSerializer()
+    person=PersonSerializer()
+    class Meta:
+        model=Ticket
+        fields=['id','title','get_status_color','persian_datetime_added','status','project','get_absolute_url','description','person']
 
 
 
