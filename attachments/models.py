@@ -29,13 +29,17 @@ class PagePrint(models.Model,DateTimeHelper):
         return f"{self.person} : {self.page}"
      
     
-class Comment(models.Model,DateTimeHelper):
+class Comment(models.Model,DateTimeHelper,LinkHelper):
     parent=models.ForeignKey("comment",related_name='replies',null=True,blank=True, verbose_name=_("parent"), on_delete=models.SET_NULL)
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
     comment=HTMLField(verbose_name="comment")
     datetime_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-
+    class_name='comment'
+    app_name=APP_NAME
+    @property
+    def childs(self):
+        return Comment.objects.filter(parent_id=self.id)
     class Meta:
         verbose_name = _("Comment")
         verbose_name_plural = _("Comments")
@@ -43,7 +47,11 @@ class Comment(models.Model,DateTimeHelper):
     def __str__(self):
         return f"{self.person} : {self.page}"
      
-    
+    @property
+    def reply_to_id(self):
+        if self.parent is not None:
+            return self.parent.id
+        return None
 
 class Like(models.Model,DateTimeHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)

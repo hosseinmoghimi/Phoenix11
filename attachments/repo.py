@@ -3,6 +3,9 @@ from .models import Like,Comment,Link,Download,Image,Location,Area, Tag,PagePrin
 from .apps import APP_NAME
 from django.db.models import Q
 from .enums import PagePrintTypeEnum
+from utility.log import leolog
+
+
 class ImageRepo():
 
     def __init__(self,request,*args, **kwargs):
@@ -110,6 +113,8 @@ class PagePrintRepo():
         message='پرینت صفحه با موفقیت اضافه شد.'
          
         return result,message,page_print
+
+
 class CommentRepo():
 
     def __init__(self,request,*args, **kwargs):
@@ -127,13 +132,16 @@ class CommentRepo():
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if me_person is None:
             return None
-        if page is None:
-            return None
         if 'comment' in kwargs:
             comment_text=kwargs['comment']
         if comment_text is None:
             return result,message,comment
         comment=Comment(person_id=me_person.id,page_id=page.id,comment=comment_text)
+        leolog(add_comment_kwargs=kwargs)
+        if 'parent_id' in kwargs:
+            parent_id=kwargs['parent_id']
+            if parent_id is not None and parent_id>0:
+                comment.parent_id=parent_id
         comment.save()
         result=SUCCEED
         message='کامنت با موفقیت اضافه شد.'

@@ -31,14 +31,22 @@ class LikeSerializer(serializers.ModelSerializer):
         model=Like
         fields=['id', 'person']
  
+class CommentSerializer2(serializers.ModelSerializer):
+    person=PersonSerializer() 
+    page=PageSerializer()
+    class Meta:
+        model=Comment
+        fields=['id','reply_to_id','page','person','comment','get_delete_url','persian_datetime_added']
+ 
  
 
 class CommentSerializer(serializers.ModelSerializer):
     person=PersonSerializer()
+    childs=CommentSerializer2(many=True)
     page=PageSerializer()
     class Meta:
         model=Comment
-        fields=['id','page','person','comment','persian_datetime_added']
+        fields=['id','childs','reply_to_id','get_delete_url','page','person','comment','persian_datetime_added']
  
 
 class TagSerializer(serializers.ModelSerializer):

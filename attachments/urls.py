@@ -9,7 +9,7 @@ urlpatterns = [
 
 
     path('toggle-like/',apis.ToggleLikeApi.as_view(),name="toggle_like"),
-
+ 
 
     path('add-comment/',apis.AddCommentApi.as_view(),name="add_comment"),
     path('comments/',views.CommentsView.as_view(),name="comments"),

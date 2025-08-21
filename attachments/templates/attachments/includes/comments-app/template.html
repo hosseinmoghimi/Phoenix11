@@ -5,7 +5,7 @@
             <h5 class="text-center">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-comments"
                     aria-expanded="true" aria-controls="collapse-comments">
-                    نظرات
+                    کامنت ها
                     <span v-if="comments.length>0">
                         <small class="text-danger mx-2">
                             <span v-text="comments.length"></span>
@@ -17,7 +17,7 @@
         <div id="collapse-comments" class="collapse" aria-labelledby="heading-comments"
             data-parent="#accordion-comments">
             <div class="card-body">
-                <div class="py-3" v-for="comment in comments">
+                <div class="py-3" v-for="comment in root_comments">
                     <comment-component :comment="comment">
                     </comment-component>
                 </div>

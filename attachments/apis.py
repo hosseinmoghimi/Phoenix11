@@ -169,9 +169,10 @@ class AddCommentApi(APIView):
             add_page_comment_form=AddPageCommentForm(request.POST)
             if add_page_comment_form.is_valid():
                 log+=1
+                parent_id = add_page_comment_form.cleaned_data['parent_id']
                 page_id = add_page_comment_form.cleaned_data['page_id']
                 comment = add_page_comment_form.cleaned_data['comment']
-                (result,message,comment) = CommentRepo(request=request).add_comment(page_id=page_id,comment=comment)
+                (result,message,comment) = CommentRepo(request=request).add_comment(page_id=page_id,comment=comment,parent_id=parent_id)
                 if result==SUCCEED:
                     context['comment'] = CommentSerializer(comment).data
         context['result'] = result
