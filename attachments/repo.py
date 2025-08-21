@@ -137,7 +137,6 @@ class CommentRepo():
         if comment_text is None:
             return result,message,comment
         comment=Comment(person_id=me_person.id,page_id=page.id,comment=comment_text)
-        leolog(add_comment_kwargs=kwargs)
         if 'parent_id' in kwargs:
             parent_id=kwargs['parent_id']
             if parent_id is not None and parent_id>0:
