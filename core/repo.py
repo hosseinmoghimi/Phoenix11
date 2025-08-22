@@ -169,7 +169,6 @@ class EventRepo():
     def add_event(self,*args, **kwargs):
         result,message,event=FAILED,'',None
         event=Event(app_name='core',class_name='event')
-        leolog(add_event_kwargs=kwargs)
         if 'title' in kwargs:
             event.title=kwargs['title']
         if 'description' in kwargs:

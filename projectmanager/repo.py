@@ -310,18 +310,16 @@ class ProjectRepo():
         if not self.request.user.has_perm(APP_NAME+".change_project"):
             message='دسترسی غیر مجاز'
             return FAILED,'',None
-        leolog(add_event_to_project_kwargs=kwargs)
         project=self.project(*args, **kwargs)
         if project is None:
             message='پروژه پیدا نشد.'
             return result,message,event
 
         event_id=kwargs['event_id']
-        leolog(event_id=event_id)
         if event_id>0:
             event=EventRepo(request=self.request).event(*args, **kwargs)
         if event_id==0:
-            
+
             result,message,event=EventRepo(request=self.request).add_event(*args, **kwargs)
         
         if event is None:
