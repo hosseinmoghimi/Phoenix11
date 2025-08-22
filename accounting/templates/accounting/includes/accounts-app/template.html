@@ -65,7 +65,7 @@
                    <div>
       <div class="text-center">
       <div class="my-2">
-          <button @click="copy_code(account)" :class="'my-2 btn btn-'+account.color">
+          <button @click="copy_to_clipboard(account.code)" :class="'my-2 btn btn-'+account.color">
             <small class=""> کد : </small>
             <small v-text="account.code">   </small>
             <i class="fa fa-copy"></i>
@@ -75,9 +75,18 @@
     </div>
                 </td>
               
-                <td>
-                  <span v-html="to_price(account.balance)"></span>
-                  <small class="text-muted mr-1"> {{CURRENCY}} </small>
+                <td> 
+                  <div>
+
+                    <button @click="copy_to_clipboard(account.balance)" class="my-2 btn btn-link ">
+                      <small class="text-muted"> مانده : </small>
+                      <span v-html="to_price_colored(account.balance,'{{CURRENCY}}')">
+
+                      </span>
+                      <i class="fa fa-copy"></i>
+                    </button>
+                  </div>
+
                 </td>
                 <td>
                   {% if perms.accounting.change_account %}

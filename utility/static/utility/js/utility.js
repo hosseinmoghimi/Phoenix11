@@ -13,6 +13,11 @@ var to_price = function (x, currency) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' ' + currency
 }
 
+let copy_to_clipboard=function(vall,app,){
+    console.log(vall +' copied to clipboard')
+    navigator.clipboard.writeText(vall);
+     
+}
 var to_price_colored = function (x, currency) {
     let color='muted'
     if (x == null)

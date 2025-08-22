@@ -15,17 +15,18 @@
 
 
         },
-        methods:{
-            copy_code:function(){
-                navigator.clipboard.writeText("{{account.code}}");
-                this.show_code_copied = true
+        methods:{ 
+
+            copy_to_clipboard:function(code){
+                copy_to_clipboard(code)
+                person_account_app.show_code_copied = true
                 setTimeout(() => {
                     person_account_app.show_code_copied = false
                 }, 2000);
-            },
 
-            copy_balance:function(){
-                navigator.clipboard.writeText("{{account.balance}}");
+            },
+            copy_balance:function(balance){
+                copy_to_clipboard(balance)
                 this.show_balance_copied = true
                 setTimeout(() => {
                     person_account_app.show_balance_copied = false

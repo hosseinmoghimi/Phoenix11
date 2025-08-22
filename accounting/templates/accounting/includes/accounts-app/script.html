@@ -8,12 +8,7 @@
       sort_field: "",
     },
     methods: {
-      copy_code:function(account){
-                navigator.clipboard.writeText(account.code);
-                setTimeout(() => {
-                    accounts_app.show_code_copied = false
-                }, 2000);
-            },
+      copy_to_clipboard: vall=>copy_to_clipboard(vall),
 
       sort: function (field) {
         console.log(field);
@@ -60,8 +55,9 @@
         let color = "primary";
         if (vall > 0) color = "success";
         if (vall < 0) color = "danger";
-        return "<span class='text-" + color + "'>" + to_price(vall) + "</span>";
+        return "<span class='text-" + color + "'>" + to_price(vall) + " {{CURRENCY}} </span>";
       },
+      to_price_colored:(vall,curr)=>to_price_colored(vall,curr),
     },
   });
 </script>

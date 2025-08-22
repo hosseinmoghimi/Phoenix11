@@ -11,22 +11,24 @@
 
 
         <div>
-            <h6 :class="'text-'+account.color">
-                <small class="text-muted">
-                    <span v-text="account.code"></span>
+              <small  >
+                    <button :class="'btn btn-sm btn-'+account.color" @click="copy_to_clipboard(account.code)">
+                        <small  >
+                        کد 
+
+                        </small>
+                        <span v-text="account.code"></span>
+                    </button>
 
 
                 </small>
-
-            </h6>
         </div>
         <div>
             <h6 :class="'text-'+account.color">
 
                 <small>
                     <span v-html="to_price(account.balance)"></span>
-                    {{CURRENCY}}
-
+                   
                 </small>
             </h6>
         </div>

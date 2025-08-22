@@ -13,12 +13,21 @@
             show_balance_copied: false,
         },
         methods:{
-            copy_code:function(){
-                navigator.clipboard.writeText("{{account.code}}");
-                this.show_code_copied = true
+            copy_balance_to_clipboard:function(balance){
+                copy_to_clipboard(balance)
+                account_app.show_balance_copied = true
+                setTimeout(() => {
+                    account_app.show_balance_copied = false
+                }, 2000);
+
+            },
+            copy_to_clipboard:function(code){
+                copy_to_clipboard(code)
+                account_app.show_code_copied = true
                 setTimeout(() => {
                     account_app.show_code_copied = false
                 }, 2000);
+
             },
 
             copy_balance:function(){

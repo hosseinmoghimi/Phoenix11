@@ -87,6 +87,9 @@
                                     </span>
                                 </td>
                                 <td>
+                                    <div v-for="account in [invoice.bedehkar]">
+                                        {% include "accounting/includes/account-app/media.html" %}
+                                    </div>
                                     <div class="media">
                                         <a :href="invoice.bedehkar.get_absolute_url">
                                             <img :src="invoice.bedehkar.thumbnail" class="rounded" width="32" alt="">
@@ -117,6 +120,11 @@
                                 </td>
 
                                 <td>
+                                    
+                                    <div v-for="account in [invoice.bestankar]">
+                                        {% include "accounting/includes/account-app/media.html" %}
+                                    </div>
+
                                     <div class="media">
                                         <a :href="invoice.bestankar.get_absolute_url">
                                             <img :src="invoice.bestankar.thumbnail" class="rounded" width="32" alt="">

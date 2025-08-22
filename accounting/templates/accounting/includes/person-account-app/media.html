@@ -11,31 +11,30 @@
 
 
         <div>
-            <h6 :class="'text-'+person_account.color">
-                <small class="text-muted">
-                    <span v-text="person_account.code"></span>
+                <small  >
+                    <button :class="'btn btn-sm btn-'+person_account.color" @click="copy_to_clipboard(person_account.code)">
+                        <small  >
+                        کد 
+
+                        </small>
+                        <span v-text="person_account.code"></span>
+                    </button>
 
 
                 </small>
 
-            </h6>
         </div>
         <div>
             <h6 :class="'text-'+person_account.color">
 
                 <small>
                     <span v-html="to_price(person_account.balance)"></span>
-                    {{CURRENCY}}
+               
 
                 </small>
             </h6>
         </div>
 
-        <a :href="person_account.get_absolute_url">
-
-            <h6>
-                <span v-text="person_account.person.full_name"></span>
-            </h6>
-        </a>
+        
     </div>
 </div>
