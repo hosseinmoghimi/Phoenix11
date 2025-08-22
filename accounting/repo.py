@@ -483,6 +483,9 @@ class PersonAccountRepo():
         if "category" in kwargs:
             category=kwargs["category"]
             objects=objects.filter(Q(category=category)   )
+        if "person_id" in kwargs:
+            person_id=kwargs["person_id"]
+            objects=objects.filter(Q(person_id=person_id)   )
         return objects.all()
   
     def add_person_account(self,*args, **kwargs):
