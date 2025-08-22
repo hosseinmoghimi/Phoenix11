@@ -5,7 +5,7 @@ from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
 from .enums import *
 from .forms import *
-from .repo import PageRepo
+from .repo import PageRepo,EventRepo
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
@@ -157,6 +157,19 @@ class PageView(View):
             return mv.get(request=request)
         context.update(PageContext(request=request,page=page))
         return render(request,TEMPLATE_ROOT+"page.html",context)
+ 
+class EventView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        phoenix_apps=context["phoenix_apps"]
+        phoenix_apps=phoenix_apps
+        event=EventRepo(request=request).event(*args, **kwargs)
+        if event is None:
+            mv=MessageView()
+            return mv.get(request=request)
+        context.update(PageContext(request=request,page=event))
+        return render(request,TEMPLATE_ROOT+"event.html",context)
  
 
 class IndexView(View):

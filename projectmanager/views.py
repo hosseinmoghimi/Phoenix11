@@ -181,6 +181,8 @@ class ProjectView(View):
         events_s=json.dumps(EventSerializer(events,many=True).data)
         context['events']=events
         context['events_s']=events_s
+        if request.user.has_perm('core.add_event'):
+            context['add_event_to_project_form']=AddEventToProjectForm()
 
 
         context['WIDE_LAYOUT']=True

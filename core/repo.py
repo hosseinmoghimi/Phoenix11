@@ -1,7 +1,8 @@
-from .models import Page,FAILED,SUCCEED
+from .models import Page,FAILED,SUCCEED,Event
 from authentication.repo import PersonRepo
 from django.db.models import Q
 from .apps import APP_NAME
+from utility.log import leolog
 class PageRepo():
     def __init__(self,request,*args, **kwargs):
         self.objects=Page.objects
@@ -129,3 +130,57 @@ class PageRepo():
             return related_page
 
    
+class EventRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.objects=Event.objects
+        self.request=request
+    def event(self,*args, **kwargs):
+        event=None
+        if 'event' in kwargs:
+            event=kwargs['event']
+            return event
+        if 'event_id' in kwargs:
+            event=self.objects.filter(pk=kwargs['event_id']).first()
+        if 'pk' in kwargs:
+            event=self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            event=self.objects.filter(pk=kwargs['id']).first()
+        return event 
+
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'meta_data' in kwargs:
+            meta_data=kwargs['meta_data']
+            objects=objects.filter(meta_data=meta_data)
+        if 'ids' in kwargs:
+            ids=kwargs['ids']
+            objects=objects.filter(id__in=ids)
+
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            id=0
+            try:
+                id=int(search_for) 
+            except:
+                pass
+            objects=objects.filter(Q(title__contains=search_for) |Q(meta_data=search_for) |Q(id=id))
+        return objects.all()
+     
+    def add_event(self,*args, **kwargs):
+        result,message,event=FAILED,'',None
+        event=Event(app_name='core',class_name='event')
+        leolog(add_event_kwargs=kwargs)
+        if 'title' in kwargs:
+            event.title=kwargs['title']
+        if 'description' in kwargs:
+            event.description=kwargs['description']
+        if 'event_datetime' in kwargs:
+            event.event_datetime=kwargs['event_datetime']
+        if 'start_datetime' in kwargs:
+            event.start_datetime=kwargs['start_datetime']
+        if 'end_datetime' in kwargs:
+            event.end_datetime=kwargs['end_datetime']
+        event.save()
+        result=SUCCEED
+        message='رویداد با موفقیت اضافه شد'
+        return result,message,event

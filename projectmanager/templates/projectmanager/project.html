@@ -55,6 +55,12 @@
       <div class="col-md-12">
           {% include "projectmanager/includes/tickets-app/template.html" %}
       </div>
+      {% if add_event_to_project_form %}
+        
+      <div class="col-md-12">
+        {% include "projectmanager/includes/add-event-to-project-app/template.html" %}
+      </div>
+      {% endif %}
       <div class="col-md-12">
         {% include "core/includes/events-app/template.html" %}
       </div>
@@ -91,4 +97,7 @@
 {% endif %}
 {% include "projectmanager/includes/tickets-app/script.html" %}
 {% include "core/includes/events-app/script.html" %}
+{% if add_event_to_project_form %}
+{% include "projectmanager/includes/add-event-to-project-app/script.html" %}
+{% endif %}
 {% endblock script %}

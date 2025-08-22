@@ -5,6 +5,7 @@ import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
 from .repo import ProjectRepo,RemoteClientRepo,TicketRepo
+from core.serializers import EventSerializer
 from .serializers import ProjectSerializer,RemoteClientSerializer,TicketSerializer
 from accounting.serializers import InvoiceSerializer
 from django.http import JsonResponse
@@ -159,6 +160,32 @@ class AddInvoiceToProjectApi(APIView):
             result,message,invoice=ProjectRepo(request=request).add_invoice_to_project(**cd)
             if result==SUCCEED:
                 context['invoice']=InvoiceSerializer(invoice).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
+
+class AddEventToProjectApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        add_evet_to_project_form=AddEventToProjectForm(request.POST)
+        if add_evet_to_project_form.is_valid():
+            log=333
+            cd=add_evet_to_project_form.cleaned_data
+            cd['start_datetime']=PersianCalendar().to_gregorian(cd['start_datetime'])
+            cd['end_datetime']=PersianCalendar().to_gregorian(cd['end_datetime'])
+            cd['event_datetime']=PersianCalendar().to_gregorian(cd['event_datetime'])
+                
+            result,message,event=ProjectRepo(request=request).add_event_to_project(**cd)
+            if event is not None:
+                context['event']=EventSerializer(event).data
         context['message']=message
         context['result']=result
         context['log']=log

@@ -23,6 +23,14 @@ class AddProjectForm(forms.Form):
     type=forms.CharField(max_length=50,required=False)
     weight=forms.IntegerField(required=False)
 
+class AddEventToProjectForm(forms.Form):
+    title=forms.CharField(max_length=50,required=True)
+    project_id=forms.IntegerField(required=True)
+    event_id=forms.IntegerField(required=True)
+    description=forms.CharField(max_length=5000,required=False)
+    start_datetime=forms.CharField(max_length=20, required=True)
+    end_datetime=forms.CharField(max_length=20, required=True)
+    event_datetime=forms.CharField(max_length=20, required=True)
 
 class AddInvoiceToProjectForm(forms.Form):
     invoice_id=forms.IntegerField(required=True)
