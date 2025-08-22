@@ -15,6 +15,7 @@ from utility.enums import UnitNameEnum
 from utility.views import NoPersmissionView
 from utility.log import leolog
 from accounting.views import ProductContext,PageContext,AddInvoiceContext,InvoiceSerializer,InvoiceLineWithInvoiceSerializer
+from core.views import EventSerializer
 from .enums import *
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='projectmanager/'
@@ -28,7 +29,6 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 
-
 def TicketContext(request,ticket,*args, **kwargs):
     context={}
     context['ticket']=ticket
@@ -41,8 +41,6 @@ def TicketContext(request,ticket,*args, **kwargs):
     context['project_s']=project_s
 
     return context
-
-
 
 def AddTicketContext(request,project,*args, **kwargs):
     context={}
@@ -169,11 +167,20 @@ class ProjectView(View):
         context['invoices']=invoices
         context['invoices_s']=invoices_s
 
+
+
+
         
         invoice_lines=project.all_invocie_lines()
         invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
         context['invoice_lines']=invoice_lines
         context['invoice_lines_s']=invoice_lines_s
+
+
+        events=project.events.order_by('-event_datetime')
+        events_s=json.dumps(EventSerializer(events,many=True).data)
+        context['events']=events
+        context['events_s']=events_s
 
 
         context['WIDE_LAYOUT']=True
@@ -280,7 +287,7 @@ class TicketsView(View):
         tickets_s=json.dumps(TicketSerializer(tickets,many=True).data)
         context['tickets_s']=tickets_s
         if request.user.has_perm(APP_NAME+".add_ticket"):
-            context.update(AddTicketContext(request=request,project=ticket.project))
+            context.update(AddTicketContext(request=request,project=None))
             
         return render(request,TEMPLATE_ROOT+"tickets.html",context)
 

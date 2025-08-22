@@ -14,7 +14,7 @@ from utility.views import MessageView
 from django.utils import timezone
 import json
 from .repo import PageRepo,FAILED,SUCCEED
-from .serializers import PageSerializer,PageBriefSerializer
+from .serializers import PageSerializer,PageBriefSerializer,EventSerializer
 from utility.enums import ColorEnum
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='core/'

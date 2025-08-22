@@ -1,17 +1,30 @@
 {% include "accounting/includes/account-app/select-script.html" %}
+{% include "authentication/includes/person-app/select-script.html" %}
 <script>
-  let organizations_for_add_ticket = JSON.parse(
-    "{{organizations_s|escapejs}}"
-  );
+    let project_for_add_ticket_app={}
+    let project_id_for_add_ticket_app=0
+</script>
+{% if project %}
+  <script>
+    
+      project_for_add_ticket_app=project
+      project_id_for_add_ticket_app=project_id
+  </script>
+{% endif %}
+<script>
+ 
   let add_ticket_app = new Vue({
     el: "#add-ticket-app",
     data: {
-      title: "",
-      organizations: organizations_for_add_ticket,
+        title: "",
+        
+        person_id:0,
+        person:{id:0},
+
       weight: 0,
       percentage_completed: 0,
-      contractor_id: 0,
-      employer_id: 0,
+      project_for_add_ticket_app: project,
+      project_id_for_add_ticket_app: project_id,
       type: "",
       event_date: current_date,
       event_time: "00:00:00",
@@ -31,6 +44,19 @@
       DatePicker: VuePersianDatetimePicker,
     },
     methods: {
+
+         select_person:function(){
+                select_person_by_id(add_ticket_app.person_id).done(data=>{
+                    console.log(data.person)
+                    if(data.person){
+                        add_ticket_app.person=data.person
+                    }
+                    else{
+                        add_ticket_app.person={}
+                    }
+                })
+            },
+
       to_price: function (vall) {
         return to_price(vall) + " {{CURRENCY}}";
       },

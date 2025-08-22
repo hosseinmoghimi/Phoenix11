@@ -55,7 +55,9 @@
       <div class="col-md-12">
           {% include "projectmanager/includes/tickets-app/template.html" %}
       </div>
-
+      <div class="col-md-12">
+        {% include "core/includes/events-app/template.html" %}
+      </div>
       <div class="col-md-12">
         {% include "projectmanager/includes/project-edit-app/template.html" %}
       </div>
@@ -88,4 +90,5 @@
 {% include "projectmanager/includes/add-ticket-app/script.html" %}
 {% endif %}
 {% include "projectmanager/includes/tickets-app/script.html" %}
+{% include "core/includes/events-app/script.html" %}
 {% endblock script %}
