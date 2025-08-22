@@ -43,9 +43,17 @@
                             <tr v-for="page in pages">
                                
                                 <td>
-                                    <a :href="page.get_absolute_url">
-                                        <span  v-text="page.title"></span>
-                                    </a>
+                                    <div class="media">
+                                        <a :href="page.get_absolute_url">
+                                            <img width="48" class="rounded" :src="page.thumbnail"> 
+                                        </a>
+                                        <div class="media-body mr-2">
+                                            <a :href="page.get_absolute_url">
+                                                <h5 v-text="page.title"></h5>
+                                            </a>
+                                        </div>
+                                    </div>
+                                   
 
                                 </td> 
                                  <td>

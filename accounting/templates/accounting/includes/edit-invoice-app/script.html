@@ -5,7 +5,7 @@
       title: "{{invoice.title}}",
       status: "{{invoice.status}}",
       payment_method: "{{invoice.payment_method}}",
-      discount_percentage: parseInt("{{invoice.discount_percentage}}"),
+      discount: parseInt("{{invoice.discount}}"),
       tax_percentage: parseInt("{{invoice.tax_percentage}}"),
       amount: parseInt("{{invoice.amount}}"),
       shipping_fee: parseInt("{{invoice.shipping_fee}}"),
@@ -25,8 +25,8 @@
           invoice_id: parseInt("{{invoice.id}}"),
           financial_event_id:parseInt("{{invoice.id}}"),
           title: edit_invoice_app.title,
-          discount_percentage: parseInt(
-            edit_invoice_app.discount_percentage
+          discount: parseInt(
+            edit_invoice_app.discount
           ),
           payment_method: edit_invoice_app.payment_method,
           amount: parseInt(edit_invoice_app.amount),

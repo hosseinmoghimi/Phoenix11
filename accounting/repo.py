@@ -2220,8 +2220,8 @@ class FinancialEventRepo():
         if "shipping_fee" in kwargs and kwargs["shipping_fee"] is not None:
             financial_event.shipping_fee=kwargs['shipping_fee'] 
 
-        if "discount_percentage" in kwargs and kwargs["discount_percentage"] is not None:
-            financial_event.discount_percentage=kwargs['discount_percentage']
+        if "discount" in kwargs and kwargs["discount"] is not None:
+            financial_event.discount=kwargs['discount']
         if "tax_percentage" in kwargs and kwargs["tax_percentage"] is not None:
             financial_event.tax_percentage=kwargs['tax_percentage']
 
@@ -2449,7 +2449,13 @@ class InvoiceRepo(FinancialEventRepo):
             invoice.title=kwargs['title'] 
 
         if 'bedehkar_id' in kwargs and kwargs['bedehkar_id'] is not None:
-            invoice.bedehkar_id=kwargs['bedehkar_id'] 
+            invoice.bedehkar_id=kwargs['bedehkar_id']
+            
+        if 'discount' in kwargs and kwargs['discount'] is not None:
+            invoice.discount=kwargs['discount'] 
+
+        if 'tax_percentage' in kwargs and kwargs['tax_percentage'] is not None:
+            invoice.tax_percentage=kwargs['tax_percentage'] 
             
         if 'shipping_fee' in kwargs and kwargs['shipping_fee'] is not None:
             invoice.shipping_fee=kwargs['shipping_fee']

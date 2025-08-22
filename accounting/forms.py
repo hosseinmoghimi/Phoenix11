@@ -15,7 +15,7 @@ class EditPersonCategoryForm(forms.Form):
 class EditFinancialEventForm(forms.Form):
     title=forms.CharField(required=True,max_length=100)
     financial_event_id=forms.IntegerField(required=True)
-    discount_percentage=forms.IntegerField(required=False)
+    discount=forms.IntegerField(required=False)
     tax_percentage=forms.IntegerField(required=False)
     shipping_fee=forms.IntegerField(required=False)
     amount=forms.IntegerField(required=False)
