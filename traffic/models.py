@@ -6,8 +6,8 @@ from accounting.models import FinancialEvent
 
 class Traffic(models.Model,DateTimeHelper,LinkHelper):
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
-    enter_datetime=models.DateTimeField(_("enter date time"), auto_now=False, auto_now_add=False)
-    exit_datetime=models.DateTimeField(_("exit date time"), auto_now=False, auto_now_add=False)
+    enter_datetime=models.DateTimeField(_("enter date time"),null=True,blank=True, auto_now=False, auto_now_add=False)
+    exit_datetime=models.DateTimeField(_("exit date time"),null=True,blank=True, auto_now=False, auto_now_add=False)
     location=models.ForeignKey("attachments.location", verbose_name=_("location"), on_delete=models.CASCADE)
     app_name=APP_NAME
     class_name="traffic"

@@ -632,7 +632,7 @@ class FinancialDocumentView(View):
             title='سند پیدا نشد.'
             body='سند پیدا نشد.'
             mv.message={'title':title,'body':body}
-            return mv.get(request=request)
+            return mv.get(request=request) 
         context['financial_document']=financial_document
         financial_document_s=json.dumps(FinancialDocumentSerializer(financial_document).data)
         context['financial_document_s']=financial_document_s
