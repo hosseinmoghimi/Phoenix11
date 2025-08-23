@@ -21,7 +21,7 @@
           <table class="table table-striped">
             <thead>
               <th>نام پروژه</th>
-
+              <th>برآورد</th>
               <th>کارفرما</th>
               <th>پیمانکار</th>
               <th></th>
@@ -45,21 +45,29 @@
                   </div>
 
                 </td>
-
                 <td>
                   <div>
-                    <a :href="project.employer.get_absolute_url">
-                      <span v-text="project.employer.title"></span>
-                    </a>
+                    
+                    <span v-text="to_price(project.amount)"></span>
+                    <small class="text-muted">
+                      {{CURRENCY}}
+                    </small>
+                  </div>
+                </td>
+                <td>
+                  <div v-for="organization_unit in [project.employer]"> 
+
+                    {% include "organization/includes/organization-unit-app/media.html" %}
                   </div>
                 </td>
 
                 <td>
-                  <div>
-                    <a :href="project.contractor.get_absolute_url">
-                      <span v-text="project.contractor.title"></span>
-                    </a>
+                    <div v-for="organization_unit in [project.contractor]"> 
+
+                    {% include "organization/includes/organization-unit-app/media.html" %}
                   </div>
+
+               
                 </td>
 
                 <td>

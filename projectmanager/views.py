@@ -149,7 +149,7 @@ class ProjectView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         project=ProjectRepo(request=request).project(*args, **kwargs)
-        project.normalize()
+        # project.normalize()
         if project is None:
             title='پروژه وجود ندارد'
             body='پروژه وجود ندارد'
@@ -222,7 +222,7 @@ class ProjectView(View):
 class ProjectsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
+        context['WIDE_LAYOUT']=True
         projects = ProjectRepo(request=request).list(parent_id=None,*args, **kwargs)
 
         context['projects']=projects
