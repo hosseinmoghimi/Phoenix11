@@ -1,0 +1,60 @@
+<div id="accordion-add-poll" class="rtl text-right farsi">
+  <div class="card" id="add-poll-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-add-poll"
+          aria-expanded="true"
+          aria-controls="collapse-add-poll"
+        >
+          افزودن نظرسنجی
+        </button>
+      </h5>
+    </div>
+    <div
+      id="collapse-add-poll"
+      class="collapse"
+      aria-labelledby="heading-add-poll"
+      data-parent="#accordion-add-poll"
+    >
+      <div class="card-body">
+        <form @submit.prevent="add_poll()">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">عنوان</label>
+                <input v-model="title" type="text" class="form-control" />
+              </div>
+            </div>
+            <div class="col-md-12">
+              <button v-if="!waiting" class="btn btn-success" type="submit">
+                <i class="fa fa-plus"></i>
+                افزودن
+              </button>
+              {% load static %}
+              <img
+                src="{% static 'leo/img/loading.gif' %}"
+                width="32"
+                v-if="waiting"
+                alt=""
+              />
+            </div>
+
+            <div class="col-md-12">
+              <div>
+                <div v-if="message.show" class="my-2">
+                  <div :class="'alert alert-'+message.color">
+                    <h5 v-html="message.title"></h5>
+                    <div v-html="message.body"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

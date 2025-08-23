@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'traffic',
     'family',
     'scheduler',
+    'polls',
 
 ]
  

@@ -33,6 +33,7 @@ urlpatterns = [
     path('traffic/', include('traffic.urls')),
     path('family/', include('family.urls')),
     path('scheduler/', include('scheduler.urls')),
+    path('polls/', include('polls.urls')),
     
     
     
