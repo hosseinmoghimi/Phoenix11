@@ -32,7 +32,7 @@ class PersonRepo():
         from django.db.models import Q
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
-            objects=objects.filter(Q(first_name__contains=search_for) |Q(last_name__contains=search_for) | Q(melli_code__contains=search_for) )
+            objects=objects.filter(Q(full_name__contains=search_for)  | Q(melli_code__contains=search_for) )
         return objects.all()
     def change_image(self,person_id,image):
         person=self.person(person_id=person_id)

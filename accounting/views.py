@@ -22,7 +22,7 @@ from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,Invoic
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
 from .serializers import PersonCategorySerializer,AssetSerializer,BankSerializer
 from .repo import FinancialYearRepo,BankRepo
-from authentication.views import PersonContext
+from authentication.views import PersonContext,PersonSerializer
 from utility.currency import to_price_colored
 import json 
 from core.views import MessageView
@@ -426,6 +426,13 @@ class SearchView(View):
 
 
                 
+
+            persons=PersonRepo(request=request).list(search_for=search_for)
+            if len(persons)>0:
+                context['persons']=persons
+                context['persons_s']=json.dumps(PersonSerializer(persons,many=True).data)
+                WAS_FOUND=True
+
 
             products=ProductRepo(request=request).list(search_for=search_for)
             if len(products)>0:

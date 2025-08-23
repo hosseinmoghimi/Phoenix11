@@ -79,6 +79,17 @@
 
     
 
+    {% if person.tel %}
+      
+    <h5>
+      <small class="text-muted">tel :</small>
+      <a href="tel:{{person.tel}}">
+
+        {{person.tel}}
+      </a>
+    </h5> 
+    {% endif %}
+
     {% if person.type2 %}
       
     <h5>

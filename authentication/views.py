@@ -146,7 +146,7 @@ class PersonsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context['name3']="name 3333"
-        persons=PersonRepo(request=request).list(*args, **kwargs)
+        persons=PersonRepo(request=request).list(*args, **kwargs).order_by('full_name')
         persons_s=json.dumps(PersonSerializer(persons,many=True).data)
         context['persons']=persons
         context['persons_s']=persons_s
