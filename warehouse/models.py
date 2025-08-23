@@ -75,21 +75,4 @@ class WareHouseMaterialSheet(models.Model,LinkHelper):
             return self.quantity
         if self.direction==MaterialPortDirectionEnum.OUT:
             return 0-self.quantity
-
-
-class MaterialTerminal(models.Model):
-    employee=models.ForeignKey("organization.employee",null=True,blank=True, verbose_name=_("employee"), on_delete=models.CASCADE)
-    ware_house=models.ForeignKey("warehouse",null=True,blank=True, verbose_name=_("warehouse"), on_delete=models.CASCADE)
-    
-
-    class Meta:
-        verbose_name = _("MaterialTerminal")
-        verbose_name_plural = _("MaterialTerminals")
-
-    def __str__(self):
-        employee=ware_house=''
-        if self.employee is not None:
-            employee= f"{self.employee}"
-        if self.ware_house is not None:
-            ware_house= f"{str(self.ware_house)}"
-        return ware_house+"___"+employee
+  
