@@ -2469,13 +2469,11 @@ class InvoiceRepo(FinancialEventRepo):
 
         if 'invoice_lines' in kwargs and kwargs['invoice_lines'] is not None and not kwargs['invoice_lines']=='':
             invoice_lines=kwargs['invoice_lines']   
-            leolog(invoice_lines=invoice_lines)
             for new_invoice_line in invoice_lines:
-                leolog(new_invoice_line=new_invoice_line)
                 invoice_line=InvoiceLineRepo(request=self.request).invoice_line(pk=int(new_invoice_line['invoice_line_id']))
                 if invoice_line is not None:
                     invoice_line.row=int(new_invoice_line['row'])
-                    invoice_line.quantity=int(new_invoice_line['quantity'])
+                    invoice_line.quantity=float(new_invoice_line['quantity'])
                     invoice_line.unit_name=new_invoice_line['unit_name']
                     invoice_line.unit_price=int(new_invoice_line['unit_price'])
                     invoice_line.discount_percentage=int(new_invoice_line['discount_percentage'])
