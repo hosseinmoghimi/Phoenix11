@@ -24,8 +24,10 @@ def getContext(request,*args, **kwargs):
     return context
 
 
-def OrganizationUnitContext(request,food_item,*args, **kwargs):
-    context=PageContext(request=request,page=food_item)
+def OrganizationUnitContext(request,organization_unit,*args, **kwargs):
+    context=PageContext(request=request,page=organization_unit)
+    context['organization_unit']=organization_unit
+
     return context
   
  
@@ -72,7 +74,7 @@ class OrganizationUnitView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request) 
         organization_unit=OrganizationUnitRepo(request=request).organization_unit(*args, **kwargs)
-        context['organization_unit']=organization_unit
+        context.update(OrganizationUnitContext(request=request,organization_unit=organization_unit))
 
         employees = organization_unit.employee_set.all()
         context['employees']=employees
