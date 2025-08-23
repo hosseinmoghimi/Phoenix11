@@ -80,7 +80,7 @@
           invoice_lines.push({
             row: parseInt(invoice_line.row),
             invoice_line_id: parseInt(invoice_line.id),
-            quantity: parseInt(invoice_line.quantity),
+            quantity: parseFloat(invoice_line.quantity),
             unit_name: invoice_line.unit_name,
             unit_price: parseInt(invoice_line.unit_price),
             discount_percentage: parseInt(invoice_line.discount_percentage),
