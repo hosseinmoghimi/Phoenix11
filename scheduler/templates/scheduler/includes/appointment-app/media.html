@@ -1,0 +1,21 @@
+<div class="media">
+  <a :href="appointment.get_absolute_url">
+    <img :src="appointment.thumbnail" class="rounded" width="64" alt="" />
+  </a>
+  <div class="media-body mr-2">
+    <h5>
+      <a :href="appointment.get_absolute_url">
+        <span v-text="appointment.title"></span>
+      </a>
+    </h5>
+
+    
+       <h6>
+      <a :href="appointment.person_to_meet.get_absolute_url">
+        <img :src="appointment.person_to_meet.image" width="32" class="rounded-circle" alt="">
+        <span v-text="appointment.person_to_meet.full_name"></span>
+      </a>
+    </h6>
+    
+  </div>
+</div>

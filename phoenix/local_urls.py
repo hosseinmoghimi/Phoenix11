@@ -32,6 +32,7 @@ urlpatterns = [
     path('library/', include('library.urls')),
     path('traffic/', include('traffic.urls')),
     path('family/', include('family.urls')),
+    path('scheduler/', include('scheduler.urls')),
     
     
     

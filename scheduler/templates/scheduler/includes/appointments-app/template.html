@@ -1,0 +1,92 @@
+<div id="accordion-appointments" class="rtl text-right farsi">
+  <div class="card" id="appointments-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-appointments"
+          aria-expanded="true"
+          aria-controls="collapse-appointments"
+        >
+                  
+          قرار ملاقات ها
+          <span v-if="appointments.length>0">
+            <small class="text-danger mx-2">
+              <span v-text="appointments.length"></span>
+            </small>
+          </span>
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-appointments"
+      class="collapse {% if expand_appointments %} show {% endif %}"
+      aria-labelledby="heading-appointments"
+      data-parent="#accordion-appointments"
+    >
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <th>کلاس نمونه</th>
+
+              <th>شخص</th>
+              <th>تاریخ</th>
+              <th></th>
+            </thead>
+            <tbody>
+              <tr v-for="appointment in appointments">
+                <td>
+               
+                  <!-- <div v-for="page in [appointment]">
+                    {% include "core/includes/page-app/media.html" %}
+                 </div> -->
+
+                <div>
+                    {% include "scheduler/includes/appointment-app/media.html" %}
+                 </div>
+
+                </td>
+
+
+                 <td>
+                 <div v-for="person in [appointment.person_to_meet]">
+                    {% include "authentication/includes/person-app/media.html" %}
+                 </div>
+                </td>
+                <td>  
+                  <span v-html="appointment.persian_event_datetime"></span>
+                </td>
+                <td>
+                  {% if perms.scheduler.change_appointment %}
+                  <a
+                    target="_blank"
+                    :href="appointment.get_edit_url"
+                    title="ویرایش"
+                    class="text-warning mx-2"
+                  >
+                    <i class="fa fa-edit text-warning"> </i>
+                    ویرایش
+                  </a>
+                  {% endif %} {% if perms.scheduler.delete_appointment %}
+                  <a
+                    target="_blank"
+                    :href="appointment.get_delete_url"
+                    title="حذف"
+                    class="text-danger mx-2"
+                  >
+                    <i class="fa fa-trash text-danger"> </i>
+                    حذف
+                  </a>
+                  {% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
