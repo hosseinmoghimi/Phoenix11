@@ -4,8 +4,7 @@ from phoenix.server_settings import CURRENCY
 from .apps import APP_NAME
 from accounting.models import Product,InvoiceLine,Invoice,CorePage
 from .enums import *
-from utility.enums import *
-from projectmanager.models import Request
+from utility.enums import * 
 
 
 class WareHouse(models.Model,LinkHelper):
@@ -40,7 +39,6 @@ class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     quantity=models.IntegerField(_("quantity"),default=1)
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD,max_length=100)
-    direction=models.CharField(_("direction"),max_length=50,choices=MaterialPortDirectionEnum.choices)
     class_name="materialport"
     app_name=APP_NAME
 
@@ -54,15 +52,14 @@ class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
 
 class WareHouseMaterialSheet(models.Model,LinkHelper):
     ware_house=models.ForeignKey("warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
-    material=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.PROTECT)
+    invoice_line=models.ForeignKey("accounting.invoiceline", verbose_name=_("invoice_line"), on_delete=models.PROTECT)
     direction=models.CharField(_("direction"),max_length=50,choices=MaterialPortDirectionEnum.choices)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
-    unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD,max_length=100)
-    quantity=models.IntegerField(_("quantity"))
-    shelf=models.CharField(_("shelf"),max_length=50)
-    row=models.CharField(_("row"),max_length=50)
-    col=models.CharField(_("col"),max_length=50)
+    shelf=models.CharField(_("shelf"),null=True,blank=True,max_length=50)
+    row=models.CharField(_("row"),null=True,blank=True,max_length=50)
+    col=models.CharField(_("col"),null=True,blank=True,max_length=50)
+    description=models.CharField(_("description"),null=True,blank=True,max_length=500)
 
     class_name="warehousematerialsheet"
     app_name=APP_NAME
