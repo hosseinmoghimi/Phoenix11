@@ -863,6 +863,11 @@ class Invoice(FinancialEvent):
         tax=(total_after_discount)*(self.tax_percentage)/100
         amount=total-discount+tax+shipping_fee
         self.amount=amount
+        try:
+            for project in self.project_set.all():
+                project.normalize()
+        except:
+            pass
         super(Invoice,self).save()
 
     @property

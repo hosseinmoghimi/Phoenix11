@@ -15,11 +15,11 @@ class PersonRepo():
         self.me=None
         self.request=request
         if request.user.is_authenticated:
+            self.me=Person.objects.filter(user_id=request.user.id).first()
             if self.request.user.has_perm(APP_NAME+'.view_person'):
                 self.objects=Person.objects.all()
             else:
                 self.objects=Person.objects.filter(user_id=request.user.id) 
-        self.me=Person.objects.filter(user_id=request.user.id).first()
         # person=PersonRepo(request=request).me
 
         
