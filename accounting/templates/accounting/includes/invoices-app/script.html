@@ -32,9 +32,8 @@
                 let CURRENCY="{{CURRENCY}}"
                 return to_price_colored(vall, CURRENCY)
             },
-            to_price: function (vall) {
-                let CURRENCY="{{CURRENCY}}"
-                return to_price(vall, CURRENCY)
+            to_price: function (vall,curr) { 
+                return to_price(vall, curr)
             },
 
         }

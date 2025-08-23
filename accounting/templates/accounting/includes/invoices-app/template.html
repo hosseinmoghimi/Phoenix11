@@ -74,11 +74,29 @@
 
                             <tr v-for="invoice in invoices">
                                 <td>
-                                    <a :href="invoice.get_absolute_url">
-                                        <span v-text="invoice.title">
+                                    <div class="media">
+                                        <a :href="invoice.get_absolute_url">
+                                            <img class="rounded" width="48" :src="invoice.thumbnail" alt="">
+                                        </a>
+                                        <div class="media-body mr-2">
+                                            <h5>
+                                                <a :href="invoice.get_absolute_url">
+                                                    <span v-text="invoice.title">
 
-                                        </span>
-                                    </a>
+                                                    </span>
+                                                </a>
+
+                                            </h5>
+                                            <h6>
+                                                
+                                                <span v-text="to_price(invoice.amount,'{{CURRENCY}}')">
+
+                                                </span>
+
+                                            </h6>
+                                        </div>
+                                    </div>
+                                   
                                 </td>
 
                                 <td>
@@ -90,31 +108,7 @@
                                     <div v-for="account in [invoice.bedehkar]">
                                         {% include "accounting/includes/account-app/media.html" %}
                                     </div>
-                                    <div class="media">
-                                        <a :href="invoice.bedehkar.get_absolute_url">
-                                            <img :src="invoice.bedehkar.thumbnail" class="rounded" width="32" alt="">
-                                        </a>
-                                        <div class="media-body mr-3">
-                                            <div>
-
-                                                <a :href="invoice.bedehkar.get_absolute_url">
-                                                    <span v-text="invoice.bedehkar.name "></span>
-                                                </a>
-                                            </div>
-                                            <div>
-
-                                                <a :href="invoice.bedehkar.get_absolute_url">
-                                                    <small class="text-muted"
-                                                        v-text="invoice.bedehkar.full_title"></small>
-                                                </a>
-                                            </div>
-                                            <div>
-                                                <small class="text-muted">
-                                                    <span v-text="invoice.bedehkar.class_title"></span>
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
 
 
                                 </td>
@@ -125,33 +119,7 @@
                                         {% include "accounting/includes/account-app/media.html" %}
                                     </div>
 
-                                    <div class="media">
-                                        <a :href="invoice.bestankar.get_absolute_url">
-                                            <img :src="invoice.bestankar.thumbnail" class="rounded" width="32" alt="">
-                                        </a>
-                                        <div class="media-body mr-3">
-                                            <div>
-
-                                                <a :href="invoice.bestankar.get_absolute_url">
-                                                    <span v-text="invoice.bestankar.name"></span>
-                                                </a>
-                                            </div>
-
-                                            <div>
-
-                                                <a :href="invoice.bestankar.get_absolute_url">
-                                                    <small class="text-muted"
-                                                        v-text="invoice.bestankar.full_title"></small>
-                                                </a>
-                                            </div>
-
-                                            <div>
-                                                <small class="text-muted">
-                                                    <span v-text="invoice.bestankar.class_title"></span>
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
+                                     
 
 
                                 </td>
@@ -159,11 +127,11 @@
 
                                 <td>
 
-                                    <span v-text="to_price(invoice.amount)">
+                                    <span v-text="to_price(invoice.amount,'{{CURRENCY}}')">
 
                                     </span>
 
-                                    {{CURRENCY}}
+                                    
 
                                 </td>
 

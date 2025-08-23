@@ -71,7 +71,7 @@ class Person(models.Model,ImageHelper,LinkHelper):
         if self.last_name:
             full_name+=self.last_name 
 
-        return full_name
+        return full_name.replace('  ',' ')
 
 
 

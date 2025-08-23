@@ -1138,7 +1138,7 @@ class AddFinancialEventView(View):
 class InvoicesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        invoices=InvoiceRepo(request=request).list()
+        invoices=InvoiceRepo(request=request).list().order_by('-event_datetime')
         invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
         context['invoices']=invoices
         context['invoices_s']=invoices_s
