@@ -101,38 +101,7 @@ class Project(Event,LinkHelper,DateHelper):
   
     def get_status_color(self):
         return StatusColor(self)
-
-class Request(InvoiceLine):
-    ware_house=models.ForeignKey("warehouse.warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
-
-    
-
-    class Meta:
-        verbose_name = _("Request")
-        verbose_name_plural = _("Requests")
-    def save(self):
-        super(Request,self).save()
-
-
-class MaterialRequest(Request):
-    
-
-    class Meta:
-        verbose_name = _("MaterialRequest")
-        verbose_name_plural = _("MaterialRequests")
-    def save(self):
-        super(MaterialRequest,self).save()
-
-
-class ServiceRequest(Request):
-    
-
-    class Meta:
-        verbose_name = _("ServiceRequest")
-        verbose_name_plural = _("ServiceRequests")
-    def save(self):
-        super(ServiceRequest,self).save()
-
+ 
 
 class Ticket(models.Model,DateTimeHelper,LinkHelper):
     parent=models.ForeignKey("ticket",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)

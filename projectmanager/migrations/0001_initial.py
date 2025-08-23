@@ -16,44 +16,10 @@ class Migration(migrations.Migration):
         ('authentication', '0001_initial'),
         ('core', '0001_initial'),
         ('organization', '0001_initial'),
-        ('warehouse', '0001_initial'),
     ]
 
     operations = [
-        migrations.CreateModel(
-            name='Request',
-            fields=[
-                ('invoiceline_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='accounting.invoiceline')),
-                ('ware_house', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='warehouse.warehouse', verbose_name='ware_house')),
-            ],
-            options={
-                'verbose_name': 'Request',
-                'verbose_name_plural': 'Requests',
-            },
-            bases=('accounting.invoiceline',),
-        ),
-        migrations.CreateModel(
-            name='MaterialRequest',
-            fields=[
-                ('request_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='projectmanager.request')),
-            ],
-            options={
-                'verbose_name': 'MaterialRequest',
-                'verbose_name_plural': 'MaterialRequests',
-            },
-            bases=('projectmanager.request',),
-        ),
-        migrations.CreateModel(
-            name='ServiceRequest',
-            fields=[
-                ('request_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='projectmanager.request')),
-            ],
-            options={
-                'verbose_name': 'ServiceRequest',
-                'verbose_name_plural': 'ServiceRequests',
-            },
-            bases=('projectmanager.request',),
-        ),
+         
         migrations.CreateModel(
             name='RemoteClient',
             fields=[
