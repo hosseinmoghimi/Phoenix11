@@ -62,8 +62,8 @@ class OrganizationUnit(Page,LinkHelper):
         except:
             pass 
 class Employee(models.Model,LinkHelper,DateTimeHelper):
-    person=models.ForeignKey("authentication.person",related_name="employees", verbose_name=_("person"), on_delete=models.CASCADE)
-    organization_unit=models.ForeignKey("organizationunit",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
+    person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person account"), on_delete=models.CASCADE)
+    organization_unit=models.ForeignKey("organizationunit",null=True,blank=True, verbose_name=_("organization_unit"), on_delete=models.CASCADE)
     job_title=models.CharField(_("job_title"),max_length=100)
 
     class_name="employee"
@@ -74,7 +74,7 @@ class Employee(models.Model,LinkHelper,DateTimeHelper):
         verbose_name_plural = _("Employees")
 
     def __str__(self):
-        return f"{self.person}  {self.job_title}  {self.organization_unit}"
+        return f"{self.person_account}  {self.job_title}  {self.organization_unit}"
  
  
     def save(self):

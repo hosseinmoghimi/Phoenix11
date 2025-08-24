@@ -29,6 +29,7 @@
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
+              <th>کارمند</th> 
               <th>شخص</th> 
 
               
@@ -40,11 +41,14 @@
             </thead>
             <tbody>
               <tr v-for="employee in employees">
+              <td>
+                {% include "organization/includes/employee-app/media.html" %}
 
+              </td>
                 <td>
-                  <a :href="employee.get_absolute_url">
-                    <span v-text="employee.person.full_name"></span>
-                  </a>
+                  <div v-for="person_account in [employee.person_account]">
+                    {% include "accounting/includes/person-account-app/media.html" %}
+                  </div>
 
                 </td>
 
