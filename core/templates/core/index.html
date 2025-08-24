@@ -2,6 +2,22 @@
 {% load static %}
 {% block content %}
 <div class="row rtl farsi">
+    <div class="col-md-12">
+        <div class="text-center">
+            <h6 class="text-center">
+                آفیس مجازی 
+            </h6>
+
+             <h5 class="text-center">
+                فونیکس
+<small class="text-muted">
+    ورژن 
+    {{VERSION}}
+</small>
+            </h5>
+            
+        </div>
+    </div>
     {% for phoenix_app in phoenix_apps %}
     {% if phoenix_app.on_index %}
       

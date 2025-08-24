@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,CURRENCY,VUE_VERSION_3,VUE_VERSION_2
+from phoenix.server_settings import VERSION,DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,CURRENCY,VUE_VERSION_3,VUE_VERSION_2
 from authentication.repo import PersonRepo,PersonRepo
 from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
@@ -55,11 +55,13 @@ def CoreContext(request,*args, **kwargs):
     current_time=current_datetime[10:]
     context['current_time']=current_time
 
+    context['VERSION']=VERSION
     context['phoenix_apps']=phoenix_apps
     parameter_repo=ParameterRepo(request=request,app_name=app_name)
     context['WIDE_LAYOUT']=parameter_repo.parameter(name=PARAMETER_NAME_ENUM.WIDE_LAYOUT,default="0").boolean_value
     context['farsi_font_name']=parameter_repo.parameter(name=PARAMETER_NAME_ENUM.FARSI_FONT,default="Tanha").value
-    # app_has_background=parameter_repo.parameter(name=ParameterNameEnum.HAS_APP_BACKGROUND,default=False).boolean_value
+    parameter_repo.set_parameter(app_name=APP_NAME,name="version",value='1.0.0')
+     
     # app_background_image=PictureRepo(request=request,app_name=app_name).picture(name=PictureNameEnum.APP_BACKGROUND_IMAGE)
     # if app_has_background:
     #     context['app_background_image']=app_background_image
