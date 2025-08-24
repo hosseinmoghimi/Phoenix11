@@ -55,11 +55,9 @@ class WareHouseRepo():
 
         warehouse=WareHouse()
         if 'name' in kwargs:
-            warehouse.name=kwargs["name"]
-        if 'organization_unit_id' in kwargs:
-            warehouse.organization_unit_id=kwargs["organization_unit_id"]
-        if 'account_id' in kwargs:
-            warehouse.account_id=kwargs["account_id"]
+            warehouse.name=kwargs["name"]  
+        if 'person_account_id' in kwargs:
+            warehouse.person_account_id=kwargs["person_account_id"]
           
         (result,message,warehouse)=warehouse.save()
         return result,message,warehouse

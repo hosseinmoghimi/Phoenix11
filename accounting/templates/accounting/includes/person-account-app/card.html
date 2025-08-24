@@ -26,7 +26,7 @@
       <div class="text-center">
         <div class="my-2">
           <button
-            @click="copy_to_clipboard('{{account.code}}')"
+            @click="copy_code_to_clipboard('{{account.code}}')"
             class="my-2 btn btn-{{account.color}}"
           >
             <small class=""> کد : </small>
@@ -41,7 +41,7 @@
     <div>
       <div class="text-center">
         <button
-          @click="copy_balance(account.balance)"
+          @click="copy_balance_to_clipboard(`{{account.balance}}`)"
           class="my-2 btn btn-{{account.balance_color}}"
         >
           <small class=""> مانده : </small>

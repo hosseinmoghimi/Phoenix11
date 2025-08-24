@@ -17,7 +17,7 @@
         },
         methods:{ 
 
-            copy_to_clipboard:function(code){
+            copy_code_to_clipboard:function(code){
                 copy_to_clipboard(code)
                 person_account_app.show_code_copied = true
                 setTimeout(() => {
@@ -25,7 +25,7 @@
                 }, 2000);
 
             },
-            copy_balance:function(balance){
+            copy_balance_to_clipboard:function(balance){
                 copy_to_clipboard(balance)
                 this.show_balance_copied = true
                 setTimeout(() => {

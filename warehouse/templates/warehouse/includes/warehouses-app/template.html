@@ -39,12 +39,10 @@
               </th>
             </thead>
             <tbody>
-              <tr v-for="warehouse in warehouses">
+              <tr v-for="ware_house in warehouses">
                 
                 <td>
-                  <a :href="warehouse.get_absolute_url">
-                    <span v-text="warehouse.name"></span>
-                  </a>
+                 {% include "warehouse/includes/warehouse-app/media.html" %}
 
                   
 
@@ -52,46 +50,19 @@
                 </td>
 
                  <td>
-                  <a :href="warehouse.account.get_absolute_url">
-                    <span v-text="warehouse.account.name"></span>
-                    <div>
-
-                      <small class="text-muted" v-text="warehouse.account.full_name"></small>
-                    </div>
-
-                     <div>
-
-                      <small class="text-muted" v-text="to_price(warehouse.account.balance)"></small>
-                    </div>
-                  </a>
-
-                   <td>
-                
-
-
-                     <td>
-                  <a :href="warehouse.organization_unit.get_absolute_url" v-if="warehouse.organization_unit">
-                    <span v-text="warehouse.organization_unit.title"></span>
-                    <div>
-
-                      <small class="text-muted" v-text="warehouse.organization_unit.full_name"></small>
-                    </div>
-
-                   
-                  </a>
-
-                   <td>
-                
-
+                  <div v-for="person_account in [ware_house.person_account]">
+                  {% include "accounting/includes/person-account-app/media.html" %}
+                                    
+                  </div>
                   
 
- 
                 </td>
+ 
                 
                 <td>
                   <a
                     target="_blank"
-                    :href="warehouse.get_edit_url"
+                    :href="ware_house.get_edit_url"
                     title="ویرایش"
                     class="text-warning mx-2"
                   >
@@ -100,7 +71,7 @@
                   </a>
                   <a
                     target="_blank"
-                    :href="warehouse.get_delete_url"
+                    :href="ware_house.get_delete_url"
                     title="حذف"
                     class="text-danger mx-2"
                   >

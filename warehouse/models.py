@@ -1,17 +1,18 @@
 from django.db import models
-from core.models import _,reverse,Page,LinkHelper,DateTimeHelper,FAILED,SUCCEED
+from core.models import _,reverse,Page,LinkHelper,DateTimeHelper,FAILED,SUCCEED,ImageHelper
 from phoenix.server_settings import CURRENCY
 from .apps import APP_NAME
 from accounting.models import Product,InvoiceLine,Invoice,CorePage
 from .enums import *
 from utility.enums import * 
 
+IMAGE_FOLDER = APP_NAME+"/images/"
 
-class WareHouse(models.Model,LinkHelper):
+class WareHouse(models.Model,LinkHelper,ImageHelper):
     name=models.CharField(_("نام"), max_length=50)
+    thumbnail_origin=models.ImageField(_("thumbnail"),blank=True,null=True, upload_to=IMAGE_FOLDER+"warehouse", height_field=None, width_field=None, max_length=None)
     person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"),null=True,blank=True, on_delete=models.PROTECT)
-    organization_unit=models.ForeignKey("organization.organizationunit", verbose_name=_("organization_unit"),null=True,blank=True, on_delete=models.PROTECT)
-
+     
     app_name=APP_NAME
     class_name="warehouse"
     class Meta:

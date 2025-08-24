@@ -15,7 +15,7 @@
         </div>
         {% endif %}
         <div class="mt-2" id="account-code-app" vcloack>
-            <h5 class="ltr" @click="copy_to_clipboard(account.code)" style="cursor: pointer;">
+            <h5 class="ltr" @click="copy_code_to_clipboard(account.code)" style="cursor: pointer;">
                 <span class="ltr">
                     {{account.code | account_code_seperator}}
                 </span>

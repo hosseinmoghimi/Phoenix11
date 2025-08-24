@@ -2,12 +2,12 @@ from rest_framework import serializers
 from .models import WareHouse
 from accounting.serializers import FinancialEventSerializer,InvoiceLineSerializer,AccountBriefSerializer
 from organization.serializers import OrganizationUnitSerializer
+from accounting.serializers import PersonAccountSerializer
 
 
 class WareHouseSerializer(serializers.ModelSerializer):
-       account=AccountBriefSerializer()
-       organization_unit=OrganizationUnitSerializer()
+       person_account=PersonAccountSerializer()
        class Meta:
         model = WareHouse
-        fields = ['id','name','organization_unit','account', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','name','thumbnail','person_account', 'get_absolute_url','get_edit_url','get_delete_url']
   

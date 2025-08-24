@@ -66,11 +66,14 @@
 
                                 </td>
                                 <td>
+                                    <btn @click="copy_balance_to_clipboard(person_account.balance)" class="btn btn-link">
+                                        
                                     <span v-html="to_price(person_account.balance)"></span>
                                     <small class="text-muted mr-1">
 
                                         {{CURRENCY}}
                                     </small>
+                                    </btn>
                                 </td>
                                 <td>
                                     <a target="_blank" :href="person_account.get_edit_url" title="ویرایش"

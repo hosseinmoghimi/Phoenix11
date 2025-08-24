@@ -65,7 +65,7 @@
                    <div>
       <div class="text-center">
       <div class="my-2">
-          <button @click="copy_to_clipboard(account.code)" :class="'my-2 btn btn-'+account.color">
+          <button @click="copy_code_to_clipboard(account.code)" :class="'my-2 btn btn-'+account.color">
             <small class=""> کد : </small>
             <small v-text="account.code">   </small>
             <i class="fa fa-copy"></i>
@@ -78,7 +78,7 @@
                 <td> 
                   <div>
 
-                    <button @click="copy_to_clipboard(account.balance)" class="my-2 btn btn-link ">
+                    <button @click="copy_balance_to_clipboard(account.balance)" class="my-2 btn btn-link ">
                       <small class="text-muted"> مانده : </small>
                       <span v-html="to_price_colored(account.balance,'{{CURRENCY}}')">
 
