@@ -154,7 +154,10 @@
                 <span v-text="to_price(sum_total())"></span>
               </td>
             </tr>
-            {% endif %} {% if invoice %} {% if invoice.ship_fee > 0 %}
+           
+ 
+            {% endif %}
+            {% if invoice %} {% if invoice.shipping_fee > 0 %}
 
             <tr>
               <td colspan="5">
@@ -162,7 +165,7 @@
               </td>
 
               <td class="bordered farsi text-right">
-                <span> {{invoice.ship_fee|to_price}} </span>
+                <span> {{invoice.shipping_fee|to_price}} </span>
               </td>
               <td></td>
             </tr>
@@ -240,7 +243,7 @@
                                         v-text="to_price(sum_prices())"></div> -->
 
                 <div>
-                  <span v-text="to_price(sum_total())"></span>
+                  {{invoice.sum_total|to_price}} 
                   {{CURRENCY}}
                 </div>
               </div>

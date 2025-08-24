@@ -842,10 +842,10 @@ class Invoice(FinancialEvent):
             self.app_name=APP_NAME
 
         result,message,invoice=FAILED,"",self
-
-        super(Invoice,self).save()
         result=SUCCEED
         message='فاکتور با موفقیت اضافه شد.'
+        self.normalize()
+         
         return result,message,invoice
 
 

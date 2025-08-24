@@ -54,7 +54,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
        bestankar=AccountSerializer()
        class Meta:
         model = Invoice
-        fields = ['id','title','thumbnail','bedehkar' ,'bestankar','sum_total','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','thumbnail','bedehkar' ,'bestankar','sum_total','amount','shipping_fee','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
  
 
 class FinancialYearSerializer(serializers.ModelSerializer): 
