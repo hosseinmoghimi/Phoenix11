@@ -133,6 +133,11 @@
       </div>
     </div>
   </div>
+  
+      <div class="col-md-12">
+        {% include "warehouse/includes/warehouse-sheets-app/template.html" %}
+      </div>
+
   {% if add_invoice_line_warehouse_sheet_form %}
 
   <div class="col-12">
@@ -145,6 +150,8 @@
 
     {% include "warehouse/includes/add-warehouse-sheet-app/script.html" %}
   {% endif %} 
+        {% include "warehouse/includes/warehouse-sheets-app/script.html" %}
+
 
 {% endblock script %}
 
