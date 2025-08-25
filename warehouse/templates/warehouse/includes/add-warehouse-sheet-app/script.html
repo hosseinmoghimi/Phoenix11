@@ -57,6 +57,11 @@
                 console.log(payload)
                 $.post(url_add_warehouse_sheet,payload).done(data=>{
                     console.log(data)
+                    if(data.result==="SUCCEED"){
+                        if(typeof warehouse_sheets_app !='undefined'){
+                            warehouse_sheets_app.warehouse_sheets.push(data.warehouse_sheet)
+                        }
+                    }
                 })
 
             },
