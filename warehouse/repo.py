@@ -116,7 +116,11 @@ class WareHouseSheetRepo():
             return result,message,warehouse_sheet
 
         warehouse_sheet=WareHouseSheet()
-            
+        warehouse=WareHouse.objects.filter(pk=kwargs["warehouse_id"]).first()
+        if warehouse is None:
+            message='انبار درست انتخاب نشده است.'
+            return result,message,None    
+         
         if 'warehouse_id' in kwargs:
             warehouse_sheet.warehouse_id=kwargs["warehouse_id"]  
 

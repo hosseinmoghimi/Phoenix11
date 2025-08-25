@@ -7,11 +7,11 @@ class AddWareHouseForm(forms.Form):
 class AddWareHouseSheetForm(forms.Form):
     invoice_line_id=forms.IntegerField(required=True) 
     warehouse_id=forms.IntegerField(required=True) 
-    shelf=forms.CharField(required=True,max_length=50)
-    row=forms.CharField(required=True,max_length=50)
-    col=forms.CharField(required=True,max_length=50)
+    shelf=forms.CharField(required=False,max_length=50)
+    row=forms.CharField(required=False,max_length=50)
+    col=forms.CharField(required=False,max_length=50)
     direction=forms.CharField(required=True,max_length=50)
-    description=forms.CharField(required=True,max_length=500)
+    description=forms.CharField(required=False,max_length=500)
      
 class SelectWareHouseForm(forms.Form):
     warehouse_id=forms.IntegerField(required=True) 

@@ -61,6 +61,11 @@
                         if(typeof warehouse_sheets_app !='undefined'){
                             warehouse_sheets_app.warehouse_sheets.push(data.warehouse_sheet)
                         }
+                        add_warehouse_sheet_app.direction=''
+                        show_message(add_warehouse_sheet_app,'موفق',data.message,'success',3000)
+                    }
+                    else{
+                        show_message(add_warehouse_sheet_app,'خطا',data.message,'danger',3000)
                     }
                 })
 
