@@ -824,6 +824,9 @@ class Service(InvoiceLineItem):
 class Invoice(FinancialEvent):
     
     @property
+    def lines(self):
+        return InvoiceLine.objects.filter(invoice_id=self.id).order_by('row')
+    @property
     def line_discount_amount(self):
         line_discount_amount=0
         for line in self.invoiceline_set.all():
@@ -856,9 +859,14 @@ class Invoice(FinancialEvent):
         tax=0
         amount=0
         shipping_fee=self.shipping_fee
-        for line in self.invoiceline_set.all():
+        i=1
+        for line in self.invoiceline_set.order_by('row'):
             total+=line.unit_price*line.quantity 
             discount+=line.discount
+            line.row=i
+            i+=1
+            # super(InvoiceLine,line).save()
+
         total_after_discount=total-discount
         tax=(total_after_discount)*(self.tax_percentage)/100
         amount=total-discount+tax+shipping_fee
@@ -914,7 +922,7 @@ class InvoiceLine(models.Model,LinkHelper):
     def delete(self,*args, **kwargs):
         invoice=self.invoice
         super(InvoiceLine,self).delete()
-        invoice.normalize()
+        self.invoice.normalize()
 
 
 

@@ -1,35 +1,138 @@
-{% extends "accounting/layout.html" %}
-{% load static %}
-{% block content %}
+{% extends "accounting/layout.html" %} {% load static %} {% block style %}
+<style>
+  .field-name {
+    text-align: left;
+    color:rgb(139, 138, 138);
+    font-size:   70%;
+  }
+  .field-value {
+    text-align: right;
+  }
+</style>
+{% endblock style %} {% block content %}
+{% load to_normal_number %}
+{% load to_price %}
+{% load to_persian_date %}
 <div class="row rtl farsi">
-    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
-        <a href="{% url 'accounting:accounts' %}">
-            <img src="{% static 'core/img/logo.png' %}" width="64em" class="mb-2" alt="">
-            <h6 class="text-center">
-                حساب ها
-            </h6>
-        </a>
-    </div>
-    <div class="col-6 col-md-3 col-lg-2 text-center my-3">
-        <a href="{% url 'accounting:tree_chart' pk=0 %}">
-            <img src="{% static 'core/img/logo.png' %}" width="64em" class="mb-2" alt="">
-            <h6 class="text-center">
-
-
-
-                لاین فاکتور
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5>سطر فاکتور</h5>
+      </div>
+      <div class="card-body">
+        <h5>
             
-            </h6>
-        </a>
+        </h5>
+         {% if perms.accounting.change_invoiceline %}
+            <a href="{{invoice_line.get_edit_url}}" class="my-2 text-warning mx-2" title="ویرایش" target="_blank">
+                <i class="fa fa-edit text-warning"></i>
+                ویرایش
+            </a>
+            {% endif %} {% if perms.core.delete_invoice_line %}
+
+            <a href="{{invoice_line.get_delete_url}}" class="my-2 text-danger mx-2" title="حذف" target="_blank">
+                <i class="fa fa-trash text-danger"></i>
+                حذف
+            </a>
+            {% endif %}
+
+      </div>
     </div>
- 
- 
+  </div>
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table rtl">
+            <tr>
+              <td class="field-name">فاکتور</td>
+
+              <td class="field-value">
+                <a href="{{invoice_line.invoice.get_abolute_url}}">
+                  {{invoice_line.invoice.title}}
+                </a>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="field-name">ردیف</td>
+
+              <td class="field-value">{{invoice_line.row}}</td>
+            </tr>
+
+            <tr>
+              <td class="field-name">شرح</td>
+
+              <td class="field-value">
+                <div class="media"> 
+                    
+                    <a href="{{invoice_line.invoice_line_item.get_absolute_url}}">
+                        <img src="{{invoice_line.invoice_line_item.thumbnail}}" class="rounded" width="64" alt="">
+                    </a>
+                  <div class="media-body">
+                    <a href="{{invoice_line.invoice_line_item.get_absolute_url}}">
+                        {{invoice_line.invoice_line_item.title}}
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="field-name">تعداد / مقدار</td>
+
+              <td class="field-value">
+              {{invoice_line.quantity|to_normal_number}}
+              {{invoice_line.unit_name}}
+              </td>
+            </tr>
 
 
 
+             <tr>
+              <td class="field-name">
+                قیمت جزء
+              </td>
+
+              <td class="field-value">
+              {{invoice_line.unit_price|to_price}}
+                {{CURRENCY}}
+            </td>
+            </tr>
+
+
+             <tr>
+              <td class="field-name">
+                مبلغ
+              </td>
+
+              <td class="field-value">
+                {{invoice_line.line_total|to_price}}
+                {{CURRENCY}}
+              </td>
+            </tr>
+
+
+             <tr>
+              <td class="field-name">
+                درصد تخفیف
+              </td>
+
+              <td class="field-value">
+                {{invoice_line.discount_percentage}} %
+
+              </td>
+            </tr>
+
+             <tr>
+              <td class="field-name"></td>
+
+              <td class="field-value"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-{% endblock content %}
-
-{% block script %}
-
-{% endblock script %}
+{% endblock content %} {% block script %} {% endblock script %}

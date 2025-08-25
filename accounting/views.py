@@ -15,7 +15,7 @@ from core.views import CoreContext,PageContext
 from .repo import FinancialDocumentRepo,CategoryRepo,BrandRepo,AssetRepo
 from .repo import PersonCategoryRepo,PersonRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo
 from .repo import ProductRepo,InvoiceRepo,FinancialEventRepo,PersonAccountRepo
-from .repo import  BankAccountRepo
+from .repo import  BankAccountRepo,InvoiceLineRepo
 from .serializers import BankAccountSerializer
 from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer,BrandSerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
@@ -834,16 +834,17 @@ class ProductView(View):
         context.update(ProductContext(request=request,product=product))
         return render(request,TEMPLATE_ROOT+"product.html",context)
     
-
 class InvoiceLineView(View):
     def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        product=ProductRepo(request=request).product(*args, **kwargs)
-        if product is None:
-            raise Http404
-        
 
-        context.update(ProductContext(request=request,product=product))
+        context=getContext(request=request)
+        invoice_line=InvoiceLineRepo(request=request).invoice_line(*args, **kwargs)
+        if invoice_line is None :
+            mv=MessageView(title='خطا',body='سطر فاکتور مورد نظر یافت نشد.')
+            return mv.get(request=request)
+        
+        context['invoice_line']=invoice_line
+        context.update(InvoiceLineItemContext(request=request,invoice_line_item=invoice_line.invoice_line_item))
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"invoice-line.html",context)

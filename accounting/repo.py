@@ -168,7 +168,7 @@ class InvoiceLineRepo:
                     unit_name=unit_name,
                     unit_price=unit_price,
                     )
-
+        invoice_line.row=len(invoice_line.invoice.invoiceline_set.all())+1
         result,message,invoice_line=invoice_line.save()
  
         return result,message,invoice_line
