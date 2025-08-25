@@ -3,7 +3,12 @@
 {% load static %}
 {% block content %}
 <div class="row rtl farsi">
-    
+    {% if add_warehouse_form %}
+      <div class="col-md-12">
+          {% include "warehouse/includes/add-warehouse-app/template.html" %}
+
+      </div>
+    {% endif %}
     <div class="col-md-12">
 
         
@@ -16,5 +21,7 @@
 
 {% block script %}
 {% include "warehouse/includes/warehouse-sheets-app/script.html" %}
- 
+{% if add_warehouse_form %}
+{% include "warehouse/includes/add-warehouse-app/script.html" %}
+{% endif %}
 {% endblock script %}

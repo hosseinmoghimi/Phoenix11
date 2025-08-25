@@ -51,10 +51,10 @@ class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
         return f"{self.person}  {self.product}  {self.direction}"
 
 
-class WareHouseMaterialSheet(models.Model,LinkHelper):
-    ware_house=models.ForeignKey("warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
+class WareHouseSheet(models.Model,LinkHelper,DateTimeHelper):
+    warehouse=models.ForeignKey("warehouse", verbose_name=_("warehouse"), on_delete=models.PROTECT)
     invoice_line=models.ForeignKey("accounting.invoiceline", verbose_name=_("invoice_line"), on_delete=models.PROTECT)
-    direction=models.CharField(_("direction"),max_length=50,choices=MaterialPortDirectionEnum.choices)
+    direction=models.CharField(_("direction"),max_length=50,choices=WareHouseSheetDirectionEnum.choices)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
     shelf=models.CharField(_("shelf"),null=True,blank=True,max_length=50)
@@ -62,18 +62,18 @@ class WareHouseMaterialSheet(models.Model,LinkHelper):
     col=models.CharField(_("col"),null=True,blank=True,max_length=50)
     description=models.CharField(_("description"),null=True,blank=True,max_length=500)
 
-    class_name="warehousematerialsheet"
+    class_name="warehousesheet"
     app_name=APP_NAME
     class Meta:
-        verbose_name = _("WareHouseMaterialSheet")
-        verbose_name_plural = _("WareHouseMaterialSheets")
+        verbose_name = _("WareHouseSheet")
+        verbose_name_plural = _("WareHouseSheets")
 
     def __str__(self):
-        return f"{self.ware_house} - {self.material} - {self.direction}     "
+        return f"{self.warehouse} - {self.invoice_line.invoice_line_item} - {self.invoice_line.quantity} {self.invoice_line.unit_name} - {self.direction}     "
 
     def balance(self):
-        if self.direction==MaterialPortDirectionEnum.IN:
+        if self.direction==WareHouseSheetDirectionEnum.IN:
             return self.quantity
-        if self.direction==MaterialPortDirectionEnum.OUT:
+        if self.direction==WareHouseSheetDirectionEnum.OUT:
             return 0-self.quantity
   

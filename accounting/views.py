@@ -2,7 +2,6 @@ from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from utility.log import leolog
 from .constants import EXCEL_PRODUCTS_DATA_START_ROW,EXCEL_SERVICES_DATA_START_ROW
-
 from django.http import Http404,HttpResponse
 from django.views import View
 from .enums import *
@@ -830,12 +829,23 @@ class ProductView(View):
         if product is None:
             raise Http404
         
+        context["WIDE_LAYOUT"]=True
 
         context.update(ProductContext(request=request,product=product))
+
+
+        from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer
+
+        warehouse_sheets=WareHouseSheetRepo(request=request).list(product_id=product.id)
+        context["warehouses"]=warehouse_sheets
+        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+        context["warehouse_sheets_s"]=warehouse_sheets_s
+
         return render(request,TEMPLATE_ROOT+"product.html",context)
     
 class InvoiceLineView(View):
     def get(self,request,*args, **kwargs):
+        from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer
 
         context=getContext(request=request)
         invoice_line=InvoiceLineRepo(request=request).invoice_line(*args, **kwargs)
@@ -847,6 +857,18 @@ class InvoiceLineView(View):
         context.update(InvoiceLineItemContext(request=request,invoice_line_item=invoice_line.invoice_line_item))
 
         context['phoenix_apps']=phoenix_apps
+
+
+        warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_line_id=invoice_line.id)
+        context["warehouses"]=warehouse_sheets
+        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+        context["warehouse_sheets_s"]=warehouse_sheets_s
+
+        
+        if request.user.has_perm('warehouse.add_warehousesheet'):
+            from warehouse.views import AddWareHouseSheetForm,WareHouseSheetDirectionEnum
+            context['directions_for_add_warehouse_sheet_app']=(i[0] for i in WareHouseSheetDirectionEnum.choices)
+            context['add_invoice_line_warehouse_sheet_form']=AddWareHouseSheetForm()
         return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
     
 
@@ -1172,6 +1194,15 @@ class InvoiceView(View):
         context.update(InvoiceContext(request=request,invoice=invoice))
 
         
+
+        from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer
+
+        warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id)
+        context["warehouses"]=warehouse_sheets
+        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+        context["warehouse_sheets_s"]=warehouse_sheets_s
+
+
         # if True:
             # invoice_line_items=InvoiceLineItemRepo(request=request).list()
             # context.update(AddInvoiceLineContext(request=request))

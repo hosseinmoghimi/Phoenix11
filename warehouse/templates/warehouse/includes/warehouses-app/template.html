@@ -39,7 +39,7 @@
               </th>
             </thead>
             <tbody>
-              <tr v-for="ware_house in warehouses">
+              <tr v-for="warehouse in warehouses">
                 
                 <td>
                  {% include "warehouse/includes/warehouse-app/media.html" %}
@@ -50,7 +50,7 @@
                 </td>
 
                  <td>
-                  <div v-for="person_account in [ware_house.person_account]">
+                  <div v-for="person_account in [warehouse.person_account]">
                   {% include "accounting/includes/person-account-app/media.html" %}
                                     
                   </div>
@@ -62,7 +62,7 @@
                 <td>
                   <a
                     target="_blank"
-                    :href="ware_house.get_edit_url"
+                    :href="warehouse.get_edit_url"
                     title="ویرایش"
                     class="text-warning mx-2"
                   >
@@ -71,7 +71,7 @@
                   </a>
                   <a
                     target="_blank"
-                    :href="ware_house.get_delete_url"
+                    :href="warehouse.get_delete_url"
                     title="حذف"
                     class="text-danger mx-2"
                   >

@@ -1,0 +1,126 @@
+<div id="accordion-warehouse-sheets" class="rtl text-right farsi">
+  <div class="card" id="warehouse_sheets-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-warehouse-sheets"
+          aria-expanded="true"
+          aria-controls="collapse-warehouse-sheets">
+          برگه های انبار
+          <span v-if="warehouse_sheets.length>0">
+            <small class="text-danger mx-2">
+              <span v-text="warehouse_sheets.length"></span>
+            </small>
+          </span>
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-warehouse-sheets"
+      class="collapse {% if expand_warehouse_sheets %} show {% endif %}"
+      aria-labelledby="heading-warehouse-sheets"
+      data-parent="#accordion-warehouse-sheets"
+    >
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+                {% if not warehouse %}
+                  
+              <th>انبار</th>
+              {% endif %}
+                {% if not product %}
+                  
+                    <th>کالا</th>
+                    {% endif %}
+                    <th>تعداد</th>
+              <th>جهت</th>
+                {% if not invoice %}
+                  
+                <th>فاکتور</th>
+                {% endif %}
+              <th>ثبت توسط</th>
+                <th>تاریخ</th>
+              <th></th>
+            </thead>
+            <tbody>
+
+              <tr v-for="warehouse_sheet in warehouse_sheets">
+                
+                {% if not warehouse %}
+                  
+                <td>
+                  <div v-for="warehouse in [warehouse_sheet.warehouse]">
+                    {% include "warehouse/includes/warehouse-app/media.html" %}
+                  </div>
+                </td>
+                {% endif %}
+                {% if not product %}
+                  
+                <td>
+                    <div v-for="product in [warehouse_sheet.invoice_line.invoice_line_item]">
+                         {% include "accounting/includes/product-app/media.html" %}
+
+                    </div>
+                </td>
+                {% endif %}
+                <td>
+                    <span v-text="warehouse_sheet.invoice_line.quantity"></span>
+                    <span v-text="warehouse_sheet.invoice_line.unit_name"></span>
+                </td>
+                
+                <td>
+                    <span v-text="warehouse_sheet.direction"></span>
+                </td>
+                {% if not invoice %}
+                  
+                <td>
+                    <a :href="warehouse_sheet.invoice_line.invoice.get_absolute_url">
+                        <span v-text="warehouse_sheet.invoice_line.invoice.title"></span>
+                    </a>
+                </td>
+                {% endif %}
+                
+
+                
+                <td>
+                  <div
+                    v-for="person in [warehouse_sheet.person]"
+                  >
+                    {% include "authentication/includes/person-app/media.html" %}
+                  </div>
+                </td>
+                <td>
+                    <span v-html="warehouse_sheet.persian_date_added"></span>
+                </td>
+                <td>
+                  <a
+                    target="_blank"
+                    :href="warehouse_sheet.get_edit_url"
+                    title="ویرایش"
+                    class="text-warning mx-2"
+                  >
+                    <i class="fa fa-edit text-warning"> </i>
+                    ویرایش
+                  </a>
+                  <a
+                    target="_blank"
+                    :href="warehouse_sheet.get_delete_url"
+                    title="حذف"
+                    class="text-danger mx-2"
+                  >
+                    <i class="fa fa-trash text-danger"> </i>
+                    حذف
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
