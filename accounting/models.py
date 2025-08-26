@@ -847,8 +847,10 @@ class Invoice(FinancialEvent):
         result,message,invoice=FAILED,"",self
         result=SUCCEED
         message='فاکتور با موفقیت اضافه شد.'
-        self.normalize()
-         
+        if self.id is not None:
+            self.normalize()
+        else:
+            super(Invoice,self).save()
         return result,message,invoice
 
 
@@ -860,17 +862,19 @@ class Invoice(FinancialEvent):
         amount=0
         shipping_fee=self.shipping_fee
         i=1
-        for line in self.invoiceline_set.order_by('row'):
-            total+=line.unit_price*line.quantity 
-            discount+=line.discount
-            line.row=i
-            i+=1
-            # super(InvoiceLine,line).save()
+        
+        if self.id is not None:
+            for line in self.invoiceline_set.order_by('row'):
+                total+=line.unit_price*line.quantity 
+                discount+=line.discount
+                line.row=i
+                i+=1
+                # super(InvoiceLine,line).save()
 
-        total_after_discount=total-discount
-        tax=(total_after_discount)*(self.tax_percentage)/100
-        amount=total-discount+tax+shipping_fee
-        self.amount=amount
+            total_after_discount=total-discount
+            tax=(total_after_discount)*(self.tax_percentage)/100
+            amount=total-discount+tax+shipping_fee
+            self.amount=amount
         super(Invoice,self).save()
         try:
             for project in self.project_set.all():
