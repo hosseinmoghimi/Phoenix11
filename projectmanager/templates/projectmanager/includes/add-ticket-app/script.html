@@ -1,30 +1,32 @@
-{% include "accounting/includes/account-app/select-script.html" %}
-{% include "authentication/includes/person-app/select-script.html" %}
+{% include "accounting/includes/account-app/select-script.html" %} 
+{% include "authentication/includes/person-app/select-script.html" %} 
+{% include "projectmanager/includes/project-app/select-script.html" %}
 <script>
-    let project_for_add_ticket_app={}
-    let project_id_for_add_ticket_app=0
+  let project_for_add_ticket_app = {};
+  let project_id_for_add_ticket_app = 0;
 </script>
 {% if project %}
-  <script>
-    
-      project_for_add_ticket_app=project
-      project_id_for_add_ticket_app=project_id
-  </script>
+<script>
+  project_for_add_ticket_app = project;
+  project_id_for_add_ticket_app = project_id;
+</script>
 {% endif %}
 <script>
- 
   let add_ticket_app = new Vue({
     el: "#add-ticket-app",
     data: {
-        title: "",
-        
-        person_id:0,
-        person:{id:0},
+      title: "",
+      description: "",
+
+      person_id: 0,
+      person: { id: 0 },
 
       weight: 0,
       percentage_completed: 0,
-      project_for_add_ticket_app: project,
-      project_id_for_add_ticket_app: project_id,
+
+      project: project_for_add_ticket_app,
+      project_id: project_id_for_add_ticket_app,
+
       type: "",
       event_date: current_date,
       event_time: "00:00:00",
@@ -44,18 +46,27 @@
       DatePicker: VuePersianDatetimePicker,
     },
     methods: {
+      select_person: function () {
+        select_person_by_id(add_ticket_app.person_id).done((data) => {
+          console.log(data.person);
+          if (data.person) {
+            add_ticket_app.person = data.person;
+          } else {
+            add_ticket_app.person = {};
+          }
+        });
+      },
 
-         select_person:function(){
-                select_person_by_id(add_ticket_app.person_id).done(data=>{
-                    console.log(data.person)
-                    if(data.person){
-                        add_ticket_app.person=data.person
-                    }
-                    else{
-                        add_ticket_app.person={}
-                    }
-                })
-            },
+      select_project: function () {
+        select_project_by_id(add_ticket_app.project_id).done((data) => {
+          console.log(data.project);
+          if (data.project) {
+            add_ticket_app.project = data.project;
+          } else {
+            add_ticket_app.project = {};
+          }
+        });
+      },
 
       to_price: function (vall) {
         return to_price(vall) + " {{CURRENCY}}";
@@ -65,11 +76,10 @@
         let payload = {
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           title: this.title,
-          contractor_id: parseInt(this.contractor_id),
-          employer_id: parseInt(this.employer_id),
-          weight: parseInt(this.weight),
+          description: this.description,
+          person_id: parseInt(this.person_id),
+          project_id: parseInt(this.project_id),
           type: this.type,
-          percentage_completed: parseInt(this.percentage_completed),
           event_datetime: this.event_date + " " + this.event_time,
           start_datetime: this.start_date + " " + this.start_time,
           end_datetime: this.end_date + " " + this.end_time,
@@ -84,13 +94,7 @@
             if (typeof tickets_app != "undefined") {
               tickets_app.tickets.push(data.ticket);
             }
-            show_message(
-              add_ticket_app,
-              "موفق",
-              data.message,
-              "success",
-              3000
-            );
+            show_message(add_ticket_app, "موفق", data.message, "success", 3000);
           } else {
             show_message(add_ticket_app, "خطا", data.message, "danger", 3000);
           }

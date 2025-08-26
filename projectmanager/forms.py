@@ -7,10 +7,13 @@ class AddSubProjectForm(forms.Form):
      
 class AddTicketForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)
-    parent_id=forms.IntegerField(required=True)
+    parent_id=forms.IntegerField(required=False)
     project_id=forms.IntegerField(required=True)
+    person_id=forms.IntegerField(required=True)
     description=forms.CharField(max_length=5000,required=False)
     
+class SelectProjectForm(forms.Form):
+    project_id=forms.IntegerField(required=True)
  
 class AddProjectForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)

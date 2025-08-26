@@ -29,43 +29,103 @@
                 <input v-model="title" type="text" class="form-control" />
               </div>
             </div>
-            <div class="col-12"></div>
 
-             <div class="col-md-4">
+            
+            <div class="col-md-12">
               <div class="form-group">
-                <label for="">شناسه شخص</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  @input="select_person()"
-                  v-model="person_id"
-                />
+                <label for="">توضیحات</label>
+                <input v-model="description" type="text" class="form-control" />
               </div>
             </div>
 
-            <div class="col-md-8">
-              <div class="form-group" v-if="person.full_name">
+            <div class="col-12">
+              <div class="row rtl">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="">شناسه شخص</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      @input="select_person()"
+                      v-model="person_id"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-md-8">
+                  <div class="form-group" v-if="person.full_name">
                     <label for="" class="text-success">شخص انتخاب شده</label>
 
-                <a :href="person.get_absolute_url">
-                  <div class="media">
-                    <img :src="person.image" width="64" alt="" />
-                    <div class="media-body mr-2">
-                      <h5>
-                        <span v-text="person.full_name"></span>
-                      </h5>
+                    <a :href="person.get_absolute_url">
+                      <div class="media">
+                        <img :src="person.image" width="64" alt="" />
+                        <div class="media-body mr-2">
+                          <h5>
+                            <span v-text="person.full_name"></span>
+                          </h5>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                  <div v-else>
+                    <div class="form-group">
+                      <label for="" class="text-danger">خطا</label>
+                      <div class="alert alert-danger">شخص انتخاب نشده است.</div>
+                      <a
+                        target="_blank"
+                        href="{% url 'authentication:persons' %}"
+                        >همه اشخاص</a
+                      >
                     </div>
                   </div>
-                </a>
-              </div>
-              <div v-else>
-                <div class="form-group">
-                    <label for="" class="text-danger">خطا</label>
-                    <div class="alert alert-danger">شخص انتخاب نشده است.</div>
                 </div>
               </div>
             </div>
 
+            
+            <div class="col-12">
+              <div class="row rtl">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="">شناسه پروژه</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      @input="select_project()"
+                      v-model="project_id"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-md-8">
+                  <div class="form-group" v-if="project.title">
+                    <label for="" class="text-success">پروژه انتخاب شده</label>
+
+                    <a :href="project.get_absolute_url">
+                      <div class="media">
+                        <img :src="project.thumbnail" width="64" alt="" />
+                        <div class="media-body mr-2">
+                          <h5>
+                            <span v-text="project.title"></span>
+                          </h5>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                  <div v-else>
+                    <div class="form-group">
+                      <label for="" class="text-danger">خطا</label>
+                      <div class="alert alert-danger">پروژه انتخاب نشده است.</div>
+                      <a
+                        target="_blank"
+                        href="{% url 'projectmanager:all_projects' %}"
+                        >همه پروژه ها</a
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <div class="col-md-4">
               <div class="form-group">
@@ -132,9 +192,6 @@
                 />
               </div>
             </div>
-
-            
- 
 
             <div class="col-md-12">
               <div v-if="message.show">

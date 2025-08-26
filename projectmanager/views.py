@@ -236,6 +236,23 @@ class ProjectsView(View):
         return render(request,TEMPLATE_ROOT+"projects.html",context)
 
 
+class AllProjectsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['WIDE_LAYOUT']=True
+        projects = ProjectRepo(request=request).list(*args, **kwargs)
+
+        context['projects']=projects
+        projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
+        context['projects_s']=projects_s
+        if request.user.has_perm(APP_NAME+".add_project"):
+            context['add_project_form']=AddProjectForm
+            organizations=OrganizationUnitRepo(request=request).list()
+            organizations_s=json.dumps(OrganizationUnitSerializer(organizations,many=True).data)
+            context['organizations_s']=organizations_s
+        return render(request,TEMPLATE_ROOT+"projects.html",context)
+
+
 class RemoteClientsView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)

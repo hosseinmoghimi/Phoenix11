@@ -11,6 +11,34 @@ from accounting.serializers import InvoiceSerializer
 from django.http import JsonResponse
 from .forms import *
    
+
+   
+
+class SelectProjectApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        message="پارامتر های ورودی صحیح نمی باشند."
+        select_project_form=SelectProjectForm(request.POST)
+        if select_project_form.is_valid():
+            log=333
+            cd=select_project_form.cleaned_data
+            project=ProjectRepo(request=request).project(**cd)
+            if project is not None:
+                context['project']=ProjectSerializer(project).data
+                result=SUCCEED
+                message='موفق'
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
+
+
 class AddTicketApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

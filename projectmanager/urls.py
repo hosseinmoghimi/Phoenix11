@@ -20,7 +20,9 @@ urlpatterns = [
     path('project/<int:pk>/',login_required(views.ProjectView.as_view()),name="project"),  
     path("project_guantt/<int:pk>/",login_required(views.ProjectGuanttView.as_view()),name="project_guantt"),
     path('project/',login_required(views.ProjectView.as_view()),name="project_null"),  
+    path('all-projects/',login_required(views.AllProjectsView.as_view()),name="all_projects"),
     path('edit-project/',login_required(apis.EditProjectApi.as_view()),name="edit_project"),  
+    path('select-project/',login_required(apis.SelectProjectApi.as_view()),name="select_project"),
     
     path('add-project-invoice/',login_required(apis.AddProjectInvoiceApi.as_view()),name="add_project_invoice"),
 
@@ -28,6 +30,9 @@ urlpatterns = [
 
     path('add-remote_client/',login_required(apis.AddRemoteClientApi.as_view()),name="add_remote_client"),  
     path('remote-clients/',login_required(views.RemoteClientsView.as_view()),name="remote_clients"),  
-    path('remote-client/<int:pk>/',login_required(views.RemoteClientView.as_view()),name="remoteclient"),  
+    path('remote-client/<int:pk>/',login_required(views.RemoteClientView.as_view()),name="remoteclient"),
+
+
+
    
 ]

@@ -24,7 +24,7 @@ class TicketSerializer(serializers.ModelSerializer):
     person=PersonSerializer()
     class Meta:
         model=Ticket
-        fields=['id','title','get_status_color','persian_datetime_added','status','project','get_absolute_url','description','person']
+        fields=['id','title','get_status_color','persian_datetime_added','status','project','get_absolute_url','description','person','get_edit_url','get_delete_url']
 
 
 

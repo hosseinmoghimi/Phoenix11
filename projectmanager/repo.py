@@ -55,24 +55,23 @@ class TicketRepo():
         ticket=Ticket()
         if 'title' in kwargs:
             title=kwargs["title"]
-            if len(Ticket.objects.filter(title=title))>0:
-                message='نام تکررای برای پروژه جدید'
-                return FAILED,message,None
             ticket.title=title
 
         if 'parent_id' in kwargs:
-            if kwargs["parent_id"]>0:
-                ticket.parent_id=kwargs["parent_id"]
+            parent_id=kwargs["parent_id"]
+            if parent_id is not None and parent_id>0:
+                ticket.parent_id=parent_id
         if 'project_id' in kwargs:
             ticket.project_id=kwargs["project_id"]
-        if 'contractor_id' in kwargs:
-            ticket.contractor_id=kwargs["contractor_id"]
+        if 'person_id' in kwargs:
+            ticket.person_id=kwargs["person_id"]
+        if 'person_id' in kwargs:
+            ticket.person_id=kwargs["person_id"]
         if 'type' in kwargs:
             ticket.type=kwargs["type"]
-        if 'weight' in kwargs:
-            ticket.weight=kwargs["weight"]
-        if 'percentage_completed' in kwargs:
-            ticket.percentage_completed=kwargs["percentage_completed"]
+        if 'description' in kwargs:
+            ticket.description=kwargs["description"]
+         
         if 'start_datetime' in kwargs:
             ticket.start_datetime=kwargs["start_datetime"]
             ticket.start_datetime=kwargs["start_datetime"]

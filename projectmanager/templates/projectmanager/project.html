@@ -86,7 +86,7 @@
 {% endblock content %} {% block script %}
 <script>
   let project_id = parseInt("{{project.id}} ");
-  let project = "{{project_s|escapejs}} ";
+  let project = JSON.parse("{{project_s|escapejs}} ");
 </script>
 {% if add_invoice_to_project_form %}
 {% include "projectmanager/includes/add-invoice-to-project-app/script.html" %}

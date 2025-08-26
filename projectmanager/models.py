@@ -135,8 +135,13 @@ class Ticket(models.Model,DateTimeHelper,LinkHelper):
         return color
  
     def save(self,*args, **kwargs):
-        return super(Ticket,self).save()
- 
+        result,message,ticket=FAILED,'',None
+        super(Ticket,self).save()
+        if self.id is not None and self.id>0:
+            ticket=self
+            result=SUCCEED
+            message='تیکت با موفقیت ثبت شد.'
+        return result,message,ticket
 
 class RemoteClient(models.Model,LinkHelper):
    
