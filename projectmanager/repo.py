@@ -148,14 +148,15 @@ class ProjectRepo():
         project=Project()
         if 'title' in kwargs:
             title=kwargs["title"]
-            if len(Project.objects.filter(title=title))>0:
-                message='نام تکررای برای پروژه جدید'
-                return FAILED,message,None
-            project.title=title
-
         if 'parent_id' in kwargs:
-            if kwargs["parent_id"]>0:
-                project.parent_id=kwargs["parent_id"]
+            parent_id=kwargs["parent_id"]
+
+        if len(Project.objects.filter(title=title).filter(parent_id=parent_id))>0:
+            message='نام تکراری برای پروژه جدید'
+            return FAILED,message,None
+        project.title=title
+        project.parent_id=parent_id
+ 
         if 'employer_id' in kwargs:
             project.employer_id=kwargs["employer_id"]
         if 'contractor_id' in kwargs:
