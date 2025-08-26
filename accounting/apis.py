@@ -151,6 +151,26 @@ class AddProductSpecificationApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+class MergeProductApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            merge_product_form=MergeProductForm(request.POST)
+            if merge_product_form.is_valid():
+                log=333
+                cd=merge_product_form.cleaned_data 
+                result,message,merged_product=ProductRepo(request=request).merge_product(**cd)
+                if merged_product is not None:
+                    context['product']=ProductSerializer(merged_product).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
 
 class AddInvoiceApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -631,6 +651,32 @@ class SelectPersonAccountApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
+
+        
+
+class SelectProductApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            select_product_form=SelectProductForm(request.POST)
+            if select_product_form.is_valid():
+                log=333
+                cd=select_product_form.cleaned_data
+                product=ProductRepo(request=request).product(**cd)
+                if product is not None:
+                    result=SUCCEED
+                    message="موفقیت آمیز"
+                    context['product']=ProductSerializer(product).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+    
 
 
 class InitALLAccountsApi(APIView):

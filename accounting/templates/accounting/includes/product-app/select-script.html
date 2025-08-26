@@ -1,0 +1,7 @@
+<script>
+    select_product_by_barcode = function (product_barcode) {
+        let payload2 = { csrfmiddlewaretoken: csrfmiddlewaretoken, barcode: product_barcode  }
+        console.log(payload2)
+        return $.post("{% url 'accounting:select_product' %}", payload2)
+    }
+</script>

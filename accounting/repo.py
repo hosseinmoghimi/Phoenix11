@@ -912,7 +912,7 @@ class ProductRepo():
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
 
-            objects=objects.filter(Q(title__contains=search_for))
+            objects=objects.filter(Q(title__contains=search_for) | Q(barcode=search_for))
         return objects.all()
     
     def add_product_to_category(self,*args, **kwargs):
@@ -935,7 +935,77 @@ class ProductRepo():
             result=SUCCEED
             product_categories=product.category_set.all()
         return result,message,category,product_categories
-       
+    def merge_product(self,*args, **kwargs):
+           
+        result,message,merged_product=FAILED,"",None
+        deleting_product=self.product(pk=kwargs['deleting_product_id'])
+        updating_product=self.product(pk=kwargs['updating_product_id'])
+
+        i=0
+        for invoice_line in InvoiceLine.objects.filter(invoice_line_item_id=deleting_product.id):
+            i+=1
+            invoice_line.invoice_line_item_id=updating_product.id
+            invoice_line.save()
+        message+='<br>'+f'( {i} )'+'سطر فاکتور ها با موفقیت همگام سازی شد.'    
+
+            
+        i=0
+        for invoice_line_item_unit in InvoiceLineItemUnit.objects.filter(invoice_line_item_id=deleting_product.id):
+            i+=1
+            invoice_line_item_unit.invoice_line_item_id=updating_product.id
+            invoice_line_item_unit.save()
+        message+='<br>'+f'( {i} )'+'قیمت ها با موفقیت همگام سازی شد.'    
+        
+        
+        i=0
+        for product_specification in ProductSpecification.objects.filter(product_id=deleting_product.id):
+            i+=1
+            product_specification.product_id=updating_product.id
+            product_specification.save()
+        message+='<br>'+f'( {i} )'+'ویژگی ها با موفقیت همگام سازی شد.'    
+
+        i=0
+        from attachments.models import Image,Link,Download,Comment,Location
+         
+        i=0
+        for iamge in Image.objects.filter(page_id=deleting_product.id):
+            i+=1
+            iamge.page_id=updating_product.id
+            iamge.save()
+        message+='<br>'+f'( {i} )'+'تصویر ها با موفقیت همگام سازی شد.'    
+
+        i=0
+        for link in Link.objects.filter(page_id=deleting_product.id):
+            i+=1
+            link.page_id=updating_product.id
+            link.save()
+        message+='<br>'+f'( {i} )'+'لینک ها با موفقیت همگام سازی شد.'    
+
+        i=0
+        for download in Download.objects.filter(page_id=deleting_product.id):
+            i+=1
+            download.page_id=updating_product.id
+            download.save()
+        message+='<br>'+f'( {i} )'+'دانلود ها با موفقیت همگام سازی شد.'    
+
+        i=0
+        for comment in Comment.objects.filter(page_id=deleting_product.id):
+            i+=1
+            comment.page_id=updating_product.id
+            comment.save()
+        message+='<br>'+f'( {i} )'+'کامنت ها با موفقیت همگام سازی شد.'    
+ 
+        # for location in Location.objects.filter(page_id=deleting_product.id):
+        #     location.page_id=updating_product.id
+        #     message+='<br>'+'موقعیت ها با موفقیت همگام سازی شد.'    
+        #     location.save()
+
+        result=SUCCEED
+        message+='<br>'+'با موفقیت همگام سازی شد.'    
+        return result,message,merged_product
+
+
+        return result,message,merged_product 
     def product(self,*args, **kwargs):
         if "product_id" in kwargs and kwargs["product_id"] is not None:
             return self.objects.filter(pk=kwargs['product_id']).first() 

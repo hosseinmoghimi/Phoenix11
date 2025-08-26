@@ -12,6 +12,14 @@ class EditPersonCategoryForm(forms.Form):
     code_length=forms.IntegerField(required=True)
 
     
+
+class SelectProductForm(forms.Form):
+    barcode=forms.CharField(max_length=100,required=True)
+
+class MergeProductForm(forms.Form):
+    deleting_product_id=forms.IntegerField(required=True)
+    updating_product_id=forms.IntegerField(required=True)
+
 class EditFinancialEventForm(forms.Form):
     title=forms.CharField(required=True,max_length=100)
     financial_event_id=forms.IntegerField(required=True)

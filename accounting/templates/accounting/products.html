@@ -17,6 +17,10 @@
         {% include "accounting/includes/products-app/list-template.html" %}
     </div>
     
+    <div class="col-md-12 ">
+        {% include "accounting/includes/merge-product-app/template.html" %}
+    </div>
+    
 </div>
 {% endblock content %}
 
@@ -29,8 +33,10 @@
 </script> 
 
 {% include "accounting/includes/products-app/list-script.html" %}
+{% include "accounting/includes/merge-product-app/script.html" %}
 {% if add_product_form %}
 {% include "accounting/includes/add-product-app/script.html" %}
+
 {% endif %}
 
 {% if import_products_from_excel_form %}

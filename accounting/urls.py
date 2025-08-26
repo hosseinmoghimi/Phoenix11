@@ -67,6 +67,7 @@ urlpatterns = [
     path('products/',login_required(views.ProductsView.as_view()),name="products"),
     path('product/<int:pk>/',login_required(views.ProductView.as_view()),name="product"),
     path("add-product/",login_required(apis.AddProductApi.as_view()),name="add_product"),
+    path("select-product/",login_required(apis.SelectProductApi.as_view()),name="select_product"),
 
 
     path('export-to-excel/',login_required(views.ExportToExcelView.as_view()),name="export_to_excel"),
@@ -98,6 +99,7 @@ urlpatterns = [
 
 
     path("add-product-specification/",login_required(apis.AddProductSpecificationApi.as_view()),name="add_product_specification"),
+    path("merge-product/",login_required(apis.MergeProductApi.as_view()),name="merge_product"),
 
      
 
