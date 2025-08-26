@@ -148,6 +148,9 @@ class PersonPrefixEnum(TextChoices):
     COMPLEX=" مجتمع",_(" مجتمع")
     SHOP="فروشگاه",_("فروشگاه")
     UNIVERSITY="دانشگاه",_("دانشگاه")
+    RESTAURANT="رستوران",_("رستوران")
+    SCHOOL="آموزشگاه",_("آموزشگاه")
+    OFFICE="اداره",_("اداره")
   
 class AppNameEnum(TextChoices):
     projectmanager='projectmanager',_('projectmanager')

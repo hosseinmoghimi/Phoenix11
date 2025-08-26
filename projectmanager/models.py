@@ -107,7 +107,7 @@ class Ticket(models.Model,DateTimeHelper,LinkHelper):
     parent=models.ForeignKey("ticket",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
     title=models.CharField(_("title"),max_length=500)
     description=HTMLField(_("description"),max_length=5000,blank=True,null=True)
-    person=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("پروفایل"), on_delete=models.PROTECT)
+    person=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("شخص"), on_delete=models.PROTECT)
     project=models.ForeignKey("project",null=True,blank=True, verbose_name=_("پروژه"), on_delete=models.CASCADE)
     datetime_added=models.DateTimeField(_("date added"),auto_now=False,auto_now_add=True)
     type=models.CharField(_("تایپ"),max_length=50,choices=TicketTypeEnum.choices)
