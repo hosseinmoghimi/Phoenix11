@@ -20,11 +20,13 @@ class TicketRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=Ticket.objects.filter(id=0)
-        profile=PersonRepo(request=request).me
-        if profile is not None:
+        me_person=PersonRepo(request=request).me
+        self.me_person=me_person
+        if me_person is not None:
             if request.user.has_perm(APP_NAME+".view_ticket"):
                 self.objects=Ticket.objects
                 self.my_accounts=self.objects 
+    
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
@@ -64,9 +66,11 @@ class TicketRepo():
         if 'project_id' in kwargs:
             ticket.project_id=kwargs["project_id"]
         if 'person_id' in kwargs:
-            ticket.person_id=kwargs["person_id"]
-        if 'person_id' in kwargs:
-            ticket.person_id=kwargs["person_id"]
+            person_id=kwargs["person_id"] 
+            if person_id is not None and person_id>0:
+                ticket.person_id=person_id
+            else:
+                ticket.person_id=self.me_person.id
         if 'type' in kwargs:
             ticket.type=kwargs["type"]
         if 'description' in kwargs:
@@ -97,14 +101,7 @@ class TicketRepo():
             if year=="13" or year=="14":
                 kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
             ticket.event_datetime=kwargs['event_datetime']
-            
-        if ticket.parent is not None and ticket.contractor_id is None:
-            ticket.contractor_id=ticket.parent_ticket.contractor_id
-
-        if ticket.parent is not None and ticket.employer_id is None:
-            ticket.employer_id=ticket.parent_ticket.employer_id
- 
-        
+             
         (result,message,ticket)=ticket.save()
         return result,message,ticket
 

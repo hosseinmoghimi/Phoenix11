@@ -50,6 +50,8 @@ class SelectPersonApi(APIView):
                 context['person']=PersonSerializer(person).data
                 result=SUCCEED
                 message='موفق'
+            else:
+                message='شخص پیدا نشد.'
         context['message']=message
         context['result']=result
         context['log']=log

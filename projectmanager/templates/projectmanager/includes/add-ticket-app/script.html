@@ -48,7 +48,7 @@
     methods: {
       select_person: function () {
         select_person_by_id(add_ticket_app.person_id).done((data) => {
-          console.log(data.person);
+          console.log(data);
           if (data.person) {
             add_ticket_app.person = data.person;
           } else {
@@ -59,7 +59,7 @@
 
       select_project: function () {
         select_project_by_id(add_ticket_app.project_id).done((data) => {
-          console.log(data.project);
+          console.log(data)
           if (data.project) {
             add_ticket_app.project = data.project;
           } else {
