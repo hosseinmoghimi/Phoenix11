@@ -12,7 +12,7 @@
 
         <div>
                 <small  >
-                    <button :class="'btn btn-sm btn-'+person_account.color" @click="copy_code_to_clipboard(person_account.code)">
+                    <button class="btn btn-sm btn-link" @click="copy_code_to_clipboard(person_account.code)">
                         <small  >
                         کد 
 
@@ -25,10 +25,10 @@
 
         </div>
         <div>
-            <h6 :class="'text-'+person_account.color">
+            <h6  >
 
                 <small>
-                    <span v-html="to_price(person_account.balance)"></span>
+                    <span v-html="to_price(person_account.balance,'{{CURRENCY}}')"></span> 
                
 
                 </small>

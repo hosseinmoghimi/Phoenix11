@@ -10,9 +10,10 @@
         },
         methods: {
             
-      copy_to_clipboard:function(code){
-                navigator.clipboard.writeText(code);
-                 
+             copy_code_to_clipboard:function(code){
+                copy_to_clipboard(code)
+                
+
             },
 
             filter: function () {
@@ -28,9 +29,8 @@
 
                 })
             },
-            to_price_colored: function (vall) {
-                let CURRENCY="{{CURRENCY}}"
-                return to_price_colored(vall, CURRENCY)
+            to_price_colored: function (vall,curr) {
+                return to_price_colored(vall, curr)
             },
             to_price: function (vall,curr) { 
                 return to_price(vall, curr)
