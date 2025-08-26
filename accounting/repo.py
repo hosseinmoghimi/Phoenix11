@@ -2176,7 +2176,7 @@ class FinancialEventRepo():
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
-        return objects.all()
+        return objects.order_by('-event_datetime')
        
     def roots(self,*args, **kwargs):
         objects=self.objects.filter(parent_id=None)

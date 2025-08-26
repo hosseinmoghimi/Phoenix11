@@ -130,7 +130,7 @@ class AccountBriefSerializer(serializers.ModelSerializer):
 class FinancialDocumentSerializer(serializers.ModelSerializer):
        class Meta:
         model = FinancialDocument
-        fields = ['id','title','balance','bedehkar','bestankar','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','balance','bedehkar','bestankar','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
 
 
 class CategorySerializer(serializers.ModelSerializer):

@@ -67,7 +67,10 @@
                                 بستانکار
                             </th>
                             <th>
-                                تراز
+                                تاریخ
+                            </th>
+                            <th>
+                                مبلغ
                             </th>
                             <th>
 
@@ -150,7 +153,9 @@
 
 
                                 </td>
-
+                                <td>
+                                    <span v-text="financial_event.persian_event_datetime"></span>
+                                </td>
                                 <td>
 
                                     <span v-text="to_price(financial_event.amount)">
