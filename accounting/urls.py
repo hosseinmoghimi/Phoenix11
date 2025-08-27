@@ -100,6 +100,7 @@ urlpatterns = [
 
     path("add-product-specification/",login_required(apis.AddProductSpecificationApi.as_view()),name="add_product_specification"),
     path("merge-product/",login_required(apis.MergeProductApi.as_view()),name="merge_product"),
+    path("report/",login_required(views.ReportView.as_view()),name="report"),
 
      
 

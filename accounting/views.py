@@ -922,6 +922,15 @@ class AssetsView(View):
         return render(request,TEMPLATE_ROOT+"assets.html",context)
 
 
+class ReportView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        
+
+        return render(request,TEMPLATE_ROOT+"report.html",context)   
+
+
+
 class ServiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
