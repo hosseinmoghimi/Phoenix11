@@ -68,7 +68,7 @@ class FinancialEventSerializer(serializers.ModelSerializer):
        bestankar=AccountSerializer()
        class Meta:
         model = FinancialEvent
-        fields = ['id','title','bedehkar' ,'bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','bedehkar','thumbnail' ,'bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
 
 
 class ChequeSerializer(serializers.ModelSerializer):

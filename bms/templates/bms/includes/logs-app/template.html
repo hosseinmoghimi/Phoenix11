@@ -111,13 +111,13 @@
 
                                 </td>
                                 <td>
-                                    <a :href="log.profile.get_absolute_url">
+                                    <a :href="log.person.get_absolute_url">
                                         <div class="media">
-                                            <img :src="log.profile.image" class="rounded-circle" width="32" alt="">
+                                            <img :src="log.person.image" class="rounded-circle" width="32" alt="">
                                             <div class="media-body mr-3">
                                                 <div>
 
-                                                    <span v-text="log.profile.name"></span>
+                                                    <span v-text="log.person.full_name"></span>
                                                 </div>
                                                 <div>
                                                     <small class="text-muted">

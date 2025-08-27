@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from bms.models import Feeder, Log,Relay,Command
-from authentication.serializers import ProfileSerializer
+from authentication.serializers import PersonSerializer
 
 class FeederSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,11 +32,11 @@ class FeederFullSerializer(serializers.ModelSerializer):
 
         
 class LogSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    person=PersonSerializer()
     relay=RelaySerializer()
     feeder=FeederSerializer()
     command=CommandSerializer()
     class Meta:
         model=Log
-        fields=['id','profile','title','relay','feeder','command','get_absolute_url','persian_date_added','persian_date_added_tag','succeed']
+        fields=['id','person','title','relay','feeder','command','get_absolute_url','persian_date_added','persian_date_added_tag','succeed']
         

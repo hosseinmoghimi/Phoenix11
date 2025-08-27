@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import ResumeFact, ResumeIndex, ResumeSkill
-from authentication.serializers import ProfileSerializer
+from authentication.serializers import PersonSerializer
 
 class ResumeSkillSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,7 +12,7 @@ class ResumeFactSerializer(serializers.ModelSerializer):
         model=ResumeFact
         fields=['id','title','count','icon','get_absolute_url','get_edit_url']
 class ResumeSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    person=PersonSerializer()
     class Meta:
         model=ResumeIndex
-        fields=['id','title','profile','language','get_absolute_url']
+        fields=['id','title','person','language','get_absolute_url']

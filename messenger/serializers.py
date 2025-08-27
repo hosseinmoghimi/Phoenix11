@@ -1,4 +1,4 @@
-from authentication.serializers import ProfileSerializer
+from authentication.serializers import PersonSerializer
 from messenger.models import Channel, Member, Message
 from rest_framework import serializers
 from authentication.models import Person
@@ -20,7 +20,7 @@ class ChannelSerializer(serializers.ModelSerializer):
         fields=['id','name','key','cluster']
 class MemberSerializer(serializers.ModelSerializer):
     channel=ChannelSerializer()
-    profile=ProfileSerializer()
+    profile=PersonSerializer()
     class Meta:
         model = Member
         fields=['id','event','profile','channel']
