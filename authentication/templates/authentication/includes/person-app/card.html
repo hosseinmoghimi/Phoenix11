@@ -16,18 +16,18 @@
         {{person.full_name}}
     </h4>
 
-    {% if person.profile %}
+    {% if person.user %}
     <h5>
-        <a href="{{person.profile.get_absolute_url}}">
+        <a href="{{ADMIN_URL}}auth/user/{{person.user.id}}">
 
-            <small class="text-muted">profile :</small>
-            {{person.profile}}
+            <small class="text-muted">یوزر :</small>
+            {{person.user.username}}
         </a>
     </h5> 
     {% endif %}
     {% if person.prefix %}
     <h5>
-        <small class="text-muted">prefix :</small>
+        <small class="text-muted">پیشوند :</small>
         {{person.prefix}}
     </h5> 
     {% endif %}
@@ -35,7 +35,7 @@
     {% if person.first_name %}
       
     <h5>
-        <small class="text-muted">first_name :</small>
+        <small class="text-muted">نام :</small>
         {{person.first_name}}
     </h5> 
 
@@ -45,7 +45,7 @@
     {% if person.last_name %}
       
     <h5>
-        <small class="text-muted">last_name :</small>
+        <small class="text-muted">نام خانوادگی :</small>
         {{person.last_name}}
     </h5> 
 
@@ -55,18 +55,57 @@
       
     
     <h5>
-        <small class="text-muted">melli_code :</small>
+        <small class="text-muted">کد ملی :</small>
         {{person.melli_code}}
     </h5> 
 
     
     {% endif %}
 
+    
+    {% if person.birth_date %}
+      
+    
+    <h5>
+        <small class="text-muted">تاریخ تولد :</small>
+        {{person.birth_date}}
+    </h5> 
+
+    
+    {% endif %}
+    {% if person.birth_location %}
+      
+    
+    <h5>
+        <small class="text-muted">محل تولد :</small>
+        {{person.birth_location}}
+    </h5> 
+
+    
+    {% endif %}
+
+
+    
+    {% if person.tel %}
+      
+    <h5>
+      <small class="text-muted">تلفن :</small>
+      <a href="tel:{{person.tel}}">
+
+        {{person.tel}}
+      </a>
+    </h5> 
+    {% endif %}
+
+
     {% if person.mobile %}
       
     <h5>
-        <small class="text-muted">mobile :</small>
+        <small class="text-muted">موبایل :</small>
+        <a href="tel:{{person.mobile}}">
+
         {{person.mobile}}
+      </a>
     </h5> 
     {% endif %}
 
@@ -82,16 +121,6 @@
 
     
 
-    {% if person.tel %}
-      
-    <h5>
-      <small class="text-muted">tel :</small>
-      <a href="tel:{{person.tel}}">
-
-        {{person.tel}}
-      </a>
-    </h5> 
-    {% endif %}
 
     {% if person.type2 %}
       
@@ -107,7 +136,7 @@
     {% if person.email %}
       
     <h5>
-        <small class="text-muted">email :</small>
+        <small class="text-muted">ایمیل :</small>
         {{person.email}}
     </h5> 
     {% endif %}
@@ -116,7 +145,7 @@
     {% if person.bio %}
       
     <h5>
-        <small class="text-muted">bio :</small>
+        <small class="text-muted">بیو :</small>
         {{person.bio}}
     </h5> 
     {% endif %}

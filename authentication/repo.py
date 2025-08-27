@@ -100,6 +100,13 @@ class PersonRepo():
                 message="کد ملی وارد شده تکراری است."
                 person=None
                 return result,message,person
+            
+        
+
+        if 'birth_date' in kwargs:
+            person.birth_date=kwargs["birth_date"]
+        if 'birth_location' in kwargs:
+            person.birth_location=kwargs["birth_location"]
 
   
         if 'type2' in kwargs:

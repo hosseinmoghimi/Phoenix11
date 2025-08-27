@@ -31,6 +31,8 @@ class Person(models.Model,ImageHelper,LinkHelper):
     melli_code=models.CharField(_("کد ملی"),null=True,blank=True, max_length=10)
     tel=models.CharField(_("تلفن"),null=True,blank=True, max_length=50)
     postal_code=models.CharField(_("کد پستی"),null=True,blank=True, max_length=20)
+    birth_date=models.CharField(_("تاریخ تولد"),null=True,blank=True, max_length=20)
+    birth_location=models.CharField(_("محل تولد"),null=True,blank=True, max_length=20)
     
     
     class_name='person'

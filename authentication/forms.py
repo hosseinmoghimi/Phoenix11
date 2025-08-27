@@ -7,11 +7,7 @@ class LoginForm(forms.Form):
 class ChangePersonImageForm(forms.Form):
     person_id=forms.IntegerField(required=False)
 
- 
-class AddProfileForm(forms.Form):
-    first_name=forms.CharField(max_length=11,required=False)
-    last_name=forms.CharField(max_length=11,required=False)
-
+  
 
 class SelectUserForm(forms.Form):
     user_id=forms.IntegerField(required=False)
@@ -35,6 +31,8 @@ class AddPersonForm(forms.Form):
     type2=forms.CharField(max_length=11,required=False)
     economic_no=forms.CharField(max_length=50,required=False)
     melli_code=forms.CharField(max_length=20,required=False)
+    birth_date=forms.CharField(max_length=20,required=False)
+    birth_location=forms.CharField(max_length=20,required=False)
     postal_code=forms.CharField(max_length=20,required=False)
     tel=forms.CharField(max_length=50,required=False)
  
