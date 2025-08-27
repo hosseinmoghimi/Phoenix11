@@ -11,5 +11,13 @@
                 {{cheque.title}}
             </a>
         </h5>
+
+        
+    <a href="{{cheque.get_absolute_url}}">
+      <div class="text-center">
+        <img width="128" src="{{cheque.get_qrcode_url}}" alt="" />
+      </div>
+    </a>
+
     </div>
 </div>
