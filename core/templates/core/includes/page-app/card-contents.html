@@ -6,7 +6,11 @@
 <img src="{{page.thumbnail}}" width="128" alt="" />
 <div class="my-3">
 
-  <h5>{{page.title}}</h5>
+  <h5>{{page.title}}
+    <span class="badge badge-{{financial_event.get_status_color}}">
+        {{financial_event.status}}
+      </span>
+  </h5>
 
   <a href="{{page.get_absolute_url}}">
     <small class="text-muted2">{{page.class_title}}</small>

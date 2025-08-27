@@ -143,6 +143,19 @@ class InvoiceLineRepo:
 
         if 'invoice_id' in kwargs:
             invoice_line.invoice_id=kwargs["invoice_id"]
+            invoice=invoice_line.invoice
+            if invoice.status==FinancialEventStatusEnum.APPROVED:
+                message='فاکتور تایید شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+                return FAILED,message,None
+            
+            if invoice.status==FinancialEventStatusEnum.DELIVERED:
+                message='فاکتور تحویل شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+                return FAILED,message,None
+            
+            if invoice.status==FinancialEventStatusEnum.FINISHED:
+                message='فاکتور نهایی شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+                return FAILED,message,None
+            
         if 'discount_percentage' in kwargs:
             invoice_line.discount_percentage=kwargs["discount_percentage"]
         if 'quantity' in kwargs:
@@ -2511,6 +2524,20 @@ class InvoiceRepo(FinancialEventRepo):
             return result,message,invoice
 
         invoice=Invoice.objects.filter(pk=kwargs['invoice_id']).first()
+
+         
+        if invoice.status==FinancialEventStatusEnum.APPROVED:
+            message='فاکتور تایید شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+            return FAILED,message,None
+        
+        if invoice.status==FinancialEventStatusEnum.DELIVERED:
+            message='فاکتور تحویل شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+            return FAILED,message,None
+        
+        if invoice.status==FinancialEventStatusEnum.FINISHED:
+            message='فاکتور نهایی شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+            return FAILED,message,None
+    
         if invoice is None:
             message="فاکتور پیدا نشد."
             return result,message,invoice
@@ -2528,6 +2555,12 @@ class InvoiceRepo(FinancialEventRepo):
             
         if 'shipping_fee' in kwargs and kwargs['shipping_fee'] is not None:
             invoice.shipping_fee=kwargs['shipping_fee']
+            
+        if 'status' in kwargs and kwargs['status'] is not None:
+            invoice.status=kwargs['status']
+            
+        if 'payment_method' in kwargs and kwargs['payment_method'] is not None:
+            invoice.payment_method=kwargs['payment_method']
 
             
         if 'bestankar_id' in kwargs and kwargs['bestankar_id'] is not None:

@@ -11,6 +11,7 @@
 
         {{project.title}}
       </a>
+     
     </h5>
     {% endfor %}
     <a class="text-info mx-2" href="{% url 'accounting:invoice_edit' pk=invoice.id%}"> تغییر </a>
@@ -20,6 +21,15 @@
 
     <a class="text-success mx-2" href="{% url 'accounting:invoice_to_excel' pk=invoice.id%}"> اکسل </a>
 
+    {% if make_financial_event_draft_form %}
+      <form action="{% url 'accounting:make_financial_event_draft' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" value="{{financial_event.id}}" name="financial_event_id">
+        <button class="btn btn-link" type="submit" >
+          پیش نویس کن
+        </button>
+      </form>
+    {% endif %}
 
   </div>
 </div>

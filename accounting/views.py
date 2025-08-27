@@ -230,16 +230,27 @@ def FinancialEventContext(request,financial_event):
  
     context["financial_document_lines_s"]=financial_document_lines_s
     if request.user.has_perm(APP_NAME+'.change_financialevent'):
-        payment_methods=(i[0] for i in PaymentMethodEnum.choices)
-        financial_event_statuses=(i[0] for i in FinancialEventStatusEnum.choices)
-        context['financial_event_statuses']=financial_event_statuses
-        context['payment_methods_for_edit_financial_event_form']=payment_methods
-        context['edit_financial_event_form']=EditFinancialEventForm()
+        if financial_event.status==FinancialEventStatusEnum.DELIVERED or financial_event.status==FinancialEventStatusEnum.APPROVED or financial_event.status==FinancialEventStatusEnum.FINISHED:
+            context['make_financial_event_draft_form']=MakeFinancialEventDraftForm()
+        else:
+            payment_methods=(i[0] for i in PaymentMethodEnum.choices)
+            financial_event_statuses=(i[0] for i in FinancialEventStatusEnum.choices)
+            context['financial_event_statuses']=financial_event_statuses
+            context['payment_methods_for_edit_financial_event_form']=payment_methods
+            context['edit_financial_event_form']=EditFinancialEventForm()
+
     return context
 
 def InvoiceContext(request,invoice,*args, **kwargs):
     context=FinancialEventContext(request=request,financial_event=invoice)
-    context.update(AddInvoiceLineContext(request=request))
+    if invoice.status==FinancialEventStatusEnum.APPROVED:
+        pass
+    elif invoice.status==FinancialEventStatusEnum.DELIVERED:
+        pass
+    elif invoice.status==FinancialEventStatusEnum.FINISHED: 
+        pass 
+    else:
+        context.update(AddInvoiceLineContext(request=request))
     context['invoice'] = invoice
     invoice_s=json.dumps(InvoiceSerializer(invoice).data)
     context['invoice_s'] =invoice_s
@@ -252,11 +263,15 @@ def InvoiceContext(request,invoice,*args, **kwargs):
         context['invoice_lines_s']=invoice_lines_s
     
     if request.user.has_perm(APP_NAME+'.change_invoice'):
-        payment_methods=(i[0] for i in PaymentMethodEnum.choices)
-        invoice_statuses=(i[0] for i in FinancialEventStatusEnum.choices)
-        context['invoice_statuses']=invoice_statuses
-        context['payment_methods_for_edit_invoice_form']=payment_methods
-        context['edit_invoice_form']=EditFinancialEventForm()
+
+        if invoice.status==FinancialEventStatusEnum.DELIVERED or invoice.status==FinancialEventStatusEnum.APPROVED or invoice.status==FinancialEventStatusEnum.FINISHED:
+            context['make_financial_event_draft_form']=MakeFinancialEventDraftForm()
+        else: 
+            payment_methods=(i[0] for i in PaymentMethodEnum.choices)
+            invoice_statuses=(i[0] for i in FinancialEventStatusEnum.choices)
+            context['invoice_statuses']=invoice_statuses
+            context['payment_methods_for_edit_invoice_form']=payment_methods
+            context['edit_invoice_form']=EditFinancialEventForm()
         
     (total,discount,total_after_discount,tax,amount)=invoice.statistics
     context['total']=total
@@ -1215,6 +1230,40 @@ class FinancialEventsView(View):
             context.update(AddFinancialEventContext(request=request))
         return render(request,TEMPLATE_ROOT+"financial-events.html",context)
 
+
+class MakeFinancialEventDraftView(View):
+    def post(self,request,*args, **kwargs):
+        make_financial_event_draft_form=MakeFinancialEventDraftForm(request.POST)
+        if make_financial_event_draft_form.is_valid():
+            cd=make_financial_event_draft_form.cleaned_data
+            financial_event=FinancialEventRepo(request=request).financial_event(pk=int(cd['financial_event_id']))
+            if financial_event is None:
+                title='خطا'
+                body='رویداد مالی پیدا نشد.'
+                mv=MessageView(title=title,body=body)
+                return mv.get(request=request)
+
+            stat=financial_event.status
+            financial_event.status=FinancialEventStatusEnum.ROLL_BACKED
+            financial_event.save()
+            from log.repo import LogRepo
+            log_repo=LogRepo(request=request)
+            kw={}
+            kw['title']='برگشت رویداد مالی'
+            kw['url']=financial_event.get_absolute_url()
+            kw['app_name']=APP_NAME
+            person=PersonRepo(request=request).me
+            kw['person_id']=person.id
+            kw['description']=f"""رویداد مالی   <a href="{financial_event.get_absolute_url()}">{financial_event.title}</a> """+f'از وضعیت {stat} به وضعیت پیش نویس برگشت کرد.'
+
+            log_repo.add_log(**kw)
+            return redirect(financial_event.get_absolute_url())
+        else:
+            title='خطا'
+            body='پارامتر های ورودی صحیح نمی باشد.'
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
+        
 
 class InvoicesView(View):
     def get(self,request,*args, **kwargs):

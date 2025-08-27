@@ -419,6 +419,7 @@ class AddChequeApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
 class AddInvoiceLineApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -463,6 +464,7 @@ class AddFinancialYearApi(APIView):
         context['log']=log
         return JsonResponse(context)
  
+
 class SetAccountParentApi(APIView): 
     def post(self,request,*args, **kwargs):
         context={}
@@ -530,7 +532,6 @@ class EditFinancialEventApi(APIView):
         return JsonResponse(context)
 
 
-
 class EditFinancialDocumentApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -551,7 +552,6 @@ class EditFinancialDocumentApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-
 
 
 class SelectFinancialEventApi(APIView):
@@ -625,6 +625,7 @@ class SelectAccountApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
 class EditPersonCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -675,7 +676,6 @@ class SelectPersonAccountApi(APIView):
         return JsonResponse(context)
 
         
-
 class SelectProductApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -699,7 +699,6 @@ class SelectProductApi(APIView):
         context['log']=log
         return JsonResponse(context)
     
-
 
 class InitALLAccountsApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -811,7 +810,6 @@ class AddAssetApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-
 
 
 class AddProductApi(APIView):

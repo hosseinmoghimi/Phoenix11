@@ -282,6 +282,8 @@ class AddCostForm(AddFinancialEventForm):
 class ChangeChequeImageForm(forms.Form):
     cheque_id=forms.IntegerField(required=True)
 
+class MakeFinancialEventDraftForm(forms.Form):
+    financial_event_id=forms.IntegerField(required=True)
 
 class AddChequeForm(AddFinancialEventForm):
     pass

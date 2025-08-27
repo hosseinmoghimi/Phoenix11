@@ -124,9 +124,10 @@ urlpatterns = [
 
     path("change-cheque-image/",login_required(views.ChangeChequeImageView.as_view()),name="change_cheque_image"),
 
+    path("make-financial-event-draft/",login_required(views.MakeFinancialEventDraftView.as_view()),name="make_financial_event_draft"),
       
-    path("financial_events/",login_required(views.FinancialEventsView.as_view()),name="financial_events"),
-    path("financial_event/<int:pk>/",login_required(views.FinancialEventView.as_view()),name="financialevent"),
+    path("financial-events/",login_required(views.FinancialEventsView.as_view()),name="financial_events"),
+    path("financial-event/<int:pk>/",login_required(views.FinancialEventView.as_view()),name="financialevent"),
     path("add-financial-event/",login_required(apis.AddFinancialEventApi.as_view()),name="add_financial_event"),
     path("select-financial-event/",login_required(apis.SelectFinancialEventApi.as_view()),name="select_financial_event"),
     path("edit-financial-event/",login_required(apis.EditFinancialEventApi.as_view()),name="edit_financial_event"),
