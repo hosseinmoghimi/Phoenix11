@@ -4,11 +4,11 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from .repo import AssetRepo,CategoryRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo,BrandRepo
-from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo
+from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,ChequeRepo
 from utility.log import leolog
 from .serializers import  InvoiceLineItemUnitBriefSerializer, ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer,BrandSerializer
-from .serializers import AssetSerializer
+from .serializers import AssetSerializer,ChequeSerializer
 from .serializers import BankAccountSerializer,BankSerializer
 from .repo import BankAccountRepo
 from django.http import JsonResponse
@@ -396,6 +396,28 @@ class AddFinancialEventApi(APIView):
         context['log']=log
         return JsonResponse(context)
     
+
+class AddChequeApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_cheque_form=AddChequeForm(request.POST,request.FILES)
+            if add_cheque_form.is_valid():
+                log=333
+                 
+                cd=add_cheque_form.cleaned_data
+                result,message,cheque=ChequeRepo(request=request).add_cheque(**cd)
+                if cheque is not None:
+                    context['cheque']=ChequeSerializer(cheque,many=False).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
 
 class AddInvoiceLineApi(APIView):
     def post(self,request,*args, **kwargs):

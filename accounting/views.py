@@ -11,12 +11,12 @@ from phoenix.server_apps import phoenix_apps
 from utility.excel import ReportWorkBook,get_style
 from utility.calendar import PersianCalendar
 from core.views import CoreContext,PageContext
-from .repo import FinancialDocumentRepo,CategoryRepo,BrandRepo,AssetRepo
+from .repo import FinancialDocumentRepo,CategoryRepo,BrandRepo,AssetRepo,ChequeRepo
 from .repo import PersonCategoryRepo,PersonRepo,ServiceRepo,FAILED,SUCCEED,InvoiceLineItemRepo,FinancialDocumentLineRepo,AccountRepo
 from .repo import ProductRepo,InvoiceRepo,FinancialEventRepo,PersonAccountRepo
 from .repo import  BankAccountRepo,InvoiceLineRepo
 from .serializers import BankAccountSerializer
-from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer,BrandSerializer
+from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer,BrandSerializer,ChequeSerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
 from .serializers import PersonCategorySerializer,AssetSerializer,BankSerializer
@@ -309,6 +309,16 @@ def AddFinancialEventContext(request):
     context['add_financial_event_form']=AddFinancialEventForm()
     return context
 
+def ChequeContext(request,cheque):
+    context=FinancialEventContext(request=request,financial_event=cheque)
+    context['cheque']=cheque
+    return context
+
+def AddChequeContext(request):
+    context=AddFinancialEventContext(request=request)
+    context['add_cheque_form']=AddChequeForm()
+    return context
+
 def AddInvoiceContext(request):
     context=AddFinancialEventContext(request=request)
 
@@ -374,6 +384,9 @@ def BankAccountContext(request,bank_account,*args, **kwargs):
     context['bank_account_s']=bank_account_s
     return context
 
+def AddBankContext(request,*args, **kwargs):
+    context={}
+    return context
 
 def BankContext(request,bank,*args, **kwargs):
     context={}
@@ -843,6 +856,7 @@ class ProductView(View):
 
         return render(request,TEMPLATE_ROOT+"product.html",context)
     
+
 class InvoiceLineView(View):
     def get(self,request,*args, **kwargs):
         from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer
@@ -897,6 +911,50 @@ class ServicesView(View):
         return render(request,TEMPLATE_ROOT+"services.html",context)
 
 
+class ChequeView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        cheque=ChequeRepo(request=request).cheque(*args, **kwargs)
+        if cheque is None:
+            raise Http404
+        
+
+        context.update(ChequeContext(request=request,cheque=cheque))
+
+        return render(request,TEMPLATE_ROOT+"cheque.html",context)   
+
+
+class ChequesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        cheques=ChequeRepo(request=request).list(*args, **kwargs)
+        cheques_s=json.dumps(ChequeSerializer(cheques,many=True).data)
+        context['cheques']=cheques
+        context['cheques_s']=cheques_s
+        if request.user.has_perm(APP_NAME+'.add_cheque'):
+            context.update(AddChequeContext(request=request))
+        return render(request,TEMPLATE_ROOT+"cheques.html",context)
+
+from django.shortcuts import reverse,redirect
+
+class ChangeChequeImageView(View):
+     def post(self,request,*args, **kwargs):
+        log=1
+        change_cheque_image_form=ChangeChequeImageForm(request.POST,request.FILES)
+        if change_cheque_image_form.is_valid():
+            log=3              
+            cheque_id=change_cheque_image_form.cleaned_data['cheque_id']
+            image=request.FILES['image']
+            result,message,cheque=ChequeRepo(request=request).change_image(cheque_id=cheque_id,
+            image=image,
+            )
+            if result==SUCCEED:
+                return redirect(reverse(APP_NAME+":cheque",kwargs={'pk':cheque.id}))
+        body='چک پیدا نشد'
+        title='چک پیدا نشد'
+        mv=MessageView(title=title,body=body,)
+        return mv.get(request=request)
+
 class AssetView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -928,7 +986,6 @@ class ReportView(View):
         
 
         return render(request,TEMPLATE_ROOT+"report.html",context)   
-
 
 
 class ServiceView(View):
@@ -1159,21 +1216,6 @@ class FinancialEventsView(View):
         return render(request,TEMPLATE_ROOT+"financial-events.html",context)
 
 
-class AddFinancialEventView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        invoices=InvoiceRepo(request=request).list()
-        invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
-        context['invoices']=invoices
-        context['invoices_s']=invoices_s
-        context['WIDE_LAYOUT']=True
-        return render(request,TEMPLATE_ROOT+"add-finanical-event.html",context)
-
-    def post(self,request,*args, **kwargs):
-        from .apis import AddFinancialEventApi
-        return AddFinancialEventApi().post(request=request)
-
-
 class InvoicesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -1265,7 +1307,6 @@ class InvoiceOfficialPrintView(View):
         context['invoice_s']=invoice_s
         context.update(InvoiceContext(request=request,invoice=invoice))
         return render(request,TEMPLATE_ROOT+"invoice-official-print.html",context)
-
 
 
 class InvoicePrintView(View):
@@ -1381,9 +1422,6 @@ class BankAccountsView(View):
             
         return render(request,TEMPLATE_ROOT+"bank-accounts.html",context)
 
-def AddBankContext(request,*args, **kwargs):
-    context={}
-    return context
 
 class BanksView(View):
     def get(self,request,*args, **kwargs):
@@ -1400,6 +1438,7 @@ class BanksView(View):
             context.update(AddBankContext(request=request))
             
         return render(request,TEMPLATE_ROOT+"banks.html",context)
+
 
 class BankAccountView(View):
     def get(self,request,*args, **kwargs):

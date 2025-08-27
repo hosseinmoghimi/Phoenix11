@@ -21,7 +21,7 @@ from .settings_on_server import  NO_DUPLICATED_ACCOUNT_NAME,NO_DUPLICATED_ACCOUN
 from django.utils import timezone
 from utility.log import leolog
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
-IMAGE_FOLDER = "images/"
+IMAGE_FOLDER = APP_NAME+"/images/"
 try:
     from accounting.settings_on_server import DELETE_OLD_ITEM_UNIT
 except:
@@ -393,7 +393,7 @@ class FinancialDocument(models.Model,LinkHelper):
 
 class Brand(models.Model,LinkHelper,ImageHelper):
     name=models.CharField(_("name"),max_length=100)
-    logo_origin=models.ImageField(_("logo"),blank=True,null=True, upload_to=IMAGE_FOLDER+"account", height_field=None, width_field=None, max_length=None)
+    logo_origin=models.ImageField(_("logo"),blank=True,null=True, upload_to=IMAGE_FOLDER+"brand", height_field=None, width_field=None, max_length=None)
     class_name="brand"
     app_name=APP_NAME
  
@@ -547,6 +547,7 @@ class PersonCategory(models.Model,LinkHelper):
         person_ids=[]
         for p_a in person_accounts:
             person_ids.append(p_a.person_id)
+        from authentication.models import Person
         return Person.objects.filter(pk__in=person_ids)
     class Meta:
         verbose_name = _("دسته بندی اشخاص")
@@ -689,8 +690,8 @@ class Category(models.Model,LinkHelper,ImageHelper):
     parent=models.ForeignKey("category", verbose_name=_("parent"),null=True,blank=True, on_delete=models.SET_NULL)
     title=models.CharField(_("title"),max_length=100)
     priority=models.IntegerField(_("priority"),default=100)
-    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
-    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'ImageBase/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'category/thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'category/header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
     products=models.ManyToManyField("product",blank=True, verbose_name=_("products"))
     def get_link(self):
             return f"""
@@ -819,6 +820,26 @@ class Service(InvoiceLineItem):
         result=SUCCEED
         message='سرویس جدید با موفقیت اضافه شد.'
         return (result,message,service)
+
+
+class Cheque(FinancialEvent,ImageHelper):
+    image_origin=models.ImageField(_("تصویر"),null=True,blank=True, upload_to=IMAGE_FOLDER+"cheque/", height_field=None, width_field=None, max_length=None)
+    def get_print_url(self):
+        return reverse(APP_NAME+':invoice_print',kwargs={'pk':self.pk})
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name="cheque"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+
+        result,message,cheque=FAILED,"",self
+        result=SUCCEED
+        message='چک با موفقیت اضافه شد.'
+        
+        super(Cheque,self).save()
+        return result,message,cheque
+
+ 
 
 
 class Invoice(FinancialEvent):

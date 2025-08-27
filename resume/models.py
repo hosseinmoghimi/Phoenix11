@@ -6,7 +6,7 @@ from resume.apps import APP_NAME
 from django.utils.translation import gettext as _
 
 from utility.models import LinkHelper
-IMAGE_FOLDER=APP_NAME+"/img/"
+IMAGE_FOLDER=APP_NAME+"/images/"
 from core.models import Page
 from django.shortcuts import reverse
 
@@ -60,14 +60,14 @@ class ResumeIndex(models.Model,LinkHelper):
     app_name=APP_NAME
     language=models.CharField(_("language"),choices=LanguageEnum.choices,default=LanguageEnum.ENGLISH, max_length=50)
     image_header_origin =models.ImageField(_("تصویر سربرگ"),null=True, blank=True, upload_to=IMAGE_FOLDER +
-                                     'Resume/Header/', height_field=None, width_field=None, max_length=None)                              
+                                     'resume/header/', height_field=None, width_field=None, max_length=None)                              
   
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
     title=models.CharField(_("title"),null=True,blank=True, max_length=100)
     typing_text=models.CharField(_("typing_text"), null=True,blank=True,default="Developer,Designer,Programmer",max_length=500)
     about_top=HTMLField(_("about_top"),null=True,blank=True)
     image_main_origin = models.ImageField(_("تصویر اصلی"),null=True, blank=True, upload_to=IMAGE_FOLDER +
-                                     'Resume/Main/', height_field=None, width_field=None, max_length=None)
+                                     'resume/main/', height_field=None, width_field=None, max_length=None)
     job_title=models.CharField(_("job_title"),null=True,blank=True, max_length=300)
     about_middle=HTMLField(_("about_middle"),null=True,blank=True)
 
@@ -268,7 +268,7 @@ class ResumeTestimonial(models.Model):
     footer = models.CharField(_("پانوشت"), max_length=200)
     priority = models.IntegerField(_("ترتیب"), default=100)
     date_added=models.DateField(_("date_added"), auto_now=False, auto_now_add=False)
-    image_origin = models.ImageField(_("تصویر"), upload_to=IMAGE_FOLDER+'Testimonial/',
+    image_origin = models.ImageField(_("تصویر"), upload_to=IMAGE_FOLDER+'testimonial/',
                                      null=True, blank=True, height_field=None, width_field=None, max_length=None)
     class_name="resumetestimonial"
     def image(self):

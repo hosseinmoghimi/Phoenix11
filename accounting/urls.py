@@ -63,6 +63,10 @@ urlpatterns = [
     path('brand/<int:pk>/',login_required(views.BrandView.as_view()),name="brand"),
     path("add-brand/",login_required(apis.AddBrandApi.as_view()),name="add_brand"),
 
+    path('cheques/',login_required(views.ChequesView.as_view()),name="cheques"),
+    path('cheque/<int:pk>/',login_required(views.ChequeView.as_view()),name="cheque"),
+    path("add-cheque/",login_required(apis.AddChequeApi.as_view()),name="add_cheque"),
+
     
     path('products/',login_required(views.ProductsView.as_view()),name="products"),
     path('product/<int:pk>/',login_required(views.ProductView.as_view()),name="product"),
@@ -118,11 +122,12 @@ urlpatterns = [
     path("add-invoice-line-item-unit/",login_required(apis.AddInvoiceLineItemUnitApi.as_view()),name="add_invoice_line_item_unit"),
     path("edit-invoice/",login_required(apis.EditInvoiceApi.as_view()),name="edit_invoice"),
 
+    path("change-cheque-image/",login_required(views.ChangeChequeImageView.as_view()),name="change_cheque_image"),
+
       
     path("financial_events/",login_required(views.FinancialEventsView.as_view()),name="financial_events"),
     path("financial_event/<int:pk>/",login_required(views.FinancialEventView.as_view()),name="financialevent"),
-    path("add-financial-event/",login_required(views.AddFinancialEventView.as_view()),name="add_financial_event"),
-    path("add-financial-event-post/",login_required(apis.AddFinancialEventApi.as_view()),name="add_financial_event_post"),
+    path("add-financial-event/",login_required(apis.AddFinancialEventApi.as_view()),name="add_financial_event"),
     path("select-financial-event/",login_required(apis.SelectFinancialEventApi.as_view()),name="select_financial_event"),
     path("edit-financial-event/",login_required(apis.EditFinancialEventApi.as_view()),name="edit_financial_event"),
     

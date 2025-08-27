@@ -12,7 +12,7 @@ from django.shortcuts import reverse
 from django.core.files.storage import FileSystemStorage
 from utility.constants import FAILED,SUCCEED
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_URL,MEDIA_URL,ADMIN_URL,FULL_SITE_URL
-IMAGE_FOLDER = "images/"
+IMAGE_FOLDER = APP_NAME+"/images/"
 PAGE_TITLE_SEPERATOR=' / '
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 from utility.enums import class_title
@@ -28,8 +28,8 @@ class Page(models.Model,LinkHelper,ImageHelper):
     date_added = models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     meta_data=models.CharField(_("meta_data"),default="",null=True,blank=True, max_length=500)
     priority = models.IntegerField(_("ترتیب"), default=1000)
-    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
-    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'ImageBase/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'page/thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'page/header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
     color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY,max_length=50)
     locations=models.ManyToManyField("attachments.location", blank=True,verbose_name=_("locations"))
     def get_status_color(self):

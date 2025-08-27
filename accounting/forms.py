@@ -279,6 +279,12 @@ class SearchAccountsForm(forms.Form):
 class AddCostForm(AddFinancialEventForm):
     priority=forms.IntegerField(required=False)
 
+class ChangeChequeImageForm(forms.Form):
+    cheque_id=forms.IntegerField(required=True)
+
+
+class AddChequeForm(AddFinancialEventForm):
+    pass
 
 class AddTaxForm(AddFinancialEventForm):
     priority=forms.IntegerField(required=False)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Asset,Category,InvoiceLineItem,Account,Service,Product,InvoiceLine,Invoice,FinancialEvent,FinancialDocumentLine,InvoiceLineItemUnit
-from .models import FinancialDocument,ProductSpecification,FinancialYear,PersonAccount
+from .models import FinancialDocument,ProductSpecification,FinancialYear,PersonAccount,Cheque
 from .models import BankAccount,Bank
 from .models import Brand,PersonCategory
 from authentication.serializers import Person
@@ -68,6 +68,14 @@ class FinancialEventSerializer(serializers.ModelSerializer):
        bestankar=AccountSerializer()
        class Meta:
         model = FinancialEvent
+        fields = ['id','title','bedehkar' ,'bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
+
+
+class ChequeSerializer(serializers.ModelSerializer):
+       bedehkar=AccountSerializer()
+       bestankar=AccountSerializer()
+       class Meta:
+        model = Cheque
         fields = ['id','title','bedehkar' ,'bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
 
 

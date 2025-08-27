@@ -117,17 +117,15 @@ class ChangePersonImageView(View):
         person_id=0
         if 'pk' in kwargs:
             person_id=kwargs['pk']
-        log=1
-        if request.method=='POST':
-            log=2
-            change_person_image_form=ChangePersonImageForm(request.POST,request.FILES)
-            if change_person_image_form.is_valid():
-                log=3              
-                person_id=change_person_image_form.cleaned_data['person_id']
-                image=request.FILES['image']
-                result=PersonRepo(request=request).change_image(person_id=person_id,
-                image=image,
-                )
+        log=1 
+        change_person_image_form=ChangePersonImageForm(request.POST,request.FILES)
+        if change_person_image_form.is_valid():
+            log=3          
+            person_id=change_person_image_form.cleaned_data['person_id']
+            image=request.FILES['image']
+            result=PersonRepo(request=request).change_image(person_id=person_id,
+            image=image,
+            )
         return redirect(reverse(APP_NAME+":person",kwargs={'pk':person_id}))
 
 

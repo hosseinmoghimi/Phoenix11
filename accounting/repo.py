@@ -1,4 +1,4 @@
-from .models import Asset,Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit
+from .models import Asset,Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit,Cheque
 from .models import InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,FinancialYear
 from .models import Invoice,Bank,PersonCategory,FinancialYear,PersonAccount,ProductSpecification
 from .models import BankAccount
@@ -1327,10 +1327,6 @@ class BankAccountRepo():
         # result,message,bank_account=bank_account.save()
         # return result,message,bank_account 
         return bank_account.save()
-
-
-
-
  
  
 class FinancialDocumentRepo():
@@ -2732,3 +2728,229 @@ class CategoryRepo():
         product_categories=product.category_set.all()
         return result,message,product_categories
     
+
+
+class ChequeRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_cheques=[]
+        self.request=request
+        self.objects=Cheque.objects.filter(id=0)
+        person=PersonRepo(request=request).me
+
+
+        if request.user.has_perm(APP_NAME+".view_financialevent"):
+            self.objects=Cheque.objects 
+        elif person is not None:
+            my_accounts=AccountRepo(request=request).my_accounts
+            ids=[]
+            for acc in my_accounts:
+                ids.append(acc.id)
+            
+             
+            self.my_cheques=Cheque.objects.filter(Q(bedehkar_id__in=ids)|Q(bestankar_id__in=ids))
+            self.objects=self.my_cheques
+    
+    def change_image(self,cheque_id,image):
+        result,message,cheque=FAILED,'',None
+        cheque=self.cheque(cheque_id=cheque_id)
+        leolog(cheque_id=cheque_id,image=image)
+        if cheque is not None:
+            cheque.image_origin = image
+            cheque.save()
+            return SUCCEED,message,cheque
+        return FAILED,message,cheque
+    
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            codeee=str(filter_number(search_for))
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
+        if "account_code" in kwargs:
+            account_code=kwargs["account_code"]
+            objects=objects.filter(Q(bedehkar__code=account_code) | Q(bestankar__code=account_code)  )
+        if "account_id" in kwargs:
+            account_id=kwargs["account_id"]
+            objects=objects.filter(Q(bedehkar_id=account_id) | Q(bestankar_id=account_id)  )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.order_by('-event_datetime')
+       
+    def roots(self,*args, **kwargs):
+        objects=self.objects.filter(parent_id=None)
+        return objects.all()
+
+    def cheque(self,*args, **kwargs):
+        if "cheque_id" in kwargs and kwargs["cheque_id"] is not None:
+            return self.objects.filter(pk=kwargs['cheque_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        if "event_id" in kwargs and kwargs["event_id"] is not None:
+            return self.objects.filter(pk=kwargs['event_id']).first() 
+         
+    def edit_cheque(self,*args, **kwargs):
+        leolog(edit_cheque_kwargs=kwargs)
+        result,message,cheque=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_financialevent"):
+            message="دسترسی غیر مجاز"
+            return result,message,cheque
+    
+        if "cheque_id" in kwargs and kwargs["cheque_id"] is not None:
+            cheque=Cheque.objects.filter(pk=kwargs['cheque_id']).first()  
+            if cheque is None:
+                message="رویداد پیدا نشد."
+                return result,message,cheque
+
+        if "title" in kwargs and kwargs["title"] is not None:
+            cheque.title=kwargs['title']
+
+
+        if "status" in kwargs  :
+            cheque.status=kwargs['status']
+
+
+        if "amount" in kwargs and kwargs["amount"] is not None:
+            cheque.amount=kwargs['amount']
+
+        if "payment_method" in kwargs and kwargs["payment_method"] is not None:
+            cheque.payment_method=kwargs['payment_method']
+
+            
+        if "shipping_fee" in kwargs and kwargs["shipping_fee"] is not None:
+            cheque.shipping_fee=kwargs['shipping_fee'] 
+
+        if "discount" in kwargs and kwargs["discount"] is not None:
+            cheque.discount=kwargs['discount']
+        if "tax_percentage" in kwargs and kwargs["tax_percentage"] is not None:
+            cheque.tax_percentage=kwargs['tax_percentage']
+
+        if "shipping_fee" in kwargs and kwargs["shipping_fee"] is not None:
+            cheque.shipping_fee=kwargs['shipping_fee']
+
+        if "bedehkar_id" in kwargs and kwargs["bedehkar_id"] is not None:
+            cheque.bedehkar_id=kwargs['bedehkar_id']
+
+        if "bestankar_id" in kwargs and kwargs["bestankar_id"] is not None:
+            cheque.bestankar_id=kwargs['bestankar_id']
+        
+        if 'event_datetime1' in kwargs and kwargs['event_datetime'] is not None:
+            event_datetime=kwargs["event_datetime"]
+            cheque.event_datetime=event_datetime
+
+           
+            year=event_datetime[:2]
+            if year=="13" or year=="14":
+                event_datetime=PersianCalendar().to_gregorian(event_datetime)
+            cheque.event_datetime=event_datetime
+
+        # if 'start_datetime' in kwargs:
+        #     start_datetime=kwargs["start_datetime"]
+        #     cheque.start_datetime=start_datetime
+
+           
+        #     year=start_datetime[:2]
+        #     if year=="13" or year=="14":
+        #         start_datetime=PersianCalendar().to_gregorian(start_datetime)
+        #     cheque.start_datetime=start_datetime
+
+        # if 'end_datetime' in kwargs:
+        #     end_datetime=kwargs["end_datetime"]
+        #     cheque.end_datetime=end_datetime
+
+           
+        #     year=end_datetime[:2]
+        #     if year=="13" or year=="14":
+        #         end_datetime=PersianCalendar().to_gregorian(end_datetime)
+        #     cheque.end_datetime=end_datetime
+
+        result,message,cheque=cheque.save()
+
+        return result,message,cheque
+       
+    def delete_all(self,*args, **kwargs):
+        result,message=FAILED,""
+        if not self.request.user.has_perm(APP_NAME+".delete_financialevent"):
+            message="دسترسی غیر مجاز"
+            return result,message
+        cheques=Cheque.objects.all()
+        cheques.delete()
+        result=SUCCEED
+        message='همه رویداد ها حذف شدند.'
+        return result,message
+    
+    def add_cheque(self,*args,**kwargs):
+        result,message,cheque=FAILED,"",None
+        
+        if len(Cheque.objects.filter(title=kwargs['title']))>0:
+            message='عنوان تکراری' 
+            return result,message,None
+        
+        if not self.request.user.has_perm(APP_NAME+".add_financialevent"):
+            message="دسترسی غیر مجاز"
+            return result,message,cheque
+
+        cheque=Cheque()
+        if 'bedehkar_id' in kwargs:
+            cheque.bedehkar_id=kwargs["bedehkar_id"]
+        if 'bestankar_id' in kwargs:
+            cheque.bestankar_id=kwargs["bestankar_id"]
+
+            
+        if "shipping_fee" in kwargs and kwargs["shipping_fee"] is not None:
+            cheque.shipping_fee=kwargs['shipping_fee'] 
+
+        if "payment_method" in kwargs and kwargs["payment_method"] is not None:
+            cheque.payment_method=kwargs['payment_method'] 
+
+        if 'title' in kwargs and kwargs["title"] is not None:
+            cheque.title=kwargs["title"]
+        if 'description' in kwargs and kwargs["description"] is not None:
+            cheque.description=kwargs["description"]
+        if 'parent_id' in kwargs and kwargs["parent_id"] is not None:
+            if kwargs["parent_id"]>0:
+                cheque.parent_id=kwargs["parent_id"]
+        if 'color' in kwargs and kwargs["color"] is not None:
+            cheque.color=kwargs["color"]
+        if 'amount' in kwargs and kwargs["amount"] is not None:
+            cheque.amount=kwargs["amount"]
+        if 'priority' in kwargs and kwargs["priority"] is not None:
+            cheque.priority=kwargs["priority"]
+        if 'type' in kwargs and kwargs["type"] is not None:
+            cheque.type=kwargs["type"]
+        if 'event_datetime' in kwargs and kwargs["event_datetime"] is not None:
+            event_datetime=kwargs["event_datetime"]
+            cheque.event_datetime=event_datetime
+
+           
+            year=event_datetime[:2]
+            if year=="13" or year=="14":
+                event_datetime=PersianCalendar().to_gregorian(event_datetime)
+            cheque.event_datetime=event_datetime
+
+        # if 'start_datetime' in kwargs:
+        #     start_datetime=kwargs["start_datetime"]
+        #     cheque.start_datetime=start_datetime
+
+           
+        #     year=start_datetime[:2]
+        #     if year=="13" or year=="14":
+        #         start_datetime=PersianCalendar().to_gregorian(start_datetime)
+        #     cheque.start_datetime=start_datetime
+
+        # if 'end_datetime' in kwargs:
+        #     end_datetime=kwargs["end_datetime"]
+        #     cheque.end_datetime=end_datetime
+
+           
+        #     year=end_datetime[:2]
+        #     if year=="13" or year=="14":
+        #         end_datetime=PersianCalendar().to_gregorian(end_datetime)
+        #     cheque.end_datetime=end_datetime
+
+        (result,message,cheque)=cheque.save()
+        return result,message,cheque
+ 

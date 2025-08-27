@@ -5,7 +5,7 @@ from phoenix.settings import ADMIN_URL,STATIC_URL,MEDIA_URL
 from django.shortcuts import reverse 
 from .calendar import PersianCalendar
 from .apps import APP_NAME
-IMAGE_FOLDER = "images/"
+IMAGE_FOLDER = APP_NAME+"/images/"
 
 
 class DateHelper():

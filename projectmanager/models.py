@@ -9,7 +9,7 @@ from accounting.models import InvoiceLine,Invoice
 from django.core.files.storage import FileSystemStorage
 
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT
-IMAGE_FOLDER = "images/"
+IMAGE_FOLDER = APP_NAME+"/images/"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 from .enums import StatusColor
 # Create your models here.
