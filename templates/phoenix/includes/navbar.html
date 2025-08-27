@@ -17,10 +17,10 @@
       {% if perms.core.add_parameter %}
         
       <li class="nav-item">
-        <a class="nav-link text-right" href="{% url 'core:settings' %}">تنظیمات</a>
+        <a class="nav-link text-right" href="{% url 'utility:settings' %}">تنظیمات</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-right" href="{{ADMIN_URL}}{{APP_NAME}}/">ادمین</a>
+        <a class="nav-link text-right" href="{{ADMIN_URL}}">ادمین</a>
       </li>
       {% endif %}
 
