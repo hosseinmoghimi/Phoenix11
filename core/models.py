@@ -38,7 +38,7 @@ class Page(models.Model,LinkHelper,ImageHelper):
         aaa=f"""
                     <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">
                     <span class="farsi mx-2">
-                    <img class="rounded-circle" width="32" src="{self.thumbnail}">
+                    <img class="rounded" width="32" src="{self.thumbnail}">
                     {self.title}
                     </span>
                     </a></li> 
