@@ -116,7 +116,7 @@ class Page(models.Model,LinkHelper,ImageHelper):
         verbose_name_plural = _("Pages")
 
     def __str__(self):
-        return self.title
+        return self.full_title
 
     def get_qrcode_url(self):
         if self.pk is None:
