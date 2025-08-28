@@ -3,9 +3,9 @@
 
   <div class="card-body">
     <div class="table-responsive rtl">
-      <div v-show="invoice_lines.length==0">
-        <h5 class="text-canter text-danger">سطری وجود ندارد.</h5>
-      </div>
+       
+        <h5 v-show="invoice_lines.length==0" class="text-canter">سطری وجود ندارد.</h5>
+      
       <div v-show="invoice_lines.length>0">
         <table class="table table-striped farsi rtl">
           <thead>
