@@ -1383,6 +1383,32 @@ class InvoicePrintView(View):
         return render(request,TEMPLATE_ROOT+"invoice-print.html",context)
 
 
+
+class InvoiceEstelamView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        if invoice is None:
+            title='فاکتور پیدا نشد.'
+            message='فاکتور پیدا نشد.'
+            mv=MessageView(title=title,message=message)
+            return mv.get(request=request)
+        from attachments.repo import PagePrintRepo,PagePrintTypeEnum
+        PagePrintRepo(request=request).add_page_print(page_id=invoice.id,draft=True,printed=False)
+        context['add_page_print_form']=True
+        context['add_page_print_form_type']=PagePrintTypeEnum.DRAFT
+        context['invoice']=invoice
+        context['NOT_REPONSIVE']=True
+        context['NOT_NAVBAR']=True
+        context['WIDE_LAYOUT']=False
+        context['title']=invoice.title
+        context['NOT_FOOTER']=True
+        invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)
+        context['invoice_s']=invoice_s
+        context.update(InvoiceContext(request=request,invoice=invoice))
+        return render(request,TEMPLATE_ROOT+"invoice-estelam.html",context)
+
+
 class CategoryView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
