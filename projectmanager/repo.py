@@ -234,6 +234,8 @@ class ProjectRepo():
             invoice.type=kwargs["type"]
 
         project=self.project(id=kwargs['project_id']) 
+        if invoice.parent_id is None:
+            invoice.parent_id=kwargs['project_id']
         (result,message,invoice)=invoice.save()
         if project is not None:
             project.invoices.add(invoice.id)  

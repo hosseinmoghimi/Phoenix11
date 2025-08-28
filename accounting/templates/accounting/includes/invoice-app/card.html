@@ -1,5 +1,10 @@
 <div class="card">
   {% load to_price %}
+  <div class="card-header">
+    <h5>
+      فاکتور
+    </h5>
+  </div>
   <div class="card-body">
     {% include 'accounting/includes/financial-event-app/card-contents.html' %}
     {% for project in invoice.project_set.all %}
