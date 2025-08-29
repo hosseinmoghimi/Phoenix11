@@ -19,7 +19,8 @@ class AddPollApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_poll_form=AddPollForm(request.POST)
         if add_poll_form.is_valid():
             log=333

@@ -18,7 +18,8 @@ class AddVehicleApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_vehicle_form=AddVehicleForm(request.POST)
         if add_vehicle_form.is_valid():
             log=333
@@ -44,7 +45,8 @@ class AddMaintenanceInvoiceApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_maintenance_invoice_form=AddMaintenanceInvoiceForm(request.POST)
         if add_maintenance_invoice_form.is_valid():
             log=333
@@ -67,7 +69,8 @@ class AddServiceManApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_service_man_form=AddServiceManForm(request.POST)
         if add_service_man_form.is_valid():
             log=333

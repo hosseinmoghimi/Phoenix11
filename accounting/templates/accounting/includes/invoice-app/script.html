@@ -1,5 +1,6 @@
 <script>
     let invoice_id=parseInt("{{invoice.id}}")
+    let invoice=JSON.parse("{{invoice_s|escapejs}}")
 </script>
 
 {% include "accounting/includes/financial-event-app/script.html" %}
@@ -13,3 +14,17 @@
 {% if edit_invoice_form %}
 {% include "accounting/includes/edit-invoice-app/script.html" %}
 {% endif %}
+
+
+
+ <script>
+    &=$(document).ready(()=>{
+        if(typeof edit_invoice_app != 'undefined'){
+            edit_invoice_app.bestankar=invoice.bestankar
+            edit_invoice_app.bestankar_code=invoice.bestankar.code
+            edit_invoice_app.bedehkar=invoice.bestankar
+            edit_invoice_app.bedehkar_code=invoice.bestankar.code
+        }
+    })
+ </script>
+

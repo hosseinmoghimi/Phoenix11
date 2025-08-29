@@ -18,7 +18,8 @@ class AddPersonApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_person_form=AddPersonForm(request.POST)
         if add_person_form.is_valid():
             log=333
@@ -40,7 +41,8 @@ class SelectPersonApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         select_person_form=SelectPersonForm(request.POST)
         if select_person_form.is_valid():
             log=333
@@ -66,7 +68,8 @@ class SelectUserApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         select_person_form=SelectUserForm(request.POST)
         if select_person_form.is_valid():
             log=333
@@ -89,7 +92,8 @@ class SelectProfileApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         select_profile_form=SelectProfileForm(request.POST)
         if select_profile_form.is_valid():
             log=333

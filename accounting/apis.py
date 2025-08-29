@@ -24,7 +24,8 @@ class AddProductToCategoryApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_product_to_category_form=AddProductToCategoryForm(request.POST)
         if add_product_to_category_form.is_valid():
             log=333
@@ -46,7 +47,8 @@ class AddPersonAccountApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_person_account_form=AddPersonAccountForm(request.POST)
         if add_person_account_form.is_valid():
             log=333
@@ -69,7 +71,8 @@ class AddBankAccountApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_bank_account_form=AddBankAccountForm(request.POST)
         if add_bank_account_form.is_valid():
             log=333
@@ -92,7 +95,8 @@ class AddBankApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_bank_form=AddBankForm(request.POST)
         if add_bank_form.is_valid():
             log=333
@@ -115,7 +119,8 @@ class AddPersonCategoryApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_person_category_form=AddPersonCategoryForm(request.POST)
         if add_person_category_form.is_valid():
             log=333
@@ -180,7 +185,8 @@ class AddInvoiceApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_invoice_form=AddInvoiceForm(request.POST)
         if add_invoice_form.is_valid():
             log=333
@@ -202,7 +208,8 @@ class AddFinancialDocumentLineApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_financial_document_line_form=AddFinancialDocumentLineForm(request.POST)
         if add_financial_document_line_form.is_valid():
             log=333
@@ -751,7 +758,8 @@ class EditInvoiceApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
          
         edit_invoice_form=EditInvoiceForm(request.POST)
         if edit_invoice_form.is_valid():
@@ -776,7 +784,8 @@ class AddBrandApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_brand_form=AddBrandForm(request.POST)
         if add_brand_form.is_valid():
             log=333
@@ -798,7 +807,8 @@ class AddAssetApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_asset_form=AddAssetForm(request.POST)
         if add_asset_form.is_valid():
             log=333
@@ -820,7 +830,8 @@ class AddProductApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_product_form=AddProductForm(request.POST)
         if add_product_form.is_valid():
             log=333
@@ -842,7 +853,8 @@ class AddServiceApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_service_form=AddServiceForm(request.POST)
         if add_service_form.is_valid():
             log=333

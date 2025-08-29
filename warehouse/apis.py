@@ -18,7 +18,8 @@ class SelectWareHouseApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         select_warehouse_form=SelectWareHouseForm(request.POST)
         if select_warehouse_form.is_valid():
             log=333
@@ -44,7 +45,8 @@ class AddWareHouseApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_warehouse_form=AddWareHouseForm(request.POST)
         if add_warehouse_form.is_valid():
             log=333
@@ -69,7 +71,8 @@ class AddWareHouseSheetApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_warehouse_sheet_form=AddWareHouseSheetForm(request.POST)
         if add_warehouse_sheet_form.is_valid():
             log=333

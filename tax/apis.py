@@ -19,7 +19,8 @@ class AddTaxApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_school_form=AddTaxForm(request.POST)
         if add_school_form.is_valid():
             log=333

@@ -18,7 +18,8 @@ class AddEmployeeApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_employee_form=AddEmployeeForm(request.POST)
         if add_employee_form.is_valid():
             log=333
@@ -40,7 +41,8 @@ class AddOrganizationUnitApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_organization_unit_form=AddOrganizationUnitForm(request.POST)
         if add_organization_unit_form.is_valid():
             log=333

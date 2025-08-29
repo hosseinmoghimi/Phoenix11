@@ -4,7 +4,7 @@
     <small class="text-muted"> مبلغ :</small>
     {{financial_event.amount|to_price}} {{CURRENCY}}
 </h5>
-
+<hr>
 <small>
     بدهکار :
 </small>
@@ -14,9 +14,12 @@
         <div class="media">
             <img src="{{financial_event.bedehkar.thumbnail}}" width="48" alt="">
             <div class="media-body mr-2">
-                <span>
+                <h6 class="text-{{financial_event.bedehkar.color}}">
                     {{financial_event.bedehkar.name}}
-                </span>
+                </h6>
+                <h6 class="text-{{financial_event.bedehkar.color}}">
+                    {{financial_event.bedehkar.code}}
+                </h6>
             </div>
         </div>
     </a>
@@ -24,7 +27,7 @@
 
 
 
-
+<hr>
 
 <small>
     بستانکار :
@@ -35,10 +38,15 @@
         <div class="media">
             <img src="{{financial_event.bestankar.thumbnail}}" width="48" alt="">
             <div class="media-body mr-2">
-                <span>
+                <h6  class="text-{{financial_event.bestankar.color}}">
                     {{financial_event.bestankar.name}}
-                </span>
+                </h6>
+
+                <h6  class="text-{{financial_event.bestankar.color}}">
+                    {{financial_event.bestankar.code}}
+                </h6>
             </div>
         </div>
     </a>
 </div>
+<hr>

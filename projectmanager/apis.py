@@ -22,7 +22,8 @@ class SelectProjectApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         select_project_form=SelectProjectForm(request.POST)
         if select_project_form.is_valid():
             log=333
@@ -47,7 +48,8 @@ class AddTicketApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_ticket_form=AddTicketForm(request.POST)
         if add_ticket_form.is_valid():
             log=333
@@ -69,7 +71,8 @@ class AddProjectInvoiceApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_invoice_form=AddProjectInvoiceForm(request.POST)
         if add_invoice_form.is_valid():
             log=333
@@ -136,7 +139,8 @@ class AddProjectApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_project_form=AddProjectForm(request.POST)
         if add_project_form.is_valid():
             log=333
@@ -158,7 +162,8 @@ class AddSubProjectApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_sub_project_form=AddSubProjectForm(request.POST)
         if add_sub_project_form.is_valid():
             log=333
@@ -180,7 +185,8 @@ class AddInvoiceToProjectApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_invoice_to_project_form=AddInvoiceToProjectForm(request.POST)
         if add_invoice_to_project_form.is_valid():
             log=333
@@ -202,7 +208,8 @@ class AddEventToProjectApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_evet_to_project_form=AddEventToProjectForm(request.POST)
         if add_evet_to_project_form.is_valid():
             log=333

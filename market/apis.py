@@ -20,7 +20,8 @@ class AddMenuApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_menu_form=AddMenuForm(request.POST)
         if add_menu_form.is_valid():
             log=333
@@ -43,7 +44,8 @@ class AddShopPackageApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_menu_form=AddMenuForm(request.POST)
         if add_menu_form.is_valid():
             log=333
@@ -66,7 +68,8 @@ class AddCartItemApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_to_cart_form=AddCartItemForm(request.POST)
         if add_to_cart_form.is_valid():
             log=333
@@ -89,7 +92,8 @@ class ChangeCartItemApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_to_cart_form=ChangeCartItemForm(request.POST)
         if add_to_cart_form.is_valid():
             log=333
@@ -111,7 +115,8 @@ class AddShopApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_shop_form=AddShopForm(request.POST)
         if add_shop_form.is_valid():
             log=333
@@ -133,7 +138,8 @@ class CheckoutCartApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         checkout_cart_form=CheckoutCartForm(request.POST)
         if checkout_cart_form.is_valid():
             log=333
