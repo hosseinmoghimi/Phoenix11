@@ -84,4 +84,7 @@
 {% include "accounting/includes/invoice-app/script.html" %} 
 {% include "warehouse/includes/warehouse-sheets-app/script.html" %}
 
+{% if edit_invoice_form %}
+{% include "accounting/includes/edit-invoice-app/script.html" %}
+{% endif %}
 {% endblock script %}

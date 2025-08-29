@@ -3,20 +3,35 @@
 
 {% include "accounting/includes/invoice-app/script.html" %}
 <script>
-  let bestankar = JSON.parse("{{bestankar_s|escapejs}}");
-  let bedehkar = JSON.parse("{{bedehkar_s|escapejs}}");
-  let invoice_lines = JSON.parse("{{invoice_lines_s|escapejs}}");
+  let status_for_edit_invoice_app =  "{{invoice.status}}" 
+  let payment_method_for_edit_invoice_app =  "{{invoice.payment_method}}" 
+  let bestankar_for_edit_invoice_app = JSON.parse("{{bestankar_s|escapejs}}");
+  let bedehkar_for_edit_invoice_app = JSON.parse("{{bedehkar_s|escapejs}}");
+  let invoice_lines_for_edit_invoice_app = JSON.parse("{{invoice_lines_s|escapejs}}");
+  
+let invoice_edit_app_event_datetime= "{{invoice.persian_event_datetime}}"
+let invoice_edit_app_event_date= invoice_edit_app_event_datetime.substring(0,10)
+let invoice_edit_app_event_time= invoice_edit_app_event_datetime.substring(10,19)
+
   let invoice_edit_app = new Vue({
     el: "#invoice-edit-app",
     data: {
-      bestankar: bestankar,
-      bedehkar: bedehkar,
-      bestankar_code: bestankar.code,
-      bedehkar_code: bedehkar.code,
+      event_date:invoice_edit_app_event_date,
+      event_time:invoice_edit_app_event_time,
+      bestankar: bestankar_for_edit_invoice_app,
+      bedehkar: bedehkar_for_edit_invoice_app,
+      payment_method: payment_method_for_edit_invoice_app,
+      status: status_for_edit_invoice_app,
+      bestankar_code: bestankar_for_edit_invoice_app.code,
+      bedehkar_code: bedehkar_for_edit_invoice_app.code,
       title: "{{invoice.title}}",
-      invoice_lines: invoice_lines,
+      invoice_lines: invoice_lines_for_edit_invoice_app,
       message: { show: false },
       waiting: false,
+    },
+    components:{
+      DatePicker: VuePersianDatetimePicker,
+
     },
     methods: {
       sum_total: function () {
@@ -90,12 +105,17 @@
 
         invoice_lines = JSON.stringify(invoice_lines);
         let payload = {
+          
+          event_datetime: invoice_edit_app.event_date+" "+invoice_edit_app.event_time,
+
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           invoice_lines: invoice_lines,
           invoice_id: invoice_id,
           financial_event_id: invoice_id,
           bedehkar_id: invoice_edit_app.bedehkar.id,
           bestankar_id: invoice_edit_app.bestankar.id,
+          status: invoice_edit_app.status,
+          payment_method: invoice_edit_app.payment_method,
           title: invoice_edit_app.title,
         };
         console.log(payload);

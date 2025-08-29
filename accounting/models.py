@@ -196,7 +196,7 @@ class Account(CorePage,LinkHelper,PersonAccountHelper):
         account=self
         if self.id is not None:
             result=SUCCEED
-            message="حساب با موفقیت اضافه گردید."
+            message="حساب با موفقیت ذخیره گردید."
         return result,message,account
  
   
@@ -366,7 +366,7 @@ class FinancialDocument(models.Model,LinkHelper):
         #     message="تاریخ سند خارج از محدوده تاریخ سال مالی جاری است."
         super(FinancialDocument,self).save()
         result=SUCCEED
-        message="با موفقیت اضافه شد."
+        message="با موفقیت ذخیره شد."
         return result,message,self
 
     class_name="financialdocument"
@@ -469,7 +469,7 @@ class FinancialDocumentLine(models.Model,LinkHelper):
         self.financial_document.normalize()
         self.account.normalize()
         result=SUCCEED
-        message='سطر سند مالی با موفقیت اضافه شد.'
+        message='سطر سند مالی با موفقیت ذخیره شد.'
         return result,message,financial_document_line
     @property
     def rest(self):
@@ -561,20 +561,15 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
     bedehkar=models.ForeignKey("account", related_name="bedehkar_events",verbose_name=_("دریافت کننده"), on_delete=models.PROTECT)
     bestankar=models.ForeignKey("account",related_name="bestankar_events", verbose_name=_("پرداخت کننده"), on_delete=models.PROTECT)
     creator=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
-    tax_percentage=models.IntegerField(_("درصد مالیات"),default=0)
-    amount=models.IntegerField(_("مبلغ"),default=0)
-    discount=models.IntegerField(_("تخفیف"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
+    amount=models.IntegerField(_("مبلغ"),default=0)
+    tax_percentage=models.IntegerField(_("درصد مالیات"),default=0)
+    tax_amount=models.IntegerField(_("مالیات"),default=0)
+    discount=models.IntegerField(_("تخفیف"),default=0)
     shipping_fee=models.IntegerField(_("هزینه حمل"),default=0)
+    sum_total=models.IntegerField(_("مبلغ نهایی"),default=0)
     # status=models.CharField(_("status"),choices=FinancialEventStatusEnum.choices,default=FinancialEventStatusEnum.DRAFT, max_length=50)
-
-    @property
-    def tax_amount(self):
-        return self.amount*self.tax_percentage/100
-    @property
-    def sum_total(self):
-        return self.tax_amount+self.amount-self.discount
-
+  
     class Meta:
         verbose_name = _("رویداد مالی")
         verbose_name_plural = _("رویداد های مالی")
@@ -594,7 +589,9 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         result=SUCCEED
-        message='رویداد مالی با موفقیت اضافه شد.'
+        message='رویداد مالی با موفقیت ذخیره شد.'
+        self.tax_amount=self.amount*self.tax_percentage/100
+        self.sum_total=self.amount+self.tax_amount+self.shipping_fee-self.discount
         super(FinancialEvent,self).save()
         return result,message,financial_event
  
@@ -752,7 +749,7 @@ class Category(models.Model,LinkHelper,ImageHelper):
         result,message,category=FAILED,'',self
         super(Category,self).save()
         result=SUCCEED
-        message='دسته بندی با موفقیت اضافه شد.'
+        message='دسته بندی با موفقیت ذخیره شد.'
         return result,message,category
 
 
@@ -818,7 +815,7 @@ class Service(InvoiceLineItem):
             self.app_name=APP_NAME
         super(Service,self).save()
         result=SUCCEED
-        message='سرویس جدید با موفقیت اضافه شد.'
+        message='سرویس جدید با موفقیت ذخیره شد.'
         return (result,message,service)
 
 
@@ -834,7 +831,7 @@ class Cheque(FinancialEvent,ImageHelper):
 
         result,message,cheque=FAILED,"",self
         result=SUCCEED
-        message='چک با موفقیت اضافه شد.'
+        message='چک با موفقیت ذخیره شد.'
         
         super(Cheque,self).save()
         return result,message,cheque
@@ -867,7 +864,7 @@ class Invoice(FinancialEvent):
 
         result,message,invoice=FAILED,"",self
         result=SUCCEED
-        message='فاکتور با موفقیت اضافه شد.'
+        message='فاکتور با موفقیت ذخیره شد.'
         if self.id is not None:
             self.normalize()
         else:
@@ -877,25 +874,16 @@ class Invoice(FinancialEvent):
 
     def normalize(self): 
         
-        total=0
-        discount=0
-        tax=0
-        amount=0
-        shipping_fee=self.shipping_fee
+        lines_total=0 
         i=1
         
         if self.id is not None:
             for line in self.invoiceline_set.order_by('row'):
-                total+=line.unit_price*line.quantity 
-                discount+=line.discount
+                lines_total+=line.unit_price*line.quantity-line.discount 
                 line.row=i
-                i+=1
-                # super(InvoiceLine,line).save()
-
-            total_after_discount=total-discount
-            tax=(total_after_discount)*(self.tax_percentage)/100
-            amount=total-discount+tax+shipping_fee
-            self.amount=amount
+                i+=1 
+ 
+            self.amount=lines_total 
         super(Invoice,self).save()
         try:
             for project in self.project_set.all():
@@ -903,21 +891,7 @@ class Invoice(FinancialEvent):
                 pass
         except:
             pass
-
-    @property
-    def statistics(self):
-        total=0
-        discount=0
-        tax=0
-        amount=0
-        shipping_fee=0
-        for line in self.invoiceline_set.all():
-            total+=line.unit_price*line.quantity 
-            discount+=line.discount
-        total_after_discount=total-discount
-        tax=(total_after_discount)*(self.tax_percentage)/100
-        amount=total-discount+tax+shipping_fee
-        return (total,discount,total_after_discount,tax,amount)
+ 
     
     def get_edit_view_url(self):
         return reverse(APP_NAME+':invoice_edit',kwargs={'pk':self.pk})
@@ -962,7 +936,7 @@ class InvoiceLine(models.Model,LinkHelper):
         self.invoice.normalize()
         if self.id is not None and self.id>0:
             result=SUCCEED
-            message='سطر فاکتور با موفقیت اضافه شد.'
+            message='سطر فاکتور با موفقیت ذخیره شد.'
         return result,message,self
     def __str__(self):
         return f'{self.invoice}>{self.invoice_line_item}*{self.quantity}'
@@ -1011,7 +985,7 @@ class BankAccount(Account):
               
         result,message,bank_account= super(BankAccount,self).save(*args, **kwargs)
         if result==SUCCEED:
-            message='حساب بانکی با موفقیت اضافه شد'
+            message='حساب بانکی با موفقیت ذخیره شد'
         return result,message,bank_account
  
 

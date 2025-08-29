@@ -273,13 +273,7 @@ def InvoiceContext(request,invoice,*args, **kwargs):
             context['invoice_statuses']=invoice_statuses
             context['payment_methods_for_edit_invoice_form']=payment_methods
             context['edit_invoice_form']=EditFinancialEventForm()
-        
-    (total,discount,total_after_discount,tax,amount)=invoice.statistics
-    context['total']=total
-    context['total_after_discount']=total_after_discount
-    context['amount']=amount
-    context['discount']=discount
-    context['tax']=tax
+         
     return context
      
 def ProductContext(request,product,*args, **kwargs):
@@ -1325,6 +1319,8 @@ class InvoiceEditView(View):
         context.update(AddInvoiceLineContext(request=request))
         context['bedehkar_s']=json.dumps(AccountBriefSerializer(invoice.bedehkar).data)
         context['bestankar_s']=json.dumps(AccountBriefSerializer(invoice.bestankar).data)
+        context['invoice_statuses_for_edit_invoice']=(i[0] for i in FinancialEventStatusEnum.choices)
+        context['invoice_payment_methods_for_edit_invoice']=(i[0] for i in PaymentMethodEnum.choices)
         return render(request,TEMPLATE_ROOT+"invoice-edit.html",context)
 
     def post(self,request,*args, **kwargs):

@@ -88,6 +88,29 @@
               </div>
             </div>
           </div>
+
+           <div class="col-md-4">
+            <div class="form-group">
+              <label for="">تاریخ</label>
+              <date-picker v-model="event_date"></date-picker>
+
+              
+              <input
+                type="text"
+                
+                class="form-control"
+                v-model="event_date"
+              />
+                <input
+                type="text"
+                
+                class="form-control"
+                v-model="event_time"
+              />
+              
+              
+            </div>
+          </div>
         </div>
       </div>
     </div>  
@@ -207,8 +230,30 @@
     <div class="card">
       <div class="card-body">
         <div class="row rtl">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="">وضعیت</label>
+              <select v-model="status" id="" class="form-control">
+                {% for status in invoice_statuses_for_edit_invoice  %}
+                  
+                <option value="{{status}}">{{status}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
 
-      <div class="col-md-4">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="">نحوه پرداخت</label>
+              <select v-model="payment_method" id="" class="form-control">
+                {% for payment_method in invoice_payment_methods_for_edit_invoice  %}
+                  
+                <option value="{{payment_method}}">{{payment_method}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+      <div class="col-md-12">
         <button v-if="!waiting" class="btn btn-success" @click="save()">ذخیره</button>
         <img  v-if="waiting" src="{% static 'leo/img/loading.gif' %}" width="48" alt="">
           

@@ -2521,6 +2521,7 @@ class InvoiceRepo(FinancialEventRepo):
         return result,message,invoice
 
     def edit_invoice(self,*args, **kwargs):
+        leolog(edit_invoice_kwargs=kwargs)
         result,message,invoice=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_invoice"):
             message="دسترسی غیر مجاز"
@@ -2547,29 +2548,29 @@ class InvoiceRepo(FinancialEventRepo):
         if 'title' in kwargs:
             invoice.title=kwargs['title'] 
 
-        if 'bedehkar_id' in kwargs and kwargs['bedehkar_id'] is not None:
+        if 'bedehkar_id' in kwargs and kwargs['bedehkar_id'] is not None and not kwargs['bedehkar_id']=='':
             invoice.bedehkar_id=kwargs['bedehkar_id']
             
-        if 'discount' in kwargs and kwargs['discount'] is not None:
+        if 'discount' in kwargs and kwargs['discount'] is not None and not kwargs['discount']=='':
             invoice.discount=kwargs['discount'] 
 
-        if 'tax_percentage' in kwargs and kwargs['tax_percentage'] is not None:
+        if 'tax_percentage' in kwargs and kwargs['tax_percentage'] is not None and not kwargs['tax_percentage']=='':
             invoice.tax_percentage=kwargs['tax_percentage'] 
             
         if 'shipping_fee' in kwargs and kwargs['shipping_fee'] is not None:
             invoice.shipping_fee=kwargs['shipping_fee']
             
-        if 'status' in kwargs and kwargs['status'] is not None:
+        if 'status' in kwargs and kwargs['status'] is not None and not kwargs['status']=='':
             invoice.status=kwargs['status']
             
             
-        if 'event_datetime' in kwargs and kwargs['event_datetime'] is not None:
+        if 'event_datetime' in kwargs and kwargs['event_datetime'] is not None and not kwargs['event_datetime']=='':
             year=kwargs['event_datetime'][:2]
             if year=="13" or year=="14":
                 kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
             invoice.event_datetime=kwargs["event_datetime"]
             leolog(edit_invoice_event_datetime=invoice.event_datetime)
-        if 'payment_method' in kwargs and kwargs['payment_method'] is not None:
+        if 'payment_method' in kwargs and kwargs['payment_method'] is not None and not kwargs['payment_method']=='':
             invoice.payment_method=kwargs['payment_method']
 
             

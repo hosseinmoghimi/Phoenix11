@@ -88,39 +88,55 @@
 
                 <div>
                   <span v-text="to_price(invoice_line.line_total)"></span>
+
+                  
+
                 </div>
               </td>
-            </tr>
-            {% if invoice %}
+            </tr> 
 
             <tr>
               <td colspan="4">
                 <div class="text-left">
-                  
+                 
                 </div>
               </td>
 
               <td  >
                 <div class="text-right"> 
+               
+
                 <span class="text-success" v-if="sum_discounts()>0" v-text="to_price(sum_discounts())"></span>
 
                 </div>
               </td>
               <td class="bordered farsi text-right">
-                {% if  invoice.discount %}
-                <div>
+                 <div v-if="sum_discounts()>0">
   
                   <span style="text-decoration: line-through" v-text="to_price(sum_prices())"></span>
                   
-                </div>
-                {% endif %}
+                </div> 
                 <span v-text="to_price(sum_total())"></span>
+
               </td>
             </tr>
            
- 
-            {% endif %}
-            {% if invoice %} 
+   {% if invoice.tax_percentage > 0 %}
+
+            <tr>
+              <td colspan="5">
+                <div class="text-left">
+                  <span> {{invoice.tax_percentage}} </span>
+                  درصد مالیات بر ارزش افزوده
+                </div>
+              </td>
+
+              <td class="bordered farsi text-right">
+                <span> {{invoice.tax_amount|to_price}} </span>
+              </td>
+            </tr>
+            {% endif %} 
+
             {% if invoice.shipping_fee > 0 %}
 
             <tr>
@@ -133,21 +149,7 @@
               </td>
            
             </tr>
-            {% endif %} {% if invoice.tax_percent > 0 %}
-
-            <tr>
-              <td colspan="5">
-                <div class="text-left">
-                  <span> {{invoice.tax_percent}} </span>
-                  درصد مالیات بر ارزش افزوده
-                </div>
-              </td>
-
-              <td class="bordered farsi text-right">
-                <span> {{invoice.tax_amount|to_price}} </span>
-              </td>
-            </tr>
-            {% endif %} {% if invoice.discount > 0 %}
+            {% endif %}{% if invoice.discount > 0 %}
 
             <tr>
               <td colspan="5">
@@ -159,9 +161,9 @@
               </td>
             </tr>
             {% endif %}
+            
            
-
-            {% endif %}
+ 
           </tbody>
           <tfoot>
             <th colspan="1">

@@ -237,7 +237,7 @@
                                 {% endif %}
                                 {% if invoice %}
 
-                                {% if invoice.ship_fee > 0 %}
+                                {% if invoice.shipping_fee > 0 %}
 
                                 <tr>
                                     <td colspan="5">
@@ -249,13 +249,34 @@
 
                                     <td class="bordered  farsi text-right">
                                         <span>
-                                            {{invoice.ship_fee|to_price}}
+                                            {{invoice.shipping_fee|to_price}}
                                         </span>
                                     </td>
                                     <td>
 
                                     </td>
 
+                                </tr>
+                                {% endif %}
+                                {% if invoice.discount > 0 %}
+
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="text-left">
+
+                                            تخفیف
+                                        </div>
+                                    </td>
+
+                                    <td class="bordered  farsi text-right">
+                                        <span>
+                                            {{invoice.discount|to_price}}
+                                        </span>
+                                    </td>
+
+                                    <td>
+
+                                    </td>
                                 </tr>
                                 {% endif %}
                                 {% if invoice.tax_percentage > 0 %}
@@ -284,39 +305,18 @@
                                     </td>
                                 </tr>
                                 {% endif %}
-                                {% if invoice.discount > 0 %}
-
                                 <tr>
                                     <td colspan="5">
                                         <div class="text-left">
 
-                                            تخفیف
-                                        </div>
-                                    </td>
-
-                                    <td class="bordered  farsi text-right">
-                                        <span>
-                                            {{invoice.discount|to_price}}
-                                        </span>
-                                    </td>
-
-                                    <td>
-
-                                    </td>
-                                </tr>
-                                {% endif %}
-                                <tr>
-                                    <td colspan="5">
-                                        <div class="text-left">
-
-                                            قابل پرداخت : {{invoice.amount|to_horuf}}
+                                            قابل پرداخت : {{invoice.sum_total|to_horuf}}
                                             {{CURRENCY}}
                                         </div>
                                     </td>
 
                                     <td class="bordered filled  farsi text-right">
                                         <span class=" farsi text-right">
-                                            {{invoice.amount|to_price}}
+                                            {{invoice.sum_total|to_price}}
                                         </span>
                                     </td>
 
