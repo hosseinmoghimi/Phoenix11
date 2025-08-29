@@ -89,7 +89,7 @@ class Like(models.Model,DateTimeHelper):
 
 
     
-class Icon(models.Model,LinkHelper):
+class Icon(models.Model,LinkHelper,DateTimeHelper):
     title = models.CharField(_("title"), null=True, blank=True, max_length=300)
     icon_fa = models.CharField(
         _("icon fa"), null=True, blank=True, max_length=50)

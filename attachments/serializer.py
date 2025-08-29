@@ -76,5 +76,5 @@ class DownloadSerializer(serializers.ModelSerializer):
     person=PersonSerializer()
     class Meta:
         model=Download
-        fields=['id','page','get_download_url', 'person','title','get_edit_url','get_delete_url']
+        fields=['id','page','get_download_url','persian_date_added', 'person','title','get_edit_url','get_delete_url']
  
