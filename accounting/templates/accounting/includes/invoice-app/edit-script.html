@@ -16,6 +16,7 @@ let invoice_edit_app_event_time= invoice_edit_app_event_datetime.substring(10,19
   let invoice_edit_app = new Vue({
     el: "#invoice-edit-app",
     data: {
+
       event_date:invoice_edit_app_event_date,
       event_time:invoice_edit_app_event_time,
       bestankar: bestankar_for_edit_invoice_app,
@@ -26,6 +27,11 @@ let invoice_edit_app_event_time= invoice_edit_app_event_datetime.substring(10,19
       bedehkar_code: bedehkar_for_edit_invoice_app.code,
       title: "{{invoice.title}}",
       invoice_lines: invoice_lines_for_edit_invoice_app,
+
+      discount: parseInt("{{invoice.discount}}"),
+      tax_percentage: parseInt("{{invoice.tax_percentage}}"),
+      shipping_fee: parseInt("{{invoice.shipping_fee}}"),
+
       message: { show: false },
       waiting: false,
     },
@@ -117,6 +123,9 @@ let invoice_edit_app_event_time= invoice_edit_app_event_datetime.substring(10,19
           status: invoice_edit_app.status,
           payment_method: invoice_edit_app.payment_method,
           title: invoice_edit_app.title,
+          discount: parseInt(this.discount),
+          tax_percentage: parseInt(this.tax_percentage),
+          shipping_fee: parseInt(this.shipping_fee),
         };
         console.log(payload);
         let url = `{% url 'accounting:invoice_edit' pk=invoice.id %}`;

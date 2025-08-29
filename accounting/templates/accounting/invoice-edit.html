@@ -89,6 +89,7 @@
             </div>
           </div>
 
+
            <div class="col-md-4">
             <div class="form-group">
               <label for="">تاریخ</label>
@@ -230,6 +231,46 @@
     <div class="card">
       <div class="card-body">
         <div class="row rtl">
+          
+
+                <div class="col-md-4">
+            <div class="form-group">
+              <label for=""> تخفیف</label>
+              
+                <span v-text="to_price(discount)"></span> {{CURRENCY}}
+              <input
+                type="number"
+                class="form-control"
+                v-model="discount"
+              />
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="">درصد مالیات</label>
+              <input
+                type="number"
+                class="form-control"
+                v-model="tax_percentage"
+              />
+            </div>
+          </div>
+
+          
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="">هزینه حمل
+
+                <span v-text="to_price(shipping_fee)"></span> {{CURRENCY}}
+              </label>
+              <input
+                type="number"
+                class="form-control"
+                v-model="shipping_fee"
+              />
+            </div>
+          </div>
           <div class="col-md-4">
             <div class="form-group">
               <label for="">وضعیت</label>
@@ -253,6 +294,8 @@
               </select>
             </div>
           </div>
+          
+
       <div class="col-md-12">
         <button v-if="!waiting" class="btn btn-success" @click="save()">ذخیره</button>
         <img  v-if="waiting" src="{% static 'leo/img/loading.gif' %}" width="48" alt="">
