@@ -295,9 +295,18 @@ class CourseClassRepo():
         self.objects=CourseClass.objects.filter(id=0)
         profile=PersonRepo(request=request).me
         if profile is not None:
-            if request.user.has_perm(APP_NAME+".view_account"):
+            if request.user.has_perm(APP_NAME+".view_courseclass"):
                 self.objects=CourseClass.objects
                 self.my_accounts=self.objects 
+            else:
+                me_student=StudentRepo(request=request).me
+                if me_student is not None:
+                    self.objects=me_student.courseclass_set.all()
+                
+                else:
+                    me_teacher=TeacherRepo(request=request).me
+                    if me_teacher is not None:
+                        self.objects=me_teacher.courseclass_set.all()
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
