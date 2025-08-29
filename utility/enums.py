@@ -58,6 +58,7 @@ class UnitNameEnum(TextChoices):
     DAY="روز",_("روز")
     MONTH="ماه",_("ماه")
     YEAR="سال",_("سال")
+    SESSION="جلسه",_("جلسه")
 
 
 class OperatingSystemNameEnum(TextChoices):
