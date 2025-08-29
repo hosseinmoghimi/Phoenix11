@@ -21,7 +21,7 @@ class Page(models.Model,LinkHelper,ImageHelper):
     parent=models.ForeignKey("page",null=True,blank=True,related_name="childs", verbose_name=_("parent"), on_delete=models.CASCADE)
     app_name=models.CharField(_("app_name"),blank=True, max_length=50)
     class_name=models.CharField(_("class_name"),blank=True, max_length=50)
-    title=models.CharField(_("title"), max_length=50)
+    title=models.CharField(_("title"), max_length=200)
     short_description=HTMLField(_("short_description"),null=True,blank=True, max_length=5000)
     description=HTMLField(_("description"),null=True,blank=True, max_length=50000)
     related_pages=models.ManyToManyField("page",blank=True, verbose_name=_("related_pages"))
