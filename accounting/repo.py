@@ -102,16 +102,17 @@ class InvoiceLineRepo:
         
         
         self.objects=None
-        if request.user.has_perm(APP_NAME+".view_event"):
+        if request.user.has_perm(APP_NAME+".view_invoiceline"):
             self.objects=InvoiceLine.objects
         elif request.user.is_authenticated:
             accs=[]
-            for person in Person.objects.filter(profile__user_id=request.user.id):
-
+            from authentication.repo import PersonRepo
+            me_person=PersonRepo(request=request).me
+            if me_person is not None:
                 my_accounts=AccountRepo(request=request).my_accounts
                 for acc in my_accounts:
                     accs.append(acc.id)
-            self.objects=InvoiceLine.objects.filter(Q(bedehkar_id__in=accs)|Q(bestankar_id__in=accs))
+            self.objects=InvoiceLine.objects.filter(Q(invoice__bedehkar_id__in=accs)|Q(invoice__bestankar_id__in=accs))
         else:
             self.objects=InvoiceLine.objects.filter(pk=0)
 
@@ -119,6 +120,8 @@ class InvoiceLineRepo:
         objects=self.objects
         if "search_for" in kwargs:
             objects=objects.filter(title__contains=kwargs['search_for']) 
+        if "invoice_line_item_id" in kwargs:
+            objects=objects.filter(invoice_line_item_id=kwargs['invoice_line_item_id']) 
         return objects.all()
     def invoice_line(self,*args, **kwargs):
         if "invoice_line_id" in kwargs:

@@ -178,8 +178,8 @@ def InvoiceLineItemContext(request,invoice_line_item,*args, **kwargs):
     context=PageContext(request=request,page=invoice_line_item)
 
     context['invoice_line_item']=invoice_line_item
-    
-    invoice_lines=invoice_line_item.invoiceline_set.order_by('row')
+    invoice_lines=InvoiceLineRepo(request=request).list(invoice_line_item_id=invoice_line_item)
+    # invoice_lines=invoice_line_item.invoiceline_set.order_by('row')
     context['invoice_lines']=invoice_lines
     invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
     context['invoice_lines_s']=invoice_lines_s
