@@ -54,9 +54,7 @@ class Major(models.Model,LinkHelper):
         result=SUCCEED
         message='رشته درسی با موفقیت اضافه شد.'
         return (result,message,major)
- 
-
-  
+   
  
 class Course(CorePage,LinkHelper):
     # major=models.ForeignKey("major", verbose_name=_("رشته"), on_delete=models.CASCADE) 
@@ -87,6 +85,7 @@ class CourseClass(models.Model,LinkHelper):
     room=models.CharField(_("room"),null=True,blank=True, max_length=50)
     teachers=models.ManyToManyField("teacher",blank=True, verbose_name=_("teachers"))
     students=models.ManyToManyField("student",blank=True, verbose_name=_("students"))
+    educational_year=models.CharField(_("educational_year"),null=True,blank=True, max_length=50)
     app_name=APP_NAME
     class_name="courseclass"
     class Meta:
@@ -119,6 +118,7 @@ class Student(models.Model,LinkHelper):
         message='دانش آموز ذخیره شد.'
         result=SUCCEED
         return result,message,student
+
 
 class Teacher(models.Model,LinkHelper):
     person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.PROTECT)

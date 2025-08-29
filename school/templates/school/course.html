@@ -34,6 +34,14 @@
         {% include "library/includes/books-app/template.html" %}
      
   </div>
+
+  <div class="col-md-12">
+
+        
+        {% include "school/includes/course-classes-app/template.html" %}
+    </div>
+
+
 </div>
 {% endblock content %} {% block script %}
 <script>
@@ -42,5 +50,6 @@
   console.log("name3: {{name3}}");
 </script>
         {% include "library/includes/books-app/script.html" %}
+        {% include "school/includes/course-classes-app/script.html" %}
 
 {% endblock script %}

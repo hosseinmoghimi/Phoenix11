@@ -122,6 +122,14 @@ class SchoolView(View):
         school_s=json.dumps(SchoolSerializer(school,many=False).data)
         context["school_s"]=school_s
 
+
+
+        course_classes=CourseClassRepo(request=request).list(school_id=school.id,*args, **kwargs)
+        context["course_classes"]=course_classes
+        course_classes_s=json.dumps(CourseClassSerializer(course_classes,many=True).data)
+        context["course_classes_s"]=course_classes_s
+
+
         return render(request,TEMPLATE_ROOT+"school.html",context)
 # Create your views here. 
 
@@ -157,6 +165,13 @@ class CourseView(View):
         context["books_s"]=books_s
 
 
+        course_classes=CourseClassRepo(request=request).list(course_id=course.id,*args, **kwargs)
+        context["course_classes"]=course_classes
+        course_classes_s=json.dumps(CourseClassSerializer(course_classes,many=True).data)
+        context["course_classes_s"]=course_classes_s
+
+
+
         return render(request,TEMPLATE_ROOT+"course.html",context)
 # Create your views here. 
 
@@ -171,6 +186,12 @@ class MajorView(View):
         context["major"]=major
         major_s=json.dumps(MajorSerializer(major,many=False).data)
         context["major_s"]=major_s
+
+
+        course_classes=CourseClassRepo(request=request).list(major_id=major.id,*args, **kwargs)
+        context["course_classes"]=course_classes
+        course_classes_s=json.dumps(CourseClassSerializer(course_classes,many=True).data)
+        context["course_classes_s"]=course_classes_s
 
         return render(request,TEMPLATE_ROOT+"major.html",context)
 # Create your views here. 

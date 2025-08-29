@@ -41,6 +41,6 @@ class CourseClassSerializer(FinancialEventSerializer):
        course=CourseSerializer()
        class Meta:
         model = CourseClass
-        fields = ['id','school','course','level','major','room','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','school','educational_year','course','level','major','room','get_absolute_url','get_edit_url','get_delete_url']
 
  

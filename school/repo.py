@@ -309,6 +309,17 @@ class CourseClassRepo():
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
+        if "major_id" in kwargs:
+            major_id=kwargs["major_id"]
+            courses=CourseRepo(request=self.request).list(major_id=major_id)
+            courses_ids=[]
+            for course in courses:
+                courses_ids.append(course.id)
+            objects=objects.filter(course_id__in=courses_ids) 
+        if "school_id" in kwargs:
+            objects=objects.filter(school_id=kwargs['school_id'])  
+        if "course_id" in kwargs:
+            objects=objects.filter(course_id=kwargs['course_id'])  
         return objects.all()
         
     def course_class(self,*args, **kwargs):

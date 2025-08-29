@@ -29,11 +29,21 @@
       <div class="card-body">
         <div class="table-responsive">
           <table class="table table-striped">
-            <thead>
+            <thead> 
               <th>واحد درسی جاری</th>
+              {% if not school %}
+                
               <th>آموزشگاه</th>
+              {% endif %}
+              {% if not course %}
+                
               <th>واحد درسی</th>
+              {% endif %}
+              {% if not major %}
+                
               <th>رشته</th>
+              {% endif %}
+              <th>سال تحصیلی</th>
               <th>پایه</th>
               <th>اتاق</th>
               
@@ -41,33 +51,51 @@
             </thead>
             <tbody>
               <tr v-for="course_class in course_classes">
+                
+              
                 <td>
                   <a :href="course_class.get_absolute_url">
                     <span v-text="course_class.course.title"></span>
                   </a>
                 </td>
+                {% if not school %}
+                
+                
                 <td>
                   <a :href="course_class.school.get_absolute_url">
                     <span v-text="course_class.school.name"></span>
                   </a>
                 </td>
+                {% endif %}
 
               
 
                 
-                <td>
-                  <a :href="course_class.course.get_absolute_url">
-                    <span v-text="course_class.course.title"></span>
-                  </a>
-                </td>
+              {% if not course %}
+                
+              <td>
+                <a :href="course_class.course.get_absolute_url">
+                  <span v-text="course_class.course.title"></span>
+                </a>
+              </td>
+              {% endif %}
 
-                <td>
-                  <a :href="course_class.major.get_absolute_url">
-                    <span v-text="course_class.major.title"></span>
-                  </a>
-                </td>
+              
+              {% if not major %}
+                
+              
+              <td>
+                <a :href="course_class.major.get_absolute_url">
+                  <span v-text="course_class.major.title"></span>
+                </a>
+              </td>
+              {% endif %}
 
                 
+                <td>
+                    <span v-text="course_class.educational_year"></span>
+                </td>
+
                 
                 <td>
                     <span v-text="course_class.level"></span>
