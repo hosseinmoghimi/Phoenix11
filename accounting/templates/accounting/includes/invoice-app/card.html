@@ -19,7 +19,10 @@
      
     </h5>
     {% endfor %}
+    {% if edit_invoice_form %}
+      
     <a class="text-info mx-2" href="{% url 'accounting:invoice_edit' pk=invoice.id%}"> تغییر </a>
+    {% endif %}
 
     <a class="text-info mx-2" href="{% url 'accounting:invoice_estelam' pk=invoice.id%}"> استعلام </a>
     <a class="text-info mx-2" href="{% url 'accounting:invoice_print' pk=invoice.id%}"> چاپ </a>
