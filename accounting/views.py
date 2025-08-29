@@ -48,6 +48,7 @@ def AddBankAccountContext(request,*args, **kwargs):
     context['add_bank_account_form']=AddBankAccountForm()
     banks_for_add_bank_account=BankRepo(request=request).list(*args, **kwargs)
     context['banks_for_add_bank_account']=banks_for_add_bank_account
+    context['account_natures_for_add_bank_account']=(i[0] for i in AccountNatureEnum.choices)
     return context
 
 def AddAccountContext(request,*args, **kwargs):
