@@ -97,12 +97,9 @@ class StudentRepo():
         
         
     def add_student(self,*args,**kwargs):
-        result,message,student=FAILED,"",None
-        if len(Student.objects.filter(name=kwargs["name"]))>0:
-            message='نام تکراری برای آموزشگاه جدید'
-            return FAILED,message,None
+        result,message,student=FAILED,"",None 
         if len(Student.objects.filter(person_account_id=kwargs["person_account_id"]))>0:
-            message='حساب تکراری برای آموزشگاه جدید'
+            message='حساب تکراری برای دانش آموز جدید'
             return FAILED,message,None
         if not self.request.user.has_perm(APP_NAME+".add_student"):
             message="دسترسی غیر مجاز"
@@ -150,12 +147,9 @@ class TeacherRepo():
         
         
     def add_teacher(self,*args,**kwargs):
-        result,message,teacher=FAILED,"",None
+        result,message,teacher=FAILED,"",None 
         if len(Teacher.objects.filter(person_account_id=kwargs["person_account_id"]))>0:
-            message='نام تکراری برای آموزشگاه جدید'
-            return FAILED,message,None
-        if len(Teacher.objects.filter(person_account_id=kwargs["person_account_id"]))>0:
-            message='حساب تکراری برای آموزشگاه جدید'
+            message='حساب تکراری برای دبیر جدید'
             return FAILED,message,None
         if not self.request.user.has_perm(APP_NAME+".add_teacher"):
             message="دسترسی غیر مجاز"

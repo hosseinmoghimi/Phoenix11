@@ -56,31 +56,7 @@ class Major(models.Model,LinkHelper):
         return (result,message,major)
  
 
- 
-# class MajorTemp(CorePage):
-#     courses=models.ManyToManyField("course",blank=True, verbose_name=_("واحد های درسی"))   
-
-#     app_name=APP_NAME
-#     class_name='major'
-
-#     class Meta:
-#         verbose_name = _("Major")
-#         verbose_name_plural = _("Majors")
-
-   
-#     def __str__(self):
-#         return self.title
-#     def save(self):
-#         (result,message,major)=FAILED,'',self
-#         if self.class_name is None or self.class_name=="":
-#             self.class_name='major'
-#         if self.app_name is None or self.app_name=="":
-#             self.app_name=APP_NAME
-#         super(Major,self).save()
-#         result=SUCCEED
-#         message='رشته درسی با موفقیت اضافه شد.'
-#         return (result,message,major)
- 
+  
  
 class Course(CorePage,LinkHelper):
     # major=models.ForeignKey("major", verbose_name=_("رشته"), on_delete=models.CASCADE) 
@@ -133,6 +109,16 @@ class Student(models.Model,LinkHelper):
     def __str__(self):
         return self.person_account.person.full_name 
 
+    def save(self,*args, **kwargs):
+        result=FAILED
+        message=''
+        student=None
+
+        super(Student,self).save()
+        student=self
+        message='دانش آموز ذخیره شد.'
+        result=SUCCEED
+        return result,message,student
 
 class Teacher(models.Model,LinkHelper):
     person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.PROTECT)
@@ -152,6 +138,6 @@ class Teacher(models.Model,LinkHelper):
 
         super(Teacher,self).save()
         teacher=self
-        message='ذخیره شد  88888888'
+        message='دبیر ذخیره شد.'
         result=SUCCEED
         return result,message,teacher

@@ -22,12 +22,67 @@
       <div class="card-body">
         <form @submit.prevent="add_student()">
           <div class="row">
+            
             <div class="col-md-12">
-              <div class="form-group">
-                <label for="">عنوان</label>
-                <input v-model="title" type="text" class="form-control" />
+              <div class="row">
+                <div class="col-4">
+                  <div class="form-group">
+                    <label for="person_account_code">حساب</label>
+                    <input
+                      type="text"
+                      placeholder=""
+                      class="form-control"
+                      id="person_account_code"
+                      @input="select_person_account()"
+                      v-model="person_account_code"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-8 mt-3">
+                  <a :href="person_account.get_absolute_url" v-if="person_account.thumbnail">
+                    <div class="media">
+                      <img :src="person_account.thumbnail" width="64" alt="" />
+                      <div class="mr-2 media-body">
+                        <h5 class="my-2">
+                          <span
+                            :class="'text-'+person_account.color"
+                            v-text="person_account.title"
+                          ></span>
+                        </h5>
+                        <h6>
+                          <span
+                            :class="'text-'+person_account.color"
+                            v-text="person_account.code"
+                          ></span>
+                        </h6>
+
+                        <h6>
+                          <span
+                            v-html="to_price_colored(person_account.balance)"
+                          ></span>
+                        </h6>
+
+                        <h6>
+                          <small
+                            :class="'text-'+person_account.color"
+                            v-text="person_account.full_name"
+                          ></small>
+                        </h6>
+                      </div>
+                    </div>
+                  </a>
+                  <div v-if="!person_account.id">
+                    <h5 class="text-danger">حساب انتخاب نشده است.</h5>
+                    <a target="_blank" href="{% url 'accounting:person_accounts' %}">همه حساب ها</a>
+                  </div>
+                </div>
               </div>
             </div>
+               <div class="col-md-12">
+              {% include "utility/includes/message-app/alert.html" %}
+            </div>
+            
             <div class="col-md-12">
               <button class="btn btn-success" type="submit">
                 <i class="fa fa-plus"></i>

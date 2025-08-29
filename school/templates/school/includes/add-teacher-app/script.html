@@ -3,14 +3,10 @@
   let add_teacher_app = new Vue({
     el: "#add-teacher-app",
     data: {
-    title: "",
-    person_account_code:"0",
-    person_account:{id:"0"},
-    event_date: current_date,
-    event_time: "00:00:00",
-    event_datetime: current_datetime,
-    message:{show:false},
-    waiting:false,
+      person_account_code:"0",
+      person_account:{}, 
+      message:{show:false},
+      waiting:false,
     },
     components: {
       DatePicker: VuePersianDatetimePicker,
@@ -27,32 +23,16 @@
         });
       },
       
+ 
 
-      to_price_colored: function (vall) {
-        let colorr = "primary";
-        if (vall > 0) {
-          colorr = "success";
-        }
-
-        if (vall < 0) {
-          colorr = "danger";
-        }
-
-        return `<span class="text-${colorr}">${to_price(
-          vall
-        )} {{CURRENCY}}</span>`;
-      },
-
-      to_price: function (vall) {
-        return to_price(vall) + " {{CURRENCY}}";
-      },
+      to_price: (vall,curr)=> to_price(vall,curr),
+     
+      to_price_colored: (vall,curr)=> to_price_colored(vall,curr),
      
       add_teacher: function () {
         let payload = {
           csrfmiddlewaretoken: csrfmiddlewaretoken,
-          title: this.title,
           person_account_id: this.person_account.id,
-          event_datetime: this.event_date+" "+this.event_time,
         };
 
         console.log(payload);
@@ -61,13 +41,13 @@
         posting.done((data) => {
           console.log(data);
           if (data.result === "SUCCEED") {
-            show_message(add_teacher_app,'موفق',data.message,'success',2000)
+            show_message(add_teacher_app,'موفق',data.message,'success',3000)
             if (typeof teachers_app != "undefined") {
               teachers_app.teachers.push(data.teacher);
             }
           }
           else{
-            show_message(add_teacher_app,'خطا',data.message,'danger',2000)
+            show_message(add_teacher_app,'خطا',data.message,'danger',3000)
           }
         });
       },
