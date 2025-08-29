@@ -123,10 +123,13 @@ class PersianCalendar:
         if value=="":
             return None
         shamsi_date_time=value
-
+        a=shamsi_date_time.replace('/','')
+        from .log import leolog
+        leolog(a=a,shamsi_date_time=shamsi_date_time)
+        shamsi_date_time=a
         year_=int(shamsi_date_time[0:4])
-        month_=int(shamsi_date_time[5:7])
-        day_=int(shamsi_date_time[8:10])
+        month_=int(shamsi_date_time[4:6])
+        day_=int(shamsi_date_time[6:8])
         padding=shamsi_date_time.find(':')
         
         hour_=0

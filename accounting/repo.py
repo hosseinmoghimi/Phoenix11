@@ -2559,6 +2559,13 @@ class InvoiceRepo(FinancialEventRepo):
         if 'status' in kwargs and kwargs['status'] is not None:
             invoice.status=kwargs['status']
             
+            
+        if 'event_datetime' in kwargs and kwargs['event_datetime'] is not None:
+            year=kwargs['event_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
+            invoice.event_datetime=kwargs["event_datetime"]
+            leolog(edit_invoice_event_datetime=invoice.event_datetime)
         if 'payment_method' in kwargs and kwargs['payment_method'] is not None:
             invoice.payment_method=kwargs['payment_method']
 
