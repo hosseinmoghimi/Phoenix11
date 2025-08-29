@@ -293,8 +293,8 @@ class CourseClassRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=CourseClass.objects.filter(id=0)
-        profile=PersonRepo(request=request).me
-        if profile is not None:
+        me_person=PersonRepo(request=request).me
+        if me_person is not None:
             if request.user.has_perm(APP_NAME+".view_courseclass"):
                 self.objects=CourseClass.objects
                 self.my_accounts=self.objects 
