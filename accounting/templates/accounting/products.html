@@ -16,10 +16,12 @@
     <div class="col-md-12 ">
         {% include "accounting/includes/products-app/list-template.html" %}
     </div>
-    
+    {% if merge_product_form %}
+      
     <div class="col-md-12 ">
         {% include "accounting/includes/merge-product-app/template.html" %}
     </div>
+    {% endif %}
     
 </div>
 {% endblock content %}

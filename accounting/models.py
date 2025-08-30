@@ -756,7 +756,7 @@ class Category(models.Model,LinkHelper,ImageHelper):
 class Product(InvoiceLineItem):
     brand=models.ForeignKey("brand",null=True,blank=True, verbose_name=_("brand"), on_delete=models.CASCADE)
     model=models.CharField(_("model"),null=True,blank=True, max_length=50)
-    barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=50)
+    barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=500)
     
     class_name="product"
     app_name=APP_NAME

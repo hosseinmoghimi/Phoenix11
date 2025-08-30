@@ -827,6 +827,8 @@ class ProductsView(View):
 
         if request.user.has_perm(APP_NAME+".add_product"):
             context.update(AddProductContext(request=request)) 
+        if request.user.has_perm(APP_NAME+".change_product"):
+            context['merge_product_form']=MergeProductForm()
         context[WIDE_LAYOUT]=True
         return render(request,TEMPLATE_ROOT+"products.html",context) 
  
