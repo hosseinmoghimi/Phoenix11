@@ -142,6 +142,7 @@ class ProjectRepo():
         if not self.request.user.has_perm(APP_NAME+".add_project"):
             message="دسترسی غیر مجاز"
             return result,message,project
+        parent_id=None
         project=Project()
         if 'title' in kwargs:
             title=kwargs["title"]
