@@ -15,6 +15,11 @@
 
         </a>
 
+      {% if APP_NAVBAR %}
+        <div class="dropdown-divider"></div>
+
+      {% include APP_NAVBAR %}
+      {% endif %}
         <div class="dropdown-divider"></div>
         <a class="dropdown-item text-center" href="{% url 'authentication:logout' %}">
             <span class="text-danger">
@@ -25,6 +30,9 @@
         </a>
     </div>
 </li>
+
+
+
 {% else %}
 <li class="nav-item  ">
     <a class="nav-link   text-right" href="{% url 'authentication:login' %}" role="button">
