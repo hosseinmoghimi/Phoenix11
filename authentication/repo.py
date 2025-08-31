@@ -168,6 +168,92 @@ class PersonRepo():
         return result,message,person
 
 
+    def edit_person(self,*args,**kwargs):
+        result,message,person=FAILED,"",None
+        person=Person.objects.filter(id=kwargs['person_id']).first()
+        if person is None:
+            message='چنین شخصی پیدا نشد.'
+            return FAILED,message,None
+        
+        if self.me is None:
+            if not person.id==self.me.id:
+                if not self.request.user.has_perm(APP_NAME+".add_person"):
+                    message="دسترسی غیر مجاز"
+                    return result,message,person
+ 
+        # if 'person_id' in kwargs:
+        #     if Person.objects.filter(person_id=kwargs['person_id']).first() is not None:
+        #         message="کد پروفایل وارد شده تکراری است."
+        #         person=None
+        #         return result,message,person
+        if 'melli_code' in kwargs:
+            melli_code=kwargs['melli_code']
+
+            if melli_code is not None and len(melli_code)>0 and Person.objects.exclude(id=person.id).filter(melli_code=melli_code).first() is not None:
+                message="کد ملی وارد شده تکراری است."
+                person=None
+                return result,message,person
+            
+        
+
+        if 'birth_date' in kwargs:
+            person.birth_date=kwargs["birth_date"]
+        if 'birth_location' in kwargs:
+            person.birth_location=kwargs["birth_location"]
+
+  
+        if 'type2' in kwargs:
+            person.type2=kwargs["type2"]
+        if 'type' in kwargs:
+            person.type=kwargs["type"]
+        if 'melli_code' in kwargs:
+            person.melli_code=kwargs["melli_code"]
+        if 'title' in kwargs:
+            person.title=kwargs["title"]
+
+        if 'postal_code' in kwargs:
+            person.postal_code=kwargs["postal_code"]
+        if 'melli_code' in kwargs:
+            person.melli_code=kwargs["melli_code"]
+        if 'economic_no' in kwargs:
+            person.economic_no=kwargs["economic_no"]
+        if 'tel' in kwargs:
+            person.tel=kwargs["tel"]
+            
+ 
+
+ 
+        if 'color' in kwargs:
+            person.color=kwargs["color"]
+        if 'first_name' in kwargs:
+            person.first_name=kwargs["first_name"]
+        if 'last_name' in kwargs:
+            person.last_name=kwargs["last_name"]
+        if 'bio' in kwargs:
+            person.bio=kwargs["bio"]
+        if 'email' in kwargs:
+            person.email=kwargs["email"]
+        if 'mobile' in kwargs:
+            person.mobile=kwargs["mobile"]
+        if 'prefix' in kwargs:
+            person.prefix=kwargs["prefix"]
+        if 'gender' in kwargs:
+            person.gender=kwargs["gender"]
+        if 'address' in kwargs:
+            person.address=kwargs["address"]  
+        if 'type' in kwargs:
+            person.type=kwargs["type"] 
+         
+          
+        (result,message,person)=person.save()
+        if result==FAILED:
+            return result,message,person
+        
+
+ 
+        return result,message,person
+
+
     def logout(self,*args, **kwargs):
         if 'request' in kwargs:
             logout(request=kwargs['request'])

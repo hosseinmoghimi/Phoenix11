@@ -37,8 +37,7 @@ def CoreContext(request,*args, **kwargs):
     context['APP_FOOTER']=app_name+'/includes/footer.html'
     me_person=PersonRepo(request=request).me
     if me_person is not None:
-        context['me_person']=me_person
-        context['person']=me_person
+        context['me_person']=me_person 
     context['ADMIN_URL']=ADMIN_URL
     context['SITE_URL']=SITE_URL
     context['STATIC_URL']=STATIC_URL

@@ -20,6 +20,7 @@ class SelectPersonForm(forms.Form):
 class AddPersonForm(forms.Form):
     user_id=forms.IntegerField(required=False)
     prefix=forms.CharField(max_length=11,required=False)
+    gender=forms.CharField(max_length=11,required=False)
     title=forms.CharField(max_length=50,required=False)
     first_name=forms.CharField(max_length=50,required=False)
     last_name=forms.CharField(max_length=50,required=False)
@@ -36,3 +37,6 @@ class AddPersonForm(forms.Form):
     postal_code=forms.CharField(max_length=20,required=False)
     tel=forms.CharField(max_length=50,required=False)
  
+
+class EditPersonForm(AddPersonForm):
+    person_id=forms.IntegerField(required=True)

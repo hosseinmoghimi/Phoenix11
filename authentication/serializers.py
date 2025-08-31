@@ -11,3 +11,12 @@ class PersonSerializer(serializers.ModelSerializer):
         fields=['id','full_name','image','username','tel','mobile','user_id','get_absolute_url', 'get_edit_url','get_delete_url']
  
  
+
+class PersonFullSerializer(serializers.ModelSerializer): 
+    
+    class Meta:
+        model=Person
+        fields=['id','prefix','title','first_name','last_name','mobile','gender','email','bio','address','type','type2','economic_no','melli_code','birth_date','birth_location','postal_code','tel','image','get_absolute_url', 'get_edit_url','get_delete_url']
+ 
+ 
+ 

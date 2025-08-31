@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect,reverse
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,ONLY_HTTPS
 from django.views import View
-from .serializers import PersonSerializer
+from .serializers import PersonSerializer,PersonFullSerializer
 from .repo import PersonRepo,FAILED,SUCCEED
 from .forms import *
 from django.http import HttpResponseRedirect
@@ -165,11 +165,21 @@ class PersonView(View):
             return mv.get(request=request)
         context.update(PersonContext(request=request,person=person))
         context['person']=person
-        person_s=json.dumps(PersonSerializer(person).data)
+        person_s=json.dumps(PersonFullSerializer(person).data)
         context['person_s']=person_s
         context['title']=person.full_name
-        if request.user.has_perm(APP_NAME+'.change_person'):
-            context['change_person_image_form']=ChangePersonImageForm()
+        me_person=PersonRepo(request=request).me
+        if me_person is not None:
+            if request.user.has_perm(APP_NAME+'.change_person') or person.user==me_person.user:
+                context['change_person_image_form']=ChangePersonImageForm()
+                context['edit_person_form']=EditPersonForm()
+                from .enums import PersonType2Enum,PersonTypeEnum
+                from utility.enums import PersonPrefixEnum,GenderEnum
+                context['prefixes_for_edit_person_app']=(i[0] for i in PersonPrefixEnum.choices)
+                context['genders_for_edit_person_app']=(i[0] for i in GenderEnum.choices)
+                context['types_for_edit_person_app']=(i[0] for i in PersonTypeEnum.choices)
+                context['types2_for_edit_person_app']=(i[0] for i in PersonType2Enum.choices)
+
         return render(request,TEMPLATE_ROOT+"person.html",context)
  
  
