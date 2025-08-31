@@ -50,7 +50,7 @@ def PersonContext(request,*args, **kwargs):
 
     from core.views import PageBriefSerializer,PageRepo
     from attachments.repo import LikeRepo
-    my_likes=LikeRepo(request=request).my_likes()
+    my_likes=LikeRepo(request=request).list(person_id=person.id)
     ids=[]
     for like in my_likes:
         ids.append(like.page.id)

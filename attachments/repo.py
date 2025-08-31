@@ -221,6 +221,13 @@ class LikeRepo():
         self.objects=Like.objects
         self.request=request
         self.me_person=PersonRepo(request=request).me
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'person_id' in kwargs:
+            objects=objects.filter(person_id=kwargs['person_id'])
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        return objects.all()
     def toggle_like(self,*args, **kwargs):
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is None:
