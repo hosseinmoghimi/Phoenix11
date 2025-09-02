@@ -15,7 +15,7 @@ class RelaySerializer(serializers.ModelSerializer):
 class CommandSerializer(serializers.ModelSerializer):
     class Meta:
         model=Command
-        fields=['id','name','color','get_absolute_url']
+        fields=['id','ip','port','register','pin','value','name','color','get_absolute_url']
 
 class RelayFullSerializer(serializers.ModelSerializer):
     commands=CommandSerializer(many=True)

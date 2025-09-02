@@ -64,6 +64,9 @@
                             <th>
 
                             </th>
+                            <th>
+
+                            </th>
                         </thead>
                         <tbody>
 
@@ -100,6 +103,18 @@
 
 
                                 </td>
+
+                                 <td>
+                                    <span v-for="command in relay.commands">
+
+                                        <button :class="'mx-2 my-2 btn btn-'+command.color" @click="execute_command2(command)">
+                                            <span v-text="command.name"></span>
+                                        </button>
+                                    </span>
+
+
+                                </td>
+
                             </tr>
                         </tbody>
                     </table>

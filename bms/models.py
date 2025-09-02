@@ -101,7 +101,18 @@ class Command(models.Model,LinkHelper):
     thumbnail_origin=models.ImageField(_("thumbnail"), upload_to=IMAGE_FOLDER+"command/", height_field=None, width_field=None, max_length=None,null=True,blank=True)
     app_name=APP_NAME
     class_name="command"
- 
+    @property
+    def ip(self):
+        return self.relay.feeder.ip
+    @property
+    def port(self):
+        return self.relay.feeder.port
+    @property
+    def pin(self):
+        return self.relay.pin
+    @property
+    def register(self):
+        return self.relay.register
     def thumbnail(self):       
         if not self.thumbnail_origin:
             return STATIC_URL+APP_NAME+"/room.png"

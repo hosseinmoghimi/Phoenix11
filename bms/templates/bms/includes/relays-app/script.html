@@ -33,6 +33,23 @@
                     }
                 })
             },
+            
+            execute_command2:function(command){
+                let command_id=command.id
+                let url = `http://`+command.ip+':'+command.port+'/execute_command/'
+                let payload = { 
+                    command: command.value,
+                    register: command.register,
+                    key: command.pin,
+                    pin: command.pin, 
+                } 
+                console.log(payload)
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                   
+                    
+                })
+            },
             to_price: function (vall) {
                 let color='primary'
                 if (vall<0)
