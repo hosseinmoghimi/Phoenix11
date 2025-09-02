@@ -87,8 +87,9 @@ class Relay(models.Model,LinkHelper):
         verbose_name_plural = _("Relay")
 
     def __str__(self):
-        return f"""[{str(self.register)}] {self.name}"""
+        return f"""{self.feeder} [{str(self.register)}] {self.name}"""
     
+
 
 class Command(models.Model,LinkHelper):
     name=models.CharField(_("name"), max_length=50)
