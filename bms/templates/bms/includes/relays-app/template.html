@@ -60,13 +60,19 @@
                             <th>
                                 رله
                             </th>
-
+                            {% if SERVER_SIDE_COMMANDS %}
+                            
                             <th>
-
+                                سمت سرور
+                                
                             </th>
+                            {% endif %}
+                            
+                            {% if CLIENT_SIDE_COMMANDS %}
                             <th>
-
+                                 سمت کلاینت
                             </th>
+                            {% endif %}
                         </thead>
                         <tbody>
 
@@ -93,7 +99,9 @@
 
                                 </td>
 
+                                {% if SERVER_SIDE_COMMANDS %}
                                 <td>
+                                      
                                     <span v-for="command in relay.commands">
 
                                         <button :class="'mx-2 my-2 btn btn-'+command.color" @click="execute_command(command)">
@@ -101,19 +109,23 @@
                                         </button>
                                     </span>
 
-
+                                    
                                 </td>
-
+                                
+                                {% endif %}
+                                {% if CLIENT_SIDE_COMMANDS %}
                                  <td>
+                                      
                                     <span v-for="command in relay.commands">
-
+                                        
                                         <button :class="'mx-2 my-2 btn btn-'+command.color" @click="execute_command2(command)">
                                             <span v-text="command.name"></span>
                                         </button>
                                     </span>
-
-
+                                    
+                                    
                                 </td>
+                                {% endif %}
 
                             </tr>
                         </tbody>

@@ -2,7 +2,7 @@ import json
 from django.shortcuts import render
 from bms.apps import APP_NAME
 from bms.repo import CommandRepo, FeederRepo,LogRepo
-from core.views import CoreContext
+from core.views import CoreContext,ParameterRepo
 from bms.serializers import CommandSerializer,RelayFullSerializer, FeederSerializer, RelaySerializer,LogSerializer
 from django.views import View
 from utility.log import leolog
@@ -12,7 +12,13 @@ LAYOUT_PARENT="phoenix/layout.html"
 def getContext(request,*args, **kwargs):
     context=CoreContext(request=request,app_name=APP_NAME)
     context['LAYOUT_PARENT']=LAYOUT_PARENT
+    paramerer_repo=ParameterRepo(request=request,app_name=APP_NAME)
+    SERVER_SIDE_COMMANDS=paramerer_repo.parameter(name='اجرای فرمان ها از سمت سرور',default=False).boolean_value
+    CLIENT_SIDE_COMMANDS=paramerer_repo.parameter(name='اجرای فرمان ها از سمت کلاینت',default=True).boolean_value
+    context['SERVER_SIDE_COMMANDS']=SERVER_SIDE_COMMANDS
+    context['CLIENT_SIDE_COMMANDS']=CLIENT_SIDE_COMMANDS
     return context
+
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
