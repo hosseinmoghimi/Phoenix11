@@ -19,6 +19,11 @@ urlpatterns = [
     path('student/<int:pk>/',login_required(views.StudentView.as_view()),name="student"), 
 
 
+    path('sessions/',login_required(views.SessionsView.as_view()),name="sessions"),  
+    path('add-session/',login_required(apis.AddSessionApi.as_view()),name="add_session"),
+    path('session/<int:pk>/',login_required(views.SessionView.as_view()),name="session"), 
+
+
 
 
     path('majors/',login_required(views.MajorsView.as_view()),name="majors"),  

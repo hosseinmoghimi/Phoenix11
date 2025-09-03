@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import School,CourseClass,Course,Teacher,Student,Major
+from .models import School,CourseClass,Course,Teacher,Student,Major,Session
 from accounting.serializers import FinancialEventSerializer,InvoiceLineSerializer,AccountBriefSerializer,PersonAccountSerializer
 from authentication.serializers import PersonSerializer
 class CourseSerializer(serializers.ModelSerializer):
@@ -24,9 +24,7 @@ class StudentSerializer(FinancialEventSerializer):
        person_account=PersonAccountSerializer()
        class Meta:
         model = Student
-        fields = ['id','person_account', 'get_absolute_url','get_edit_url','get_delete_url']
-
- 
+        fields = ['id','person_account','last_name','melli_code','father_name','first_name', 'get_absolute_url','get_edit_url','get_delete_url']
 
  
 class MajorSerializer(FinancialEventSerializer):
@@ -42,5 +40,13 @@ class CourseClassSerializer(FinancialEventSerializer):
        class Meta:
         model = CourseClass
         fields = ['id','school','educational_year','course','level','major','room','get_absolute_url','get_edit_url','get_delete_url']
+
+ 
+class SessionSerializer(FinancialEventSerializer):
+       course_class=CourseClassSerializer()
+       class Meta:
+        model = Session
+        fields = ['id','title','course_class','session_no','persian_start_datetime','persian_end_datetime','get_absolute_url','get_edit_url','get_delete_url']
+ 
 
  

@@ -1,0 +1,77 @@
+<div id="accordion-class-students" class="rtl text-right farsi">
+  <div class="card" id="class-students-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-class-students"
+          aria-expanded="true"
+          aria-controls="collapse-class-students"
+        >
+          
+        دانش آموزان
+        </button>
+      </h5>
+    </div>
+    <div
+      id="collapse-class-students"
+      class="collapse "
+      aria-labelledby="heading-class-students"
+      data-parent="#accordion-class-students"
+    >
+      <div class="card-body">
+       <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <th>
+                    ردیف
+                </th>
+                <th>
+                    نام  
+                </th>
+                
+                
+                
+                <th>
+                    نام پدر
+                </th>
+                <th>
+                    کد ملی
+                </th>
+                <th>
+
+                </th>
+            </thead>
+            <tbody>
+                
+                <tr  v-for="(student,raw) in students" :key="student.id"> 
+                    <td>
+                         <span v-text="raw + 1"></span>
+                    </td>
+                    <td>
+                    {% include "school/includes/student-app/media.html" %}
+                    </td>
+                    <td>
+                    
+                            <span v-text="student.father_name"></span>
+                         
+                    </td>
+                    <td>
+                          
+                            <span v-text="student.melli_code"></span>
+                         
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+                <template v-for="student in students">
+
+                </template>
+       </div>
+      </div>
+    </div>
+  </div>
+</div>

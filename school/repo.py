@@ -1,4 +1,4 @@
-from .models import School,Course,CourseClass,Teacher,Student,Major
+from .models import School,Course,CourseClass,Teacher,Student,Major,Session
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo 
@@ -363,4 +363,81 @@ class CourseClassRepo():
             course_class.nature=kwargs["nature"]
         (result,message,course_class)=course_class.save()
         return result,message,course_class
+
+
+
+class SessionRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=Session.objects.filter(id=0)
+        me_person=PersonRepo(request=request).me
+        if me_person is not None:
+            if request.user.has_perm(APP_NAME+".view_courseclass"):
+                self.objects=Session.objects
+                self.my_accounts=self.objects 
+            else:
+                me_student=StudentRepo(request=request).me
+                if me_student is not None:
+                    self.objects=me_student.courseclass_set.all()
+                
+                else:
+                    me_teacher=TeacherRepo(request=request).me
+                    if me_teacher is not None:
+                        self.objects=me_teacher.courseclass_set.all()
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+        if "course_class_id" in kwargs:
+            course_class_id=kwargs["course_class_id"]
+            objects=objects.filter(course_class_id=course_class_id)  
+           
+        if "course_id" in kwargs:
+            objects=objects.filter(course_class__course_id=kwargs['course_id'])  
+        return objects.all()
+        
+    def session(self,*args, **kwargs):
+        if "session_id" in kwargs and kwargs["session_id"] is not None:
+            return self.objects.filter(pk=kwargs['session_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_session(self,*args,**kwargs):
+        result,message,session=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_session"):
+            message="دسترسی غیر مجاز"
+            return result,message,session
+
+        session=Session()
+        if 'name' in kwargs:
+            session.name=kwargs["name"]
+        if 'parent_id' in kwargs:
+            if kwargs["parent_id"]>0:
+                session.parent_id=kwargs["parent_id"]
+        if 'color' in kwargs:
+            session.color=kwargs["color"]
+        if 'code' in kwargs:
+            session.code=kwargs["code"]
+        if 'priority' in kwargs:
+            session.priority=kwargs["priority"]
+        if 'type' in kwargs:
+            session.type=kwargs["type"]
+
+            
+        if 'parent_code' in kwargs:
+            parent_code= kwargs["parent_code"]
+            parent=Account.objects.filter(code=parent_code).first()
+            if parent is not None:
+                session.parent_id=parent.id
+
+        if 'nature' in kwargs:
+            session.nature=kwargs["nature"]
+        (result,message,session)=session.save()
+        return result,message,session
 

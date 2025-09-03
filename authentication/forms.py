@@ -26,6 +26,7 @@ class AddPersonForm(forms.Form):
     last_name=forms.CharField(max_length=50,required=False)
     mobile=forms.CharField(max_length=50,required=False)
     email=forms.CharField(max_length=50,required=False)
+    father_name=forms.CharField(max_length=50,required=False)
     bio=forms.CharField(max_length=2000,required=False)
     address=forms.CharField(max_length=200,required=False)
     type=forms.CharField(max_length=11,required=False)

@@ -1,0 +1,85 @@
+<script>
+    let class_student_component_template=`{% include 'school/includes/class-students-app/component.html' %}`
+
+    let students_for_class_students_app=JSON.parse(`{{students_s|escapejs}}`)
+
+    let class_student_component = Vue.component('class-student-component', {
+        data: function () {
+            return {
+                confirm_delete: false,
+                show_add_reply:false,
+                reply:'',
+            }
+        },
+        methods: {
+            clear_reply:function(){
+                this.reply=''
+            },
+            add_reply:function(){
+                let payload={
+                    csrfmiddlewaretoken:csrfmiddlewaretoken,
+                    parent_id:parseInt(this.comment.id),
+                    comment:this.reply,
+                    page_id: page_id,
+                }
+                console.log(payload) 
+                let comment=this.comment
+                let posting = $.post(url_add_comment, payload)
+                posting.done((data) => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+
+                        comment.childs.push(data.comment) 
+                    }
+                })
+
+            },
+            delete_comment: function (comment_id) {
+                this.confirm_delete = false
+
+                let url = url_delete_comment
+                let payload = {
+                    comment_id: comment_id,
+                    csrfmiddlewaretoken: csrfmiddlewaretoken
+                }
+                let posting = $.post(url, payload)
+                
+                posting.done(function (data) {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        comments_app.comments = comments_app.comments.filter((comment) => {
+                            return (comment.id != comment_id)
+                        })
+
+                         comments_app.root_comments = comments_app.root_comments.filter((comment) => {
+                            return (comment.id != comment_id)
+                        })
+
+                        comment_component.confirm_delete = false
+                    }
+                })
+            },
+
+
+        },
+        props: ['student','course_class'],
+        template: class_student_component_template,
+    })
+
+</script>
+
+<script>
+    let class_students_app=new Vue({
+        el:"#class-students-app",
+        components:{
+            class_student_component,
+        },
+        data:{
+            students:students_for_class_students_app,
+
+        },
+        methods:{
+
+        }
+    })
+</script>

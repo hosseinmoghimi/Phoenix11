@@ -149,6 +149,8 @@ class PersonRepo():
             person.email=kwargs["email"]
         if 'mobile' in kwargs:
             person.mobile=kwargs["mobile"]
+        if 'father_name' in kwargs:
+            person.father_name=kwargs["father_name"]
         if 'prefix' in kwargs:
             person.prefix=kwargs["prefix"]
         if 'gender' in kwargs:
@@ -195,6 +197,8 @@ class PersonRepo():
                 return result,message,person
             
         
+        if 'father_name' in kwargs:
+            person.father_name=kwargs["father_name"]
 
         if 'birth_date' in kwargs:
             person.birth_date=kwargs["birth_date"]

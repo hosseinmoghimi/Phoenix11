@@ -1,0 +1,15 @@
+<script>
+    
+    let sessions_for_sessions_app=JSON.parse("{{sessions_s|escapejs}}")
+    let sessions_app = new Vue({
+        el: "#sessions-app",
+        data: {
+            sessions: sessions_for_sessions_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>

@@ -96,6 +96,27 @@ class CourseClass(models.Model,LinkHelper):
         return f"{self.school} : {self.course} @ {self.room} @ {to_tartib(self.level)} {self.major} " 
  
 
+class Session(models.Model,LinkHelper,DateTimeHelper):
+    session_no=models.IntegerField(_("session_no"))
+    room=models.CharField(_("room"),null=True,blank=True, max_length=50)
+    course_class=models.ForeignKey("courseclass", verbose_name=_("course_class"), on_delete=models.CASCADE)
+    start_datetime=models.DateTimeField(_("start_datetime"), auto_now=False, auto_now_add=False)
+    end_datetime=models.DateTimeField(_("end_datetime"), auto_now=False, auto_now_add=False)
+
+    class_name='session'
+    app_name=APP_NAME
+    
+    @property
+    def title(self):
+        return f'جلسه {self.session_no} - {self.course_class.course}'
+    
+    class Meta:
+        verbose_name = _("Session")
+        verbose_name_plural = _("Sessions")
+
+    def __str__(self):
+        return self.title
+ 
 class Student(models.Model,LinkHelper):
     person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.PROTECT)
     
@@ -118,7 +139,20 @@ class Student(models.Model,LinkHelper):
         message='دانش آموز ذخیره شد.'
         result=SUCCEED
         return result,message,student
-
+    
+    @property
+    def last_name(self):
+        return self.person_account.person.last_name
+    @property
+    def first_name(self):
+        return self.person_account.person.first_name
+    
+    @property
+    def melli_code(self):
+        return self.person_account.person.melli_code
+    @property
+    def father_name(self):
+        return self.person_account.person.father_name
 
 class Teacher(models.Model,LinkHelper):
     person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.PROTECT)
