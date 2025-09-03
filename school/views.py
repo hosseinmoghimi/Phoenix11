@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import CourseRepo,SchoolRepo,CourseClassRepo,TeacherRepo,StudentRepo,MajorRepo,SessionRepo
-from .serializers import CourseClassSerializer,SchoolSerializer,CourseSerializer,TeacherSerializer,SessionSerializer,StudentSerializer,MajorSerializer
+from .repo import CourseRepo,SchoolRepo,CourseClassRepo,TeacherRepo,StudentRepo,MajorRepo,SessionRepo,StudentInSessionRepo
+from .serializers import CourseClassSerializer,SchoolSerializer,CourseSerializer,TeacherSerializer,StudentInSessionSerializer,SessionSerializer,StudentSerializer,MajorSerializer
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
@@ -265,6 +265,38 @@ class SessionsView(View):
 
 
 class SessionView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        
+        session=SessionRepo(request=request).session(*args, **kwargs) 
+        context["session"]=session
+        session_s=json.dumps(SessionSerializer(session,many=False).data)
+        context["session_s"]=session_s
+
+
+        students=session.course_class.students.all()
+        context["students"]=students
+        students_s=json.dumps(StudentSerializer(students,many=True).data)
+        context["students_s"]=students_s
+
+        return render(request,TEMPLATE_ROOT+"session.html",context)
+
+
+class StudentInSessionsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        
+        sessions=SessionRepo(request=request).list(*args, **kwargs) 
+        context["sessions"]=sessions
+        sessions_s=json.dumps(SessionSerializer(sessions,many=True).data)
+        context["sessions_s"]=sessions_s
+
+        return render(request,TEMPLATE_ROOT+"sessions.html",context)
+
+
+class StudentInSessionView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context['name3']="name 3333"

@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import SchoolRepo,CourseRepo,CourseClassRepo,TeacherRepo,StudentRepo,MajorRepo,SessionRepo
-from .serializers import SchoolSerializer,CourseSerializer,CourseClassSerializer,SessionSerializer,TeacherSerializer,StudentSerializer,MajorSerializer
+from .repo import SchoolRepo,CourseRepo,CourseClassRepo,TeacherRepo,StudentRepo,MajorRepo,SessionRepo,StudentInSessionRepo
+from .serializers import SchoolSerializer,CourseSerializer,CourseClassSerializer,SessionSerializer,StudentInSessionSerializer,TeacherSerializer,StudentSerializer,MajorSerializer
  
 from django.http import JsonResponse
 from .forms import *
@@ -81,6 +81,31 @@ class AddTeacherApi(APIView):
         context['log']=log
         return JsonResponse(context)
   
+
+  
+class AddStudentInSessionApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        add_student_in_session_form=AddStudentInSessionForm(request.POST)
+        if add_student_in_session_form.is_valid():
+            log=333
+            cd=add_student_in_session_form.cleaned_data
+            result,message,student_in_session=StudentInSessionRepo(request=request).add_student_in_session(**cd)
+            if student_in_session is not None:
+                context['student_in_session']=StudentInSessionSerializer(student_in_session).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+
  
 
 class AddMajorApi(APIView):

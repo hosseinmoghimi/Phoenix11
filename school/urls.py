@@ -25,6 +25,12 @@ urlpatterns = [
 
 
 
+    path('student_in_sessions/',login_required(views.StudentInSessionsView.as_view()),name="student_in_sessions"),  
+    path('add-student_in_session/',login_required(apis.AddStudentInSessionApi.as_view()),name="add_student_in_session"),
+    path('student_in_session/<int:pk>/',login_required(views.StudentInSessionView.as_view()),name="session"), 
+
+
+
 
     path('majors/',login_required(views.MajorsView.as_view()),name="majors"),  
     path('add-major/',login_required(apis.AddMajorApi.as_view()),name="add_major"),

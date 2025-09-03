@@ -8,37 +8,40 @@
             return {
                 confirm_delete: false,
                 show_add_reply:false,
-                reply:'',
+                score:0,
+                status:'',
+                description:'',
             }
         },
         methods: {
             set_attend:function(){
-                console.log(this.student.person_account.person.full_name)
-                console.log('حاضر')
+                this.add_student_in_session('حاضر')
+
             },
             set_absent:function(){
-                console.log(this.student.person_account.person.full_name)
-                console.log('غایب')
+                this.add_student_in_session('غایب')
+
             },
             set_delayed:function(){
-                console.log(this.student.person_account.person.full_name)
-                console.log('تاخیر')
+                this.add_student_in_session('تاخیر')
             },
-            add_reply:function(){
+            add_student_in_session:function(status){
+                 
                 let payload={
                     csrfmiddlewaretoken:csrfmiddlewaretoken,
-                    parent_id:parseInt(this.comment.id),
-                    comment:this.reply,
-                    page_id: page_id,
+                    session_id:parseInt("{{session.id}}"),
+                    student_id:this.student.id,
+                    score:parseInt(this.score),
+                    description: this.description,
+                    status: status,
                 }
                 console.log(payload) 
                 let comment=this.comment
-                let posting = $.post(url_add_comment, payload)
+                let posting = $.post("{% url 'school:add_student_in_session' %}", payload)
                 posting.done((data) => {
                     console.log(data)
                     if (data.result === 'SUCCEED') {
-
-                        comment.childs.push(data.comment) 
+ 
                     }
                 })
 

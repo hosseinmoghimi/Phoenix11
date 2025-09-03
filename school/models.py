@@ -156,7 +156,20 @@ class Student(models.Model,LinkHelper):
     @property
     def father_name(self):
         return self.person_account.person.father_name
+    
+class StudentInSession(models.Model):
+    session=models.ForeignKey("session", verbose_name=_("session"), on_delete=models.CASCADE)
+    student=models.ForeignKey("student", verbose_name=_("student"), on_delete=models.CASCADE)
+    status=models.CharField(_("وضعیت حضور"), max_length=50)
+    score=models.IntegerField(_("score"))    
+    description=models.CharField(_("description"),null=True,blank=True, max_length=5000)
+    class Meta:
+        verbose_name = _("StudentInSession")
+        verbose_name_plural = _("StudentInSessions")
 
+    def __str__(self):
+        return f'{self.session} - {self.student}'
+ 
 class Teacher(models.Model,LinkHelper):
     person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.PROTECT)
     
