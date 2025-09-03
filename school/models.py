@@ -95,6 +95,17 @@ class CourseClass(models.Model,LinkHelper):
     def __str__(self):
         return f"{self.school} : {self.course} @ {self.room} @ {to_tartib(self.level)} {self.major} " 
  
+    def save(self):
+        (result,message,course)=FAILED,'',self
+        if self.class_name is None or self.class_name=="":
+            self.class_name='course'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        super(CourseClass,self).save()
+        result=SUCCEED
+        message='واحد درسی با موفقیت اضافه شد.'
+        return (result,message,course)
+ 
 
 class Session(models.Model,LinkHelper,DateTimeHelper):
     session_no=models.IntegerField(_("session_no"))
@@ -117,6 +128,16 @@ class Session(models.Model,LinkHelper,DateTimeHelper):
     def __str__(self):
         return self.title
  
+    def save(self):
+        (result,message,course)=FAILED,'',self
+        if self.class_name is None or self.class_name=="":
+            self.class_name='course'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        super(Session,self).save()
+        result=SUCCEED
+        message='جلسه با موفقیت اضافه شد.'
+        return (result,message,course)
 class Student(models.Model,LinkHelper):
     person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.PROTECT)
     
@@ -157,18 +178,21 @@ class Student(models.Model,LinkHelper):
     def father_name(self):
         return self.person_account.person.father_name
     
-class StudentInSession(models.Model):
+class StudentInSession(models.Model,LinkHelper):
     session=models.ForeignKey("session", verbose_name=_("session"), on_delete=models.CASCADE)
     student=models.ForeignKey("student", verbose_name=_("student"), on_delete=models.CASCADE)
-    status=models.CharField(_("وضعیت حضور"), max_length=50)
-    score=models.IntegerField(_("score"))    
+    status=models.CharField(_("وضعیت حضور"),default=_('نامشخص'), max_length=50)
+    score=models.IntegerField(_("score"),default=0)    
     description=models.CharField(_("description"),null=True,blank=True, max_length=5000)
+
+    class_name="studentinsession"
+    app_name=APP_NAME
     class Meta:
         verbose_name = _("StudentInSession")
         verbose_name_plural = _("StudentInSessions")
 
     def __str__(self):
-        return f'{self.session} - {self.student}'
+        return f'{self.session} - {self.student}- {self.status}- {self.score}'
  
 class Teacher(models.Model,LinkHelper):
     person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.PROTECT)

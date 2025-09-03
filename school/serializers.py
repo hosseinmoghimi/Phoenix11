@@ -56,7 +56,7 @@ class StudentInSessionSerializer(FinancialEventSerializer):
        student=StudentSerializer()
        class Meta:
         model = StudentInSession
-        fields = ['id', 'session','student','status','score','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id', 'session', 'description','student','status','score','get_absolute_url','get_edit_url','get_delete_url']
  
 
  

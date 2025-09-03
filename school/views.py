@@ -87,6 +87,17 @@ class StudentView(View):
         student_s=json.dumps(StudentSerializer(student,many=False).data)
         context["student_s"]=student_s
 
+
+
+
+
+        students_in_session=StudentInSessionRepo(request=request).list(student_id=student.id).order_by('session__session_no')
+        context["students_in_session"]=students_in_session
+        students_in_session_s=json.dumps(StudentInSessionSerializer(students_in_session,many=True).data)
+        context["students_in_session_s"]=students_in_session_s
+
+
+
         return render(request,TEMPLATE_ROOT+"student.html",context)
  
  
@@ -187,6 +198,12 @@ class MajorView(View):
         course_classes_s=json.dumps(CourseClassSerializer(course_classes,many=True).data)
         context["course_classes_s"]=course_classes_s
 
+        
+        courses=major.courses.all()
+        context["courses"]=courses
+        courses_s=json.dumps(CourseSerializer(courses,many=True).data)
+        context["courses_s"]=courses_s
+
         return render(request,TEMPLATE_ROOT+"major.html",context)
 
 
@@ -235,11 +252,15 @@ class CourseClassView(View):
         context["teachers_s"]=teachers_s
  
 
-        sessions=SessionRepo(request=request).list(course_class_id=course_class.id)
+        sessions=SessionRepo(request=request).list(course_class_id=course_class.id).order_by('session_no')
         context["sessions"]=sessions
         sessions_s=json.dumps(SessionSerializer(sessions,many=True).data)
         context["sessions_s"]=sessions_s
- 
+
+        next_session_no=1
+        if len(sessions)>0:
+            next_session_no=sessions.last().session_no+1
+        context["next_session_no"]=next_session_no
         
         students=course_class.students.all()
         context["students"]=students
@@ -279,6 +300,18 @@ class SessionView(View):
         context["students"]=students
         students_s=json.dumps(StudentSerializer(students,many=True).data)
         context["students_s"]=students_s
+
+
+
+      
+
+
+        students_in_session=StudentInSessionRepo(request=request).list(session_id=session.id).order_by('student__person_account__person__last_name')
+        context["students_in_session"]=students_in_session
+        students_in_session_s=json.dumps(StudentInSessionSerializer(students_in_session,many=True).data)
+        context["students_in_session_s"]=students_in_session_s
+
+
 
         return render(request,TEMPLATE_ROOT+"session.html",context)
 

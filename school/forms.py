@@ -16,7 +16,8 @@ class AddStudentForm(forms.Form):
     person_account_id=forms.IntegerField(required=True)
 
 class AddSessionForm(forms.Form):
-    title=forms.CharField(max_length=50,required=True)
+    course_class_id=forms.IntegerField(required=True) 
+    session_no=forms.IntegerField(required=True)
 
    
 class AddStudentInSessionForm(forms.Form):

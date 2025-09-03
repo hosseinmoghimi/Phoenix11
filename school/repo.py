@@ -408,32 +408,26 @@ class SessionRepo():
         if not self.request.user.has_perm(APP_NAME+".add_session"):
             message="دسترسی غیر مجاز"
             return result,message,session
-
+        from django.utils import timezone
+        now=timezone.now()
         session=Session()
-        if 'name' in kwargs:
-            session.name=kwargs["name"]
-        if 'parent_id' in kwargs:
-            if kwargs["parent_id"]>0:
-                session.parent_id=kwargs["parent_id"]
-        if 'color' in kwargs:
-            session.color=kwargs["color"]
-        if 'code' in kwargs:
-            session.code=kwargs["code"]
-        if 'priority' in kwargs:
-            session.priority=kwargs["priority"]
-        if 'type' in kwargs:
-            session.type=kwargs["type"]
-
-            
-        if 'parent_code' in kwargs:
-            parent_code= kwargs["parent_code"]
-            parent=Account.objects.filter(code=parent_code).first()
-            if parent is not None:
-                session.parent_id=parent.id
-
-        if 'nature' in kwargs:
-            session.nature=kwargs["nature"]
+        if 'course_class_id' in kwargs:
+            session.course_class_id=kwargs["course_class_id"] 
+        if 'session_no' in kwargs:
+            session.session_no=kwargs["session_no"]
+        if 'start_datetime' in kwargs:
+            session.start_datetime=kwargs["start_datetime"]
+        else:
+             session.start_datetime=now
+        if 'end_datetime' in kwargs:
+            session.end_datetime=kwargs["end_datetime"]
+        else:
+             session.end_datetime=now 
+              
         (result,message,session)=session.save()
+        student_in_session_repo=StudentInSessionRepo(request=self.request)
+        for student in session.course_class.students.all():
+            student_in_session_repo.add_student_in_session(student_id=student.id,session_id=session.id)
         return result,message,session
 
 
@@ -460,24 +454,14 @@ class StudentInSessionRepo():
                         self.objects=me_teacher.courseclass_set.all()
     
     def list(self,*args, **kwargs):
-        objects=self.objects
-        if "search_for" in kwargs:
-            search_for=kwargs["search_for"]
-            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
-        if "parent_id" in kwargs:
-            parent_id=kwargs["parent_id"]
-            objects=objects.filter(parent_id=parent_id)  
-        if "major_id" in kwargs:
-            major_id=kwargs["major_id"]
-            courses=CourseRepo(request=self.request).list(major_id=major_id)
-            courses_ids=[]
-            for course in courses:
-                courses_ids.append(course.id)
-            objects=objects.filter(course_id__in=courses_ids) 
-        if "school_id" in kwargs:
-            objects=objects.filter(school_id=kwargs['school_id'])  
-        if "course_id" in kwargs:
-            objects=objects.filter(course_id=kwargs['course_id'])  
+        objects=self.objects 
+        if "session_id" in kwargs:
+            session_id=kwargs["session_id"]
+            objects=objects.filter(session_id=session_id) 
+        if "student_id" in kwargs:
+            student_id=kwargs["student_id"]
+            objects=objects.filter(student_id=student_id)  
+          
         return objects.all()
         
     def student_in_session(self,*args, **kwargs):
@@ -493,6 +477,8 @@ class StudentInSessionRepo():
         if not self.request.user.has_perm(APP_NAME+".add_student_in_session"):
             message="دسترسی غیر مجاز"
             return result,message,student_in_session
+        
+        StudentInSession.objects.filter(student_id=kwargs["student_id"]).filter(session_id=kwargs["session_id"]).delete()
 
         student_in_session=StudentInSession()
        
@@ -501,6 +487,7 @@ class StudentInSessionRepo():
             student_in_session.student_id=kwargs["student_id"]
         if 'session_id' in kwargs:
             student_in_session.session_id=kwargs["session_id"]
+
         if 'status' in kwargs:
             student_in_session.status=kwargs["status"]
         if 'score' in kwargs:
@@ -509,6 +496,7 @@ class StudentInSessionRepo():
             student_in_session.description=kwargs["description"]
 
         student_in_session.save()
+        leolog(student_in_session=student_in_session)
         if student_in_session.id is not None:    
             (result,message,student_in_session)=(SUCCEED,'با موفقیت ذخیره شد.',student_in_session)
         return result,message,student_in_session

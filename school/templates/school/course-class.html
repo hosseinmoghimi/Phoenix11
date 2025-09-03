@@ -11,6 +11,15 @@
           </a>
         </h6>
 
+        {% for major in course_class.course.major_set.all %}
+          
+        <h6>
+          <small class="text-muted"> رشته </small>
+          <a href="{{major.get_absolute_url}}">
+            {{major.title}}
+          </a>
+        </h6>
+        {% endfor %}
         <h6>
           <small class="text-muted"> واحد درسی </small>
           <a href="{{course_class.course.get_absolute_url}}">

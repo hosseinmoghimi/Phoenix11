@@ -1,0 +1,54 @@
+<tr>
+  <td>
+            {% if not session %}
+                  <a :href="student_in_session.session.get_absolute_url">
+
+                    جلسه
+                    <span v-text="student_in_session.session.session_no"></span>
+                    <span v-text="student_in_session.session.course_class.course.title"></span>
+                  </a>
+                {% else %}
+
+                <span v-text=" raw+1"></span>
+                {% endif %}
+
+  </td>
+  <td>
+    <div v-for="student in [student_in_session.student]">
+
+      {% include "school/includes/student-app/media.html" %}</td>
+    </div>
+    {% if not student %}
+      
+    <td>
+      <span v-text="student_in_session.student.father_name"></span>
+    </td>
+    <td>
+      <span v-text="student_in_session.student.melli_code"></span>
+    </td>
+    {% endif %}
+  <td>
+    <span v-text="student_in_session.status"></span>
+  </td>
+  <td>
+    <span v-text="student_in_session.score"></span>
+  </td>
+  <td>
+    {% if session %}
+      
+    <input
+    type="number"
+    v-model="student_in_session.score"
+    min="0"
+    max="20"
+    class="form-control"
+    />
+    <input type="text" v-model="student_in_session.description" class="form-control" />
+    <button class="btn btn-success" @click="set_attend()">حاضر</button>
+    
+    <button class="btn btn-danger" @click="set_absent()">غایب</button>
+    
+    <button class="btn btn-warning" @click="set_delayed()">تاخیر</button>
+    {% endif %}
+  </td>
+</tr>
