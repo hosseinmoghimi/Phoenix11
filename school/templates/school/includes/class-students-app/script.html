@@ -12,8 +12,17 @@
             }
         },
         methods: {
-            clear_reply:function(){
-                this.reply=''
+            set_attend:function(){
+                console.log(this.student.person_account.person.full_name)
+                console.log('حاضر')
+            },
+            set_absent:function(){
+                console.log(this.student.person_account.person.full_name)
+                console.log('غایب')
+            },
+            set_delayed:function(){
+                console.log(this.student.person_account.person.full_name)
+                console.log('تاخیر')
             },
             add_reply:function(){
                 let payload={

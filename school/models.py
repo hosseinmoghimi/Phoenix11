@@ -146,6 +146,9 @@ class Student(models.Model,LinkHelper):
     @property
     def first_name(self):
         return self.person_account.person.first_name
+    @property
+    def image(self):
+        return self.person_account.person.image
     
     @property
     def melli_code(self):

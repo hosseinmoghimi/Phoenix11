@@ -44,32 +44,13 @@
                 </th>
             </thead>
             <tbody>
-                
-                <tr  v-for="(student,raw) in students" :key="student.id"> 
-                    <td>
-                         <span v-text="raw + 1"></span>
-                    </td>
-                    <td>
-                    {% include "school/includes/student-app/media.html" %}
-                    </td>
-                    <td>
-                    
-                            <span v-text="student.father_name"></span>
-                         
-                    </td>
-                    <td>
-                          
-                            <span v-text="student.melli_code"></span>
-                         
-                    </td>
-                    <td>
-                    </td>
-                </tr>
+                <template v-for="(student,raw) in students">
+                    <class-student-component  :student="student"></class-student-component>
+                </template>
+               
             </tbody>
         </table>
-                <template v-for="student in students">
-
-                </template>
+                
        </div>
       </div>
     </div>

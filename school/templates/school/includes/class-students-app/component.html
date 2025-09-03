@@ -1,0 +1,27 @@
+<tr>
+  <td>
+    <span v-text=" 1"></span>
+  </td>
+  <td>
+    {% include "school/includes/student-app/media.html" %}
+</td>
+  <td>
+    <span v-text="student.father_name"></span>
+  </td>
+  <td>
+    <span v-text="student.melli_code"></span>
+  </td>
+  <td>
+    <button class="btn btn-success" @click="set_attend()">
+        حاضر
+    </button>
+
+     <button class="btn btn-danger" @click="set_absent()">
+        غایب
+    </button>
+     <button class="btn btn-warning" @click="set_delayed()">
+        تاخیر
+    </button>
+
+  </td>
+</tr>
