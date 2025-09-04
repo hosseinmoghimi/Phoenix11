@@ -155,16 +155,10 @@ class PrescriptionView(View):
         context["prescription_s"]=prescription_s
         invoice=prescription
 
-        context.update(InvoiceContext(request=request,invoice=invoice))
+        context.update(InvoiceContext(request=request,invoice=invoice,warehouse=True))
+
 
         
-
-        from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer
-
-        warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id)
-        context["warehouses"]=warehouse_sheets
-        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
-        context["warehouse_sheets_s"]=warehouse_sheets_s
 
 
         return render(request,TEMPLATE_ROOT+"prescription.html",context)

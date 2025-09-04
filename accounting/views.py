@@ -273,7 +273,14 @@ def InvoiceContext(request,invoice,*args, **kwargs):
             context['invoice_statuses']=invoice_statuses
             context['payment_methods_for_edit_invoice_form']=payment_methods
             context['edit_invoice_form']=EditFinancialEventForm()
-         
+    
+    if 'warehouse' in kwargs and kwargs['warehouse']:
+        from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer
+
+        warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id)
+        context["warehouses"]=warehouse_sheets
+        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+        context["warehouse_sheets_s"]=warehouse_sheets_s     
     return context
      
 def ProductContext(request,product,*args, **kwargs):
@@ -1288,23 +1295,10 @@ class InvoiceView(View):
         context['invoice']=invoice
         invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)
         context['invoice_s']=invoice_s
-        context.update(InvoiceContext(request=request,invoice=invoice))
+        context.update(InvoiceContext(request=request,invoice=invoice,warehouse=True))
 
         
-
-        from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer
-
-        warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id)
-        context["warehouses"]=warehouse_sheets
-        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
-        context["warehouse_sheets_s"]=warehouse_sheets_s
-
-
-        # if True:
-            # invoice_line_items=InvoiceLineItemRepo(request=request).list()
-            # context.update(AddInvoiceLineContext(request=request))
-            # invoice_line_items_s=json.dumps(InvoiceLineItemSerializer(invoice_line_items,many=True).data)
-            # context["invoice_line_items_s"]=invoice_line_items_s
+  
 
         return render(request,TEMPLATE_ROOT+"invoice.html",context)
 
