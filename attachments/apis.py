@@ -255,8 +255,14 @@ class AddDownloadApi(APIView):
                 cd=add_page_download_form.cleaned_data
                 page_id = cd['page_id']
                 title = cd['title']
-                file = request.FILES['file1']
-                
+                try:
+                    file = request.FILES['file1']
+                except:
+                    
+                    context['log'] = log
+                    context['result'] = FAILED
+                    context['message'] = 'فایل را انتخاب کنید'
+                    return JsonResponse(context)
                 result,message,download = DownloadRepo(request=request).add_download(
                     page_id=page_id,
                     title=title,
