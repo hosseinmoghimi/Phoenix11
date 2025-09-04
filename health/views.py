@@ -142,9 +142,41 @@ class PrescriptionsView(View):
 # Create your views here. 
 
 
+from accounting.views import FinancialEventStatusEnum,AddInvoiceLineContext,InvoiceLineItemRepo,AddInvoiceLineForm,InvoiceLineItemSerializer
+from django.db.models import Q
 
 
- 
+def AddPrescriptionLineContext(request,*args, **kwargs):
+    context=AddInvoiceLineContext(request=request)
+    unit_names=(i[0] for i in UnitNameEnum.choices)
+    context["unit_names_for_add_invoice_line"]=unit_names
+    context["unit_names_for_edit_invoice_line"]=unit_names
+    unit_names2=[]
+    for ii in UnitNameEnum.choices:
+        unit_names2.append(str(ii[0]))
+    context["unit_names_for_edit_invoice_line_s"]=json.dumps(unit_names2)
+    context["add_invoice_line_form"]=AddInvoiceLineForm
+    invoice_line_items=InvoiceLineItemRepo(request=request).list().filter(Q(class_name='drug')|Q(class_name='service'))
+    invoice_line_items_s=json.dumps(InvoiceLineItemSerializer(invoice_line_items,many=True).data)
+    context["invoice_line_items_s"]=invoice_line_items_s
+    return context
+
+def PrescriptionContext(request,prescription,*args, **kwargs):
+    invoice=prescription
+    context=InvoiceContext(request=request,invoice=invoice,warehouse=True) 
+
+    if invoice.status==FinancialEventStatusEnum.APPROVED:
+        pass
+    elif invoice.status==FinancialEventStatusEnum.DELIVERED:
+        pass
+    elif invoice.status==FinancialEventStatusEnum.FINISHED: 
+        pass 
+    else:
+        context.update(AddPrescriptionLineContext(request=request))
+
+    return context
+
+
 class PrescriptionView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -153,10 +185,8 @@ class PrescriptionView(View):
         context["prescription"]=prescription
         prescription_s=json.dumps(PrescriptionSerializer(prescription).data)
         context["prescription_s"]=prescription_s
-        invoice=prescription
 
-        context.update(InvoiceContext(request=request,invoice=invoice,warehouse=True))
-
+        context.update(PrescriptionContext(request=request,prescription=prescription,warehouse=True))
 
         
 

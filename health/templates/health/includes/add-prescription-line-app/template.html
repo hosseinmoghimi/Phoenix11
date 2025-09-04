@@ -1,16 +1,16 @@
-<div id="accordion-add-prescription-line" class="rtl text-right farsi">
+<div id="accordion-add-invoice-line" class="rtl text-right farsi">
 
-  <div class="card" id="add-prescription-line-app">
+  <div class="card" id="add-invoice-line-app">
     <div class="card-header">
       <h5 class="text-center">
-        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-prescription-line"
-          aria-expanded="true" aria-controls="collapse-add-prescription-line">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-invoice-line"
+          aria-expanded="true" aria-controls="collapse-add-invoice-line">
           افزودن سطر نسخه
         </button>
       </h5>
     </div>
-    <div id="collapse-add-prescription-line" class="collapse " aria-labelledby="heading-add-prescription-line"
-      data-parent="#accordion-add-prescription-line">
+    <div id="collapse-add-invoice-line" class="collapse " aria-labelledby="heading-add-invoice-line"
+      data-parent="#accordion-add-invoice-line">
 
 
       <div class="card-body">
@@ -18,7 +18,7 @@
 
           <div class="col-md-12">
             <div class="form-group">
-              <label for="">جستجوی دارو </label>
+              <label for="">جستجوی آیتم </label>
               <input v-model="search_for" @input="filter()" class="form-control">
 
             </div>
@@ -26,35 +26,46 @@
 
           <div class="col-md-12">
             <a target="_blank" class="mx-2" href="{% url 'health:drugs' %}">همه دارو ها</a>
-            <button @click="add_drug()" v-if="prescription_line_items.length==0" class="btn btn-success">+</button>
+            <button @click="add_product()" v-if="invoice_line_items.length==0" class="btn btn-success">+</button>
             <a target="_blank" class="mx-2" href="{% url 'accounting:services' %}">همه خدمات</a>
-            <button @click="add_service()" v-if="prescription_line_items.length==0" class="btn btn-success">+</button>
+            <button @click="add_service()" v-if="invoice_line_items.length==0" class="btn btn-success">+</button>
           </div>
 
           <div class="col-md-12">
             <div class="table-responsive">
               <table class="table table-striped">
                 <tbody>
-                  <tr v-for="(prescription_line_item, index) in buffer_items" :key="prescription_line_item.id">
+                  <tr v-for="(invoice_line_item, index) in buffer_items" :key="invoice_line_item.id">
                     <td>
                       <span v-text="index + 1"></span>
                     </td>
                     <td>
-                      <button class="btn btn-info my-2" @click="select_item(prescription_line_item)">
+                    
+                       <button v-if="invoice_line_item.class_title=='سرویس'" class="btn btn-info my-2" @click="select_item(invoice_line_item)">
                         انتخاب
+                    <span v-text="invoice_line_item.class_title"></span>
+
                       </button>
+                      <button v-else class="btn btn-primary my-2" @click="select_item(invoice_line_item)">
+                        انتخاب
+                     
+                    <span v-text="invoice_line_item.class_title"></span>
+                     
+                  </button>
+
                     </td>
                     <td>
-                      <a target="_blank" :href="prescription_line_item.get_absolute_url">
+                      <a target="_blank" :href="invoice_line_item.get_absolute_url">
                         <div class="media">
-                          <img :src="prescription_line_item.thumbnail" width="48" class="rounded" alt="">
+                          <img :src="invoice_line_item.thumbnail" width="48" class="rounded" alt="">
                           <div class="media-body mr-2">
 
-                            <h5 v-text="prescription_line_item.title"></h5>
+                            <h5 v-text="invoice_line_item.title"></h5>
+                            <h6 class="text-muted small" v-text="invoice_line_item.class_title"></h6>
                             <h6>
                               هر
-                              <span v-text="prescription_line_item.unit_name"></span>
-                              <span v-text="to_price(prescription_line_item.unit_price)"></span>
+                              <span v-text="invoice_line_item.unit_name"></span>
+                              <span v-text="to_price(invoice_line_item.unit_price)"></span>
                               {{CURRENCY}}
                             </h6>
                           </div>
@@ -67,7 +78,7 @@
                 </tbody>
               </table>
             </div>
-            <div class="col-md-12 " v-if="prescription_line_items.length>list_length">
+            <div class="col-md-12 " v-if="invoice_line_items.length>list_length">
               <button class="btn btn-success my-2" @click="more()" v-if="search_for">
                 بیشتر
               </button>
@@ -75,29 +86,29 @@
             </div>
 
 
-            <div class="col-md-12 " v-if="prescription_line_items.length>=list_length">
+            <div class="col-md-12 " v-if="invoice_line_items.length>=list_length">
 
               <button class="btn btn-danger my-2" @click="less()" v-if="list_length>6">
                 کمتر
               </button>
             </div>
-            <div class="col-md-4 my-1" v-for="prescription_line_item_unit in prescription_line_item_units">
-              <button class="btn btn-success"  @click="select_prescription_line_item_unit(prescription_line_item_unit)"
-                v-text="' هر '+ prescription_line_item_unit.unit_name +' ' +to_price(prescription_line_item_unit.unit_price)+' {{CURRENCY}}'"></button>
+            <div class="col-md-4 my-1" v-for="invoice_line_item_unit in invoice_line_item_units">
+              <button class="btn btn-success"  @click="select_invoice_line_item_unit(invoice_line_item_unit)"
+                v-text="' هر '+ invoice_line_item_unit.unit_name +' ' +to_price(invoice_line_item_unit.unit_price)+' {{CURRENCY}}'"></button>
             </div>
 
           </div>
         </div>
-        <form @submit.prevent="add_prescription_line()">
+        <form @submit.prevent="add_invoice_line()">
           <div class="row">
 
 
             <div class="col-md-12">
               <div class="form-group">
                 <label for="">آیتم</label>
-                <select disabled v-model="prescription_line_item_id" class="form-control">
-                  <option :value="prescription_line_item.id" v-for="prescription_line_item in prescription_line_items"
-                    v-text=" prescription_line_item.title">
+                <select disabled v-model="invoice_line_item_id" class="form-control">
+                  <option :value="invoice_line_item.id" v-for="invoice_line_item in invoice_line_items"
+                    v-text=" invoice_line_item.title">
                   </option>
                 </select>
               </div>
@@ -197,14 +208,14 @@
             </div>
 
 
-            <div class="col-md-12 my-2" v-if="prescription_line_item_id==0 || !unit_price>0 || !quantity>0">
+            <div class="col-md-12 my-2" v-if="invoice_line_item_id==0 || !unit_price>0 || !quantity>0">
               <div class="alert alert-warning">
                 <h5 class="my-2">
                   داده های ورودی را اصلاح کنید.
                 </h5>
                 <div>
                   <ul class="rtl">
-                    <li class="text-right rtl" v-if="prescription_line_item_id==0">
+                    <li class="text-right rtl" v-if="invoice_line_item_id==0">
                       آیتم را جستجو و انتخاب کنید.
 
                     </li>

@@ -14,28 +14,29 @@ class WeightUnitEnum(TextChoices):
 
 class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")
+    INSTANCE="مورد",_("مورد")
     KILOGERAM="کیلوگرم",_("کیلوگرم")
+    GERAM="گرم",_("گرم")
     METER="متر",_("متر")
+    METER2="متر مربع",_("متر مربع")
+    METER3="متر مکعب",_("متر مکعب")
     LITER="لیتر",_("لیتر")
     MILI_LITER="میلی لیتر",_("میلی لیتر")
     CC="سی سی ",_("سی سی ")
+    SERVICE="سرویس",_("سرویس")
     SHAKHEH="شاخه",_("شاخه")
     Node="نود شبکه",_("نود شبکه")
     SHISHEH="شیشه",_("شیشه")
     DASTGAH="دستگاه",_("دستگاه")
-    GERAM="گرم",_("گرم")
     SHEET="ورق",_("ورق")
     TON="تن",_("تن")
     LINE="خط",_("خط")
     PORS="پورس",_("پورس")
-    METER2="متر مربع",_("متر مربع")
-    METER3="متر مکعب",_("متر مکعب")
     PART="قطعه",_("قطعه")
     Roll="رول",_("رول") 
     TAKHTE="تخته",_("تخته")
     LINK="لینک",_("لینک")
-    SERVICE="سرویس",_("سرویس")
-    INSTANCE="مورد",_("مورد")
+    KHESHAB="خشاب",_("خشاب")
     PERSON="نفر",_("نفر")
     PACK="بسته",_("بسته")
     POCKET="کیسه",_("کیسه")
@@ -231,6 +232,8 @@ def class_title(*args, **kwargs):
         class_title = "واحد درسی"
     if class_name == "payment":
         class_title = "پرداخت"
+    if class_name == "prescription":
+        class_title = "نسخه"
     if class_name == "property":
         class_title = "ملک"
     if class_name == "book":

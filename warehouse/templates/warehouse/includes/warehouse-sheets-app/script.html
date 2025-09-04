@@ -1,3 +1,4 @@
+{% if warehouse_sheets_s %}
 <script>
     
     let warehouse_sheets_for_warehouse_sheets_app=JSON.parse("{{warehouse_sheets_s|escapejs}}")
@@ -19,3 +20,5 @@
         }
     })
 </script>
+  
+{% endif %}

@@ -1,4 +1,6 @@
-<div id="accordion-warehouse-sheets" class="rtl text-right farsi">
+
+{% if warehouse_sheets_s %}
+  <div id="accordion-warehouse-sheets" class="rtl text-right farsi">
   <div class="card" id="warehouse_sheets-app">
     <div class="card-header">
       <h5 class="text-center">
@@ -25,7 +27,7 @@
       data-parent="#accordion-warehouse-sheets"
     >
       <div class="card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" v-if="warehouse_sheets.length>0">
           <table class="table table-striped">
             <thead>
                 {% if not warehouse %}
@@ -120,7 +122,13 @@
             </tbody>
           </table>
         </div>
+        <div v-if="warehouse_sheets.length==0">
+          <span>
+            برگه انباری وجود ندارد
+          </span>
+        </div>
       </div>
     </div>
   </div>
 </div>
+{% endif %}

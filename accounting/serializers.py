@@ -82,7 +82,7 @@ class ChequeSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
        class Meta:
         model = Product
-        fields = ['id','title','model','thumbnail','unit_name','unit_price','barcode',  'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','class_title','model','thumbnail','unit_name','unit_price','barcode',  'get_absolute_url','get_edit_url','get_delete_url']
         # fields = ['id','name','get_market_absolute_url','thumbnail','barcode','unit_price', 'unit_name',  'get_absolute_url','get_edit_url','get_delete_url']
 
 
@@ -96,7 +96,7 @@ class ServiceSerializer(serializers.ModelSerializer):
 class InvoiceLineItemSerializer(serializers.ModelSerializer):
        class Meta:
               model = InvoiceLineItem
-              fields = ['id','title','thumbnail','unit_name','unit_price',  'get_absolute_url','get_edit_url','get_delete_url']
+              fields = ['id','title','class_title','thumbnail','unit_name','unit_price',  'get_absolute_url','get_edit_url','get_delete_url']
         # fields = ['id','name','get_market_absolute_url','thumbnail','barcode','unit_price', 'unit_name',  'get_absolute_url','get_edit_url','get_delete_url']
 
 
