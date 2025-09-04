@@ -1,0 +1,61 @@
+{% include "accounting/includes/person-account-app/select-script.html" %}
+<script>
+  let add_patient_app = new Vue({
+    el: "#add-patient-app",
+    data: {
+      
+      person_account_code:"0",
+      person_account:{}, 
+      message:{show:false},
+      waiting:false,
+    },
+
+    components: {
+      DatePicker: VuePersianDatetimePicker,
+    },
+    methods: {
+      
+      select_person_account: function () {
+          select_person_account_by_code(add_patient_app.person_account_code).done((data) => {
+              if (data.result === "SUCCEED") {
+                  add_patient_app.person_account = data.person_account;
+              } else {
+                  add_patient_app.person_account = {}
+              }
+        });
+      },
+      
+ 
+
+      to_price: (vall,curr)=> to_price(vall,curr),
+     
+      to_price_colored: (vall,curr)=> to_price_colored(vall,curr),
+     
+ 
+      add_patient: function () {
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          person_account_id: this.person_account.id, 
+        };
+
+        console.log(payload);
+        let url = "{% url 'health:add_patient' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            add_patient_app.title=''
+            if (typeof patients_app != "undefined") {
+              patients_app.patients.push(data.patient);
+            }
+            show_message(add_patient_app,'موفق',data.message,'success',3000)
+          }
+          else{
+                        
+            show_message(add_patient_app,'خطا',data.message,'danger',3000)
+          }
+        });
+      },
+    },
+  });
+</script>

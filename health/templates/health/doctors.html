@@ -1,0 +1,30 @@
+{% extends "health/layout.html" %}
+{% block content %}
+<div class="row rtl farsi">
+     
+    {% if add_doctor_form %}
+    <div class="col-md-12">
+        {% include "health/includes/add-doctor-app/template.html" %}
+    </div>
+    {% endif %}
+    
+    <div class="col-md-12 ">
+        {% include "health/includes/doctors-app/template.html" %}
+    </div>
+    
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    
+   
+    
+
+</script> 
+
+{% include "health/includes/doctors-app/script.html" %}
+{% if add_doctor_form %}
+{% include "health/includes/add-doctor-app/script.html" %}
+{% endif %}
+{% endblock script %}

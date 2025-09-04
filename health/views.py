@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import DrugRepo
-from .serializers import DrugSerializer
+from .repo import DrugRepo,PatientRepo,DoctorRepo,PrescriptionRepo
+from .serializers import DrugSerializer,DoctorSerializer,PatientSerializer,PrescriptionSerializer
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
@@ -10,7 +10,7 @@ from utility.calendar import PersianCalendar
 import json
 from utility.enums import UnitNameEnum
 from utility.log import leolog
-from accounting.views import AddProductContext,ProductContext
+from accounting.views import AddProductContext,ProductContext,InvoiceContext
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='health/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -65,3 +65,107 @@ class DrugView(View):
 # Create your views here. 
 
 
+
+# Create your tests here.
+
+class DoctorsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        doctors=DoctorRepo(request=request).list(*args, **kwargs)
+        context["doctors"]=doctors
+        doctors_s=json.dumps(DoctorSerializer(doctors,many=True).data)
+        context["doctors_s"]=doctors_s
+        if request.user.has_perm(APP_NAME+'.add_doctor'):
+            context['add_doctor_form']=AddDoctorForm()
+            context.update(AddProductContext(request=request))
+        return render(request,TEMPLATE_ROOT+"doctors.html",context)
+# Create your views here. 
+
+
+
+
+ 
+class DoctorView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        doctor=DoctorRepo(request=request).doctor(*args, **kwargs)
+        context["doctor"]=doctor
+        doctor_s=json.dumps(DoctorSerializer(doctor).data)
+        context["doctor_s"]=doctor_s
+        return render(request,TEMPLATE_ROOT+"doctor.html",context)
+# Create your views here. 
+
+
+
+class PatientsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        patients=PatientRepo(request=request).list(*args, **kwargs)
+        context["patients"]=patients
+        patients_s=json.dumps(PatientSerializer(patients,many=True).data)
+        context["patients_s"]=patients_s
+        if request.user.has_perm(APP_NAME+'.add_patient'):
+            context['add_patient_form']=AddPatientForm()
+            context.update(AddProductContext(request=request))
+        return render(request,TEMPLATE_ROOT+"patients.html",context)
+# Create your views here. 
+
+
+
+
+ 
+class PatientView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        patient=PatientRepo(request=request).patient(*args, **kwargs)
+        context["patient"]=patient
+        patient_s=json.dumps(PatientSerializer(patient).data)
+        context["patient_s"]=patient_s
+        return render(request,TEMPLATE_ROOT+"patient.html",context)
+# Create your views here. 
+
+ 
+ 
+class PrescriptionsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        prescriptions=PrescriptionRepo(request=request).list(*args, **kwargs)
+        context["prescriptions"]=prescriptions
+        prescriptions_s=json.dumps(PrescriptionSerializer(prescriptions,many=True).data)
+        context["prescriptions_s"]=prescriptions_s
+        if request.user.has_perm(APP_NAME+'.add_prescription'):
+            context['add_prescription_form']=AddPrescriptionForm()
+            context.update(AddProductContext(request=request))
+        return render(request,TEMPLATE_ROOT+"prescriptions.html",context)
+# Create your views here. 
+
+
+
+
+ 
+class PrescriptionView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        prescription=PrescriptionRepo(request=request).prescription(*args, **kwargs)
+        context["prescription"]=prescription
+        prescription_s=json.dumps(PrescriptionSerializer(prescription).data)
+        context["prescription_s"]=prescription_s
+        invoice=prescription
+
+        context.update(InvoiceContext(request=request,invoice=invoice))
+
+        
+
+        from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer
+
+        warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id)
+        context["warehouses"]=warehouse_sheets
+        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+        context["warehouse_sheets_s"]=warehouse_sheets_s
+
+
+        return render(request,TEMPLATE_ROOT+"prescription.html",context)
+# Create your views here. 

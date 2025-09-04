@@ -13,7 +13,7 @@ from library.serializers import BookSerializer
 
 from utility.enums import UnitNameEnum
 from utility.log import leolog
-from accounting.views import AddInvoiceLineContext,InvoiceContext,ProductContext
+from accounting.views import AddInvoiceLineContext,InvoiceContext,ProductContext,AccountContext
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='school/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -98,6 +98,8 @@ class StudentView(View):
 
 
 
+        context.update(AccountContext(request=request,account=student.person_account))
+         
         return render(request,TEMPLATE_ROOT+"student.html",context)
  
  
@@ -109,6 +111,8 @@ class TeacherView(View):
         context["teacher"]=teacher
         teacher_s=json.dumps(TeacherSerializer(teacher,many=False).data)
         context["teacher_s"]=teacher_s
+
+        context.update(AccountContext(request=request,account=teacher.person_account))
 
         return render(request,TEMPLATE_ROOT+"teacher.html",context)
 

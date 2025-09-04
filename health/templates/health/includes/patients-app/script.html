@@ -1,0 +1,15 @@
+<script>
+    
+    let patients_for_patients_app=JSON.parse("{{patients_s|escapejs}}")
+    let patients_app = new Vue({
+        el: "#patients-app",
+        data: {
+            patients: patients_for_patients_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>
