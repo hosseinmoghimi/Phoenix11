@@ -80,3 +80,9 @@
 
 {% include APP_SCRIPT %}
 {% endif %}
+
+{% if me_person %}
+  <script>
+    let me_person=JSON.parse(`{{me_person_s|escapejs}}`)
+  </script>
+{% endif %}

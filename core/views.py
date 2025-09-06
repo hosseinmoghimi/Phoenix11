@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from phoenix.server_settings import VERSION,DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL,CURRENCY,VUE_VERSION_3,VUE_VERSION_2
-from authentication.repo import PersonRepo,PersonRepo
+from authentication.views import PersonRepo,PersonSerializer
 from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
 from .enums import *
@@ -54,6 +54,8 @@ def CoreContext(request,*args, **kwargs):
     me_person=PersonRepo(request=request).me
     if me_person is not None:
         context['me_person']=me_person 
+        me_person_s=json.dumps(PersonSerializer(me_person).data)
+        context['me_person_s']=me_person_s 
     context['ADMIN_URL']=ADMIN_URL
     context['SITE_URL']=SITE_URL
     context['STATIC_URL']=STATIC_URL
