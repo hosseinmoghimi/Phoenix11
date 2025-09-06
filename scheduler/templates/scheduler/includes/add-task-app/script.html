@@ -1,0 +1,43 @@
+{% include "accounting/includes/account-app/select-script.html" %}
+<script>
+  let add_task_app = new Vue({
+    el: "#add-task-app",
+    data: {
+      title: "", 
+      message:{show:false,},
+      waiting:false,
+    },
+
+    components: {
+      DatePicker: VuePersianDatetimePicker,
+    },
+    methods: {
+      
+ 
+      add_task: function () {
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          title: this.title, 
+        };
+
+        console.log(payload);
+        let url = "{% url 'scheduler:add_task' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            show_message(add_task_app,'موفق',data.message,'success',3000)
+            add_task_app.title=''
+            if (typeof tasks_app != "undefined") {
+              tasks_app.tasks.push(data.task);
+            }
+          }
+          else{
+            show_message(add_task_app,'خطا',data.message,'danger',3000)
+
+          }
+        });
+      },
+    },
+  });
+</script>

@@ -1,26 +1,26 @@
-<div id="accordion-add-appointment" class="rtl text-right farsi">
-  <div class="card" id="add-appointment-app">
+<div id="accordion-add-task" class="rtl text-right farsi">
+  <div class="card" id="add-task-app">
     <div class="card-header">
       <h5 class="text-center">
         <button
           class="btn btn-link"
           data-toggle="collapse"
-          data-target="#collapse-add-appointment"
+          data-target="#collapse-add-task"
           aria-expanded="true"
-          aria-controls="collapse-add-appointment"
+          aria-controls="collapse-add-task"
         >
-          افزودن قرار ملاقات
+          افزودن تسک
         </button>
       </h5>
     </div>
     <div
-      id="collapse-add-appointment"
+      id="collapse-add-task"
       class="collapse"
-      aria-labelledby="heading-add-appointment"
-      data-parent="#accordion-add-appointment"
+      aria-labelledby="heading-add-task"
+      data-parent="#accordion-add-task"
     >
       <div class="card-body">
-        <form @submit.prevent="add_appointment()">
+        <form @submit.prevent="add_task()">
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">

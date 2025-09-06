@@ -1,0 +1,15 @@
+<script>
+    
+    let tasks_for_tasks_app=JSON.parse("{{tasks_s|escapejs}}")
+    let tasks_app = new Vue({
+        el: "#tasks-app",
+        data: {
+            tasks: tasks_for_tasks_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>

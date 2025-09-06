@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import AppointmentRepo
-from .serializers import AppointmentSerializer
+from .repo import AppointmentRepo,TaskRepo
+from .serializers import AppointmentSerializer,TaskSerializer
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
@@ -40,7 +40,7 @@ class IndexView(View):
 
  
  
-class AppointmentesView(View):
+class AppointmentsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         appointments=AppointmentRepo(request=request).list(*args, **kwargs)
@@ -63,6 +63,34 @@ class AppointmentView(View):
         context["appointment_s"]=appointment_s
 
         return render(request,TEMPLATE_ROOT+"appointment.html",context)
+# Create your views here. 
+
+
+ 
+ 
+class TasksView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        tasks=TaskRepo(request=request).list(*args, **kwargs)
+        context["tasks"]=tasks
+        tasks_s=json.dumps(TaskSerializer(tasks,many=True).data)
+        context["tasks_s"]=tasks_s
+        if request.user.has_perm(APP_NAME+'.add_task'):
+            context['add_task_form']=AddTaskForm()
+        return render(request,TEMPLATE_ROOT+"tasks.html",context)
+# Create your views here. 
+   
+ 
+class TaskView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        task=TaskRepo(request=request).task(*args, **kwargs)
+        context["task"]=task
+        task_s=json.dumps(TaskSerializer(task,many=False).data)
+        context["task_s"]=task_s
+
+        return render(request,TEMPLATE_ROOT+"task.html",context)
 # Create your views here. 
 
 

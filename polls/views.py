@@ -5,7 +5,7 @@ from .serializers import PollSerializer
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
-from core.views import CoreContext
+from core.views import CoreContext,PageContext
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 import json
@@ -40,7 +40,7 @@ class IndexView(View):
 
  
  
-class PollesView(View):
+class PollsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         polls=PollRepo(request=request).list(*args, **kwargs)
@@ -58,6 +58,7 @@ class PollView(View):
         context=getContext(request=request)
         context['name3']="name 3333"
         poll=PollRepo(request=request).poll(*args, **kwargs)
+        context.update(PageContext(page=poll,request=request))
         context["poll"]=poll
         poll_s=json.dumps(PollSerializer(poll,many=False).data)
         context["poll_s"]=poll_s

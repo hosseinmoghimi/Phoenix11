@@ -3,9 +3,31 @@ from core.models import _,reverse,Event,Page,LinkHelper,DateTimeHelper,FAILED,SU
 from phoenix.server_settings import CURRENCY
 from .apps import APP_NAME 
 
-class Appointment(Event):
-    person_to_meet=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
+
+
+class Task(Event):
     
+
+    class Meta:
+        verbose_name = _("Task")
+        verbose_name_plural = _("Tasks")
+
+
+
+
+    def save(self):
+        if self.class_name is None or self.class_name=='':
+            self.class_name='task'
+        if self.app_name is None or self.app_name=='':
+            self.app_name=APP_NAME
+        (result,message,appointment)=FAILED,'',self
+        super(Task,self).save()
+        result=SUCCEED
+        message='تسک با موفقیت اضافه شد.'
+        return  (result,message,appointment)
+ 
+class Appointment(Task):
+    persons_to_meet=models.ManyToManyField("authentication.person", verbose_name=_("person"))
     app_name=APP_NAME
     class_name="appointment"
 
