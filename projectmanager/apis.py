@@ -218,9 +218,9 @@ class AddEventToProjectApi(APIView):
             cd['end_datetime']=PersianCalendar().to_gregorian(cd['end_datetime'])
             cd['event_datetime']=PersianCalendar().to_gregorian(cd['event_datetime'])
                 
-            result,message,event=ProjectRepo(request=request).add_event_to_project(**cd)
-            if event is not None:
-                context['event']=EventSerializer(event).data
+            result,message,events=ProjectRepo(request=request).add_event_to_project(**cd)
+            if result==SUCCEED:
+                context['events']=EventSerializer(events,many=True).data
         context['message']=message
         context['result']=result
         context['log']=log

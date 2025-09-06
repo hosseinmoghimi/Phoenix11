@@ -6,8 +6,8 @@
   let add_event_to_project_app = new Vue({
     el: "#add-event-to-project-app",
     data: {
-        title: "ssssss",
-        event_id:827,
+        title: "",
+        event_id:0,
         event:{},
 
             
@@ -59,7 +59,7 @@
           console.log(data);
           if (data.result === "SUCCEED") {
             if (typeof events_app != "undefined") {
-              events_app.events.push(data.event);
+              events_app.events=(data.events);
             }
             show_message(
               add_event_to_project_app,

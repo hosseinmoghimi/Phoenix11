@@ -306,14 +306,14 @@ class ProjectRepo():
 
     
     def add_event_to_project(self,*args, **kwargs):
-        result,message,event=FAILED,'',None
+        result,message,events=FAILED,'',[]
         if not self.request.user.has_perm(APP_NAME+".change_project"):
             message='دسترسی غیر مجاز'
-            return FAILED,'',None
+            return FAILED,'',[]
         project=self.project(*args, **kwargs)
         if project is None:
             message='پروژه پیدا نشد.'
-            return result,message,event
+            return result,message,events
 
         event_id=kwargs['event_id']
         if event_id>0:
@@ -324,11 +324,16 @@ class ProjectRepo():
         
         if event is None:
             message='رویداد پیدا نشد.'
-            return result,message,None
-        project.events.add(event.id)
-        result=SUCCEED
-        message='با موفقیت به پروژه اضافه شد.'
-        return result,message,event
+            return result,message,events
+        if event in project.events.all():
+            project.events.remove(event.id)
+            message='با موفقیت از پروژه حذف شد.'
+            result=SUCCEED
+        else:
+            project.events.add(event.id)
+            result=SUCCEED
+            message='با موفقیت به پروژه اضافه شد.'
+        return result,message,project.events.all()
 
 
 class RemoteClientRepo():
