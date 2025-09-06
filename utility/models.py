@@ -54,6 +54,9 @@ class DateTimeHelper(DateHelper):
 
     def persian_start_datetime(self):
         return PersianCalendar().from_gregorian(self.start_datetime)
+    
+    def persian_date_updated(self):
+        return PersianCalendar().from_gregorian(self.date_updated)
 
     def persian_end_datetime(self):
         return PersianCalendar().from_gregorian(self.end_datetime)
