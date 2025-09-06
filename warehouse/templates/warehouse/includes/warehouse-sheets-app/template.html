@@ -30,16 +30,17 @@
         <div class="table-responsive" v-if="warehouse_sheets.length>0">
           <table class="table table-striped">
             <thead>
-                {% if not warehouse %}
-                  
-              <th>انبار</th>
-              {% endif %}
+              <th>جهت</th>
+              <th>تعداد</th>
+
                 {% if not product %}
                   
                     <th>کالا</th>
                     {% endif %}
-                    <th>تعداد</th>
-              <th>جهت</th>
+                {% if not warehouse %}
+                  
+              <th>انبار</th>
+              {% endif %}
                 {% if not invoice %}
                   
                 <th>فاکتور</th>
@@ -53,24 +54,13 @@
 
               <tr v-for="warehouse_sheet in warehouse_sheets">
                 
-                {% if not warehouse %}
-                  
                 <td>
-                  <div v-for="warehouse in [warehouse_sheet.warehouse]">
-                    {% include "warehouse/includes/warehouse-app/media.html" %}
-                  </div>
-                </td>
-                {% endif %}
-                {% if not product %}
-                  
-                <td>
-                    <div v-for="product in [warehouse_sheet.invoice_line.invoice_line_item]">
-                         {% include "accounting/includes/product-app/media.html" %}
+                  <span :class="'text-'+direction_color(warehouse_sheet.direction)">
 
-                    </div>
+                    <span v-text="warehouse_sheet.direction"></span>
+                  </span>
                 </td>
-                {% endif %}
-                <td>
+                 <td>
                     <span v-text="warehouse_sheet.invoice_line.quantity"></span>
                     <span v-text="warehouse_sheet.invoice_line.unit_name"></span>
                     <div v-if="warehouse_sheet.invoice_line.status && warehouse_sheet.invoice_line.status!='نو'" >
@@ -82,9 +72,25 @@
                     </div>
                 </td>
                 
+                {% if not product %}
+                  
                 <td>
-                    <span v-text="warehouse_sheet.direction"></span>
+                    <div v-for="product in [warehouse_sheet.invoice_line.invoice_line_item]">
+                         {% include "accounting/includes/product-app/media.html" %}
+
+                    </div>
                 </td>
+                {% endif %}
+               
+                
+                {% if not warehouse %}
+                  
+                <td>
+                  <div v-for="warehouse in [warehouse_sheet.warehouse]">
+                    {% include "warehouse/includes/warehouse-app/media.html" %}
+                  </div>
+                </td>
+                {% endif %}
                 {% if not invoice %}
                   
                 <td>

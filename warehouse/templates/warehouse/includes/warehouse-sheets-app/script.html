@@ -13,7 +13,12 @@
                 
 
             },
-
+            direction_color:function(direction){
+                if(direction.indexOf('ورود')>-1){
+                    return 'success'
+                }
+                return 'danger'
+            },
             to_price: function(vall) { 
                 return  to_price(vall) 
             }
