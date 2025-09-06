@@ -121,7 +121,12 @@ class NotificationRepo:
             pk=kwargs['pk']
         if 'id' in kwargs:
             pk=kwargs['id']
-        return self.objects.filter(pk=pk).first()
+        notification= self.objects.filter(pk=pk).first()
+        if 'read' in kwargs:
+            notification.read=kwargs['read']
+            notification.save()
+        return notification
+    
     def send_notification(self,*args, **kwargs):
         member=MemberRepo(request=self.request).member(*args, **kwargs)
         if member is None:

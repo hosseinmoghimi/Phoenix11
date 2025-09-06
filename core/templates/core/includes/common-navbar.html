@@ -49,4 +49,40 @@
    
 </li>
 
+
+{% endif %}
+
+
+
+
+
+{% if notifications %} 
+<li class="nav-item dropdown">
+    <a title="پیام های شما" class="nav-link dropdown-toggle text-right" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        
+        <span class="mx-1 text-danger">
+            {{notifications|length}}
+        </span>
+        <i class="fa fa-bell text-danger" aria-hidden="true"></i>
+
+          
+    </a>
+    <div class="dropdown-menu text-right" aria-labelledby="navbarDropdown" >
+        {% for notification in notifications %}
+          
+        <a class="dropdown-item text-right"  href="{{notification.get_absolute_url}}">
+            <h6 class="text-right">
+
+                {{notification.title}}
+            </h6>
+        </a>
+        {% endfor %}
+
+        
+    </div>
+</li>
+
+
+ 
 {% endif %}

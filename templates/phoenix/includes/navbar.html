@@ -20,7 +20,7 @@
         <a class="nav-link text-right" href="{% url 'utility:settings' %}">تنظیمات</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-right" href="{{ADMIN_URL}}">ادمین</a>
+        <a class="nav-link text-right" href="{{ADMIN_URL}}{{APP_NAME}}/">ادمین</a>
       </li>
       {% endif %}
 
@@ -53,8 +53,8 @@
        
 
  
-      {% include "authentication/includes/common-navbar.html" %}
- 
+      {% include "core/includes/common-navbar.html" %}
+  
  
  
       

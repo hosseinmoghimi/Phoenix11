@@ -32,9 +32,25 @@ def CoreContext(request,*args, **kwargs):
     context['VUE_VERSION_3']=VUE_VERSION_3
     context['VUE_VERSION_2']=VUE_VERSION_2
     context['DEBUG']=DEBUG
-    context['APP_NAVBAR']=app_name+'/includes/navbar.html'
-    context['APP_SCRIPT']=app_name+'/includes/script.html'
-    context['APP_FOOTER']=app_name+'/includes/footer.html'
+
+    
+
+    if 'NO_APP_NAVBAR' in kwargs and not kwargs['NO_APP_NAVBAR']:
+        pass 
+    else:
+        context['APP_NAVBAR']=app_name+'/includes/navbar.html'
+
+    if 'NO_APP_SCRIPT' in kwargs and not kwargs['NO_APP_SCRIPT']:
+        pass 
+    else:
+        context['APP_SCRIPT']=app_name+'/includes/script.html'
+    if 'NO_APP_FOOTER' in kwargs and not kwargs['NO_APP_FOOTER']:
+        pass 
+    else:
+        context['APP_FOOTER']=app_name+'/includes/footer.html'
+
+
+
     me_person=PersonRepo(request=request).me
     if me_person is not None:
         context['me_person']=me_person 
@@ -71,7 +87,7 @@ def CoreContext(request,*args, **kwargs):
             context['current_app']=appp
             context['app_title']=appp['title']
     from messenger.views import MessengerContext
-    context.update(MessengerContext(request=request,person=me_person))
+    context.update(MessengerContext(request=request,me_person=me_person))
     return context
 
         
