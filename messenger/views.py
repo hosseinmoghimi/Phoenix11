@@ -36,10 +36,8 @@ def MessengerContext(request,*args, **kwargs):
 def getContext(request,*args, **kwargs):
     context=CoreContext(request=request,app_name=APP_NAME)
     context['LAYOUT_PARENT']=LAYOUT_PARENT
-    profile=context['profile']
-    
-    
-    context.update(MessengerContext(request=request,profile=profile))
+    me_person=PersonRepo(request=request).me
+    context.update(MessengerContext(request=request,person=me_person))
         
     return context
 def get_member_context(request,*args, **kwargs):

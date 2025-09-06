@@ -199,6 +199,12 @@
         console.log(payload)
         let url = "{% url 'accounting:add_invoice_line' %}";
         let posting = $.post(url, payload);
+        posting.fail(function(data){
+
+          console.log(data)
+          add_invoice_line_app.show_add_btn = true
+
+        })
         posting.done((data) => {
 
 

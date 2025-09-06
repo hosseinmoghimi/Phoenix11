@@ -55,9 +55,9 @@
                                 {% for member in channel.member_set.all %}
                                 <div class="mb-3">
 
-                                    <a href="{{member.profile.get_absolute_url}}">
-                                        <img src="{{member.profile.image}}" class="rounded-circle" width="48" alt="">
-                                        {{member.profile.full_name}}
+                                    <a href="{{member.person.get_absolute_url}}">
+                                        <img src="{{member.person.image}}" class="rounded-circle" width="48" alt="">
+                                        {{member.person.full_name}}
                                     </a>
                                 </div>
                                 {% endfor %}

@@ -18,12 +18,13 @@ class ChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
         fields=['id','name','key','cluster']
+        
 class MemberSerializer(serializers.ModelSerializer):
     channel=ChannelSerializer()
-    profile=PersonSerializer()
+    person=PersonSerializer()
     class Meta:
         model = Member
-        fields=['id','event','profile','channel']
+        fields=['id','event','person','channel']
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
