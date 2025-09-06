@@ -44,8 +44,9 @@
                   
                 <th>فاکتور</th>
                 {% endif %}
-              <th>ثبت توسط</th>
+                <th>ثبت توسط</th>
                 <th>تاریخ</th>
+                <th></th>
               <th></th>
             </thead>
             <tbody>
@@ -105,6 +106,18 @@
                 <td>
                     <span v-html="warehouse_sheet.persian_date_added"></span>
                 </td>
+
+                  <td>
+                    <div v-if="warehouse_sheet.shelf">
+                      قفسه <span v-text="warehouse_sheet.shelf"></span>
+                    </div>
+                    <div v-if="warehouse_sheet.row">
+                      ردیف <span v-text="warehouse_sheet.row"></span>
+                    </div>
+                    <div v-if="warehouse_sheet.col">
+                      ستون <span v-text="warehouse_sheet.col"></span>
+                    </div>
+                  </td>
                 <td>
                   <a
                     target="_blank"
