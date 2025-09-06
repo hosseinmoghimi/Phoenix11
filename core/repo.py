@@ -37,7 +37,7 @@ class PageRepo():
             except:
                 pass
             objects=objects.filter(Q(title__contains=search_for) |Q(meta_data=search_for) |Q(id=id))
-        return objects.all()
+        return objects.all().order_by('priority')
     def set_thumbnail_header(self,*args, **kwargs):
         if not self.request.user.has_perm("core.change_page"):
             return

@@ -2275,7 +2275,6 @@ class FinancialEventRepo():
             return self.objects.filter(pk=kwargs['event_id']).first() 
          
     def edit_financial_event(self,*args, **kwargs):
-        leolog(edit_financial_event_kwargs=kwargs)
         result,message,financial_event=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_financialevent"):
             message="دسترسی غیر مجاز"
@@ -2521,7 +2520,6 @@ class InvoiceRepo(FinancialEventRepo):
         return result,message,invoice
 
     def edit_invoice(self,*args, **kwargs):
-        leolog(edit_invoice_kwargs=kwargs)
         result,message,invoice=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_invoice"):
             message="دسترسی غیر مجاز"
@@ -2569,7 +2567,6 @@ class InvoiceRepo(FinancialEventRepo):
             if year=="13" or year=="14":
                 kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
             invoice.event_datetime=kwargs["event_datetime"]
-            leolog(edit_invoice_event_datetime=invoice.event_datetime)
         if 'payment_method' in kwargs and kwargs['payment_method'] is not None and not kwargs['payment_method']=='':
             invoice.payment_method=kwargs['payment_method']
 
@@ -2798,7 +2795,6 @@ class ChequeRepo():
     def change_image(self,cheque_id,image):
         result,message,cheque=FAILED,'',None
         cheque=self.cheque(cheque_id=cheque_id)
-        leolog(cheque_id=cheque_id,image=image)
         if cheque is not None:
             cheque.image_origin = image
             cheque.save()
@@ -2837,7 +2833,6 @@ class ChequeRepo():
             return self.objects.filter(pk=kwargs['event_id']).first() 
          
     def edit_cheque(self,*args, **kwargs):
-        leolog(edit_cheque_kwargs=kwargs)
         result,message,cheque=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_financialevent"):
             message="دسترسی غیر مجاز"

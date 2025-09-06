@@ -125,7 +125,6 @@ class PersianCalendar:
         shamsi_date_time=value
         a=shamsi_date_time.replace('/','')
         from .log import leolog
-        leolog(a=a,shamsi_date_time=shamsi_date_time)
         shamsi_date_time=a
         year_=int(shamsi_date_time[0:4])
         month_=int(shamsi_date_time[4:6])

@@ -33,7 +33,7 @@ def CoreContext(request,*args, **kwargs):
     context['VUE_VERSION_2']=VUE_VERSION_2
     context['DEBUG']=DEBUG
 
-    
+
 
     if 'NO_APP_NAVBAR' in kwargs and not kwargs['NO_APP_NAVBAR']:
         pass 
@@ -93,7 +93,20 @@ def CoreContext(request,*args, **kwargs):
         
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
- 
+    if 'me_person' in context:
+        me_person=context['me_person']
+        if me_person is not None:
+             
+            from attachments.repo import LikeRepo
+            my_likes=LikeRepo(request=request).list(person_id=me_person.id)
+            ids=[]
+            for like in my_likes:
+                ids.append(like.page.id)
+            pages=PageRepo(request=request).list(ids=ids)
+            if pages is not None and len(pages)>0:
+                pages_s=json.dumps(PageBriefSerializer(pages,many=True).data)
+                context['pages_s']=pages_s
+                context['pages']=pages
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 

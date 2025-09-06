@@ -496,7 +496,6 @@ class StudentInSessionRepo():
             student_in_session.description=kwargs["description"]
 
         student_in_session.save()
-        leolog(student_in_session=student_in_session)
         if student_in_session.id is not None:    
             (result,message,student_in_session)=(SUCCEED,'با موفقیت ذخیره شد.',student_in_session)
         return result,message,student_in_session

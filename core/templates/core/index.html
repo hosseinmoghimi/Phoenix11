@@ -10,6 +10,13 @@
           </h5> 
     </div>
   </div>
+  {% if pages %}
+    
+  <div class="col-md-12">
+    {% include "core/includes/pages-app/template.html" %}
+    
+  </div>
+  {% endif %}
   {% for phoenix_app in phoenix_apps %} {% if phoenix_app.on_index %}
 
   <div class="col-4 col-md-3 col-lg-2 text-center my-3">
@@ -26,4 +33,10 @@
   console.log("name2: {{name2}}");
   console.log("name3: {{name3}}");
 </script>
+
+  {% if pages %}
+    
+    {% include "core/includes/pages-app/script.html" %}
+    
+  {% endif %}
 {% endblock script %}
