@@ -244,6 +244,8 @@ class AddInvoiceLineForm(forms.Form):
     discount_percentage=forms.IntegerField(required=False)
     quantity=forms.FloatField(required=True)
     unit_price=forms.IntegerField(required=True)
+    status=forms.CharField(max_length=50,required=False)
+    description=forms.CharField(max_length=500,required=False)
     coef=forms.IntegerField(required=False)
     save=forms.BooleanField(required=False)
     unit_name=forms.CharField(max_length=100, required=True)

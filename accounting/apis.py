@@ -1,3 +1,4 @@
+from utility.message import INVALID_FORM_VALUE_MESSAGE
 
 from utility.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
@@ -431,7 +432,7 @@ class AddInvoiceLineApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         result=FAILED
-        message=""
+        message=INVALID_FORM_VALUE_MESSAGE
         log=111
         context['result']=FAILED
         if request.method=='POST':

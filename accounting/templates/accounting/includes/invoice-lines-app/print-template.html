@@ -36,6 +36,15 @@
 
               <td class="bordered farsi text-right">
                 <span v-text="invoice_line.invoice_line_item.title"></span>
+                <div v-if="invoice_line.status && invoice_line.status!='نو'" class="text-muted">
+                  <small>
+
+                    (
+                      
+                      <span v-text="invoice_line.status"></span>
+                      )
+                    </small>
+                </div>
               </td>
                
               <td class="bordered farsi text-right">

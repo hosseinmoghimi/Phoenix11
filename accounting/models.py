@@ -906,7 +906,7 @@ class InvoiceLine(models.Model,LinkHelper):
     discount_percentage=models.IntegerField(_("discount_percentage"),default=0)
     tax_amount=models.IntegerField(_("tax_amount"),default=0)
     description=models.CharField(_("description"),null=True,blank=True, max_length=5000)
-
+    status=models.CharField(_("status"),choices=InvoiceLineStatusEnum.choices,null=True,blank=True, max_length=5000)
     class_name="invoiceline"
     app_name=APP_NAME
     class Meta:

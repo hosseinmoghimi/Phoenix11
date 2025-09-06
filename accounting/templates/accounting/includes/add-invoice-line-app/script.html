@@ -17,6 +17,8 @@
       discount_percentage: 0,
       quantity: 0,
       save: false,
+      description:"",
+      status:"",
       search_for: "",
       buffer_items: [],
       list_length: 6,
@@ -187,6 +189,8 @@
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           invoice_id: invoice_id,
           search_for: this.search_for,
+          description: this.description,
+          status: this.status,
           invoice_line_item_id: this.invoice_line_item_id,
           quantity: parseFloat(this.quantity),
           unit_price: parseInt(this.unit_price),
@@ -203,10 +207,11 @@
 
           console.log(data)
           add_invoice_line_app.show_add_btn = true
-
+          
         })
         posting.done((data) => {
-
+          
+          console.log(data)
 
 
           add_invoice_line_app.waiting = false

@@ -105,6 +105,8 @@ def AddInvoiceLineContext(request,*args, **kwargs):
     for ii in UnitNameEnum.choices:
         unit_names2.append(str(ii[0]))
     context["unit_names_for_edit_invoice_line_s"]=json.dumps(unit_names2)
+    invoice_line_statuses=(i[0] for i in InvoiceLineStatusEnum.choices)
+    context["invoice_line_statuses"]=invoice_line_statuses
     context["add_invoice_line_form"]=AddInvoiceLineForm
     invoice_line_items=InvoiceLineItemRepo(request=request).list()
     invoice_line_items_s=json.dumps(InvoiceLineItemSerializer(invoice_line_items,many=True).data)

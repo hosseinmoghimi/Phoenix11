@@ -159,6 +159,10 @@ class InvoiceLineRepo:
                 message='فاکتور نهایی شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
                 return FAILED,message,None
             
+        if 'description' in kwargs:
+            invoice_line.description=kwargs["description"]
+        if 'status' in kwargs:
+            invoice_line.status=kwargs["status"]
         if 'discount_percentage' in kwargs:
             invoice_line.discount_percentage=kwargs["discount_percentage"]
         if 'quantity' in kwargs:
