@@ -88,9 +88,17 @@
                 {% if not invoice %}
                   
                 <td>
+                  <div>
                     <a :href="warehouse_sheet.invoice_line.invoice.get_absolute_url">
-                        <span v-text="warehouse_sheet.invoice_line.invoice.title"></span>
+                    <span v-text="warehouse_sheet.invoice_line.invoice.title"></span>
                     </a>
+                  </div>
+                  <div>
+                    <a :href="warehouse_sheet.invoice_line.get_absolute_url">
+                    ردیف
+                    <span v-text="warehouse_sheet.invoice_line.row"></span>
+                    </a>
+                  </div>
                 </td>
                 {% endif %}
                 

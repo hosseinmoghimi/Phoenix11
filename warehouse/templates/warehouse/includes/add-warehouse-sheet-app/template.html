@@ -28,7 +28,8 @@
               <input v-model="description" type="text" class="form-control" />
             </div>
           </div>
-
+          {% if not warehouse %}
+            
           <div class="col-md-12">
             <div class="row">
               <div class="col-6">
@@ -66,6 +67,8 @@
               </div>
             </div>
           </div>
+          {% endif %}
+
           {% if not invoice_line %}
             
           <div class="col-md-12">
