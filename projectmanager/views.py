@@ -225,6 +225,7 @@ class ProjectsView(View):
         context['WIDE_LAYOUT']=True
         projects = ProjectRepo(request=request).list(parent_id=None,*args, **kwargs)
 
+        context['expands_projects']=True
         context['projects']=projects
         projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
         context['projects_s']=projects_s
