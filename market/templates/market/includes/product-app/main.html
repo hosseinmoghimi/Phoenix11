@@ -10,7 +10,10 @@
                     {{product.title}}
                 </h2>
 <div class="media">
-    <img src="{{product.get_market_qrcode_url}}" width="64"  alt="">
+    <a href="{{product.get_market_absolute_url}}">
+
+        <img src="{{product.get_market_qrcode_url}}" width="64"  alt="">
+    </a>
     <div class="media-body mr-2">
   <div class="text-right">
                     <div>{% include "attachments/includes/page-like-app/template.html" %}</div>
