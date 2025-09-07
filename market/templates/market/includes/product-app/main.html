@@ -9,8 +9,10 @@
                 <h2 class="text-right">
                     {{product.title}}
                 </h2>
-
-                <div class="text-right">
+<div class="media">
+    <img src="{{product.get_market_qrcode_url}}" width="64"  alt="">
+    <div class="media-body mr-2">
+  <div class="text-right">
                     <div>{% include "attachments/includes/page-like-app/template.html" %}</div>
 
                 </div>
@@ -19,6 +21,9 @@
                     <div>{% include "market/includes/product-app/main-shop.html" %}</div>
 
                 </div>
+    </div>
+</div>
+              
                 {% if product.short_description %}
                   <div class="rtl text-right">
                     {{product.short_description|safe}}
