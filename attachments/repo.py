@@ -15,6 +15,8 @@ class ImageRepo():
         objects=Image.objects
         if 'page_id' in kwargs:
             objects=objects.filter(page_id=kwargs['page_id'])
+        if 'search_for' in kwargs:
+            objects=objects.filter(Q(title__contains=kwargs['search_for']))
         return objects.all()
     def image(self,*args, **kwargs):
         if 'pk' in kwargs and kwargs['pk'] is not None:
@@ -122,6 +124,8 @@ class CommentRepo():
         self.request=request
     def list(self,*args, **kwargs):
         objects=Comment.objects
+        if 'search_for' in kwargs:
+            objects=objects.filter(Q(comment__contains=kwargs['search_for']))
         if 'page_id' in kwargs:
             objects=objects.filter(page_id=kwargs['page_id'])
         return objects.all()
@@ -273,6 +277,8 @@ class LinkRepo():
         self.request=request
     def list(self,*args, **kwargs):
         objects=self.objects
+        if 'search_for' in kwargs:
+            objects=objects.filter(Q(title__contains=kwargs['search_for']))
         if 'page_id' in kwargs:
             page_id=kwargs['page_id']
             objects=objects.filter(page_id=page_id)
@@ -301,6 +307,9 @@ class DownloadRepo():
             return self.objects.filter(pk=kwargs['pk']).first()
     def list(self,*args, **kwargs):
         objects=self.objects
+        if 'search_for' in kwargs:
+            objects=objects.filter(Q(title__contains=kwargs['search_for']))
+        
         if 'page_id' in kwargs:
             page_id=kwargs['page_id']
             objects=objects.filter(page_id=page_id)

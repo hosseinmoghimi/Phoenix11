@@ -60,6 +60,29 @@ def AddEmployeeContext(request,*args, **kwargs):
     return context
   
 
+def SearchContext(request,search_for,*args, **kwargs):
+    context={}
+    WAS_FOUND=False
+    
+
+    organization_units=OrganizationUnitRepo(request=request).list(search_for=search_for)
+    if len(organization_units)>0:
+        context['organization_units']=organization_units
+        context['organization_units_s']=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+        WAS_FOUND=True
+
+
+    employees=EmployeeRepo(request=request).list(search_for=search_for)
+    if len(employees)>0:
+        context['employees']=employees
+        context['employees_s']=json.dumps(EmployeeSerializer(employees,many=True).data)
+        WAS_FOUND=True
+
+
+    context['WAS_FOUND']=WAS_FOUND
+    return context
+
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

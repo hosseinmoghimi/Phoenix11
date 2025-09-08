@@ -1,11 +1,24 @@
 <script>
   let edit_invoice_app_bestankar=invoice.bestankar
   let edit_invoice_app_bedehkar=invoice.bedehkar
+  let edit_invoice_app_description=""
+  let edit_invoice_app_short_description=""
+
   let edit_invoice_app_event_datetime= "{{invoice.persian_event_datetime}}"
    let edit_invoice_app_event_date= edit_invoice_app_event_datetime.substring(0,10)
    let edit_invoice_app_event_time= edit_invoice_app_event_datetime.substring(10,19)
  
 </script>
+{% if invoice.description %}
+  <script>
+    edit_invoice_app_description="{{invoice.description}}"
+  </script>
+{% endif %}
+{% if invoice.short_description %}
+  <script>
+    edit_invoice_app_short_description="{{invoice.short_description}}"
+  </script>
+{% endif %}
 <script>
   let edit_invoice_app = new Vue({
     el: "#edit_invoice-app",
@@ -22,6 +35,8 @@
       event_time: edit_invoice_app_event_time,
       event_datetime: edit_invoice_app_event_datetime,
 
+      description:edit_invoice_app_description,
+      short_description:edit_invoice_app_short_description,
       payment_method: "{{invoice.payment_method}}",
       discount: parseInt("{{invoice.discount}}"),
       tax_percentage: parseInt("{{invoice.tax_percentage}}"),
@@ -134,6 +149,8 @@
           discount: parseInt(
             edit_invoice_app.discount
           ),
+          description: edit_invoice_app.description,
+          short_description: edit_invoice_app.short_description,
           payment_method: edit_invoice_app.payment_method,
           amount: parseInt(edit_invoice_app.amount),
           tax_percentage: parseInt(edit_invoice_app.tax_percentage),

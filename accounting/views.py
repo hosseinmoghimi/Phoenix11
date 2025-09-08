@@ -415,6 +415,51 @@ def BankContext(request,bank,*args, **kwargs):
     return context
 
 
+def SearchContext(request,search_for,*args, **kwargs):
+    context={}
+    WAS_FOUND=False
+
+    accounts=AccountRepo(request=request).list(search_for=search_for)
+    if len(accounts)>0:
+        context['accounts']=accounts
+        context['accounts_s']=json.dumps(AccountSerializer(accounts,many=True).data)
+        WAS_FOUND=True
+
+
+        
+
+    persons=PersonRepo(request=request).list(search_for=search_for)
+    if len(persons)>0:
+        context['persons']=persons
+        context['persons_s']=json.dumps(PersonSerializer(persons,many=True).data)
+        WAS_FOUND=True
+
+
+    products=ProductRepo(request=request).list(search_for=search_for)
+    if len(products)>0:
+        context['products']=products
+        context['products_s']=json.dumps(ProductSerializer(products,many=True).data)
+        WAS_FOUND=True
+
+        
+
+    services=ServiceRepo(request=request).list(search_for=search_for)
+    if len(services)>0:
+        context['services']=services
+        context['services_s']=json.dumps(ServiceSerializer(services,many=True).data)
+        WAS_FOUND=True
+
+        
+
+    categories=CategoryRepo(request=request).list(search_for=search_for)
+    if len(categories)>0:
+        context['categories']=categories
+        context['categories_s']=json.dumps(CategorySerializer(categories,many=True).data)
+        WAS_FOUND=True
+
+    context['WAS_FOUND']=WAS_FOUND
+    return context
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -425,75 +470,7 @@ class IndexView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
-
-
-class SearchView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps 
-         
-        return render(request,TEMPLATE_ROOT+"search.html",context)
-
-    def post(self,request,*args, **kwargs):
-        result=FAILED
-        message=''
-        log=1
-        context=getContext(request=request) 
-        search_form=SearchForm(request.POST)
-        WAS_FOUND=False
-        search_for=''   
-        if search_form.is_valid():
-            log=2
-            search_for=search_form.cleaned_data['search_for']
-            result=SUCCEED
-
-            accounts=AccountRepo(request=request).list(search_for=search_for)
-            if len(accounts)>0:
-                context['accounts']=accounts
-                context['accounts_s']=json.dumps(AccountSerializer(accounts,many=True).data)
-                WAS_FOUND=True
-
-
-                
-
-            persons=PersonRepo(request=request).list(search_for=search_for)
-            if len(persons)>0:
-                context['persons']=persons
-                context['persons_s']=json.dumps(PersonSerializer(persons,many=True).data)
-                WAS_FOUND=True
-
-
-            products=ProductRepo(request=request).list(search_for=search_for)
-            if len(products)>0:
-                context['products']=products
-                context['products_s']=json.dumps(ProductSerializer(products,many=True).data)
-                WAS_FOUND=True
-
-                
-
-            services=ServiceRepo(request=request).list(search_for=search_for)
-            if len(services)>0:
-                context['services']=services
-                context['services_s']=json.dumps(ServiceSerializer(services,many=True).data)
-                WAS_FOUND=True
-
-                
-
-            categories=CategoryRepo(request=request).list(search_for=search_for)
-            if len(categories)>0:
-                context['categories']=categories
-                context['categories_s']=json.dumps(CategorySerializer(categories,many=True).data)
-                WAS_FOUND=True
-
-        context['WAS_FOUND']=WAS_FOUND
-        context['search_for']=search_for
-        context['message']=message
-        context['log']=log
-        context['result']=result
-        return render(request,"utility/search.html",context)
-
+ 
 
 class SettingsView(View):
     def get(self,request,*args, **kwargs):

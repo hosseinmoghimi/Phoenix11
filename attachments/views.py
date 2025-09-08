@@ -182,15 +182,53 @@ class DownloadView(View):
         title = 'دسترسی غیر مجاز'
         message_view = MessageView(title=title,body=body)
         if download is None:
-            message_view.body = 'دانلود مورد نظر شما پیدا نشد.'
-            message_view.title = 'دانلود مورد نظر پیدا نشد.'
+            message_view.body = 'موقعیت مورد نظر شما پیدا نشد.'
+            message_view.title = 'موقعیت مورد نظر پیدا نشد.'
         else:
             from .models import Link
             message_view.links.append(Link(title='تلاش مجدد', color="warning",
                                   icon_material="apartment", url=download.get_download_url))
 
         return message_view.get(request=request)
-        
+      
+def SearchContext(request,search_for,*args, **kwargs):
+    context={}
+    WAS_FOUND=False
+
+
+    tags=TagRepo(request=request).list(search_for=search_for)
+    if len(tags)>0:
+        context['tags']=tags
+        context['tags_s']=json.dumps(TagSerializer(tags,many=True).data)
+        WAS_FOUND=True
+
+
+    downloads=DownloadRepo(request=request).list(search_for=search_for)
+    if len(downloads)>0:
+        context['downloads']=downloads
+        context['downloads_s']=json.dumps(DownloadSerializer(downloads,many=True).data)
+        WAS_FOUND=True
+
+
+    links=LinkRepo(request=request).list(search_for=search_for)
+    if len(links)>0:
+        context['links']=links
+        context['links_s']=json.dumps(LinkSerializer(links,many=True).data)
+        WAS_FOUND=True
+
+    images=ImageRepo(request=request).list(search_for=search_for)
+    if len(images)>0:
+        context['images']=images
+        context['images_s']=json.dumps(ImageSerializer(images,many=True).data)
+        WAS_FOUND=True
+
+
+          
+
+    context['WAS_FOUND']=WAS_FOUND
+    leolog(context=context)
+    return context
+  
       
 class IndexView(View):
     def get(self, request, *args, **kwargs): 

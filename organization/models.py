@@ -61,6 +61,8 @@ class OrganizationUnit(Page,LinkHelper):
             return f"{STATIC_URL}{self.app_name}/img/pages/thumbnail/{self.class_name}.png/"
         except:
             pass 
+
+
 class Employee(models.Model,LinkHelper,DateTimeHelper):
     person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person account"), on_delete=models.CASCADE)
     organization_unit=models.ForeignKey("organizationunit",null=True,blank=True, verbose_name=_("organization_unit"), on_delete=models.CASCADE)

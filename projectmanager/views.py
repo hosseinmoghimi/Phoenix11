@@ -72,6 +72,23 @@ def ProjectContext(request,project,*args, **kwargs):
     return context
 
 
+def SearchContext(request,search_for,*args, **kwargs):
+    context={}
+    WAS_FOUND=False
+    
+
+    projects=ProjectRepo(request=request).list(search_for=search_for)
+    if len(projects)>0:
+        context['projects']=projects
+        context['projects_s']=json.dumps(ProjectSerializer(projects,many=True).data)
+        WAS_FOUND=True
+
+
+    context['WAS_FOUND']=WAS_FOUND
+    return context
+
+
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

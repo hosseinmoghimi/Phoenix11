@@ -53,6 +53,7 @@ class Comment(models.Model,DateTimeHelper,LinkHelper):
             return self.parent.id
         return None
 
+
 class Like(models.Model,DateTimeHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
@@ -84,10 +85,6 @@ class Like(models.Model,DateTimeHelper):
         my_likes=Like.objects.filter(page_id=page.id).filter(person_id=person_id)
         return len(my_likes)>0
     
-
-
-
-
     
 class Icon(models.Model,LinkHelper,DateTimeHelper):
     title = models.CharField(_("title"), null=True, blank=True, max_length=300)
@@ -267,7 +264,6 @@ class Link(Icon,LinkHelper):
         return f"{QRCODE_URL}{file_name}"
   
 
-
 class Image(models.Model,LinkHelper,DateTimeHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
     app_name=APP_NAME
@@ -380,7 +376,6 @@ class Image(models.Model,LinkHelper,DateTimeHelper):
             return self.image
 
 
-
 class Tag(models.Model,LinkHelper):
     title=models.CharField(_("title"), max_length=50)  
     pages=models.ManyToManyField("core.page",blank=True, verbose_name=_("pages"))
@@ -442,6 +437,7 @@ class Location(models.Model,LinkHelper):
                 
             </a>
         """
+ 
  
 class Area(models.Model,LinkHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)

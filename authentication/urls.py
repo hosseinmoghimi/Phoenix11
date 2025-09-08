@@ -6,7 +6,6 @@ app_name=APP_NAME
 urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),
-    path('search/',login_required(views.SearchView.as_view()),name="search"),  
 
     path('settings/',login_required(views.IndexView.as_view()),name="settings"),
     path('login/',(views.LoginView.as_view()),name="login"),

@@ -31,6 +31,7 @@ class EditFinancialEventForm(forms.Form):
     payment_method=forms.CharField(max_length=50, required=False)
     bedehkar_id=forms.IntegerField(required=False)
     bestankar_id=forms.IntegerField(required=False)
+    short_description=forms.CharField(max_length=1000,required=False)
     description=forms.CharField(max_length=1000,required=False)
     status=forms.CharField(max_length=50,required=False)
 

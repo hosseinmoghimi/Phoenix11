@@ -59,9 +59,17 @@
                 {% if not organization_unit %}
                   
                 <td>
-                  <a :href="employee.organization_unit.get_absolute_url">
-                    <span v-text="employee.organization_unit.title"></span>
+                  <div class="media">
+                      <a :href="employee.organization_unit.get_absolute_url">
+                    <img :src="employee.organization_unit.thumbnail" class="rounded" width="48">
                   </a>
+                    <div class="media-body mr-2">
+  <a :href="employee.organization_unit.get_absolute_url">
+                    <h5 v-text="employee.organization_unit.title"></h5>
+                  </a>
+                    </div>
+                  </div>
+                
                 </td>
                 {% endif %}
 

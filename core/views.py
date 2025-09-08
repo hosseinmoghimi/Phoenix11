@@ -135,6 +135,17 @@ def PageContext(request,page,*args, **kwargs):
     context.update(PagPrintsContext(request=request,page=page,person=me_person))
     return context
 
+def SearchContext(request,search_for,*args, **kwargs):
+    context={}
+    WAS_FOUND=False
+    pages=PageRepo(request=request).list(search_for=search_for)
+    if len(pages)>0:
+        context['pages']=pages
+        context['pages_s']=json.dumps(PageBriefSerializer(pages,many=True).data)
+        WAS_FOUND=True
+
+    context['WAS_FOUND']=WAS_FOUND
+    return context
 
 class SearchView(View):
     def get(self,request,*args, **kwargs):
@@ -155,26 +166,67 @@ class SearchView(View):
         if search_form.is_valid():
             log=2
             search_for=search_form.cleaned_data['search_for']
+            app_name=search_form.cleaned_data['app_name']
             result=SUCCEED
+            WAS_FOUND=False
+            SEARCH_IN_ALL_APPS=True
+
+            if app_name=='accounting' or SEARCH_IN_ALL_APPS:
+                from accounting.views import SearchContext as accounting_SearchContext
+                context.update(accounting_SearchContext(request=request,search_for=search_for))
+                if context['WAS_FOUND']:
+                    WAS_FOUND=True
+
+
+            if app_name=='core' or SEARCH_IN_ALL_APPS:
+                from core.views import SearchContext as core_SearchContext
+                context.update(core_SearchContext(request=request,search_for=search_for))
+                if context['WAS_FOUND']:
+                    WAS_FOUND=True
+
+
+            if app_name=='projectmanager' or SEARCH_IN_ALL_APPS:
+                from projectmanager.views import SearchContext as projectmanager_SearchContext
+                context.update(projectmanager_SearchContext(request=request,search_for=search_for))
+                if context['WAS_FOUND']:
+                    WAS_FOUND=True
+
+
+            if app_name=='warehouse' or SEARCH_IN_ALL_APPS:
+                from warehouse.views import SearchContext as warehouse_SearchContext
+                context.update(warehouse_SearchContext(request=request,search_for=search_for))
+                if context['WAS_FOUND']:
+                    WAS_FOUND=True
+
+
+            if app_name=='authentication' or SEARCH_IN_ALL_APPS:
+                from authentication.views import SearchContext as authentication_SearchContext
+                context.update(authentication_SearchContext(request=request,search_for=search_for))
+                if context['WAS_FOUND']:
+                    WAS_FOUND=True
 
             
-            pages=PageRepo(request=request).list(search_for=search_for)
-            if len(pages)>0:
-                context['pages']=pages
-                context['pages_s']=json.dumps(PageBriefSerializer(pages,many=True).data)
+            if app_name=='attachments' or SEARCH_IN_ALL_APPS:
+                from attachments.views import SearchContext as attachments_SearchContext
+                context.update(attachments_SearchContext(request=request,search_for=search_for))
+                if context['WAS_FOUND']:
+                    WAS_FOUND=True
             
-            from attachments.views import TagRepo,TagSerializer
-            tags=TagRepo(request=request).list(search_for=search_for)
-            if len(tags)>0:
-                context['tags']=tags
-                context['tags_s']=json.dumps(TagSerializer(tags,many=True).data)
-
-
+            if app_name=='organization' or SEARCH_IN_ALL_APPS:
+                from organization.views import SearchContext as organization_SearchContext
+                context.update(organization_SearchContext(request=request,search_for=search_for))
+                if context['WAS_FOUND']:
+                    WAS_FOUND=True
+        
+            
+            
+             
         context['message']=message
         context['search_for']=search_for
         context['log']=log
         context['result']=result
-        return render(request,TEMPLATE_ROOT+"search.html",context)
+        context['WAS_FOUND']=WAS_FOUND
+        return render(request, "utility/search.html",context)
 
 
 class PageView(View):

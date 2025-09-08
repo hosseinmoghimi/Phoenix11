@@ -2524,6 +2524,7 @@ class InvoiceRepo(FinancialEventRepo):
         return result,message,invoice
 
     def edit_invoice(self,*args, **kwargs):
+        leolog(kwargs=kwargs)
         result,message,invoice=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_invoice"):
             message="دسترسی غیر مجاز"
@@ -2575,6 +2576,12 @@ class InvoiceRepo(FinancialEventRepo):
             invoice.payment_method=kwargs['payment_method']
 
             
+        if 'description' in kwargs  :
+            invoice.description=kwargs['description']   
+            
+        if 'short_description' in kwargs  :
+            invoice.short_description=kwargs['short_description']   
+
         if 'bestankar_id' in kwargs and kwargs['bestankar_id'] is not None:
             invoice.bestankar_id=kwargs['bestankar_id']   
 
@@ -2592,7 +2599,6 @@ class InvoiceRepo(FinancialEventRepo):
                     if invoice_line.quantity==0:
                         invoice_line.delete()
 
-                    
         return invoice.save()
 
 

@@ -27,6 +27,22 @@ def getContext(request,*args, **kwargs):
     return context
 
  
+def SearchContext(request,search_for,*args, **kwargs):
+    context={}
+    WAS_FOUND=False
+
+    warehouses=WareHouseRepo(request=request).list(search_for=search_for)
+    if len(warehouses)>0:
+        context['warehouses']=warehouses
+        context['warehouses_s']=json.dumps(WareHouseSerializer(warehouses,many=True).data)
+        WAS_FOUND=True
+
+
+          
+
+    context['WAS_FOUND']=WAS_FOUND
+    return context
+
  
 class IndexView(View):
     def get(self,request,*args, **kwargs):

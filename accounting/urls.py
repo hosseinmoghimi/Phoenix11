@@ -6,7 +6,6 @@ app_name=APP_NAME
 urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),
-    path('search/',login_required(views.SearchView.as_view()),name="search"),
 
     path("tree-chart/<int:pk>/",login_required(views.TreeChartView.as_view()),name="tree_chart"),
     path("tree-list/",login_required(views.TreeListView.as_view()),name="tree_list"),
