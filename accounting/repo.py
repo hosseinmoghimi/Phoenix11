@@ -2035,6 +2035,9 @@ class FinancialDocumentLineRepo:
         if "bestankar" in kwargs and kwargs["bestankar"] is not None:
             objects=objects.filter(Q(bestankar=kwargs['bestankar']) )
 
+            
+        if "account_id__in" in kwargs :
+            objects=objects.filter(Q(account_id__in=kwargs['account_id__in']) )
         if "bedehkar" in kwargs and kwargs["bedehkar"] is not None:
             objects=objects.filter(Q(bedehkar=kwargs['bedehkar']) )
 

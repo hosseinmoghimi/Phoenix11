@@ -399,7 +399,7 @@ def PersonAccountContext(request,person_account,*args, **kwargs):
 def BankAccountContext(request,bank_account,*args, **kwargs):
     context=AccountContext(request=request,account=bank_account,*args, **kwargs)
     context['bank_account']=bank_account
-    bank_account_s=json.dumps(PersonAccountSerializer(bank_account).data)
+    bank_account_s=json.dumps(BankAccountSerializer(bank_account).data)
     context['bank_account_s']=bank_account_s
     return context
 
@@ -724,6 +724,7 @@ class PersonView(View):
         person=PersonRepo(request=request).person(*args, **kwargs)
 
 
+
         if person is None:
             title='خطا'
             body='شخص پیدا نشد.'
@@ -740,6 +741,8 @@ class PersonView(View):
 
 
 
+
+
         bank_accounts=person.bankaccount_set.all()
 
         context['bank_accounts']=bank_accounts
@@ -747,7 +750,18 @@ class PersonView(View):
         context['bank_accounts_s']=bank_accounts_s
 
 
-        
+        accounts_ids=[]
+        for bank_account in bank_accounts:
+            accounts_ids.append(bank_account.id)
+        for person_account in person_accounts:
+            accounts_ids.append(person_account.id)
+
+        financial_document_lines=FinancialDocumentLineRepo(request=request).list(account_id__in=accounts_ids)
+        financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
+        context['financial_document_lines_s']=financial_document_lines_s
+        context['financial_document_lines']=financial_document_lines
+
+
         if request.user.has_perm(APP_NAME+'.add_personaccount'):
             context.update(AddPersonAccountContext(request=request))
         if request.user.has_perm(APP_NAME+'.add_bankaccount'):
