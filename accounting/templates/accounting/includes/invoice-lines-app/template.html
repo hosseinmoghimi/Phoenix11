@@ -7,7 +7,7 @@
     <div id="invoice-lines-app" class="card">
         <div id="heading-invoice-lines" class="card-header">
             <h5 class="text-center">
-                <button data-toggle="collapse" data-target="#collapse-invoice-lines" aria-expanded="false"
+                <button data-toggle="collapse " data-target="#collapse-invoice-lines" aria-expanded="false"
                     aria-controls="collapse-invoice-lines" class="btn btn-link collapsed">
                     سطر های فاکتور
                     <span v-if="invoice_lines.length>0" class="mx-2">
@@ -21,7 +21,7 @@
         </div>
 
         <div id="collapse-invoice-lines" aria-labelledby="heading-invoice-lines" data-parent="#accordion-invoice-lines"
-            class="collapse">
+            class="collapse {% if expand_invoice_lines %}show{% endif %}">
 
             <div class="card-body">
                 <div class="table-responsive rtl">
@@ -98,8 +98,14 @@
                                             <div class="media text-right farsi">
                                                 <img width="48" class="rounded" :src="invoice_line.invoice_line_item.thumbnail" alt="">
                                                 <div class="media-body mr-2">
+                                                    <h6>
+                                                        <span v-text="invoice_line.invoice_line_item.title"></span>
 
-                                                    <span v-text="invoice_line.invoice_line_item.title"></span>
+                                                    </h6>
+
+                                                    <h6>
+                                                        <small class="text-muted" v-text="invoice_line.status"></small>
+                                                    </h6>
                                                 </div>
                                             </div>
                                         </a>

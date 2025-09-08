@@ -68,6 +68,7 @@
                 </a>
                 <div v-if="!bedehkar">
                   <h5 class="text-danger">بدهکار انتخاب نشده است.</h5>
+                  <a href="{% url 'accounting:person_accounts' %}" target="_blank">همه حساب های اشخاص</a>
                 </div>
               </div>
             </div>
@@ -115,6 +116,8 @@
                 </a>
                 <div v-if="!bestankar">
                   <h5 class="text-danger">بستانکار انتخاب نشده است.</h5>
+                  <a href="{% url 'accounting:person_accounts' %}" target="_blank">همه حساب های اشخاص</a>
+
                 </div>
               </div>
             </div>

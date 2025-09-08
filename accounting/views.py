@@ -1265,6 +1265,7 @@ class InvoiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context['WIDE_LAYOUT']=True
+        context['expand_invoice_lines']=True
         invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
         if invoice is None:
             title='فاکتور پیدا نشد.'

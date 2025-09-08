@@ -129,7 +129,9 @@
             add_invoice_app.title=''
             if (typeof invoices_app != "undefined") {
               invoices_app.invoices.push(data.invoice);
-              show_message(add_invoice_app,'موفق',data.message,'success',5000)
+              let ss=`<br><a href="${data.invoice.get_absolute_url}">${data.invoice.title}</a>`
+              console.log(ss)
+              show_message(add_invoice_app,'موفق',data.message+ss,'success',10000)
             }
           }
           else{
