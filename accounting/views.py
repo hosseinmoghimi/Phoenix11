@@ -646,7 +646,7 @@ class FinancialDocumentView(View):
         context['financial_document_s']=financial_document_s
 
 
-        financial_document_lines=financial_document.financialdocumentline_set.all()
+        financial_document_lines=financial_document.financialdocumentline_set.order_by('-date_time')
 
         context['financial_document_lines']=financial_document_lines
         financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
