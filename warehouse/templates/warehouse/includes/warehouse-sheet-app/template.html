@@ -1,0 +1,131 @@
+<div class="card">
+    {% load to_normal_number %}
+    {% load to_price %}
+    {% load to_persian_date %}
+  <div class="card-header">
+    برگه انبار
+  </div>
+  <div class="card-body">
+    <table class="table">
+      <tbody>
+        <tr>
+          <td class="field_name">انبار</td>
+          <td class="field_value">
+            <div class="media">
+              <a href="{{warehouse_sheet.warehouse.get_absolute_url}}">
+                <img
+                  src="{{warehouse_sheet.warehouse.thumbnail}}"
+                  class="rounded"
+                  width="64"
+                  alt=""
+                />
+              </a>
+              <div class="media-body mr-2">
+                <h6>
+                  <a href="{{warehouse_sheet.warehouse.get_absolute_url}}">
+                    {{warehouse_sheet.warehouse.name}}
+                  </a>
+                </h6>
+              </div>
+            </div>
+          </td>
+        </tr>
+   <tr>
+          <td class="field_name">فاکتور</td>
+          <td class="field_value">
+            <div class="media">
+              <a href="{{warehouse_sheet.invoice_line.invoice.get_absolute_url}}">
+                <img
+                  src="{{warehouse_sheet.invoice_line.invoice.thumbnail}}"
+                  class="rounded"
+                  width="64"
+                  alt=""
+                />
+              </a>
+              <div class="media-body mr-2">
+                <h6>
+                  <a href="{{warehouse_sheet.invoice_line.invoice.get_absolute_url}}">
+                    {{warehouse_sheet.invoice_line.invoice.title}}
+                  </a>
+                </h6>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="field_name">کالا</td>
+          <td class="field_value">
+            <div class="media">
+              <a href="{{warehouse_sheet.invoice_line.invoice_line_item.get_absolute_url}}">
+                <img
+                  src="{{warehouse_sheet.invoice_line.invoice_line_item.thumbnail}}"
+                  class="rounded"
+                  width="64"
+                  alt=""
+                />
+              </a>
+              <div class="media-body mr-2">
+                <h6>
+                  <a href="{{warehouse_sheet.invoice_line.invoice_line_item.get_absolute_url}}">
+                    {{warehouse_sheet.invoice_line.invoice_line_item.title}}
+                  </a>
+                </h6>
+              </div>
+            </div>
+          </td>
+        </tr>
+
+           <tr>
+          <td class="field_name">تعداد</td>
+          <td class="field_value">
+            <div class=" ">
+              {{warehouse_sheet.invoice_line.quantity|to_normal_number}}
+              {{warehouse_sheet.invoice_line.unit_name}}
+              <small class="text-muted mx-2">
+
+                  {{warehouse_sheet.invoice_line.status}}
+                </small>
+               
+            </div>
+          </td>
+        </tr>
+
+
+         <tr>
+          <td class="field_name">مبلغ</td>
+          <td class="field_value">
+            <div class=" ">
+              {{warehouse_sheet.invoice_line.line_total|to_price}} {{CURRENCY}}
+               
+            </div>
+          </td>
+        </tr>
+
+
+         <tr>
+          <td class="field_name">جهت</td>
+          <td class="field_value">
+            <div class=" ">
+              {{warehouse_sheet.direction}}
+                
+            </div>
+          </td>
+        </tr>
+
+          <tr>
+          <td class="field_name">تاریخ</td>
+          <td class="field_value">
+            <div class=" ">
+              {{warehouse_sheet.date_added|to_persian_datetime|safe}}
+                
+            </div>
+          </td>
+        </tr>
+
+
+
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer"></div>
+</div>

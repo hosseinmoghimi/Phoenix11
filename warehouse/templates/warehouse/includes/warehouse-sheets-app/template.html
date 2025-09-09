@@ -135,6 +135,16 @@
                 <td>
                   <a
                     target="_blank"
+                    :href="warehouse_sheet.get_absolute_url"
+                    title="نمایش"
+                    class="text-info mx-2"
+                  >
+                    <i class="fa fa-edit text-info"> </i>
+                    نمایش
+                  </a>
+
+                  <a
+                    target="_blank"
                     :href="warehouse_sheet.get_edit_url"
                     title="ویرایش"
                     class="text-warning mx-2"
@@ -142,6 +152,7 @@
                     <i class="fa fa-edit text-warning"> </i>
                     ویرایش
                   </a>
+
                   <a
                     target="_blank"
                     :href="warehouse_sheet.get_delete_url"

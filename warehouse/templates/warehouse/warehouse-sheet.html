@@ -1,0 +1,25 @@
+{% extends "warehouse/layout.html" %} {% load static %} {% block content %}
+<div class="row rtl farsi">
+    
+  <div class="col-12">
+    {% include "warehouse/includes/warehouse-sheet-app/template.html" %}
+  </div>
+
+  {% if add_warehouse_sheet_signature_form %}
+  <div class="col-12">
+    {% include
+    "warehouse/includes/add-warehouse-sheet-signature-app/template.html" %}
+  </div>
+  {% endif %}
+</div>
+{% endblock content %} 
+{% block script %} 
+{% include "warehouse/includes/warehouse-sheet-app/script.html" %}
+
+
+ {% if add_warehouse_sheet_signature_form %} 
+
+{% include "warehouse/includes/add-warehouse-sheet-signature-app/script.html" %}
+ {% endif %} 
+ 
+ {% endblock script %}

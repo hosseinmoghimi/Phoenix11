@@ -11,6 +11,10 @@ class WeightUnitEnum(TextChoices):
     GRAM="گرم",_("گرم")
     TON="تن",_("تن")
 
+ 
+class SignatureStatus(TextChoices):
+    CONFIRMED="تایید می شود",_("تایید می شود")
+    DENIED="رد می شود",_("رد می شود")
 
 class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")

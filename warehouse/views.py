@@ -127,9 +127,9 @@ class WareHouseSheetView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context['name3']="name 3333"
-        warehouse_sheet=WareHouseRepo(request=request).warehouse_sheet(*args, **kwargs)
+        warehouse_sheet=WareHouseSheetRepo(request=request).warehouse_sheet(*args, **kwargs)
         context["warehouse_sheet"]=warehouse_sheet
-        warehouse_sheet_s=json.dumps(WareHouseSerializer(warehouse_sheet,many=False).data)
+        warehouse_sheet_s=json.dumps(WareHouseSheetSerializer(warehouse_sheet,many=False).data)
         context["warehouse_sheet_s"]=warehouse_sheet_s
 
         return render(request,TEMPLATE_ROOT+"warehouse-sheet.html",context)
