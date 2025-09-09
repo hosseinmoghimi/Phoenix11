@@ -143,7 +143,7 @@ def AccountContext(request,account,*args, **kwargs):
     context['account_s']=account_s
 
     
-    financial_document_lines=account.financialdocumentline_set.all().order_by('date_time')
+    financial_document_lines=account.financialdocumentline_set.all()
 
     context['financial_document_lines']=financial_document_lines
     financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
@@ -151,7 +151,7 @@ def AccountContext(request,account,*args, **kwargs):
 
 
  
-    all_sub_accounts_lines=account.all_sub_accounts_lines().order_by('-bedehkar')
+    all_sub_accounts_lines=account.all_sub_accounts_lines().order_by('date_time') 
     all_sub_accounts_lines_s=json.dumps(FinancialDocumentLineSerializer(all_sub_accounts_lines,many=True).data)
     context['all_sub_accounts_lines_s']=all_sub_accounts_lines_s
     context['financial_document_lines']=all_sub_accounts_lines
