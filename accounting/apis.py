@@ -178,6 +178,28 @@ class MergeProductApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
+class MergeAccountApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            merge_account_form=MergeAccountForm(request.POST)
+            if merge_account_form.is_valid():
+                log=333
+                cd=merge_account_form.cleaned_data 
+                result,message,merged_account=AccountRepo(request=request).merge_account(**cd)
+                if merged_account is not None:
+                    context['account']=AccountSerializer(merged_account).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
 class AddInvoiceApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

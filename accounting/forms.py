@@ -20,6 +20,10 @@ class MergeProductForm(forms.Form):
     deleting_product_id=forms.IntegerField(required=True)
     updating_product_id=forms.IntegerField(required=True)
 
+class MergeAccountForm(forms.Form):
+    deleting_account_id=forms.IntegerField(required=True)
+    updating_account_id=forms.IntegerField(required=True)
+
 class EditFinancialEventForm(forms.Form):
     title=forms.CharField(required=True,max_length=100)
     financial_event_id=forms.IntegerField(required=True)

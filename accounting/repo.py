@@ -224,8 +224,77 @@ class AccountRepo():
     def roots(self,*args, **kwargs):
         objects=self.objects.filter(parent_id=None)
         return objects.all()
+    
+    def merge_account(self,*args, **kwargs):
+           
+        result,message,merged_account=FAILED,"",None
+        deleting_account=self.account(pk=kwargs['deleting_account_id'])
+        updating_account=self.account(pk=kwargs['updating_account_id'])
+
+        i=0
+        from core.models import Page
+        from attachments.models import Comment,Image,Link,Download,Location
+        for child in Page.objects.filter(parent_id=deleting_account.id):
+            i+=1
+            child.parent_id=updating_account.id
+            child.save()
+        message+='<br>'+f'( {i} )'+'فرزند با موفقیت همگام سازی شد.'    
+ 
+        i=0
+        for comment in Comment.objects.filter(page_id=deleting_account.id):
+            i+=1
+            comment.page_id=updating_account.id
+            comment.save()
+        message+='<br>'+f'( {i} )'+'کامنت ها با موفقیت همگام سازی شد.'    
+        i=0
+        for link in Link.objects.filter(page_id=deleting_account.id):
+            i+=1
+            link.page_id=updating_account.id
+            link.save()
+        message+='<br>'+f'( {i} )'+'لینک ها با موفقیت همگام سازی شد.'    
+            
+        i=0
+        for download in Download.objects.filter(page_id=deleting_account.id):
+            i+=1
+            download.page_id=updating_account.id
+            download.save()
+        message+='<br>'+f'( {i} )'+'دانلود ها با موفقیت همگام سازی شد.'    
 
 
+
+        for image in Image.objects.filter(page_id=deleting_account.id):
+            i+=1
+            image.page_id=updating_account.id
+            image.save()
+        message+='<br>'+f'( {i} )'+'تصاویر با موفقیت همگام سازی شد.'    
+
+
+
+        i=0
+        for financial_document_line in FinancialDocumentLine.objects.filter(account_id=deleting_account.id):
+            i+=1
+            financial_document_line.account_id=updating_account.id
+            message+='<br>'+f'( {i} )'+'سطر های اسناد مالی با موفقیت همگام سازی شد.'    
+            financial_document_line.save()
+
+
+            
+
+        i=0
+        for financial_event in FinancialEvent.objects.filter(Q(bedehkar_id=deleting_account.id)|Q(bestankar_id=deleting_account.id)):
+            i+=1
+            if financial_event.bedehkar_id==deleting_account.id:
+                financial_event.bedehkar_id=updating_account.id
+            if financial_event.bestankar_id==deleting_account.id:
+                financial_event.bestankar_id=updating_account.id
+            message+='<br>'+f'( {i} )'+'رویداد های مالی با موفقیت همگام سازی شد.'    
+            financial_event.save()
+
+        result=SUCCEED
+        message+='<br>'+'با موفقیت همگام سازی شد.'    
+        return result,message,merged_account
+ 
+    
         
     def import_accounts_from_excel(self,*args,**kwargs):
         result,message,accounts=FAILED,"",[]

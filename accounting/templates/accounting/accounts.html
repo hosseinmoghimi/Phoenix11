@@ -9,7 +9,12 @@
      {% include 'accounting/includes/accounts-app/template.html' %}
    </div>
 
-
+ {% if merge_account_form %}
+      
+    <div class="col-md-12 ">
+        {% include "accounting/includes/merge-account-app/template.html" %}
+    </div>
+    {% endif %}
 </div>
 {% endblock content %}
 
@@ -17,5 +22,8 @@
 {% block script %}
 
      {% include 'accounting/includes/accounts-app/script.html' %}
-
+ {% if merge_account_form %}
+      
+        {% include "accounting/includes/merge-account-app/script.html" %}
+    {% endif %}
 {% endblock script %}

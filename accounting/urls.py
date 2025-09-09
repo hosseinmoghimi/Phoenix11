@@ -107,6 +107,7 @@ urlpatterns = [
     path("report/",login_required(views.ReportView.as_view()),name="report"),
 
      
+    path("merge-account/",login_required(apis.MergeAccountApi.as_view()),name="merge_account"),
 
     path('assets/',login_required(views.AssetsView.as_view()),name="assets"),
     path('asset/<int:pk>/',login_required(views.AssetView.as_view()),name="asset"),

@@ -715,6 +715,8 @@ class AccountsView(View):
         accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
         context['accounts_s']=accounts_s
         context.update(AddAccountContext(request=request))
+
+        context['merge_account_form']=MergeAccountForm()
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
 
 
