@@ -140,7 +140,19 @@ class Page(models.Model,LinkHelper,DateTimeHelper,ImageHelper):
         if self.parent is None:
             return self.title
         return self.parent.full_title+PAGE_TITLE_SEPERATOR+self.title
- 
+    def all_sub_ids(self,*args, **kwargs):
+        ids=[]
+        children=Page.objects.filter(parent_id=self.id)
+        if 'same_class' in kwargs and kwargs['same_class']:
+            children=children.filter(class_name=self.class_name)
+        if 'my_id' in kwargs and kwargs['my_id']:
+            ids.append(self.id)
+        for child in children:
+            ids.append(child.id)
+            aa=child.all_sub_ids(*args, **kwargs)
+            for a in aa:
+                ids.append(a)
+        return ids
 
 
 class EventCategory(models.Model,LinkHelper):

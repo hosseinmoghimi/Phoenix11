@@ -894,6 +894,7 @@ class Invoice(FinancialEvent):
                 lines_total+=line.unit_price*line.quantity-line.discount 
                 line.row=i
                 i+=1 
+                super(InvoiceLine,line).save()
  
             self.amount=lines_total 
         super(Invoice,self).save()

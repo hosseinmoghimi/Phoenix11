@@ -38,6 +38,9 @@ class TicketRepo():
         if "project_id" in kwargs:
             project_id=kwargs["project_id"]
             objects=objects.filter(project_id=project_id)  
+        if "project_id__in" in kwargs:
+            project_id__in=kwargs["project_id__in"]
+            objects=objects.filter(project_id__in=project_id__in)  
         return objects.all()
         
     def ticket(self,*args, **kwargs):

@@ -175,6 +175,8 @@ class ProjectView(View):
         
         context.update(ProjectContext(request=request,project=project))
 
+        all_sub_ids=project.all_sub_ids(same_class=True,my_id=True)
+        leolog(all_sub_ids=all_sub_ids) 
 
 
         
@@ -188,7 +190,7 @@ class ProjectView(View):
 
 
         
-        invoice_lines=project.all_invocie_lines()
+        invoice_lines=project.all_invocie_lines().order_by('invoice_line_item__title')
         invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
         context['invoice_lines']=invoice_lines
         context['invoice_lines_s']=invoice_lines_s
@@ -213,8 +215,7 @@ class ProjectView(View):
         if request.user.has_perm(APP_NAME+".change_project"):
             context['add_invoice_to_project_form']=AddInvoiceToProjectForm()
 
-
-        tickets=TicketRepo(request=request).list(project_id=project.id)
+        tickets=TicketRepo(request=request).list(project_id__in=all_sub_ids)
         context['tickets']=tickets
         tickets_s=json.dumps(TicketSerializer(tickets,many=True).data)
         context['tickets_s']=tickets_s
