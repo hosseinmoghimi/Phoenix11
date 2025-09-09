@@ -12,7 +12,8 @@ class WeightUnitEnum(TextChoices):
     TON="تن",_("تن")
 
  
-class SignatureStatus(TextChoices):
+class SignatureStatusEnum(TextChoices):
+    REQUESTED="درخواست می شود",_("درخواست می شود")
     CONFIRMED="تایید می شود",_("تایید می شود")
     DENIED="رد می شود",_("رد می شود")
 

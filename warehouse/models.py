@@ -77,19 +77,18 @@ class WareHouseSheet(models.Model,LinkHelper,DateTimeHelper):
         if self.direction==WareHouseSheetDirectionEnum.OUT:
             return 0-self.quantity
   
-class WareHouseSheetSignature(models.Model):
+class WareHouseSheetSignature(models.Model,LinkHelper,DateTimeHelper):
     warehouse_sheet=models.ForeignKey("warehousesheet", verbose_name=_("warehouse_sheet"), on_delete=models.PROTECT)
     employee=models.ForeignKey("organization.employee", verbose_name=_("employee"), on_delete=models.PROTECT)
-    status=models.CharField(_("status"),choices=SignatureStatus.choices, max_length=50)
+    status=models.CharField(_("status"),choices=SignatureStatusEnum.choices, max_length=50)
     description=models.CharField(_("description"),null=True,blank=True, max_length=50)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    
+    class_name='warehousesheetsignature'
+    app_name=APP_NAME
     class Meta:
         verbose_name = _("WareHouseSheetSignature")
         verbose_name_plural = _("WareHouseSheetSignatures")
 
     def __str__(self):
         return f'{self.employee}  {self.status}  {self.warehouse_sheet}'
-
-    def get_absolute_url(self):
-        return reverse("WareHouseSheetSignature_detail", kwargs={"pk": self.pk})
+ 

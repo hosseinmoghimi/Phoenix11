@@ -15,3 +15,8 @@ class AddWareHouseSheetForm(forms.Form):
      
 class SelectWareHouseForm(forms.Form):
     warehouse_id=forms.IntegerField(required=True) 
+    
+class AddWareHouseSheetSignatureForm(forms.Form):
+    warehouse_sheet_id=forms.IntegerField(required=True) 
+    status=forms.CharField(required=True,max_length=50)
+    description=forms.CharField(required=False,max_length=500)

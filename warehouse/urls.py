@@ -12,6 +12,7 @@ urlpatterns = [
     path('warehouse/<int:pk>/',login_required(views.WareHouseView.as_view()),name="warehouse"), 
 
 
+    path('add-warehouse-sheet-signature/',login_required(apis.AddWareHouseSheetSignatureApi.as_view()),name="add_warehouse_sheet_signature"), 
     
     path('warehouse_sheets/',login_required(views.WareHouseSheetsView.as_view()),name="warehouse_sheets"),  
     path('add_warehouse_sheet/',login_required(apis.AddWareHouseSheetApi.as_view()),name="add_warehouse_sheet"), 

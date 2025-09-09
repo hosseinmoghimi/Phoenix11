@@ -5,16 +5,19 @@
     {% include "warehouse/includes/warehouse-sheet-app/template.html" %}
   </div>
 
+  <div class="col-12">
+{% include "warehouse/includes/warehouse-sheet-signatures-app/template.html" %}
+  </div>
   {% if add_warehouse_sheet_signature_form %}
   <div class="col-12">
-    {% include
-    "warehouse/includes/add-warehouse-sheet-signature-app/template.html" %}
+    {% include "warehouse/includes/add-warehouse-sheet-signature-app/template.html" %}
   </div>
   {% endif %}
 </div>
 {% endblock content %} 
 {% block script %} 
 {% include "warehouse/includes/warehouse-sheet-app/script.html" %}
+{% include "warehouse/includes/warehouse-sheet-signatures-app/script.html" %}
 
 
  {% if add_warehouse_sheet_signature_form %} 

@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import WareHouseRepo,WareHouseSheetRepo
-from .serializers import WareHouseSerializer,WareHouseSheetSerializer
+from .repo import WareHouseRepo,WareHouseSheetRepo,WareHouseSheetSignatureRepo
+from .serializers import WareHouseSerializer,WareHouseSheetSerializer,WareHouseSheetSignatureSerializer
 from django.views import View
+from utility.enums import *
 from .enums import *
 from .forms import *
 from .apps import APP_NAME
@@ -132,6 +133,20 @@ class WareHouseSheetView(View):
         warehouse_sheet_s=json.dumps(WareHouseSheetSerializer(warehouse_sheet,many=False).data)
         context["warehouse_sheet_s"]=warehouse_sheet_s
 
+        warehouse_sheet_signatures=WareHouseSheetSignatureRepo(request=request).list(warehouse_sheet_id=warehouse_sheet.id,*args, **kwargs)
+        context["warehouse_sheet_signatures"]=warehouse_sheet_signatures
+        warehouse_sheet_signatures_s=json.dumps(WareHouseSheetSignatureSerializer(warehouse_sheet_signatures,many=True).data)
+        context["warehouse_sheet_signatures_s"]=warehouse_sheet_signatures_s
+
+        from organization.views import EmployeeRepo,EmployeeSerializer
+        me_employee=EmployeeRepo(request=request).me
+        
+        if me_employee is not None:
+            context['me_employee']=me_employee
+            me_employee_s=json.dumps(EmployeeSerializer(me_employee).data)
+            context['me_employee_s']=me_employee_s
+            context['warehouse_sheet_signature_statuses']=(i[0] for i in SignatureStatusEnum.choices)
+            context['add_warehouse_sheet_signature_form']=AddWareHouseSheetSignatureForm()
         return render(request,TEMPLATE_ROOT+"warehouse-sheet.html",context)
 # Create your views here. 
 
