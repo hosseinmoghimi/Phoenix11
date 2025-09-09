@@ -143,7 +143,7 @@ def AccountContext(request,account,*args, **kwargs):
     context['account_s']=account_s
 
     
-    financial_document_lines=account.financialdocumentline_set.all()
+    financial_document_lines=account.financialdocumentline_set.all().order_by('date_time')
 
     context['financial_document_lines']=financial_document_lines
     financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
