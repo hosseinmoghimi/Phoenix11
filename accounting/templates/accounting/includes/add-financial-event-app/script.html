@@ -6,6 +6,8 @@
             amount: 0,
             bedehkar: { code: "0", name: false },
             bestankar: { code: "0", name: false },
+            bedehkar_code:  "0" ,
+            bestankar_code:   "0" ,
             description:"",
             financial_event_date: current_date,
             financial_event_time: current_time,
@@ -17,6 +19,33 @@
 
         },
         methods: {
+            paste_bestankar:async ()=>{
+                console.log('paste_bestankar ')
+
+                try {
+                    const text = await navigator.clipboard.readText();
+                    add_financial_event_app.bestankar_code=String(text)
+                    add_financial_event_app.select_bestankar()
+                    
+                } catch (err) {
+                    console.error('Failed to read clipboard contents: ', err);
+                }
+
+            },
+                paste_bedehkar:async ()=>{
+                console.log('paste_bedehkar ')
+
+                try {
+                    const text = await navigator.clipboard.readText();
+                    add_financial_event_app.bedehkar_code=String(text)
+                    add_financial_event_app.select_bedehkar()
+                    
+                } catch (err) {
+                    console.error('Failed to read clipboard contents: ', err);
+                }
+
+            },
+      
             swap: function () {
                 let bed = add_financial_event_app.bedehkar
                 let bes = add_financial_event_app.bestankar
@@ -116,7 +145,7 @@
 
             },
             select_bedehkar: function () {
-                select_account_by_code(this.bedehkar.code).done(data => {
+                select_account_by_code(this.bedehkar_code).done(data => {
                     console.log(data)
 
                     if (data.result === "SUCCEED") {
@@ -134,7 +163,7 @@
                 })
             },
             select_bestankar: function () {
-                select_account_by_code(this.bestankar.code).done(data => {
+                select_account_by_code(this.bestankar_code).done(data => {
                     console.log(data)
                     if (data.result === "SUCCEED") {
                         if(data.account.nature==="{{ONLY_BEDEHKAR}}"){
