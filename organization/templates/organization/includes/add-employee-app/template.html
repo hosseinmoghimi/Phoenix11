@@ -56,27 +56,27 @@
               <div class="row">
                 <div class="col-6">
                   <div class="form-group">
-                    <label for="person_id">شخص</label>
+                    <label for="person_id">حساب شخص</label>
                     <input
-                      type="number"
+                      type="text"
                       placeholder=""
                       class="form-control"
                       id="person_id"
-                      @input="select_person()"
-                      v-model="person_id"
+                      @input="select_person_account()"
+                      v-model="person_account_code"
                     />
                   </div>
                 </div>
 
                 <div class="col-6 mt-3">
-                  <a :href="person.get_absolute_url" v-if="person">
+                  <a :href="person_account.get_absolute_url" v-if="person_account.id">
                     <div class="media">
-                      <img :src="person.thumbnail" width="64" alt="" />
+                      <img :src="person_account.person.image" width="64" alt="" />
                       <div class="mr-2 media-body">
                         <h5 class="my-2">
                           <span
-                            :class="'text-'+person.color"
-                            v-text="person.full_name"
+                            :class="'text-'+person_account.color"
+                            v-text="person_account.person.full_name"
                           ></span>
                         </h5>
                         
@@ -87,8 +87,9 @@
                       </div>
                     </div>
                   </a>
-                  <div v-if="!person">
-                    <h5 class="text-danger">شخص انتخاب نشده است.</h5>
+                  <div v-if="!person_account.id">
+                    <h5 class="text-danger">حساب شخص انتخاب نشده است.</h5>
+                    <a href="{% url 'accounting:person_accounts' %}" target="_blank">همه حساب های اشخاص</a>
                   </div>
                 </div>
               </div>
