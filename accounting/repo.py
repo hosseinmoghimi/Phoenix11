@@ -274,11 +274,100 @@ class AccountRepo():
         for financial_document_line in FinancialDocumentLine.objects.filter(account_id=deleting_account.id):
             i+=1
             financial_document_line.account_id=updating_account.id
-            message+='<br>'+f'( {i} )'+'سطر های اسناد مالی با موفقیت همگام سازی شد.'    
             financial_document_line.save()
-
+        message+='<br>'+f'( {i} )'+'سطر های اسناد مالی با موفقیت همگام سازی شد.'    
 
             
+        from warehouse.models import WareHouse
+        i=0
+        for warehouse in WareHouse.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            warehouse.person_account_id=updating_account.id
+            warehouse.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'انبارها با موفقیت همگام سازی شد.'    
+        
+
+        from transport.models import ServiceMan
+        i=0
+        for service_man in ServiceMan.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            service_man.person_account_id=updating_account.id
+            service_man.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'تعمیرکار ها با موفقیت همگام سازی شد.'    
+        
+
+
+        from organization.models import OrganizationUnit
+        i=0
+        for organization_unit in OrganizationUnit.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            organization_unit.person_account_id=updating_account.id
+            organization_unit.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'واحد های سازمانی با موفقیت همگام سازی شد.'    
+        
+        from market.models import MarketPerson
+        i=0
+        for market_person in MarketPerson.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            market_person.person_account_id=updating_account.id
+            market_person.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'افراد فروشگاه با موفقیت همگام سازی شد.'    
+        
+
+            
+        from health.models import Doctor,Patient
+        i=0
+        for doctor in Doctor.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            doctor.person_account_id=updating_account.id
+            doctor.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'دکتر ها با موفقیت همگام سازی شد.'    
+        
+
+        i=0
+        for patient in Patient.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            patient.person_account_id=updating_account.id
+            patient.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'بیمار ها با موفقیت همگام سازی شد.'    
+        
+
+        from school.models import School,Teacher,Student
+        i=0
+        for school in School.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            school.person_account_id=updating_account.id
+            school.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'مدرسه ها با موفقیت همگام سازی شد.'    
+        
+
+
+        i=0
+        for teacher in Teacher.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            teacher.person_account_id=updating_account.id
+            teacher.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'دبیر ها با موفقیت همگام سازی شد.'    
+        
+
+
+        i=0
+        for student in Student.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            student.person_account_id=updating_account.id
+            student.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'دانش آموزان با موفقیت همگام سازی شد.'    
+        
+
 
         i=0
         for financial_event in FinancialEvent.objects.filter(Q(bedehkar_id=deleting_account.id)|Q(bestankar_id=deleting_account.id)):
@@ -287,8 +376,8 @@ class AccountRepo():
                 financial_event.bedehkar_id=updating_account.id
             if financial_event.bestankar_id==deleting_account.id:
                 financial_event.bestankar_id=updating_account.id
-            message+='<br>'+f'( {i} )'+'رویداد های مالی با موفقیت همگام سازی شد.'    
             financial_event.save()
+        message+='<br>'+f'( {i} )'+'رویدادهای مالی با موفقیت همگام سازی شد.'    
 
         result=SUCCEED
         message+='<br>'+'با موفقیت همگام سازی شد.'    
@@ -1024,6 +1113,7 @@ class ProductRepo():
             result=SUCCEED
             product_categories=product.category_set.all()
         return result,message,category,product_categories
+    
     def merge_product(self,*args, **kwargs):
            
         result,message,merged_product=FAILED,"",None
@@ -1054,13 +1144,37 @@ class ProductRepo():
         message+='<br>'+f'( {i} )'+'ویژگی ها با موفقیت همگام سازی شد.'    
 
         i=0
+
+        
+        from projectmanager.models import RemoteClient
+        
+        i=0
+        for remote_client in RemoteClient.objects.filter(product_id=deleting_product.id):
+            i+=1
+            remote_client.product_id=updating_product.id
+            remote_client.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'ریموت کلاینت ها با موفقیت همگام سازی شد.'    
+
+        from market.models import Shop
+        
+        i=0
+        for shop in Shop.objects.filter(product_id=deleting_product.id):
+            i+=1
+            shop.product_id=updating_product.id
+            shop.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'ریموت کلاینت ها با موفقیت همگام سازی شد.'    
+
+
+
         from attachments.models import Image,Link,Download,Comment,Location
          
         i=0
-        for iamge in Image.objects.filter(page_id=deleting_product.id):
+        for image in Image.objects.filter(page_id=deleting_product.id):
             i+=1
-            iamge.page_id=updating_product.id
-            iamge.save()
+            image.page_id=updating_product.id
+            image.save()
         message+='<br>'+f'( {i} )'+'تصویر ها با موفقیت همگام سازی شد.'    
 
         i=0
@@ -1095,6 +1209,7 @@ class ProductRepo():
 
 
         return result,message,merged_product 
+    
     def product(self,*args, **kwargs):
         if "product_id" in kwargs and kwargs["product_id"] is not None:
             return self.objects.filter(pk=kwargs['product_id']).first() 
