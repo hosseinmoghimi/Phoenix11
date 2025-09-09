@@ -9,6 +9,7 @@
 let financial_document_for_add_financial_document_line_app={id:0,title:'سند بی نام'}
 let financial_event_for_add_financial_document_line_app={id:0,title:''}
 let account_for_add_financial_document_line_app={code:'0'}
+let account_code_for_add_financial_document_line_app=""
 </script>
 {% if financial_document %}
 <script>
@@ -25,6 +26,7 @@ let account_for_add_financial_document_line_app={code:'0'}
  
 <script>
     account_for_add_financial_document_line_app=JSON.parse(`{{account_s|escapejs}}`)
+    account_code_for_add_financial_document_line_app="{{account.code}}"
   </script>
 {% endif %}
 
@@ -36,6 +38,7 @@ let account_for_add_financial_document_line_app={code:'0'}
             date_time: current_date,
             bedehkar: 0,
             bestankar: 0,
+            account_code:account_code_for_add_financial_document_line_app,
             account: account_for_add_financial_document_line_app,
             financial_event: financial_event_for_add_financial_document_line_app,
             financial_document: financial_document_for_add_financial_document_line_app,
@@ -46,6 +49,24 @@ let account_for_add_financial_document_line_app={code:'0'}
 
         },
         methods: {
+            paste_account:async ()=>{
+                console.log('paste_account ')
+
+                try {
+                    const text = await navigator.clipboard.readText();
+                    add_financial_document_line_app.account_code=String(text)
+                    add_financial_document_line_app.select_account()
+                    
+                } catch (err) {
+                    console.error('Failed to read clipboard contents: ', err);
+                }
+
+            },
+            
+            set_account:function(code){
+                add_financial_document_line_app.account_code=code
+                add_financial_document_line_app.select_account()
+            },
 
             to_price: vall => to_price(vall),
             to_price_colored: vall => to_price_colored(vall),
@@ -106,7 +127,7 @@ let account_for_add_financial_document_line_app={code:'0'}
                 this.bedehkar = a
             },
             select_account: function () {
-                select_account_by_code(this.account.code).done(data => {
+                select_account_by_code(this.account_code).done(data => {
                     if (data.result === "SUCCEED") {
                         leolog(data.account)
                         add_financial_document_line_app.account = data.account
