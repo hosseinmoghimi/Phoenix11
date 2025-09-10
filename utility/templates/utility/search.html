@@ -16,6 +16,28 @@
         {% include "accounting/includes/accounts-app/template.html" %}
     </div>
     {% endif %}
+    
+    {% if financial_documents %}
+         
+    <div class="col-md-12 ">
+        {% include "accounting/includes/financial-documents-app/template.html" %}
+    </div>
+    {% endif %}
+
+    {% if financial_events %}
+         
+    <div class="col-md-12 ">
+        {% include "accounting/includes/financial-events-app/template.html" %}
+    </div>
+    {% endif %}
+
+     {% if invoices %}
+         
+    <div class="col-md-12 ">
+        {% include "accounting/includes/invoices-app/template.html" %}
+    </div>
+    {% endif %}
+
 
 
 
@@ -187,6 +209,20 @@
         {% include "attachments/includes/tags-app/script.html" %}
     {% endif %}
 
+    
+    {% if financial_documents %}
+         
+        {% include "accounting/includes/financial-documents-app/script.html" %}
+    {% endif %}
+    {% if financial_events %}
+         
+        {% include "accounting/includes/financial-events-app/script.html" %}
+    {% endif %}
+
+     {% if invoices %}
+         
+        {% include "accounting/includes/invoices-app/script.html" %}
+    {% endif %}
 <script>
     let log = '{{log}}'
     let WAS_FOUND = '{{WAS_FOUND}}'

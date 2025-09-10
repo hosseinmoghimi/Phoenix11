@@ -428,6 +428,31 @@ def SearchContext(request,search_for,*args, **kwargs):
 
         
 
+    invoices=InvoiceRepo(request=request).list(search_for=search_for)
+    if len(invoices)>0:
+        context['invoices']=invoices
+        context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
+        WAS_FOUND=True
+
+        
+
+    financial_events=FinancialEventRepo(request=request).list(search_for=search_for)
+    if len(financial_events)>0:
+        context['financial_events']=financial_events
+        context['financial_events_s']=json.dumps(FinancialEventSerializer(financial_events,many=True).data)
+        WAS_FOUND=True
+
+        
+
+    financial_documents=FinancialDocumentRepo(request=request).list(search_for=search_for)
+    if len(financial_documents)>0:
+        context['financial_documents']=financial_documents
+        context['financial_documents_s']=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
+        WAS_FOUND=True
+
+
+        
+
     persons=PersonRepo(request=request).list(search_for=search_for)
     if len(persons)>0:
         context['persons']=persons

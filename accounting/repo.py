@@ -2438,8 +2438,7 @@ class FinancialEventRepo():
         objects=self.objects
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
-            codeee=str(filter_number(search_for))
-            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
+            objects=objects.filter(Q(title__contains=search_for)  )
         if "account_code" in kwargs:
             account_code=kwargs["account_code"]
             objects=objects.filter(Q(bedehkar__code=account_code) | Q(bestankar__code=account_code)  )
@@ -2648,8 +2647,7 @@ class InvoiceRepo(FinancialEventRepo):
         objects=self.objects
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
-            codeee=str(filter_number(search_for))
-            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
+            objects=objects.filter(Q(title__contains=search_for)  )
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
