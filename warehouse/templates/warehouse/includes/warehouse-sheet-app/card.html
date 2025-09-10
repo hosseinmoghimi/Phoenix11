@@ -2,6 +2,7 @@
     {% load to_normal_number %}
     {% load to_price %}
     {% load to_persian_date %}
+    {% load to_text_color %}
   <div class="card-header">
     برگه انبار
   </div>
@@ -85,14 +86,25 @@
 
                   {{warehouse_sheet.invoice_line.status}}
                 </small>
-               
+            
             </div>
           </td>
         </tr>
 
+          <tr>
+          <td class="field_name">مبلغ جزء</td>
+          <td class="field_value">
+            <div class=" ">
+              
+               {{warehouse_sheet.invoice_line.unit_price|to_price}}
+               {{CURRENCY}}
+            </div>
+          </td>
+        </tr>
+ 
 
          <tr>
-          <td class="field_name">مبلغ</td>
+          <td class="field_name">جمع</td>
           <td class="field_value">
             <div class=" ">
               {{warehouse_sheet.invoice_line.line_total|to_price}} {{CURRENCY}}
@@ -105,7 +117,7 @@
          <tr>
           <td class="field_name">جهت</td>
           <td class="field_value">
-            <div class=" ">
+            <div class="text-{{warehouse_sheet.direction|to_text_color}}">
               {{warehouse_sheet.direction}}
                 
             </div>

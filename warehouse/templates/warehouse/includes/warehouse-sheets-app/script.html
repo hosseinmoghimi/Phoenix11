@@ -19,6 +19,13 @@
                 }
                 return 'danger'
             },
+            to_arrow:function(direction){
+                if(direction.indexOf('ورود')>-1){
+                    return `<i class="fa fa-arrow-down text-success"></i>`
+                }
+                return `<i class="fa fa-arrow-up text-danger"></i>`
+            },
+            
             to_price: function(vall) { 
                 return  to_price(vall) 
             }

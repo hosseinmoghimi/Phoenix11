@@ -27,6 +27,7 @@
       data-parent="#accordion-warehouse-sheets"
     >
       <div class="card-body">
+       
         <div class="table-responsive" v-if="warehouse_sheets.length>0">
           <table class="table table-striped">
             <thead>
@@ -34,7 +35,7 @@
               <th>تعداد</th>
 
                 {% if not product %}
-                  
+                 
                     <th>کالا</th>
                     {% endif %}
                 {% if not warehouse %}
@@ -52,12 +53,13 @@
             </thead>
             <tbody>
 
-              <tr v-for="warehouse_sheet in warehouse_sheets">
+              <tr v-for="warehouse_sheet in warehouse_sheets"  >
                 
                 <td>
                   <span :class="'text-'+direction_color(warehouse_sheet.direction)">
 
                     <span v-text="warehouse_sheet.direction"></span>
+                    <span v-html="to_arrow(warehouse_sheet.direction)"></span>
                   </span>
                 </td>
                  <td>
