@@ -124,7 +124,7 @@
       </div>
       <div>
         <btn
-          class="btn btn-success"
+          class="btn btn-success my-2 btn-block"
           @click="copy_shaba_no_to_clipboard(`{{bank_account.shaba_no}}`)"
         >
           شبا : {{bank_account.shaba_no}}
@@ -132,7 +132,7 @@
       </div>
       <div>
         <btn
-          class="btn btn-danger"
+          class="btn btn-danger my-2 btn-block"
           @click="copy_card_no_to_clipboard(`{{bank_account.card_no}}`)"
         >
           کارت : {{bank_account.card_no}}
@@ -140,12 +140,25 @@
       </div>
       <div>
         <btn
-          class="btn btn-info"
+          class="btn btn-info my-2 btn-block"
           @click="copy_account_no_to_clipboard(`{{bank_account.account_no}}`)"
         >
           شماره حساب : {{bank_account.account_no}}
         </btn>
       </div>
+
+
+      <div>
+        <btn
+          class="btn btn-warning my-2 btn-block"
+          @click="copy_all_to_clipboard()"
+        >
+  کپی همه 
+
+</btn>
+      </div>
+
+
     </div>
 
     <div class="my-3">

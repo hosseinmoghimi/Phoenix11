@@ -794,6 +794,7 @@ class Product(InvoiceLineItem):
             generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
         return f"{QRCODE_URL}{file_name}"
   
+
 class ProductSpecification(models.Model,LinkHelper):
     product=models.ForeignKey("product", verbose_name=_("product"), on_delete=models.CASCADE)
     name=models.CharField(_("name"),max_length=50)
@@ -847,8 +848,6 @@ class Cheque(FinancialEvent,ImageHelper):
         
         super(Cheque,self).save()
         return result,message,cheque
-
- 
 
 
 class Invoice(FinancialEvent):
@@ -996,6 +995,9 @@ class BankAccount(Account):
             self.class_name='bankaccount'
               
               
+        self.shaba_no=self.shaba_no.replace(' ' ,'')
+        self.account_no=self.account_no.replace(' ' ,'')
+        self.card_no=self.card_no.replace(' ' ,'')
         result,message,bank_account= super(BankAccount,self).save(*args, **kwargs)
         if result==SUCCEED:
             message='حساب بانکی با موفقیت ذخیره شد'
