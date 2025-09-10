@@ -7,6 +7,7 @@ from utility.repo import ParameterRepo
 from messenger.apps import APP_NAME
 from django.views import View
 from core.views import CoreContext,leolog
+from phoenix.settings import PUSHER_IS_ENABLE
 import json
 
 TEMPLATE_ROOT=APP_NAME+"/"
@@ -21,10 +22,10 @@ def MessengerContext(request,*args, **kwargs):
         if me_person is None:
             context['PUSHER_IS_ENABLE']=False
             return {}
-    PUSHER_IS_ENABLE=ParameterRepo(request=request,app_name=APP_NAME).parameter(name=ParameterEnum.PUSHER_IS_ENABLE,default='False').boolean_value
+    # PUSHER_IS_ENABLE=ParameterRepo(request=request,app_name=APP_NAME).parameter(name=ParameterEnum.PUSHER_IS_ENABLE,default='False').boolean_value
     if PUSHER_IS_ENABLE and me_person is not None and me_person.member_set.first() is not None:
         context.update(MemberContext(request=request))
-        context['PUSHER_IS_ENABLE'] = True
+        # context['PUSHER_IS_ENABLE'] = True
         
     else:
         context['PUSHER_IS_ENABLE'] = False

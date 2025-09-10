@@ -1211,19 +1211,25 @@ class ProductRepo():
         return result,message,merged_product 
     
     def product(self,*args, **kwargs):
+        product=None
         if "product_id" in kwargs and kwargs["product_id"] is not None:
-            return self.objects.filter(pk=kwargs['product_id']).first() 
-        if "pk" in kwargs and kwargs["pk"] is not None:
-            return self.objects.filter(pk=kwargs['pk']).first() 
-        if "id" in kwargs and kwargs["id"] is not None:
-            return self.objects.filter(pk=kwargs['id']).first() 
-        if "code" in kwargs and kwargs["code"] is not None:
-            return self.objects.filter(barcode=kwargs['code']).first()
-             
+            product= self.objects.filter(pk=kwargs['product_id']).first() 
         if "barcode" in kwargs and kwargs["barcode"] is not None:
             a= self.objects.filter(barcode=kwargs['barcode']).first() 
-            return a 
-           
+            if product is None:
+                product= a 
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            if product is None:
+                product= self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            if product is None:
+                product= self.objects.filter(pk=kwargs['id']).first() 
+        if "code" in kwargs and kwargs["code"] is not None:
+            if product is None:
+                product= self.objects.filter(barcode=kwargs['code']).first()
+             
+        return product
+       
     def add_product(self,*args,**kwargs):
         result,message,product=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_product"):
@@ -3042,11 +3048,11 @@ class CategoryRepo():
         (result,message,category)=category.save()
         return result,message,category
     def add_product_to_category(self,*args, **kwargs):
-        result,message,product_categories=FAILED,'',[]
+        result,message,product_categories,product,category=FAILED,'',[],None,None
             
         if not self.request.user.has_perm(APP_NAME+".add_category"):
             message="دسترسی غیر مجاز"
-            return result,message,product_categories
+            return result,message,product_categories,product,category
         # product_id=0
         # category_id=0
         # if 'category_id' in kwargs:
@@ -3057,21 +3063,21 @@ class CategoryRepo():
         category=self.category(*args, **kwargs)
         if product is None:
             message="کالایی پیدا نشد"
-            return result,message,product_categories
+            return result,message,product_categories,product,category
         if category is None:
             message="دسته بندی پیدا نشد"
-            return result,message,product_categories
+            return result,message,product_categories,product,category
         if product in category.products.all():
             message='با موفقیت کالا از این دسته بندی حذف شد.'
             result=SUCCEED
             category.products.remove(product.id)
             product_categories=product.category_set.all()
-            return result,message,product_categories
+            return result,message,product_categories,product,category
         category.products.add(product.id)
         result=SUCCEED
         message='با موفقیت کالا به دسته بندی اضافه شد.'
         product_categories=product.category_set.all()
-        return result,message,product_categories
+        return result,message,product_categories,product,category
     
 
 

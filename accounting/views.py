@@ -1459,6 +1459,7 @@ class CategoryView(View):
 
         if request.user.has_perm(APP_NAME+'.add_category'):
             context['add_category_form']=AddCategoryForm()
+            context['add_product_to_category_form']=AddProductToCategoryForm()
         if request.user.has_perm(APP_NAME+'.add_product'):
             context['add_product_form']=AddProductForm()
             context.update(AddProductContext(request=request))

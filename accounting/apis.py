@@ -31,9 +31,11 @@ class AddProductToCategoryApi(APIView):
         if add_product_to_category_form.is_valid():
             log=333
             cd=add_product_to_category_form.cleaned_data
-            result,message,product_categories=CategoryRepo(request=request).add_product_to_category(**cd)
+            result,message,product_categories,product,category=CategoryRepo(request=request).add_product_to_category(**cd)
             if result==SUCCEED:
                 context['product_categories']=CategorySerializer(product_categories,many=True).data
+                context['category']=CategorySerializer(category,many=False).data
+                context['product']=ProductSerializer(product,many=False).data
         context['message']=message
         context['result']=result
         context['log']=log

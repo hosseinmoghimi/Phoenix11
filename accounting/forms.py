@@ -134,7 +134,7 @@ class AddServiceForm(AddInvoiceLineItemForm):
 class AddProductToCategoryForm(forms.Form):
     product_id=forms.IntegerField(required=True)
     category_id=forms.IntegerField(required=True)
-
+    product_barcode=forms.CharField(max_length=200,required=False)
 
 class AddCategoryForm(forms.Form):
     title=forms.CharField( max_length=100, required=True)
