@@ -50,29 +50,23 @@ class Person(models.Model,ImageHelper,LinkHelper):
     def full_name_(self):
         full_name=""
         if self.prefix:
-            full_name=self.prefix
-            
-        if len(full_name)>0:
-            full_name+=" "
+            full_name=self.prefix+" "
+             
+        if self.title:
+            full_name+=self.title +" "
            
         if self.first_name:
-            full_name+=self.first_name 
+            full_name+=self.first_name +" "
 
+             
             
-            
-        if len(full_name)>0:
-            full_name+=" "
-            
-        if self.title:
-            full_name+=self.title 
-
-            
-            
-        if len(full_name)>0:
-            full_name+=" "
            
         if self.last_name:
-            full_name+=self.last_name 
+            full_name+=self.last_name +" "
+            
+
+            
+             
 
         return full_name.replace('  ',' ')
 
