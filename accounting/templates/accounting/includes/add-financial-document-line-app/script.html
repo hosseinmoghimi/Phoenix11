@@ -6,10 +6,12 @@
 
 
 <script>
+    let amount_for_add_financial_document_line_app=0
 let financial_document_for_add_financial_document_line_app={id:0,title:'سند بی نام'}
 let financial_event_for_add_financial_document_line_app={id:0,title:''}
 let account_for_add_financial_document_line_app={code:'0'}
 let account_code_for_add_financial_document_line_app=""
+let title_for_add_financial_document_line_app=""
 </script>
 {% if financial_document %}
 <script>
@@ -19,6 +21,13 @@ let account_code_for_add_financial_document_line_app=""
 {% if financial_event %}
  
 <script>
+
+    
+ account_for_add_financial_document_line_app={code:`{{financial_event.bedehkar.code}}`,get_absolute_url:`{{financial_event.bedehkar.get_absolute_url}}`,title:"{{financial_event.bedehkar.title}}",thumbnail:"{{financial_event.bedehkar.thumbnail}}"}
+ account_code_for_add_financial_document_line_app="{{financial_event.bedehkar.code}}"
+
+    amount_for_add_financial_document_line_app=parseInt(`{{financial_event.amount}}`)
+    title_for_add_financial_document_line_app="{{financial_event.title}}"
     financial_event_for_add_financial_document_line_app=JSON.parse(`{{financial_event_s|escapejs}}`)
   </script>
 {% endif %}
@@ -34,9 +43,9 @@ let account_code_for_add_financial_document_line_app=""
     let add_financial_document_line_app = new Vue({
         el: "#add-financial-document-line-app",
         data: {
-            title:"",
+            title:title_for_add_financial_document_line_app,
             date_time: current_date,
-            bedehkar: 0,
+            bedehkar: amount_for_add_financial_document_line_app,
             bestankar: 0,
             account_code:account_code_for_add_financial_document_line_app,
             account: account_for_add_financial_document_line_app,
