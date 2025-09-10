@@ -405,7 +405,7 @@ class Brand(models.Model,LinkHelper,ImageHelper):
         return self.name
 
 
-class FinancialDocumentLine(models.Model,LinkHelper):
+class FinancialDocumentLine(models.Model,LinkHelper,DateTimeHelper):
     financial_document=models.ForeignKey("financialdocument", verbose_name=_("accountingdocument"), on_delete=models.CASCADE)
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
     financial_event=models.ForeignKey("financialevent", null=True,blank=True,verbose_name=_("event"), on_delete=models.PROTECT)
@@ -427,6 +427,12 @@ class FinancialDocumentLine(models.Model,LinkHelper):
                     <small class="text-muted mr-1">{a[11:]}</small>
 
                 """
+    
+    @property
+    def persian_date_time_(self):
+        a= PersianCalendar().from_gregorian(self.date_time)    
+        return a
+    
     def delete(self,*args, **kwargs): 
         account=self.account
         financial_document=self.financial_document
@@ -994,7 +1000,7 @@ class BankAccount(Account):
         if self.class_name is None or self.class_name=='':
             self.class_name='bankaccount'
               
-              
+
         self.shaba_no=self.shaba_no.replace(' ' ,'')
         self.account_no=self.account_no.replace(' ' ,'')
         self.card_no=self.card_no.replace(' ' ,'')

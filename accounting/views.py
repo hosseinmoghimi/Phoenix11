@@ -725,7 +725,12 @@ class FinancialDocumentLineView(View):
         context['financial_document_line']=financial_document_line
         financial_document_line_s=json.dumps(FinancialDocumentLineSerializer(financial_document_line).data)
         context['financial_document_line_s']=financial_document_line_s
-
+        context['account_s']=json.dumps(AccountSerializer(financial_document_line.account).data)
+        context['financial_event_s']=json.dumps(FinancialEventSerializer(financial_document_line.financial_event).data)
+        context['financial_document_s']=json.dumps(FinancialDocumentSerializer(financial_document_line.financial_document).data)
+        context['persian_date_time']=financial_document_line.persian_date_time_[0:10]
+        if request.user.has_perm(APP_NAME+'.change_financialdocumentline'):
+            context['edit_financial_document_line_form']=EditFinancialDocumentLineForm()
 
         return render(request,TEMPLATE_ROOT+"financial-document-line.html",context)
 

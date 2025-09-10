@@ -2362,6 +2362,115 @@ class FinancialDocumentLineRepo:
         LogRepo(request=self.request).add_log(**new_log)
         return result,message,financial_document_line
     
+
+       
+    def edit_financial_document_line(self,*args, **kwargs):
+        financial_document_line,message,result=(None,"",FAILED)
+    
+        bestankar=kwargs['bestankar']
+        bedehkar=kwargs['bedehkar']
+        if bedehkar==0 and bestankar==0:
+            message="مبلغ بدهکار و بستانکار صفر وارد شده است."
+            return result,message,financial_document_line
+
+            
+        if bedehkar>0 and bestankar>0:
+            message="مبلغ بدهکار و بستانکار ، هر دو وارد شده است."
+            return result,message,financial_document_line
+
+        if bedehkar<0 or bestankar<0:
+            message="مبلغ بدهکار یا بستانکار منفی وارد شده است."
+            return result,message,financial_document_line
+
+        # if not Permission(request=self.request).is_permitted(APP_NAME,OperationEnum.ADD,"accountingdocumentline"):
+        if not self.request.user.has_perm(APP_NAME+".change_accountingdocumentline"):
+            message="دسترسی غیر مجاز"
+            return result,message,financial_document_line
+        
+        financial_document_line=FinancialDocumentLine.objects.filter(pk=kwargs['financial_document_line_id']).first()
+        if financial_document_line is None:
+            return FAILED,'سطر پیدا نشد.',None
+        if 'title' in kwargs:
+            financial_document_line.title=kwargs['title']
+        if 'financial_event_id' in kwargs:
+            financial_event_id=kwargs['financial_event_id']
+            financial_event=FinancialEvent.objects.filter(pk=financial_event_id).first()
+            if financial_event is None:
+                message='رویداد مالی درست انتخاب نشده است.'
+                return result,message,None
+            financial_document_line.financial_event_id=financial_event_id
+        if 'financial_document_id' in kwargs:
+            financial_document_id=kwargs['financial_document_id']
+            financial_document=FinancialDocument.objects.filter(pk=financial_document_id).first()
+            if financial_document is None:
+                message='سند مالی درست انتخاب نشده است.'
+                return FAILED,message,None
+ 
+            if financial_document.status==FinancialDocumentStatusEnum.ACCEPTED:
+                message='سند مرتبط تایید شده می باشد.<br> نمی توان سطر های آن را تغییر داد.'
+                return FAILED,message,None
+        if 'description' in kwargs:
+            financial_document_line.description=kwargs['description']
+        if 'persian_date_time' in kwargs and kwargs['persian_date_time'] is not None and not kwargs['persian_date_time']=='':
+            persian_date_time=kwargs['persian_date_time']
+            date_time=PersianCalendar().to_gregorian(persian_date_time)
+            # date_time=date_time,persian_date_time=kwargs['persian_date_time'])
+            # financial_document_line.date_time=date_time
+        if 'bestankar' in kwargs  :
+            financial_document_line.bestankar=kwargs['bestankar']
+        if 'bedehkar' in kwargs :
+            financial_document_line.bedehkar=kwargs['bedehkar'] 
+        if 'date_time' in kwargs :
+
+            date_time=kwargs['date_time']
+            year=date_time[:2]
+            if year=="13" or year=="14":
+                date_time=PersianCalendar().to_gregorian(kwargs["date_time"])
+            financial_document_line.date_time=date_time 
+
+        if 'account_code' in kwargs and kwargs['account_code'] is not None:
+            account=AccountRepo(request=self.request).account(code=kwargs['account_code']) 
+            if account is not None:
+                financial_document_line.account=account
+        if 'account_id' in kwargs and kwargs['account_id'] is not None:
+            financial_document_line.account_id=kwargs['account_id'] 
+        
+        if financial_document_line.account is None:
+            message='حساب درست انتخاب نشده است.'
+            return FAILED,message,None
+        # if 'financial_year_id' in kwargs:
+        #     payment.financial_year_id=kwargs['financial_year_id']
+        # else:
+        #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
+
+        if financial_document_line.account.nature==AccountNatureEnum.ONLY_BESTANKAR and financial_document_line.bedehkar>0:
+            message=financial_document_line.account.name+" ماهیت فقط بستانکار دارد"
+            financial_document_line=None
+            return result,message,financial_document_line
+        if financial_document_line.account.nature==AccountNatureEnum.ONLY_BEDEHKAR and financial_document_line.bestankar>0:
+            message=financial_document_line.account.name+" ماهیت فقط بدهکار دارد"
+            financial_document_line=None
+            return result,message,financial_document_line
+
+        result,message,financial_document_line=financial_document_line.save()
+        if result==FAILED:
+            return result,message,financial_document_line
+        # financial_document_line.account.normalize_total()
+        result=SUCCEED
+        message="با موفقیت تغییر یافت."
+         
+
+        me_person=PersonRepo(request=self.request).me
+        new_log={}
+        new_log['title']="تغییر سند مالی "
+        new_log['app_name']=APP_NAME
+        new_log['url']=financial_document_line.get_absolute_url()
+        new_log['person']=me_person
+        new_log['description']="خط سند مالی جدید با موفقیت اضافه گردید."
+        LogRepo(request=self.request).add_log(**new_log)
+        return result,message,financial_document_line
+    
+
     def delete_all(self,*args,**kwargs):
         result,message=FAILED,''
         if not self.request.user.has_perm(APP_NAME+".delete_accountingdocumentline"):

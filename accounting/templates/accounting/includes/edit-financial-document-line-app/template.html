@@ -1,26 +1,26 @@
 {% load static %}
 
-<div id="accordion-add-financial-document-line">
-  <div class="card" id="add-financial-document-line-app">
+<div id="accordion-edit-financial-document-line">
+  <div class="card" id="edit-financial-document-line-app">
     <div class="card-header">
       <h5 class="card-title text-center farsi">
         <button
           class="btn btn-link"
           data-toggle="collapse"
-          data-target="#collapse-add-financial-document-line"
+          data-target="#collapse-edit-financial-document-line"
           aria-expanded="true"
-          aria-controls="collapse-add-financial-document-line"
+          aria-controls="collapse-edit-financial-document-line"
         >
           <i class="fa fa-plus"></i>
-          افزودن سطر سند مالی
+          ویرایش سطر سند مالی
         </button>
       </h5>
     </div>
     <div
-      id="collapse-add-financial-document-line"
-      class="collapse {% if expand_add_financial_document_line %} show {% endif %}"
-      aria-labelledby="heading-add-financial-document-line"
-      data-parent="#accordion-add-financial-document-line"
+      id="collapse-edit-financial-document-line"
+      class="collapse {% if expand_edit_financial_document_line %} show {% endif %}"
+      aria-labelledby="heading-edit-financial-document-line"
+      data-parent="#accordion-edit-financial-document-line"
     >
       <div class="card-body">
         
@@ -37,30 +37,13 @@
               </div>
             </div>
 
-            <div class="col-md-12">
-               {% if not account and financial_event %}
-<div class="my-2">
-
-  <button class="btn btn-{{financial_event.bedehkar.color}}" @click="set_account(`{{financial_event.bedehkar.code}}`,parseInt(`{{financial_event.amount}}`),0)">
-    <small class=" ml-1">بدهکار</small>
-    {{financial_event.bedehkar.title}}</button>
-    <button class="btn btn-{{financial_event.bestankar.color}}" @click="set_account(`{{financial_event.bestankar.code}}`,0,parseInt(`{{financial_event.amount}}`))">
-      <small class=" ml-1">بستانکار</small>
-      {{financial_event.bestankar.title}}</button>
-      <button class="btn btn-info " @click="paste_account()">
-        <i class="fa fa-paste"></i> الصاق
-      </button>
-    </div>
-
-                {% endif %}
-            </div>
+            
 
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">حساب</label>
 
              
-                {% if not account %}
 
                 <input
                   class="form-control"
@@ -68,25 +51,21 @@
                   @input="select_account()"
                   type="text"
                 />
-                {% endif %}
 
                 <div class="my-2" v-if="account.title">
                   {% include "accounting/includes/account-app/media.html" %}
                 </div>
-                {% if not account %}
 
                 <h6 class="text-danger my-2">
                   <a target="_blank" href="{% url 'accounting:person_accounts' %}">
                     <span> همه حساب های اشخاص </span>
                   </a>
                 </h6>
-                {% endif %}
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">رویداد</label>
-                {% if not financial_event %}
 
                 <input
                   class="form-control"
@@ -94,7 +73,6 @@
                   @input="select_financial_event_by_id()"
                   type="number"
                 />
-                {% endif %}
 
                 <div class="my-2">
                   <h5 v-if="financial_event.title">
@@ -103,7 +81,6 @@
                     </a>
                   </h5>
                 </div>
-                {% if not financial_event %}
 
                 <h6 class="text-danger">
                   <a
@@ -113,14 +90,12 @@
                     <span> همه رویداد ها </span>
                   </a>
                 </h6>
-                {% endif %}
               </div>
             </div>
 
             <div class="col-md-4">
               <div class="form-group">
                 <label for="">سند</label>
-                {% if not financial_document %}
 
                 <input
                   class="form-control"
@@ -130,7 +105,7 @@
                 />
                   
                 <input type="text"  v-if="financial_document.id==0" v-model="financial_document.title" class="form-control" placeholder="نام سند جدید">
-                {% else %} {% endif %}
+                
 
                 <div class="my-2">
                   <h5 v-if="financial_document.title">
@@ -201,7 +176,7 @@
             </div>
 
             <div class="col-md-12">
-              <button @click="add_financial_document_line()" type="submit" class="btn btn-success">
+              <button @click="edit_financial_document_line()" type="submit" class="btn btn-success">
                 <i class="fa fa-plus"></i>افزودن
               </button>
             </div>

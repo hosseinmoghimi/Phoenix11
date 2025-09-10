@@ -57,6 +57,7 @@ urlpatterns = [
     
     path('financial-document-line/<int:pk>/',login_required(views.FinancialDocumentLineView.as_view()),name="financialdocumentline"),
     path('add-financial-document-line/',login_required(apis.AddFinancialDocumentLineApi.as_view()),name="add_financial_document_line"),
+    path("edit-financial-document-line/",login_required(apis.EditFinancialDocumentLineApi.as_view()),name="edit_financial_document_line"),
     
     path('brands/',login_required(views.BrandsView.as_view()),name="brands"),
     path('brand/<int:pk>/',login_required(views.BrandView.as_view()),name="brand"),

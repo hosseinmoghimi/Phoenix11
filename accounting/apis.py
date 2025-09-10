@@ -584,6 +584,32 @@ class EditFinancialDocumentApi(APIView):
         return JsonResponse(context)
 
 
+
+
+
+class EditFinancialDocumentLineApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            edit_financial_document_line_form=EditFinancialDocumentLineForm(request.POST)
+            if edit_financial_document_line_form.is_valid():
+                log=333
+                cd=edit_financial_document_line_form.cleaned_data
+                result,message,financial_document_line=FinancialDocumentLineRepo(request=request).edit_financial_document_line(**cd)
+                if financial_document_line is not None:
+                    context['financial_document_line']=FinancialDocumentLineSerializer(financial_document_line).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+
 class SelectFinancialEventApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
