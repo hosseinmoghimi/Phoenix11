@@ -29,30 +29,7 @@
       <div class="card-body">
         <div class="row rtl">
           <div class="col-md-4 farsi text-center" v-for="image in images">
-            {% if not page %}
-            <div class="media">
-              <a :href="image.page.get_absolute_url" >
-                <img
-                  :src="image.page.thumbnail"
-                  class="rounded"
-                  width="32"
-                  alt=""
-                />
-              </a>
-              <div class="media-body mr-2">
-                <h6  class="text-right">
-                <a :href="image.page.get_absolute_url" class="mt-3">
-                    <span v-text="image.page.title"></span>
-                  </a>
-                </h6>
-                <h6 class="text-right" >
-                  <small class="text-muted">
-                    <span v-text="image.page.class_title"></span>
-                  </small>
-                </h6>
-              </div>
-            </div>
-            {% endif %}
+            
 
             <div class="media">
               <a
@@ -90,6 +67,32 @@
                     <i class="fa fa-trash text-danger"></i>
                   </a>
                   {% endif %}
+                </div>
+                <div>
+                  {% if not page %}
+            <div class="media">
+              <a :href="image.page.get_absolute_url" >
+                <img
+                  :src="image.page.thumbnail"
+                  class="rounded"
+                  width="32"
+                  alt=""
+                />
+              </a>
+              <div class="media-body mr-2">
+                <h6  class="text-right">
+                <a :href="image.page.get_absolute_url" class="mt-3">
+                    <span v-text="image.page.title"></span>
+                  </a>
+                </h6>
+                <h6 class="text-right" >
+                  <small class="text-muted">
+                    <span v-text="image.page.class_title"></span>
+                  </small>
+                </h6>
+              </div>
+            </div>
+            {% endif %}
                 </div>
               </div>
             </div>
