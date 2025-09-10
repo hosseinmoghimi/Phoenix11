@@ -40,8 +40,8 @@
             <div class="col-md-12">
                {% if not account and financial_event %}
 
-                <button class="btn btn-{{financial_event.bedehkar.color}}" @click="set_account({{financial_event.bedehkar.code}})">{{financial_event.bedehkar.title}}</button>
-                <button class="btn btn-{{financial_event.bestankar.color}}" @click="set_account({{financial_event.bestankar.code}})">{{financial_event.bestankar.title}}</button>
+                <button class="btn btn-{{financial_event.bedehkar.color}}" @click="set_account(`{{financial_event.bedehkar.code}}`)">{{financial_event.bedehkar.title}}</button>
+                <button class="btn btn-{{financial_event.bestankar.color}}" @click="set_account(`{{financial_event.bestankar.code}}`)">{{financial_event.bestankar.title}}</button>
                     <button class="btn btn-info btn-sm" @click="paste_account()">
                     <i class="fa fa-paste"></i>
                   </button>
