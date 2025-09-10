@@ -145,6 +145,22 @@
             if (title.indexOf(search_for) > -1) {
               return true;
             }
+
+
+
+            let model = invoice_line_item.model;
+
+            if (model && model.length>0 && model.toUpperCase().indexOf(search_for) > -1) {  
+              return true;
+            }
+
+            
+            let brand = invoice_line_item.brand;
+
+            if (brand && brand.toUpperCase().indexOf(search_for) > -1) {
+              return true;
+            }
+
             return false;
           });
         if (add_invoice_line_app.invoice_line_items.length == 0) {

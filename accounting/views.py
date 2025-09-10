@@ -111,6 +111,16 @@ def AddInvoiceLineContext(request,*args, **kwargs):
     invoice_line_items=InvoiceLineItemRepo(request=request).list()
     invoice_line_items_s=json.dumps(InvoiceLineItemSerializer(invoice_line_items,many=True).data)
     context["invoice_line_items_s"]=invoice_line_items_s
+
+    
+    # products=ProductRepo(request=request).list()
+    # products_s=json.dumps(ProductSerializer(products,many=True).data)
+    # context["products_s"]=products_s
+
+    
+    # services=ServiceRepo(request=request).list()
+    # services_s=json.dumps(ServiceSerializer(services,many=True).data)
+    # context["services_s"]=services_s
     return context
  
 def AccountsContext(request):

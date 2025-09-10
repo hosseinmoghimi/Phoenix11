@@ -621,6 +621,20 @@ class InvoiceLineItem(CorePage,LinkHelper):
             return unit.unit_price
         return 0
 
+    @property    
+    def model(self):
+        product= Product.objects.filter(id=self.id).first()
+        if product is not None:
+            return product.model
+        return ""
+
+    @property    
+    def brand(self):
+        product= Product.objects.filter(id=self.id).first()
+        if product is not None:
+            return product.brand.name
+        return ""
+
 
 class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     invoice_line_item=models.ForeignKey("invoicelineitem",related_name="units" ,verbose_name=_("invoicelineitem"), on_delete=models.CASCADE)
