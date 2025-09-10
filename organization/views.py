@@ -104,6 +104,14 @@ class OrganizationUnitView(View):
         employees_s=json.dumps(EmployeeSerializer(employees,many=True).data)
         context['employees_s']=employees_s
 
+        
+        from projectmanager.views import ProjectRepo,ProjectSerializer
+        projects = ProjectRepo(request=request).list(organization_unit_id=organization_unit.id)
+        context['projects']=projects
+        projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
+        context['projects_s']=projects_s
+
+
 
 
         

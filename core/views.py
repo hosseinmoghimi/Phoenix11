@@ -76,7 +76,7 @@ def CoreContext(request,*args, **kwargs):
     context['phoenix_apps']=phoenix_apps
     parameter_repo=ParameterRepo(request=request,app_name=app_name)
     context['WIDE_LAYOUT']=parameter_repo.parameter(name=PARAMETER_NAME_ENUM.WIDE_LAYOUT,default="0").boolean_value
-    context['farsi_font_name']=parameter_repo.parameter(name=PARAMETER_NAME_ENUM.FARSI_FONT,default="Tanha").value
+    context['farsi_font_name']=parameter_repo.parameter(name=PARAMETER_NAME_ENUM.FARSI_FONT,default="Shabnam").value
     parameter_repo.set_parameter(app_name=APP_NAME,name="version",value='1.0.0')
      
     # app_background_image=PictureRepo(request=request,app_name=app_name).picture(name=PictureNameEnum.APP_BACKGROUND_IMAGE)

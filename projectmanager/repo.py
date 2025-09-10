@@ -128,7 +128,10 @@ class ProjectRepo():
             objects=objects.filter(Q(title__contains=search_for)  )
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
-            objects=objects.filter(parent_id=parent_id)  
+            objects=objects.filter(parent_id=parent_id) 
+        if "organization_unit_id" in kwargs:
+            organization_unit_id=kwargs["organization_unit_id"]
+            objects=objects.filter(Q(contractor_id=organization_unit_id)  |Q(employer_id=organization_unit_id))
         return objects.all()
         
     def project(self,*args, **kwargs):
