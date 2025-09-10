@@ -5,7 +5,7 @@ from authentication.serializers import PersonSerializer
 class PageSerializer(serializers.ModelSerializer):
     class Meta:
         model=Page
-        fields=['id','title','app_name','class_title','get_absolute_url' ,'get_edit_url','get_delete_url']
+        fields=['id','title','thumbnail','app_name','class_title','get_absolute_url' ,'get_edit_url','get_delete_url']
  
 
 class EventSerializer(serializers.ModelSerializer):

@@ -72,10 +72,13 @@ let title_for_add_financial_document_line_app=""
 
             },
             
-            set_account:function(code){
+            set_account:function(code,bedehkar,bestankar){
                 add_financial_document_line_app.account_code=code
+                add_financial_document_line_app.bedehkar=bedehkar
+                add_financial_document_line_app.bestankar=bestankar
                 add_financial_document_line_app.select_account()
             },
+ 
 
             to_price: vall => to_price(vall),
             to_price_colored: vall => to_price_colored(vall),
