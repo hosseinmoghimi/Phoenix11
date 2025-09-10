@@ -1,0 +1,60 @@
+<script>
+    let bank_account_app=new Vue({
+        el:"#bank-account-app",
+        data:{
+            show_balance_copied:false,
+            show_code_copied:false,
+            show_card_no_copied:false,
+            show_shaba_no_copied:false,
+            show_account_no_copied:false,
+
+        },
+        methods:{
+            copy_balance_to_clipboard:function(balance){
+                copy_to_clipboard(balance)
+                bank_account_app.show_balance_copied = true
+                setTimeout(() => {
+                    bank_account_app.show_balance_copied = false
+                }, 2000);
+
+            },
+            copy_code_to_clipboard:function(code){
+                copy_to_clipboard(code)
+                bank_account_app.show_code_copied = true
+                setTimeout(() => {
+                    bank_account_app.show_code_copied = false
+                }, 2000);
+
+            },
+            
+            copy_card_no_to_clipboard:function(code){
+                copy_to_clipboard(code)
+                bank_account_app.show_code_copied = true
+                setTimeout(() => {
+                    bank_account_app.show_code_copied = false
+                }, 2000);
+
+            },
+
+            
+            copy_shaba_no_to_clipboard:function(shaba_no){
+                copy_to_clipboard(shaba_no)
+                bank_account_app.show_shaba_no_copied = true
+                setTimeout(() => {
+                    bank_account_app.show_shaba_no_copied = false
+                }, 2000);
+
+            }, 
+            copy_account_no_to_clipboard:function(account_no){
+                copy_to_clipboard(account_no)
+                bank_account_app.show_account_no_copied = true
+                setTimeout(() => {
+                    bank_account_app.show_account_no_copied = false
+                }, 2000);
+
+            },
+
+
+        }
+    })
+</script>
