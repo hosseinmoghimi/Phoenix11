@@ -229,7 +229,7 @@ class Account(CorePage,LinkHelper,PersonAccountHelper):
             bedehkar+=child.bedehkar
             counter+=counter2
         self.bestankar=bestankar
-        self.bedehkar=bestankar
+        self.bedehkar=bedehkar
         self.balance=bestankar-bedehkar
         super(Account,self).save()
         result=SUCCEED

@@ -398,10 +398,19 @@ class AccountRepo():
         #     account.balance=0
         #     account.save()
         
-        for account in Account.objects.filter(parent_id=None):
-            result,message,counter2=account.normalize_to_top()
-            counter+=counter2
-        message=f'{counter} حساب مالی با موفقیت نرمال سازی شد.'
+
+        sw=1
+        if sw==1:
+            for account in Account.objects.filter(parent_id=None):
+                result,message,counter2=account.normalize_to_top()
+                counter+=counter2
+
+        if sw==2:
+            for account in Account.objects.all():
+                counter+=1
+                account.normalize()
+            result=SUCCEED
+            message=f'{counter} حساب مالی با موفقیت نرمال سازی شد.'
         
         return result,message,counter
         
