@@ -226,7 +226,6 @@ def SearchContext(request,search_for,*args, **kwargs):
           
 
     context['WAS_FOUND']=WAS_FOUND
-    leolog(context=context)
     return context
   
       
