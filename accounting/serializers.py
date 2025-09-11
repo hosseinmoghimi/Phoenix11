@@ -68,7 +68,7 @@ class FinancialEventSerializer(serializers.ModelSerializer):
        bestankar=AccountSerializer()
        class Meta:
         model = FinancialEvent
-        fields = ['id','title','bedehkar','thumbnail' ,'bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','balance','bedehkar','thumbnail' ,'bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
 
 
 class ChequeSerializer(serializers.ModelSerializer):
@@ -138,7 +138,7 @@ class AccountBriefSerializer(serializers.ModelSerializer):
 class FinancialDocumentSerializer(serializers.ModelSerializer):
        class Meta:
         model = FinancialDocument
-        fields = ['id','title','balance','bedehkar','bestankar','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','balance','bedehkar','status','status_color','bestankar','get_absolute_url','get_edit_url','get_delete_url']
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -153,7 +153,12 @@ class FinancialDocumentLineSerializer(serializers.ModelSerializer):
        account=AccountSerializer()
        class Meta:
         model = FinancialDocumentLine
-        fields = ['id','account','financial_document','amount','title','persian_date_time','balance','bedehkar','bestankar','financial_event', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','account','rest','financial_document','amount','title','persian_date_time','balance','bedehkar','bestankar','financial_event', 'get_absolute_url','get_edit_url','get_delete_url']
+
+class FinancialDocumentLineForPrintSerializer(serializers.ModelSerializer):
+       class Meta:
+        model = FinancialDocumentLine
+        fields = ['id','rest','amount','title','persian_date_time','balance','bedehkar','bestankar','get_absolute_url','get_edit_url','get_delete_url']
 
 
 class ProductSpecificationSerializer(serializers.ModelSerializer):

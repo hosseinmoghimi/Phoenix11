@@ -83,6 +83,9 @@
 
                                         </span>
                                     </a>
+                                    <span :class="'badge badge-'+financial_document.status_color">
+                                        <span v-text="financial_document.status"></span>
+                                    </span>
                                 </td>
 
 

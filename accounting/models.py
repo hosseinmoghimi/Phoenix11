@@ -416,6 +416,8 @@ class FinancialDocumentLine(models.Model,LinkHelper,DateTimeHelper):
     bedehkar=models.IntegerField(_("بدهکار"),default=0)
     bestankar=models.IntegerField(_("بستانکار"),default=0)
     balance=models.IntegerField(_("بالانس"),default=0)
+    rest=models.IntegerField(_("مانده"),default=0)
+
     @property
     def amount(self):
         return self.bestankar+self.bedehkar
@@ -600,7 +602,13 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
         super(FinancialEvent,self).save()
         return result,message,financial_event
  
-
+    @property
+    def balance(self):
+        balance=0
+        for financial_document_line in FinancialDocumentLine.objects.filter(financial_event_id=self.id):
+            balance+=financial_document_line.bestankar
+            balance-=financial_document_line.bedehkar
+        return balance
 class InvoiceLineItem(CorePage,LinkHelper):
     class_name="invoicelineitem"
     app_name=APP_NAME

@@ -44,27 +44,14 @@
             
 
             
-            {% if not financial_document %}
-            <th>سند</th>
-              
-            {% endif %}
-            {% if not account %}
-            <th>حساب</th>
-              
-            {% endif %}
-            {% if not financial_event %}
-            <th>رویداد</th>
-              
-            {% endif %}
+             
 
             
             <th>تاریخ</th>
-
             <th>مبلغ</th>
-
             <th>بدهکار</th>
-
             <th>بستانکار</th>
+            <th>مانده</th>
  
           </thead>
           <tbody>
@@ -79,35 +66,7 @@
                 <div>
                     <span v-text="financial_document_line.title"></span>
                 </div>
-              </td>
-  {% if not financial_document %}
-            
-              <td>
-                 
-                  <span
-                    v-text="financial_document_line.financial_document.title"
-                  ></span>
-              </td>
-              
-            {% endif %}
-            {% if not account %}
-              
-              <td>
-                  
-                      <div v-text="financial_document_line.account.name"></div>
-                       
-                    
-              </td>
-            {% endif %}
-            {% if not financial_event %}
-              
-            <td>
-                
-                <span
-                v-text="financial_document_line.financial_event.title"
-                ></span>
-            </td>
-            {% endif %}
+              </td> 
 
               <td>
                 <span v-html="financial_document_line.persian_date_time"></span>
@@ -116,8 +75,7 @@
                 <span v-text="to_price(financial_document_line.amount)"></span>
               </td>
               <td>
-                <span
-                  class="text-danger"
+                <span 
                   v-if="financial_document_line.bedehkar!='0'"
                 >
                   <span
@@ -126,8 +84,7 @@
                 </span>
               </td>
               <td>
-                <span
-                  class="text-success"
+                <span 
                   v-if="financial_document_line.bestankar!='0'"
                 >
                   <span
@@ -135,7 +92,9 @@
                   ></span>
                 </span>
               </td>
-              
+              <td>
+                <span v-text="to_price(financial_document_line.rest)"></span>
+              </td>
             </tr>
             <tr>
               <td colspan="9">&nbsp;</td>
@@ -144,18 +103,7 @@
           <tfoot>
             <th></th>
             <th></th>
-            {% if not financial_document %}
-            <th></th>
-              
-            {% endif %}
-{% if not account %}
-  
-<th></th>
-{% endif %}
-{% if not financial_event %}
-  
-<th></th>
-{% endif %}
+            
             <th></th>
             <th>
               <div class="text-left farsi">جمع</div>

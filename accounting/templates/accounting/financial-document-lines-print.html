@@ -5,30 +5,30 @@
       <div class="card-body">
         {% if account %} 
          <h6>
-          <small class="text-muted"> حساب </small>
+          <small class="text-muted"> حساب  : </small>
 
           {{account.title}}
         </h6>
         {% endif %} 
         {% if financial_event %}
         <h6>
-          <small class="text-muted"> رویداد مالی </small>
+          <small class="text-muted"> رویداد مالی  : </small>
 
           {{financial_event.title}}
         </h6>
         {% endif %}
         {% if person %} 
          <h6>
-          <small class="text-muted"> شخص </small>
+          <small class="text-muted"> شخص  : </small>
 
           {{person.full_name}}
         </h6>  
         {% endif %}
          {% if financial_document %}
             <h6>
-          <small class="text-muted"> سند مالی </small>
+          <small class="text-muted"> سند مالی : </small>
 
-          {{person.full_name}}
+          {{financial_document.title}}
         </h6>  
         {% endif %}
       </div>

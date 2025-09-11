@@ -19,7 +19,7 @@ from .serializers import BankAccountSerializer
 from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer,BrandSerializer,ChequeSerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
-from .serializers import PersonCategorySerializer,AssetSerializer,BankSerializer
+from .serializers import PersonCategorySerializer,AssetSerializer,BankSerializer,FinancialDocumentLineForPrintSerializer
 from .repo import FinancialYearRepo,BankRepo
 from authentication.views import PersonContext,PersonSerializer
 from utility.currency import to_price_colored
@@ -760,7 +760,7 @@ class FinancialDocumentLinesPrintView(View):
             financial_document_lines_ids=json.loads(financial_document_lines_ids)
             financial_document_lines=FinancialDocumentLineRepo(request=request).list(id__in=financial_document_lines_ids)
             context['financial_document_lines']=financial_document_lines
-            financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
+            financial_document_lines_s=json.dumps(FinancialDocumentLineForPrintSerializer(financial_document_lines,many=True).data)
             context['financial_document_lines_s']=financial_document_lines_s
             context['print_financial_document_lines_form']=PrintFinancialDocumentLinesForm()
 
