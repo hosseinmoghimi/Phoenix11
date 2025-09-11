@@ -158,6 +158,7 @@ def AccountContext(request,account,*args, **kwargs):
     context['financial_document_lines']=financial_document_lines
     financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
     context['financial_document_lines_s']=financial_document_lines_s
+    context['print_financial_document_lines_form']=PrintFinancialDocumentLinesForm()
 
 
  
@@ -166,6 +167,7 @@ def AccountContext(request,account,*args, **kwargs):
     context['all_sub_accounts_lines_s']=all_sub_accounts_lines_s
     context['financial_document_lines']=all_sub_accounts_lines
     context['financial_document_lines_s']=all_sub_accounts_lines_s
+    context['print_financial_document_lines_form']=PrintFinancialDocumentLinesForm()
 
 
     
@@ -686,6 +688,7 @@ class FinancialDocumentView(View):
         context['financial_document_lines']=financial_document_lines
         financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
         context['financial_document_lines_s']=financial_document_lines_s
+        context['print_financial_document_lines_form']=PrintFinancialDocumentLinesForm()
 
         if request.user.has_perm(APP_NAME+'.add_financialdocumentline'):
             context.update(AddFinancialDocumentLineContext(request=request,financial_document=financial_document))
@@ -745,6 +748,51 @@ class FinancialDocumentLineView(View):
         return render(request,TEMPLATE_ROOT+"financial-document-line.html",context)
 
 
+
+class FinancialDocumentLinesPrintView(View):
+    def post(self,request,*args, **kwargs):
+        print_financial_document_lines_form=PrintFinancialDocumentLinesForm(request.POST)
+        if print_financial_document_lines_form.is_valid():
+            kwargs=print_financial_document_lines_form.cleaned_data
+            context=getContext(request=request) 
+
+            financial_document_lines_ids=kwargs['financial_document_lines_ids']
+            financial_document_lines_ids=json.loads(financial_document_lines_ids)
+            financial_document_lines=FinancialDocumentLineRepo(request=request).list(id__in=financial_document_lines_ids)
+            context['financial_document_lines']=financial_document_lines
+            financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
+            context['financial_document_lines_s']=financial_document_lines_s
+            context['print_financial_document_lines_form']=PrintFinancialDocumentLinesForm()
+
+            if 'account_id' in kwargs:
+                account=AccountRepo(request=request).account(account_id=kwargs['account_id'])
+                if account is not None:
+                    context['account']=account
+                    context['account_s']=json.dumps(AccountSerializer(account).data)
+            if 'financial_event_id' in kwargs:
+                financial_event=FinancialEventRepo(request=request).financial_event(financial_event_id=kwargs['financial_event_id'])
+                if financial_event is not None:
+                    context['financial_event']=financial_event
+                    context['financial_event_s']=json.dumps(FinancialEventSerializer(financial_event).data)
+            if 'financial_document_id' in kwargs:
+                financial_document=FinancialDocumentRepo(request=request).financial_document(financial_document_id=kwargs['financial_document_id'])
+                if financial_document is not None:
+                    context['financial_document']=financial_document
+                    context['financial_document_s']=json.dumps(FinancialDocumentSerializer(financial_document).data)
+            if 'person_id' in kwargs:
+                person=PersonRepo(request=request).person(person_id=kwargs['person_id'])
+                if person is not None:
+                    context['person']=person
+                    context['person_s']=json.dumps(PersonSerializer(person).data)
+            
+            
+        context['NOT_REPONSIVE']=True
+        context['NOT_NAVBAR']=True
+        context['NOT_FOOTER']=True
+        context['WIDE_LAYOUT']=False
+        return render(request,TEMPLATE_ROOT+"financial-document-lines-print.html",context)
+
+
 class AccountsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request) 
@@ -802,6 +850,7 @@ class PersonView(View):
         financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
         context['financial_document_lines_s']=financial_document_lines_s
         context['financial_document_lines']=financial_document_lines
+        context['print_financial_document_lines_form']=PrintFinancialDocumentLinesForm()
 
 
         if request.user.has_perm(APP_NAME+'.add_personaccount'):
@@ -1403,9 +1452,9 @@ class InvoicePrintView(View):
         context['invoice']=invoice
         context['NOT_REPONSIVE']=True
         context['NOT_NAVBAR']=True
+        context['NOT_FOOTER']=True
         context['WIDE_LAYOUT']=False
         context['title']=invoice.title
-        context['NOT_FOOTER']=True
         invoice_s=json.dumps(InvoiceSerializer(invoice,many=False).data)
         context['invoice_s']=invoice_s
         context.update(InvoiceContext(request=request,invoice=invoice))

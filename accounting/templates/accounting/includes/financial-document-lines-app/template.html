@@ -266,10 +266,38 @@
       </div>
       <div class="card-footer">
         <div class="text-right">
-          <a class="btn btn-info">
+            <button class="btn btn-info" @click="ready_for_print()">
             <i class="fa fa-print"></i>
+            آماده برای
             چاپ
-          </a>
+          </button>
+
+          <form action="{% url 'accounting:financial_document_lines_print' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="financial_document_lines_ids" :value="financial_document_lines_ids_str()">
+            {% if account %}
+            <input type="hidden" name="account_id" value="{{account.id}}">
+            {% endif %}
+
+            {% if financial_event %}
+            <input type="hidden" name="financial_event_id" value="{{financial_event.id}}">
+            {% endif %}
+
+            {% if financial_document %}
+            <input type="hidden" name="financial_document_id" value="{{financial_document.id}}">
+            {% endif %}
+
+            
+
+            {% if person %}
+            <input type="hidden" name="person_id" value="{{person.id}}">
+            {% endif %}
+            <button class="btn btn-info" type="submit">
+              <i class="fa fa-print"></i>
+              چاپ
+            </button>
+          </form>
+          
         </div>
       </div>
     </div>

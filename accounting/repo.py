@@ -2213,6 +2213,9 @@ class FinancialDocumentLineRepo:
         if "start_date" in kwargs and kwargs["start_date"] is not None :
             start_date=kwargs["start_date"]
             objects=objects.filter(date_time__gte=start_date) 
+        if "id__in" in kwargs :
+            id__in=kwargs["id__in"]
+            objects=objects.filter(id__in=id__in) 
         if "end_date" in kwargs and kwargs["end_date"] is not None :
             end_date=kwargs["end_date"]
             objects=objects.filter(date_time__lte=end_date) 

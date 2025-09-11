@@ -25,6 +25,16 @@ class EditFinancialDocumentLineForm(forms.Form):
     bestankar=forms.IntegerField(required=True)
 
     
+
+class PrintFinancialDocumentLinesForm(forms.Form):
+    financial_document_lines_ids=forms.CharField(max_length=5000,required=True)
+    financial_document_id=forms.IntegerField(required=False)
+    financial_event_id=forms.IntegerField(required=False)
+    account_id=forms.IntegerField(required=False)
+    person_id=forms.IntegerField(required=False)
+    persian_date_time=forms.CharField(max_length=50, required=False) 
+    
+    
 class SelectProductForm(forms.Form):
     barcode=forms.CharField(max_length=100,required=True)
 

@@ -14,7 +14,10 @@
 </script>
 {% endif %}
 <script>
-    
+    let financial_document_lines_ids=[]
+    financial_document_lines.forEach(financial_document_line => {
+        financial_document_lines_ids.push(financial_document_line.id)
+    });
 </script>
 <script>
 
@@ -22,13 +25,30 @@
         el: "#financial-document-lines-app",
         data: {
             financial_document_lines: financial_document_lines,
-            total: { bestankar: 0, bedehkar: 0 }
+            total: { bestankar: 0, bedehkar: 0 },
+            financial_document_lines_ids:financial_document_lines_ids,
 
         },
         mounted: function () {
-            this.calc_total()
+            this.calc_total() 
         },
         methods: {
+            to_price_colored: vall => to_price_colored(vall),
+
+            financial_document_lines_ids_str:function(){
+                return JSON.stringify(this.financial_document_lines_ids)
+            },
+            ready_for_print:function(){
+                financial_document_lines_app.financial_document_lines_ids=[]
+                this.financial_document_lines.forEach(financial_document_line => {
+                    financial_document_lines_app.financial_document_lines_ids.push(financial_document_line.id)
+                });
+                console.log(financial_document_lines_app.financial_document_lines_ids)
+                
+                financial_document_lines_app.financial_document_lines_ids=JSON.stringify(financial_document_lines_app.financial_document_lines_ids)
+                console.log(financial_document_lines_app.financial_document_lines_ids)
+                return financial_document_lines_app.financial_document_lines_ids
+            },
             to_price: vall => to_price(vall),
             add_financial_document_line: function (financial_document_line) {
                 this.financial_document_lines.push(financial_document_line)
