@@ -758,7 +758,7 @@ class SelectProductApi(APIView):
         return JsonResponse(context)
     
 
-class InitALLAccountsApi(APIView):
+class InitAllAccountsApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         result=FAILED
@@ -779,7 +779,44 @@ class InitALLAccountsApi(APIView):
         return JsonResponse(context)
 
 
-class DeleteALLAccountsApi(APIView):
+
+
+class NormalizeAllAccountsApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        counter=0
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            (result,message,counter)=AccountRepo(request=request).normalize_all_accounts() 
+        context['counter']=counter
+        context['message']=message
+        context['result']=result 
+        context['log']=log
+        return JsonResponse(context)
+    
+    
+class NormalizeAllFinancialDocumentsApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        counter=0
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            (result,message,counter)=FinancialDocumentRepo(request=request).normalize_all_financial_documents() 
+        context['counter']=counter
+        context['message']=message
+        context['result']=result 
+        context['log']=log
+        return JsonResponse(context)
+
+
+
+class DeleteAllAccountsApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         result=FAILED

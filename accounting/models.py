@@ -202,7 +202,10 @@ class Account(CorePage,LinkHelper,PersonAccountHelper):
   
     
     def all_sub_accounts_lines(self):
-        ids=self.all_sub_accounts_id()
+        ids=[self.id]
+        for child in self.childs:
+            for id in child.all_sub_accounts_id():
+                ids.append(id)
         return FinancialDocumentLine.objects.filter(account_id__in=ids)
 
     def all_sub_accounts_id(self):
@@ -212,7 +215,26 @@ class Account(CorePage,LinkHelper,PersonAccountHelper):
                 ids.append(id)
         return ids
 
-        
+    def normalize_to_top(self):
+        result,message,counter=FAILED,'',0
+        counter=1
+        bestankar=0
+        bedehkar=0
+        for financial_document_line in self.financialdocumentline_set.all():
+            bestankar+=financial_document_line.bestankar
+            bedehkar+=financial_document_line.bedehkar
+        for child in Account.objects.filter(parent_id=self.id):
+            result2,message2,counter2=child.normalize_to_top()
+            bestankar+=child.bestankar
+            bedehkar+=child.bedehkar
+            counter+=counter2
+        self.bestankar=bestankar
+        self.bedehkar=bestankar
+        self.balance=bestankar-bedehkar
+        super(Account,self).save()
+        result=SUCCEED
+        message='با موفقیت نرمال سازی شد.'
+        return result,message,counter
 
     def normalize(self):
         # print(self.full_title)
@@ -389,7 +411,9 @@ class FinancialDocument(models.Model,LinkHelper):
         self.bestankar=bestankar
         self.balance=bestankar-bedehkar
         self.save()
-
+        result=SUCCEED
+        message='با موفقیت نرمال سازی شد.'
+        return result,message
 
 class Brand(models.Model,LinkHelper,ImageHelper):
     name=models.CharField(_("name"),max_length=100)

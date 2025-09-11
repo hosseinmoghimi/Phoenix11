@@ -19,7 +19,7 @@ from .serializers import BankAccountSerializer
 from .serializers import ServiceSerializer,FinancialDocumentSerializer,CategorySerializer,BrandSerializer,ChequeSerializer
 from .serializers import InvoiceLineItemSerializer,AccountBriefSerializer,InvoiceLineItemUnitSerializer,InvoiceLineWithInvoiceSerializer,InvoiceLineSerializer,AccountSerializer,ProductSerializer,InvoiceSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import FinancialYearSerializer,ProductSpecificationSerializer,PersonAccountSerializer
-from .serializers import PersonCategorySerializer,AssetSerializer,BankSerializer,FinancialDocumentLineForPrintSerializer
+from .serializers import PersonCategorySerializer,AssetSerializer,BankSerializer
 from .repo import FinancialYearRepo,BankRepo
 from authentication.views import PersonContext,PersonSerializer
 from utility.currency import to_price_colored
@@ -147,8 +147,7 @@ def AccountContext(request,account,*args, **kwargs):
     if bank_account is not None:
         context['bank_account']=bank_account
         account=bank_account
-    context['account']=account
-    # account.normalize_total()
+    context['account']=account 
     account_s=json.dumps(AccountSerializer(account).data)
     context['account_s']=account_s
 

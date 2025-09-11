@@ -10,9 +10,11 @@ urlpatterns = [
     path("tree-chart/<int:pk>/",login_required(views.TreeChartView.as_view()),name="tree_chart"),
     path("tree-list/",login_required(views.TreeListView.as_view()),name="tree_list"),
     path('settings/',login_required(views.SettingsView.as_view()),name="settings"),
+    path("normalize_all_financial_documents/",login_required(apis.NormalizeAllFinancialDocumentsApi.as_view()),name="normalize_all_financial_documents"),
+    path("normalize_all_accounts/",login_required(apis.NormalizeAllAccountsApi.as_view()),name="normalize_all_accounts"),
 
-    path("init_all_accounts/",login_required(apis.InitALLAccountsApi.as_view()),name="init_all_accounts"),
-    path("delete_all_accounts/",login_required(apis.DeleteALLAccountsApi.as_view()),name="delete_all_accounts"),
+    path("init_all_accounts/",login_required(apis.InitAllAccountsApi.as_view()),name="init_all_accounts"),
+    path("delete_all_accounts/",login_required(apis.DeleteAllAccountsApi.as_view()),name="delete_all_accounts"),
     
     path("person/<int:pk>/",login_required(views.PersonView.as_view()),name="person"), 
 

@@ -29,6 +29,16 @@
                 <button class="btn btn-success farsi" @click="init_all_accounts()">
                     افزودن کدینگ های پیش فرض
                 </button>
+
+                <button class="btn btn-success farsi" @click="normalize_all_accounts()">
+                    نرمال سازی همه حساب ها
+                </button>
+
+                
+                <button class="btn btn-success farsi" @click="normalize_all_financial_documents()">
+                    نرمال سازی همه سند ها
+                </button>
+
                 <a target="_blank" class="btn btn-primary farsi" href="{% url 'accounting:tree_chart' pk=0 %}"
                     target="_blank"> درخت حساب
                     ها</a>
@@ -64,6 +74,53 @@
             show_delete: false,
         },
         methods: {
+            normalize_all_accounts: function () {
+                settings_app.message.show = false
+                settings_app.waiting = true
+                let url = "{% url 'accounting:normalize_all_accounts' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                }
+                posting = $.post(url, payload)
+                posting.done((data) => {
+                    console.log(data)
+                    settings_app.waiting = false
+
+                    // settings_app.waiting = false
+                    if (data.result === "SUCCEED") {
+                        let title = "موفق" 
+                        show_message(settings_app, title, data.message , "success", 20000)
+                    }
+                    else {
+                        show_message(settings_app, "ناموفق", data.message, "danger", 20000)
+                    }
+                })
+            },
+            
+            normalize_all_financial_documents: function () {
+                settings_app.message.show = false
+                settings_app.waiting = true
+                let url = "{% url 'accounting:normalize_all_financial_documents' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                }
+                posting = $.post(url, payload)
+                posting.done((data) => {
+                    console.log(data)
+                    settings_app.waiting = false
+
+                    // settings_app.waiting = false
+                    if (data.result === "SUCCEED") {
+                        let title = "موفق" 
+                        show_message(settings_app, title, data.message , "success", 20000)
+                    }
+                    else {
+                        show_message(settings_app, "ناموفق", data.message, "danger", 20000)
+                    }
+                })
+            },
+            
+            
             init_all_accounts: function () {
                 settings_app.message.show = false
                 settings_app.waiting = true
@@ -89,6 +146,7 @@
                     }
                 })
             },
+            
             delete_all_accounts: function () {
                 settings_app.message.show = false
                 settings_app.waiting = true

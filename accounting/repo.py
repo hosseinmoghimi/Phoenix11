@@ -228,6 +228,8 @@ class AccountRepo():
     def merge_account(self,*args, **kwargs):
            
         result,message,merged_account=FAILED,"",None
+        if not self.request.has_perm(APP_NAME+'.change_account'):
+            return FAILED,message,None
         deleting_account=self.account(pk=kwargs['deleting_account_id'])
         updating_account=self.account(pk=kwargs['updating_account_id'])
 
@@ -383,7 +385,25 @@ class AccountRepo():
         message+='<br>'+'با موفقیت همگام سازی شد.'    
         return result,message,merged_account
  
-    
+    def normalize_all_accounts(self,*args, **kwargs):
+        result,message,counter=FAILED,'',0
+        if not self.request.user.has_perm(APP_NAME+".change_account"):
+            message="دسترسی غیر مجاز"
+            message='شما مجوز دسترسی به این عملکرد را ندارید.'
+            return result,message,counter
+        
+        # for account in Account.objects.all():
+        #     account.bedehkar=0
+        #     account.bestankar=0
+        #     account.balance=0
+        #     account.save()
+        
+        for account in Account.objects.filter(parent_id=None):
+            result,message,counter2=account.normalize_to_top()
+            counter+=counter2
+        message=f'{counter} حساب مالی با موفقیت نرمال سازی شد.'
+        
+        return result,message,counter
         
     def import_accounts_from_excel(self,*args,**kwargs):
         result,message,accounts=FAILED,"",[]
@@ -2117,6 +2137,19 @@ class FinancialDocumentRepo():
             objects=objects.filter(title__contains=kwargs['search_for']) 
         return objects.all()
     
+    def normalize_all_financial_documents(self,*args, **kwargs):
+        result,message,counter=FAILED,'',0
+        if not self.request.user.has_perm(APP_NAME+".change_financialdocument"):
+            message="دسترسی غیر مجاز"
+            message='شما مجوز دسترسی به این عملکرد را نداریـــد.'
+            return result,message,counter
+        for financial_document in FinancialDocument.objects.all():
+            result,message=financial_document.normalize()
+            counter+=1
+        message=f'{counter} سند مالی با موفقیت نرمال سازی شد.'
+        return result,message,counter
+    
+    
     def financial_document(self,*args, **kwargs):
         if "financial_document_id" in kwargs:
             return self.objects.filter(pk=kwargs['financial_document_id']).first() 
@@ -2355,8 +2388,7 @@ class FinancialDocumentLineRepo:
 
         result,message,financial_document_line=financial_document_line.save()
         if result==FAILED:
-            return result,message,financial_document_line
-        # financial_document_line.account.normalize_total()
+            return result,message,financial_document_line 
         result=SUCCEED
         message="با موفقیت اضافه گردید."
          
@@ -2463,8 +2495,7 @@ class FinancialDocumentLineRepo:
 
         result,message,financial_document_line=financial_document_line.save()
         if result==FAILED:
-            return result,message,financial_document_line
-        # financial_document_line.account.normalize_total()
+            return result,message,financial_document_line 
         result=SUCCEED
         message="با موفقیت تغییر یافت."
          
