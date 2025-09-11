@@ -406,7 +406,7 @@ class Brand(models.Model,LinkHelper,ImageHelper):
 
 
 class FinancialDocumentLine(models.Model,LinkHelper,DateTimeHelper):
-    financial_document=models.ForeignKey("financialdocument", verbose_name=_("accountingdocument"), on_delete=models.CASCADE)
+    financial_document=models.ForeignKey("financialdocument", verbose_name=_("accountingdocument"), on_delete=models.PROTECT)
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
     financial_event=models.ForeignKey("financialevent", null=True,blank=True,verbose_name=_("event"), on_delete=models.PROTECT)
     title=models.CharField(_("title"), max_length=500)
