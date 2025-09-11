@@ -13,6 +13,18 @@
   <small class="text-muted"> مبلغ :</small>
   {{financial_event.amount|to_price}} {{CURRENCY}}
 </h5>
+<h5>
+  <small class="text-muted"> تراز :</small>
+  
+                   <span   class="badge badge-primary"> 
+                     
+                    {{financial_event.balance|to_price}} 
+                    {{CURRENCY}}
+                     
+                  </span>
+ 
+ 
+</h5>
 <hr />
 <small> بدهکار : </small>
 <div>
