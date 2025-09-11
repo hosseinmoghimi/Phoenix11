@@ -228,7 +228,8 @@ class AccountRepo():
     def merge_account(self,*args, **kwargs):
            
         result,message,merged_account=FAILED,"",None
-        if not self.request.has_perm(APP_NAME+'.change_account'):
+        if not self.request.user.has_perm(APP_NAME+'.change_account'):
+            message='شما مجوز دسترسی برای این عملکرد را ندارید.'
             return FAILED,message,None
         deleting_account=self.account(pk=kwargs['deleting_account_id'])
         updating_account=self.account(pk=kwargs['updating_account_id'])
