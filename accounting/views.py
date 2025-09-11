@@ -48,6 +48,12 @@ def AddBankAccountContext(request,*args, **kwargs):
     context['add_bank_account_form']=AddBankAccountForm()
     banks_for_add_bank_account=BankRepo(request=request).list(*args, **kwargs)
     context['banks_for_add_bank_account']=banks_for_add_bank_account
+    if 'person' in kwargs:
+        person=kwargs['person']
+        # context['person']=person
+        person_s=json.dumps(PersonSerializer(person).data)
+        # context['person_s']=person_s
+        context['person_s_for_add_bank_account']=json.dumps(PersonSerializer(person).data)
     context['account_natures_for_add_bank_account']=(i[0] for i in AccountNatureEnum.choices)
     return context
 
@@ -475,6 +481,13 @@ def SearchContext(request,search_for,*args, **kwargs):
     if len(products)>0:
         context['products']=products
         context['products_s']=json.dumps(ProductSerializer(products,many=True).data)
+        WAS_FOUND=True
+
+
+    brands=BrandRepo(request=request).list(search_for=search_for)
+    if len(brands)>0:
+        context['brands']=brands
+        context['brands_s']=json.dumps(BrandSerializer(brands,many=True).data)
         WAS_FOUND=True
 
         
@@ -1646,6 +1659,8 @@ class PersonAccountView(View):
         context['person_category_s']=person_category_s
 
 
+        if request.user.has_perm(APP_NAME+'.add_bankaccount'):
+            context.update(AddBankAccountContext(request=request,person=person_account.person))
         return render(request,TEMPLATE_ROOT+"person-account.html",context)
 
 

@@ -112,6 +112,16 @@
     
         {% endif %}
 
+
+        
+  {% if brands %}
+              <div class="col-md-12 ">
+        {% include "accounting/includes/brands-app/template.html" %}
+    </div>
+    
+        {% endif %}
+
+
         
   {% if images %}
               <div class="col-md-12 ">
@@ -146,6 +156,10 @@
 
 {% endif %}
 
+  {% if brands %}
+        {% include "accounting/includes/brands-app/script.html" %}
+    
+        {% endif %}
 
 {% if products %}
     {% include "accounting/includes/products-app/list-script.html" %}

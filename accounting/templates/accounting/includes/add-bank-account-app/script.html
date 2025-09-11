@@ -5,6 +5,14 @@
     let person_for_add_bank_account_app={}
     // const colors_for_add_account_app = JSON.parse("{a{colors_s|escapejs}}")
 </script>
+
+{% if person_s_for_add_bank_account %}
+  <script>
+    person_for_add_bank_account_app=JSON.parse("{{person_s_for_add_bank_account}}")
+    person_id_for_add_bank_account_app=person_for_add_bank_account_app.id
+
+  </script>
+{% endif %}
 {% if bank %}
   <script>
     bank_id=parseInt("{{bank.id}}")

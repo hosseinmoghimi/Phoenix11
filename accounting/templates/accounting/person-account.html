@@ -2,9 +2,9 @@
 
 
 {% block content %}
-   {% if account.parent %} 
-    <div class="rtl my-2">{{account.parent.get_breadcrumb|safe}}</div>
-    {% endif %} 
+{% if account.parent %} 
+<div class="rtl my-2">{{account.parent.get_breadcrumb|safe}}</div>
+{% endif %} 
     
 <div class="row rtl farsi">
     <div class="col-md-4">
@@ -21,6 +21,13 @@
 
     </div>
     
+    {% if add_bank_account_form %}
+     
+    <div class="col-md-12">
+        {% include "accounting/includes/add-bank-account-app/template.html" %}
+    </div>
+  
+    {% endif %}
 
     <div class="col-md-12">
         {% include "accounting/includes/financial-events-app/template.html" %}
@@ -64,5 +71,11 @@
 
 
 {% block script %}
-{% include "accounting/includes/person-account-app/script.html" %}   
+{% include "accounting/includes/person-account-app/script.html" %} 
+
+    {% if add_bank_account_form %}
+     
+        {% include "accounting/includes/add-bank-account-app/script.html" %}
+  
+    {% endif %}  
 {% endblock script %}

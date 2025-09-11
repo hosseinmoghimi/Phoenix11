@@ -1120,7 +1120,7 @@ class ProductRepo():
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
 
-            objects=objects.filter(Q(title__contains=search_for) | Q(barcode=search_for))
+            objects=objects.filter(Q(title__contains=search_for) | Q(barcode=search_for)|Q(model__contains=search_for))
         return objects.all()
     
     def add_product_to_category(self,*args, **kwargs):
@@ -1717,7 +1717,7 @@ class BrandRepo():
   
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
-            objects=objects.filter(Q(full_name__contains=search_for) | Q(melli_code__contains=search_for) | Q(code=search_for))
+            objects=objects.filter(Q(name__contains=search_for) )
         return objects.all()
      
     def brand(self,*args, **kwargs):
@@ -2868,7 +2868,6 @@ class InvoiceRepo(FinancialEventRepo):
         return result,message,invoice
 
     def edit_invoice(self,*args, **kwargs):
-        leolog(kwargs=kwargs)
         result,message,invoice=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_invoice"):
             message="دسترسی غیر مجاز"
