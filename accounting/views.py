@@ -955,7 +955,10 @@ class ProductView(View):
         context=getContext(request=request)
         product=ProductRepo(request=request).product(*args, **kwargs)
         if product is None:
-            raise Http404
+            title='کالای مورد نظر یافت نشد.'
+            body='کالای مورد نظر یافت نشد.'
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
         
         context["WIDE_LAYOUT"]=True
 
