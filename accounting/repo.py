@@ -2176,6 +2176,11 @@ class FinancialDocumentRepo():
             message="دسترسی غیر مجاز"
             return result,message,financial_document
         
+
+        old=FinancialDocument.objects.filter(title=kwargs['title']).first()
+        if old is not None:
+            message='از قبل سندی با همین عنوان موجود می باشد و نمی توان با نام تکراری سندی ایجاد کرد.'
+            return FAILED,message,None
         f_year=FinancialYear.objects.filter(status=FinancialYearStatusEnum.IN_PROGRESS).first()
         if f_year is None:
             url=reverse(APP_NAME+":financial_years")
@@ -2343,6 +2348,7 @@ class FinancialDocumentLineRepo:
         if 'financial_document_id' in kwargs:
             financial_document_id=kwargs['financial_document_id']
             if int(financial_document_id)==0 and 'financial_document_title' in kwargs:
+                
                 result,message,financial_document=FinancialDocumentRepo(request=self.request).add_financial_document(title=kwargs['financial_document_title'])
                 if financial_document is not None:
                     financial_document_id=financial_document.id

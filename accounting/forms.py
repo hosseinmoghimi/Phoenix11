@@ -178,12 +178,12 @@ class AddProductSpecificationForm(forms.Form):
 
 class AddFinancialDocumentLineForm(forms.Form):
     account_id=forms.IntegerField(required=False)
-    account_code=forms.CharField(max_length=100, required=True)
+    account_code=forms.CharField(max_length=100, required=False)
     title=forms.CharField(max_length=100, required=True)
     bedehkar=forms.IntegerField(required=True)
     bestankar=forms.IntegerField(required=True)
     financial_document_id=forms.IntegerField(required=True)
-    financial_document_title=forms.CharField(max_length=20, required=False)
+    financial_document_title=forms.CharField(max_length=500, required=False)
     financial_event_id=forms.IntegerField(required=True)
     persian_date_time=forms.CharField(max_length=20, required=False)
     date_time=forms.CharField(max_length=30, required=False)
