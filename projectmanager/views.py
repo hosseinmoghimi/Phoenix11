@@ -53,7 +53,7 @@ def ProjectContext(request,project,*args, **kwargs):
     project_s=json.dumps(ProjectSerializer(project).data)
 
 
-    projects=project.childs.all()
+    projects=project.childs.all().order_by('priority')
     context['projects']=projects
     projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
     context['projects_s']=projects_s
@@ -176,7 +176,6 @@ class ProjectView(View):
         context.update(ProjectContext(request=request,project=project))
 
         all_sub_ids=project.all_sub_ids(same_class=True,my_id=True)
-        leolog(all_sub_ids=all_sub_ids) 
 
 
         
