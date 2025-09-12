@@ -12,7 +12,7 @@
             </div>
             <div class="card-body text-right">
                 <div class="my-2">
-                    <button v-if="!show_delete" class="btn btn-danger farsi" @click="show_delete=!show_delete">
+                    <button v-if="!show_delete" class="btn btn-danger my-2 farsi" @click="show_delete=!show_delete">
                         حذف همه کد ها
                     </button>
                     <div v-if="show_delete">
@@ -26,26 +26,26 @@
                         </button>
                     </div>
                 </div>
-                <button class="btn btn-success farsi" @click="init_all_accounts()">
+                <button class="my-2 btn btn-success farsi" @click="init_all_accounts()">
                     افزودن کدینگ های پیش فرض
                 </button>
 
-                <button class="btn btn-success farsi" @click="normalize_all_accounts()">
+                <button class="my-2 btn btn-info farsi" @click="normalize_all_accounts()">
                     نرمال سازی همه حساب ها
                 </button>
 
                 
-                <button class="btn btn-success farsi" @click="normalize_all_financial_documents()">
+                <button class="my-2 btn btn-warning farsi" @click="normalize_all_financial_documents()">
                     نرمال سازی همه سند ها
                 </button>
 
-                <a target="_blank" class="btn btn-primary farsi" href="{% url 'accounting:tree_chart' pk=0 %}"
+                <a target="_blank" class="my-2 btn btn-primary farsi" href="{% url 'accounting:tree_chart' pk=0 %}"
                     target="_blank"> درخت حساب
                     ها</a>
-                <a target="_blank" class="btn btn-info farsi" href="{% url 'accounting:tree_list' %}" target="_blank">
+                <a target="_blank" class="my-2 btn btn-info farsi" href="{% url 'accounting:tree_list' %}" target="_blank">
                     لیست حساب
                     ها</a>
-                <a target="_blank" class="btn btn-warning farsi" href="{% url 'accounting:selection' %}"
+                <a target="_blank" class="my-2 btn btn-warning farsi" href="{% url 'accounting:selection' %}"
                     target="_blank"> انتخاب حساب
                     ها</a>
                 <div class="mt-2">
