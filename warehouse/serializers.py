@@ -16,7 +16,7 @@ class WareHouseSheetSerializer(serializers.ModelSerializer):
        person=PersonSerializer()
        class Meta:
         model = WareHouseSheet
-        fields = ['id','shelf','col','row','invoice_line','direction','warehouse','persian_date_added','person', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','shelf','sum','col','row','invoice_line','direction','warehouse','persian_date_added','person', 'get_absolute_url','get_edit_url','get_delete_url']
   
 class WareHouseSheetSignatureSerializer(serializers.ModelSerializer):
        warehouse_sheet=WareHouseSheetSerializer()

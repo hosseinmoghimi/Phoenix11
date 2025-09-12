@@ -67,7 +67,9 @@ class WareHouseSheet(models.Model,LinkHelper,DateTimeHelper):
     class Meta:
         verbose_name = _("WareHouseSheet")
         verbose_name_plural = _("WareHouseSheets")
-
+    @property
+    def sum(self):
+        return self.invoice_line.line_total
     def __str__(self):
         return f"{self.warehouse} - {self.invoice_line.invoice_line_item} - {self.invoice_line.quantity} {self.invoice_line.unit_name} - {self.direction}     "
 

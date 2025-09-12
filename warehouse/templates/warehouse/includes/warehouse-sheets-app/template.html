@@ -72,6 +72,13 @@
                         )
                       </small>
                     </div>
+                    <div>
+                          <span v-text="warehouse_sheet.invoice_line.quantity"></span>
+                          *
+                          <span v-text="to_price(warehouse_sheet.invoice_line.unit_price)"></span>
+                    {{CURRENCY}}
+
+                    </div>
                 </td>
                 
                 {% if not product %}
@@ -167,12 +174,38 @@
                 </td>
               </tr>
             </tbody>
+            
           </table>
         </div>
         <div v-if="warehouse_sheets.length==0">
           <span>
             برگه انباری وجود ندارد
           </span>
+        </div>
+      </div>
+      <div class="card-footer">
+
+        <div>
+          <small class="text-muted">
+            ورودی کل
+          </small>
+          <span  class="text-success" v-text="to_price(sum_in)"></span>
+        </div>
+
+        <div>
+          <small class="text-muted">
+            خروجی کل
+          </small>
+          <span class="text-danger" v-text="to_price(sum_out)"></span>
+        </div>
+
+        <div>
+          <small class="text-muted">
+            مانده کل
+          </small>
+          <span v-if="sum_in>sum_out" class="text-success" v-text="to_price(sum_in-sum_out)"></span>
+          <span v-if="sum_in<sum_out" class="text-danger" v-text="to_price(sum_in-sum_out)"></span>
+          <span v-if="sum_in==sum_out" class="text-info" v-text="to_price(sum_in-sum_out)"></span>
         </div>
       </div>
     </div>
