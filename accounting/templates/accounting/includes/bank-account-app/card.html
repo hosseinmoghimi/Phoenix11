@@ -122,12 +122,15 @@
         <small class="text-muted">ماهیت : </small>
         {{account.nature}}
       </div>
+     
+     
+     
       <div>
         <btn
-          class="btn btn-success my-2 btn-block"
-          @click="copy_shaba_no_to_clipboard(`{{bank_account.shaba_no}}`)"
+          class="btn btn-info my-2 btn-block"
+          @click="copy_account_no_to_clipboard(`{{bank_account.account_no}}`)"
         >
-          شبا : {{bank_account.shaba_no}}
+          شماره حساب : {{bank_account.account_no}}
         </btn>
       </div>
       <div>
@@ -138,14 +141,17 @@
           کارت : {{bank_account.card_no}}
         </btn>
       </div>
+     
       <div>
         <btn
-          class="btn btn-info my-2 btn-block"
-          @click="copy_account_no_to_clipboard(`{{bank_account.account_no}}`)"
+          class="btn btn-success my-2 btn-block"
+          @click="copy_shaba_no_to_clipboard(`{{bank_account.shaba_no}}`)"
         >
-          شماره حساب : {{bank_account.account_no}}
+          شبا : {{bank_account.shaba_no}}
         </btn>
       </div>
+     
+     
 
 
       <div>
