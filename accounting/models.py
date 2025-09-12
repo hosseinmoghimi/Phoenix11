@@ -661,7 +661,7 @@ class InvoiceLineItem(CorePage,LinkHelper):
         return ""
 
     @property    
-    def brand(self):
+    def brand_name(self):
         product= Product.objects.filter(id=self.id).first()
         if product is not None:
             return product.brand.name
