@@ -41,13 +41,13 @@
                {% if not account and financial_event %}
 <div class="my-2">
 
-  <button class="btn btn-{{financial_event.bedehkar.color}}" @click="set_account(`{{financial_event.bedehkar.code}}`,parseInt(`{{financial_event.amount}}`),0)">
+  <button class="my-2 btn btn-{{financial_event.bedehkar.color}}" @click="set_account(`{{financial_event.bedehkar.code}}`,parseInt(`{{financial_event.amount}}`),0)">
     <small class=" ml-1">بدهکار</small>
     {{financial_event.bedehkar.title}}</button>
-    <button class="btn btn-{{financial_event.bestankar.color}}" @click="set_account(`{{financial_event.bestankar.code}}`,0,parseInt(`{{financial_event.amount}}`))">
+    <button class="my-2 btn btn-{{financial_event.bestankar.color}}" @click="set_account(`{{financial_event.bestankar.code}}`,0,parseInt(`{{financial_event.amount}}`))">
       <small class=" ml-1">بستانکار</small>
       {{financial_event.bestankar.title}}</button>
-      <button class="btn btn-info " @click="paste_account()">
+      <button class="my-2 btn btn-info " @click="paste_account()">
         <i class="fa fa-paste"></i> الصاق
       </button>
     </div>
