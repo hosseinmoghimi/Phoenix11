@@ -76,6 +76,8 @@
                           <span v-text="warehouse_sheet.invoice_line.quantity"></span>
                           *
                           <span v-text="to_price(warehouse_sheet.invoice_line.unit_price)"></span>
+                          =
+                          <span v-text="to_price(warehouse_sheet.sum)"></span>
                     {{CURRENCY}}
 
                     </div>
