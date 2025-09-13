@@ -1,3 +1,6 @@
+
+
+
 <script>
   let bank_account_app = new Vue({
     el: "#bank-account-app",
@@ -49,9 +52,13 @@
       },
 
       copy_all_to_clipboard: function () {
-        let account_no = `{{bank_account.account_no}}`;
-        let card_no = `{{bank_account.card_no}}`;
-        let shaba_no = `{{bank_account.shaba_no}}`;
+        
+        let account_no = `{% if bank_account.account_no %}bank_account.account_no{% else %}{% endif %}`;
+        let card_no = `{% if bank_account.card_no %}bank_account.card_no{% else %}{% endif %}`;
+        let shaba_no = `{% if bank_account.shaba_no %}bank_account.shaba_no{% else %}{% endif %}`;
+        
+
+
         let first_name = `{{bank_account.person.first_name}}`;
         let last_name = `{{bank_account.person.last_name}}`;
         let full_name = `{{bank_account.person.full_name}}`;
