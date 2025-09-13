@@ -633,6 +633,8 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
             balance+=financial_document_line.bestankar
             balance-=financial_document_line.bedehkar
         return balance
+
+
 class InvoiceLineItem(CorePage,LinkHelper):
     class_name="invoicelineitem"
     app_name=APP_NAME
@@ -1046,10 +1048,12 @@ class BankAccount(Account):
         if self.class_name is None or self.class_name=='':
             self.class_name='bankaccount'
               
-
-        self.shaba_no=self.shaba_no.replace(' ' ,'')
-        self.account_no=self.account_no.replace(' ' ,'')
-        self.card_no=self.card_no.replace(' ' ,'')
+        if self.shaba_no is not None and len(self.shaba_no)>0:
+            self.shaba_no=self.shaba_no.replace(' ' ,'')
+        if self.account_no is not None and len(self.account_no)>0:
+            self.account_no=self.account_no.replace(' ' ,'')
+        if self.card_no is not None and len(self.card_no)>0:
+            self.card_no=self.card_no.replace(' ' ,'')
         result,message,bank_account= super(BankAccount,self).save(*args, **kwargs)
         if result==SUCCEED:
             message='حساب بانکی با موفقیت ذخیره شد'
