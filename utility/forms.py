@@ -9,6 +9,10 @@ class SearchForm(forms.Form):
     app_name=forms.CharField(max_length=50,required=True)
     search_for=forms.CharField(max_length=100, required=True)
 
+class AddToClipBoradForm(forms.Form):
+    name=forms.CharField(max_length=100,required=True)
+    text=forms.CharField(max_length=100,required=True)
+    
     
 class GetParametersForm(forms.Form):
     app_name=forms.CharField(max_length=50,required=True)

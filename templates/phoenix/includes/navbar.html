@@ -49,13 +49,16 @@
       </li>
       
 
- 
+      
        
 
  
       {% include "core/includes/common-navbar.html" %}
   
- 
+      {% if clipboard_items %}
+      {% include "utility/includes/clipboard-items-app/template.html" %}
+        
+      {% endif %}
  
       
     </ul>

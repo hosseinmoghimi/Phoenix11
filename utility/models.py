@@ -244,3 +244,16 @@ class Parameter(models.Model):
         """
 
 
+class ClipBoardItem(models.Model):
+    name=models.CharField(_("name"), max_length=100)
+    text=models.CharField(_("text"), max_length=100)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _("ClipBoardItem")
+        verbose_name_plural = _("ClipBoardItems")
+
+    def __str__(self):
+ 
+        return f'{self.person}  :  {self.name} :  {self.text}'
+ 

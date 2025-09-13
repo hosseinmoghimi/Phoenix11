@@ -7,10 +7,10 @@
             person_accounts: person_accounts_for_person_accounts_app
         },
         methods: {
-            copy_code_to_clipboard: vall=>copy_to_clipboard(vall),
  
+            copy_code_to_clipboard: (vall,name)=>copy_to_clipboard(vall,name),
             
-            copy_balance_to_clipboard: vall=>copy_to_clipboard(vall),
+            copy_balance_to_clipboard:  (vall,name)=>copy_to_clipboard(vall,name),
                         
             to_price: function(vall) {
                 let color="primary"

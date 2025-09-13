@@ -112,5 +112,4 @@ class Vehicle(Asset):
         return f'{STATIC_URL}{APP_NAME}/images/thumbnail/{pic}/' 
 
 
-
-   
+ 

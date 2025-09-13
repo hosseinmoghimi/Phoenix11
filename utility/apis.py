@@ -2,7 +2,7 @@ from .serializers import ParameterSerializer
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
-from .repo import ParameterRepo 
+from .repo import ParameterRepo,ClipBoardItemRepo
 from utility.constants import SUCCEED, FAILED
 from utility.utils import str_to_html
  
@@ -29,6 +29,58 @@ class SetParameterApi(APIView):
                     )
                 if result==SUCCEED:
                     context['parameter'] = ParameterSerializer(parameter).data
+        context['log'] = log
+        context['message'] = message
+        context['result'] = result
+        return JsonResponse(context)
+
+
+class AddClipBoardItemApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        result = FAILED
+        message=''
+        if request.method == 'POST':
+            log += 1
+            add_to_clipboard_form = AddToClipBoradForm(request.POST)
+            if add_to_clipboard_form.is_valid():
+                log += 1
+                cd=add_to_clipboard_form.cleaned_data 
+                text = cd['text']
+                name = cd['name']
+                
+                result = ClipBoardItemRepo(request=request,).add_clipboard_item(
+                    text=text,
+                    name=name,
+                    )
+                 
+        context['log'] = log
+        context['message'] = message
+        context['result'] = result
+        return JsonResponse(context)
+
+
+class ClearAllClipBoardItemsApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        result = FAILED
+        message=''
+        if request.method == 'POST':
+            log += 1
+            add_to_clipboard_form = AddToClipBoradForm(request.POST)
+            if add_to_clipboard_form.is_valid():
+                log += 1
+                cd=add_to_clipboard_form.cleaned_data 
+                text = cd['text']
+                name = cd['name']
+                
+                result = ClipBoardItemRepo(request=request,).add_clipboard_item(
+                    text=text,
+                    name=name,
+                    )
+                 
         context['log'] = log
         context['message'] = message
         context['result'] = result

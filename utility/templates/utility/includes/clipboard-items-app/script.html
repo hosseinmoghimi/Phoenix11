@@ -1,0 +1,21 @@
+{% if clipboard_items %}
+<script>
+    console.log("clip_board_irems_app started !!!!")
+    let clipboard_items_app=new Vue({
+        el:'#clipboard-items-app',
+        data:{
+            clipboard_items:[],
+        },
+        methods:{
+            copy_to_clipboard:function(text){
+                copy_to_clipboard(text)
+            },
+            clear_all_clipboard_items:function(){
+                    console.log("clear_all_clipboard_items")
+            },
+        },
+
+    })
+</script>
+  
+{% endif %}

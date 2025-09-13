@@ -13,9 +13,26 @@ var to_price = function (x, currency) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' ' + currency
 }
 
-let copy_to_clipboard=function(vall,app,){
+let copy_to_clipboard=function(vall,name){
     console.log(vall +' copied to clipboard')
+    console.log('name='+name)
+    console.log('vall='+vall)
     navigator.clipboard.writeText(vall);
+    if(typeof name !='undefined'){
+        let payload={
+            csrfmiddlewaretoken:csrfmiddlewaretoken,
+            text:vall,
+            name:name,
+        }
+        let urll=url_add_clipboard_item
+        $.post(urll,payload).done(data=>{
+            console.log(data)
+            if(data.result==='SUCCEED'){
+                clipboard_items_app.clipboard_items.push({name:name,text:vall})
+            }
+        })
+        console.log('saved')
+    }
      
 }
 var to_price_colored = function (x, currency) {

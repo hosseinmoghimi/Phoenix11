@@ -69,8 +69,15 @@
         $(".notification-divider:last").addClass("d-none")
     })
 </script>
+<script>
+    url_add_clipboard_item="{% url 'utility:add_clipboard_item'  %}"
+    url_clear_all_clipboard_item="{% url 'utility:clear_all_clipboard_items'  %}"
+</script>
 
-
+      {% if clipboard_items %}
+      {% include "utility/includes/clipboard-items-app/script.html" %}
+        
+      {% endif %}
 
 {% if PUSHER_IS_ENABLE %}
 {% include "phoenix/includes/pusher-script.html" %}

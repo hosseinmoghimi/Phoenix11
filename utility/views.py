@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-
+from .log import leolog
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
@@ -10,6 +10,7 @@ from phoenix.server_settings import DB_PREFIX_NAME,PUSHER_IS_ENABLE,DEBUG, MEDIA
 from phoenix.server_apps import phoenix_apps
 from django.utils import timezone
 from django.http import HttpResponse
+from .repo import ClipBoardItemRepo
 
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='utility/'
@@ -23,6 +24,22 @@ def getContext(request,*args, **kwargs):
  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
+
+def ClipBoardItemContext(request,*args, **kwargs):
+    context={}
+    if 'person' in kwargs:
+        person=kwargs['person']
+    if person is None:
+        from authentication.repo import PersonRepo
+        person=PersonRepo(request=request).me
+    if person is None:
+        return {}
+    from .repo import ClipBoardItemRepo
+    clipboard_items=ClipBoardItemRepo(request=request).list()
+    if len(clipboard_items)>0:
+        context['clipboard_items']=clipboard_items
+    return context
+
 def SearchContext(request,app_name,search_for,*args, **kwargs):
     context={}
     return context

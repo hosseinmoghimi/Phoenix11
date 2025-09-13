@@ -4,12 +4,12 @@
      
     {% if add_invoice_form %}
     <div class="col-md-12">
-        {% include "accounting/includes/add-invoice-app/template.html" %}
+        {% include "transport/includes/add-maintenance-invoice-app/template.html" %}
     </div>
     {% endif %}
    
     <div class="col-md-12 ">
-        {% include "accounting/includes/invoices-app/template.html" %}
+        {% include "transport/includes/maintenance-invoices-app/template.html" %}
     </div>
     
 </div>
@@ -23,7 +23,7 @@
 
 </script> 
 
-{% include "accounting/includes/invoices-app/script.html" %}
+{% include "transport/includes/maintenance-invoices-app/script.html" %}
 
 {% if add_invoice_form %}
 {% include "accounting/includes/add-invoice-app/script.html" %}

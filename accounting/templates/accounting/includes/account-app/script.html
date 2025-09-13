@@ -14,15 +14,15 @@
         },
         methods:{
             copy_balance_to_clipboard:function(balance){
-                copy_to_clipboard(balance)
+                copy_to_clipboard(balance,'مانده')
                 account_app.show_balance_copied = true
                 setTimeout(() => {
                     account_app.show_balance_copied = false
                 }, 2000);
 
             },
-            copy_code_to_clipboard:function(code){
-                copy_to_clipboard(code)
+            copy_code_to_clipboard:function(code,name){
+                copy_to_clipboard(code,name)
                 account_app.show_code_copied = true
                 setTimeout(() => {
                     account_app.show_code_copied = false

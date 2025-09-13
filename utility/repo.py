@@ -1,4 +1,4 @@
-from .models import Parameter,Picture
+from .models import Parameter,Picture,ClipBoardItem
 from utility.constants import *
 from django.db.models import Q
 from authentication.repo import PersonRepo
@@ -8,6 +8,38 @@ from .apps import APP_NAME
 from .log import leolog
 
 
+class ClipBoardItemRepo:
+    
+    def __init__(self,*args, **kwargs):
+        self.app_name=""
+        self.request=None
+        self.user=None
+        if 'app_name' in kwargs:
+            self.app_name=kwargs['app_name']
+        else:
+            self.app_name=None
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user 
+        self.me_person=PersonRepo(request=self.request).me
+        self.objects=ClipBoardItem.objects.filter(person=self.me_person)
+
+
+    def list(self,*args, **kwargs):
+        return self.objects.all()
+     
+    def add_clipboard_item(self,*args,**kwargs):
+        result=FAILED
+        if self.me_person is None:
+            return FAILED
+        clip_board_item=ClipBoardItem(person_id=self.me_person.id,*args,**kwargs)
+        clip_board_item.save()
+
+        clip_board_item_list=ClipBoardItem.objects.filter(person_id=self.me_person)
+        if len(clip_board_item_list)>CLIPBODRD_MAX_LENGTH :
+            clip_board_item_list.first().delete()
+        result=SUCCEED
+        return result
 
 
 class PictureRepo:
@@ -62,7 +94,6 @@ class PictureRepo:
 
     def get(self,*args, **kwargs):
         return self.picture(*args, **kwargs)
-
 
 class ParameterRepo:    
     def __init__(self,request,*args, **kwargs):
