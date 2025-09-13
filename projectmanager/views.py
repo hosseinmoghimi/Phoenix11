@@ -96,6 +96,15 @@ class IndexView(View):
         phoenix_apps=context["phoenix_apps"]
         phoenix_apps=phoenix_apps
 
+
+
+        
+        projects = ProjectRepo(request=request).list(parent_id=None,*args, **kwargs)
+        # context['expand_projects']=True
+        context['projects']=projects
+        projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
+        context['projects_s']=projects_s
+
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
 
