@@ -28,7 +28,8 @@ let copy_to_clipboard=function(vall,name){
         $.post(urll,payload).done(data=>{
             console.log(data)
             if(data.result==='SUCCEED'){
-                clipboard_items_app.clipboard_items.push({name:name,text:vall})
+                if(typeof clipboard_items_app !='undefined')
+                    clipboard_items_app.clipboard_items.push({name:name,text:vall})
             }
         })
         console.log('saved')
