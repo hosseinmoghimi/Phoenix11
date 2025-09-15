@@ -2944,7 +2944,7 @@ class InvoiceRepo(FinancialEventRepo):
                     invoice_line.unit_name=new_invoice_line['unit_name']
                     invoice_line.unit_price=int(new_invoice_line['unit_price'])
                     invoice_line.discount_percentage=int(new_invoice_line['discount_percentage'])
-                    invoice_line.save()
+                    invoice_line.save(normalize_row=False)
                     if invoice_line.quantity==0:
                         invoice_line.delete()
 

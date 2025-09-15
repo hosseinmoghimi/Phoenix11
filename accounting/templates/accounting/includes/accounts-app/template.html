@@ -65,7 +65,7 @@
                    <div>
       <div class="text-center">
       <div class="my-2">
-          <button @click="copy_code_to_clipboard(account.code)" :class="'my-2 btn btn-'+account.color">
+          <button @click="copy_code_to_clipboard(account.code,account.title)" :class="'my-2 btn btn-'+account.color">
             <small class=""> کد : </small>
             <small v-text="account.code">   </small>
             <i class="fa fa-copy"></i>

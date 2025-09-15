@@ -996,10 +996,14 @@ class InvoiceLine(models.Model,LinkHelper):
         return (100-self.discount_percentage)*self.unit_price*self.quantity/100
 
     def save(self,*args, **kwargs):
-
+        normalize_row=True
+        if 'normalize_row' in kwargs:
+            normalize_row=kwargs['normalize_row']
         super(InvoiceLine,self).save()
         result,message=FAILED,''
-        self.invoice.normalize()
+        if normalize_row:
+            self.invoice.normalize()
+
         if self.id is not None and self.id>0:
             result=SUCCEED
             message='سطر فاکتور با موفقیت ذخیره شد.'
