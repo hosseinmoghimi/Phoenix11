@@ -296,7 +296,7 @@ def InvoiceContext(request,invoice,*args, **kwargs):
     if 'warehouse' in kwargs and kwargs['warehouse']:
         from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer
 
-        warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id)
+        warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id).order_by('date_added')
         context["warehouses"]=warehouse_sheets
         warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
         context["warehouse_sheets_s"]=warehouse_sheets_s     
