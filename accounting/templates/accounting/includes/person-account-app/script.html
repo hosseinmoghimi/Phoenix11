@@ -17,16 +17,16 @@
         },
         methods:{ 
 
-            copy_code_to_clipboard:function(code){
-                copy_to_clipboard(code)
+            copy_code_to_clipboard:function(code,name){
+                copy_to_clipboard(code,name)
                 person_account_app.show_code_copied = true
                 setTimeout(() => {
                     person_account_app.show_code_copied = false
                 }, 2000);
 
             },
-            copy_balance_to_clipboard:function(balance){
-                copy_to_clipboard(balance)
+            copy_balance_to_clipboard:function(balance,name){
+                copy_to_clipboard(balance,name)
                 this.show_balance_copied = true
                 setTimeout(() => {
                     person_account_app.show_balance_copied = false
