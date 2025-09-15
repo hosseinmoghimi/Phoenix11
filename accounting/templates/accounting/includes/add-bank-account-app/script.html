@@ -8,7 +8,7 @@
 
 {% if person_s_for_add_bank_account %}
   <script>
-    person_for_add_bank_account_app=JSON.parse("{{person_s_for_add_bank_account}}")
+    person_for_add_bank_account_app=JSON.parse(`{{person_s_for_add_bank_account|escapejs}}`)
     person_id_for_add_bank_account_app=person_for_add_bank_account_app.id
 
   </script>
