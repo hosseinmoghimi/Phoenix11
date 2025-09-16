@@ -1,4 +1,4 @@
-from accounting.forms import AddProductForm,forms,AddInvoiceForm
+from accounting.forms import AddProductForm,forms,AddInvoiceForm,AddEventForm
 from core.forms import EditPageForm
 
 class AddSubProjectForm(forms.Form):
@@ -15,25 +15,20 @@ class AddTicketForm(forms.Form):
 class SelectProjectForm(forms.Form):
     project_id=forms.IntegerField(required=True)
  
-class AddProjectForm(forms.Form):
-    title=forms.CharField(max_length=50,required=True)
+class AddProjectForm(AddEventForm):
     contractor_id=forms.IntegerField(required=True)
     employer_id=forms.IntegerField(required=True)
     percentage_completed=forms.IntegerField(required=True)
-    event_datetime=forms.CharField(max_length=50,required=False)
-    start_datetime=forms.CharField(max_length=50,required=False)
-    end_datetime=forms.CharField(max_length=50,required=False)
     type=forms.CharField(max_length=50,required=False)
     weight=forms.IntegerField(required=False)
+     
 
-class AddEventToProjectForm(forms.Form):
-    title=forms.CharField(max_length=500,required=False)
+
+
+class AddEventToProjectForm(AddEventForm):
     project_id=forms.IntegerField(required=True)
     event_id=forms.IntegerField(required=True)
-    description=forms.CharField(max_length=5000,required=False)
-    start_datetime=forms.CharField(max_length=20, required=True)
-    end_datetime=forms.CharField(max_length=20, required=True)
-    event_datetime=forms.CharField(max_length=20, required=True)
+    
 
 class AddInvoiceToProjectForm(forms.Form):
     invoice_id=forms.IntegerField(required=True)

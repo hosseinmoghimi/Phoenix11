@@ -5,6 +5,17 @@ class TogglePageLikeForm(forms.Form):
     page_id=forms.IntegerField(required=True)
 
 
+class AddEventForm(forms.Form):
+    title=forms.CharField(max_length=200, required=True)
+    priority=forms.IntegerField(required=False)
+    color=forms.CharField(max_length=50, required=False)
+    status=forms.CharField(max_length=50, required=False)
+    event_datetime=forms.CharField(max_length=50,required=False)
+    start_datetime=forms.CharField(max_length=50,required=False)
+    end_datetime=forms.CharField(max_length=50,required=False)
+    description=forms.CharField(max_length=5000,required=False)
+
+
 class EditPageForm(forms.Form):
     page_id=forms.IntegerField(required=False)
     parent_id=forms.IntegerField(required=False)

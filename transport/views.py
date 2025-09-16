@@ -1,15 +1,15 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .serializers import VehicleSerializer,MaintenanceInvoiceSerializer,ServiceManSerializer
-from .repo import VehicleRepo,MaintenanceInvoiceRepo,ServiceManRepo
+from .serializers import MaintenanceSerializer,VehicleSerializer,MaintenanceInvoiceSerializer,ServiceManSerializer
+from .repo import VehicleRepo,MaintenanceInvoiceRepo,ServiceManRepo,MaintenanceRepo
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 import json
 from django.views import View
-from core.views import CoreContext,leolog
-from accounting.views import AssetContext,AddInvoiceContext,InvoiceSerializer
+from core.views import CoreContext,leolog,PageContext
+from accounting.views import AssetContext,AddInvoiceContext,InvoiceSerializer,InvoiceLineWithInvoiceSerializer
 from .enums import MaintenanceTypesEnum
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='transport/'
@@ -89,6 +89,10 @@ class VehicleView(View):
         context[WIDE_LAYOUT]=False
         context['vehicle']=vehicle 
         context.update(VehicleContext(request=request,vehicle=vehicle))
+        maintenances=MaintenanceRepo(request=request).list(vehicle_id=vehicle.id)
+        context['maintenances']=maintenances
+        maintenances_s=json.dumps(MaintenanceSerializer(maintenances,many=True).data)
+        context['maintenances_s']=maintenances_s
         return render(request,TEMPLATE_ROOT+"vehicle.html",context) 
     
  
@@ -117,6 +121,51 @@ class MaintenanceInvoiceView(View):
         from accounting.views import InvoiceContext
         context.update(InvoiceContext(request=request,invoice=maintenance_invoice))
         return render(request,TEMPLATE_ROOT+"maintenance-invoice.html",context) 
+    
+
+
+class MaintenancesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        maintenances =MaintenanceRepo(request=request).list(*args, **kwargs)
+        context['maintenances']=maintenances
+        maintenances_s=json.dumps(MaintenanceSerializer(maintenances,many=True).data)
+        context['maintenances_s']=maintenances_s
+ 
+        context[WIDE_LAYOUT]=False
+        if request.user.has_perm(APP_NAME+'.add_maintenance'):
+            context['add_maintenance_form']=AddMaintenanceForm()
+        return render(request,TEMPLATE_ROOT+"maintenances.html",context) 
+    
+    
+    
+class MaintenanceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        maintenance =MaintenanceRepo(request=request).maintenance(*args, **kwargs)
+        context[WIDE_LAYOUT]=True
+        context['maintenance']=maintenance 
+        maintenance_s=json.dumps(MaintenanceSerializer(maintenance,many=False).data)
+        context['maintenance_s']=maintenance_s 
+        context.update(PageContext(request=request,page=maintenance))
+
+
+        
+        invoices=maintenance.invoices.order_by('-event_datetime')
+        invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
+        context['invoices']=invoices
+        context['invoices_s']=invoices_s
+
+
+
+
+        
+        invoice_lines=maintenance.all_invocie_lines().order_by('invoice_line_item__title')
+        invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
+        context['invoice_lines']=invoice_lines
+        context['invoice_lines_s']=invoice_lines_s
+
+        return render(request,TEMPLATE_ROOT+"maintenance.html",context) 
     
  
  

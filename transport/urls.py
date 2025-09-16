@@ -16,6 +16,10 @@ urlpatterns = [
     path('maintenance-invoice/<int:pk>/',login_required(views.MaintenanceInvoiceView.as_view()),name="maintenanceinvoice"),
     path('add-maintenance-invoice/',login_required(apis.AddMaintenanceInvoiceApi.as_view()),name="add_maintenance_invoice"),
 
+    path('maintenances/',login_required(views.MaintenancesView.as_view()),name="maintenances"),
+    path('maintenance/<int:pk>/',login_required(views.MaintenanceView.as_view()),name="maintenance"),
+    path('add-maintenance/',login_required(apis.AddMaintenanceApi.as_view()),name="add_maintenance"),
+
     path('service-mans/',login_required(views.ServiceMansView.as_view()),name="service_mans"),
     path('service-man/<int:pk>/',login_required(views.ServiceManView.as_view()),name="serviceman"),
     path('add-service-man/',login_required(apis.AddServiceManApi.as_view()),name="add_service_man"),

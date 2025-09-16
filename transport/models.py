@@ -9,7 +9,7 @@ from phoenix.server_settings import CURRENCY
 from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar, to_persian_datetime_tag
 from phoenix.settings import STATIC_URL
 from django.db import models
-from core.models import  Page,ColorEnum
+from core.models import  Page,ColorEnum,Event
 from django.shortcuts import reverse
 from django.utils.translation import gettext as _
 from .apps import APP_NAME 
@@ -37,7 +37,48 @@ class ServiceMan(models.Model,LinkHelper):
         super(ServiceMan,self).save(*args, **kwargs)
         message='سرویس کار با موفقیت اضافه شد.'
         return SUCCEED,message,self
-  
+
+class Maintenance(Event):
+    kilometer=models.IntegerField(_("کیلومتر"),default=0)
+    service_man=models.ForeignKey("serviceman", verbose_name=_("service man"), on_delete=models.PROTECT)
+    vehicle=models.ForeignKey("vehicle", verbose_name=_("vehicle"), on_delete=models.PROTECT)
+    maintenance_type=models.CharField(_("سرویس"),choices=MaintenanceTypesEnum.choices, max_length=100)
+    
+    invoices=models.ManyToManyField("accounting.invoice",blank=True, verbose_name=_("invoice"))
+    
+    class_name='maintenance'
+    app_name=APP_NAME
+    @property
+    def sum(self):
+        sum=0
+        for invoice in self.invoices.all():
+            sum+=invoice.amount
+        return sum
+    def save(self, *args, **kwargs):
+        
+        from django.utils import timezone
+        now =timezone.now()
+        if self.event_datetime is None:
+            self.event_datetime=now
+        if self.start_datetime is None:
+            self.start_datetime=now
+        if self.end_datetime is None:
+            self.end_datetime=now
+
+        if self.app_name is None or self.app_name=="":
+            self.app_name = APP_NAME
+        if self.class_name is None or self.class_name=="":
+            self.class_name = "maintenance"
+        return super(Maintenance, self).save(*args, **kwargs)
+    class Meta:
+        verbose_name = _("Maintenance")
+        verbose_name_plural = _("Maintenances")
+ 
+    def all_invocie_lines(self):
+        invoice_ids=[]
+        for invoice in self.invoices.all():
+            invoice_ids.append(invoice.id)
+        return InvoiceLine.objects.filter(invoice_id__in=invoice_ids)
 
 class MaintenanceInvoice(Invoice):
     kilometer=models.IntegerField(_("کیلومتر"),default=0)

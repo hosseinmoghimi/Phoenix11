@@ -2,15 +2,15 @@
 {% load to_price %}
 {% load to_amount_color %}
 {% load static %}
-<div id="accordion-invoices" class="rtl text-right farsi">
+<div id="accordion-maintenance-invoices" class="rtl text-right farsi">
 
 
 
     <div class="card" id="maintenance-invoices-app">
-        <div class="card-header" id="heading-invoices">
+        <div class="card-header" id="heading-maintenance-invoices">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-invoices"
-                    aria-expanded="true" aria-controls="collapse-invoices">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-maintenance-invoices"
+                    aria-expanded="true" aria-controls="collapse-maintenance-invoices">
 
                     فاکتور های تعمیر و نگهداری
 
@@ -26,8 +26,8 @@
 
          
         </div>
-        <div id="collapse-invoices" class="collapse {% if expand_invoices %} show {% endif %}"
-            aria-labelledby="heading-invoices" data-parent="#accordion-invoices">
+        <div id="collapse-maintenance-invoices" class="collapse {% if expand_maintenance_invoices %} show {% endif %}"
+            aria-labelledby="heading-maintenance-invoices" data-parent="#accordion-maintenance-invoices">
 
 
             <div class="card-body">

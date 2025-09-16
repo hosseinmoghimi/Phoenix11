@@ -1,4 +1,4 @@
-from accounting.forms import forms,AddInvoiceForm
+from accounting.forms import forms,AddInvoiceForm,AddEventForm
  
  
 class AddVehicleForm(forms.Form):
@@ -7,6 +7,12 @@ class AddVehicleForm(forms.Form):
  
 
 class AddMaintenanceInvoiceForm(AddInvoiceForm):
+    kilometer=forms.IntegerField(  required=False)
+    service_man_id=forms.IntegerField(required=True)
+    vehicle_id=forms.IntegerField(required=True)
+    maintenance_type=forms.CharField(max_length=100, required=True)
+    
+class AddMaintenanceForm(AddEventForm):
     kilometer=forms.IntegerField(  required=False)
     service_man_id=forms.IntegerField(required=True)
     vehicle_id=forms.IntegerField(required=True)
