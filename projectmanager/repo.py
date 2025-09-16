@@ -370,8 +370,15 @@ class RemoteClientRepo():
         objects = self.objects
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
-           
             objects = objects.filter(Q(name__contains=search_for)|Q(description__contains=search_for)|Q(local_ip__contains=search_for)|Q(remote_ip__contains=search_for))
+           
+        
+        if 'product_id' in kwargs:
+            product_id=kwargs['product_id']
+            objects = objects.filter(product_id=product_id)
+           
+        
+        
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home'])) 
          

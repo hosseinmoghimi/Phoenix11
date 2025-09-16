@@ -972,6 +972,13 @@ class ProductView(View):
         warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
         context["warehouse_sheets_s"]=warehouse_sheets_s
 
+        from projectmanager.views import RemoteClientRepo,RemoteClientSerializer
+
+        remote_clients=RemoteClientRepo(request=request).list(product_id=product.id)
+        context["warehouses"]=remote_clients
+        remote_clients_s=json.dumps(RemoteClientSerializer(remote_clients,many=True).data)
+        context["remote_clients_s"]=remote_clients_s
+
         return render(request,TEMPLATE_ROOT+"product.html",context)
     
 
