@@ -54,12 +54,12 @@
                                    
                                       
                                 <div v-for="person in [person_account.person]">
-                                    {% include "authentication/includes/person-app/media.html" %}
+                                    {% include "accounting/includes/person-app/media.html" %}
 
                                 </div>
                                 </td>
 
-                                
+
                                   <td>
                                     <a :href="person_account.person_category.get_absolute_url">
                                         <span   v-text="person_account.person_category.title"></span>

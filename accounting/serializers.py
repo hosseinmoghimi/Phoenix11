@@ -4,6 +4,7 @@ from .models import FinancialDocument,ProductSpecification,FinancialYear,PersonA
 from .models import BankAccount,Bank
 from .models import Brand,PersonCategory
 from authentication.serializers import Person
+
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model=Person
