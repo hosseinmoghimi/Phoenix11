@@ -2338,6 +2338,8 @@ class FinancialDocumentLineRepo:
         financial_document_line=FinancialDocumentLine()
         if 'title' in kwargs:
             financial_document_line.title=kwargs['title']
+        if 'status' in kwargs:
+            financial_document_line.status=kwargs['status']
         if 'financial_event_id' in kwargs:
             financial_event_id=kwargs['financial_event_id']
             financial_event=FinancialEvent.objects.filter(pk=financial_event_id).first()
@@ -2447,6 +2449,10 @@ class FinancialDocumentLineRepo:
         financial_document_line=FinancialDocumentLine.objects.filter(pk=kwargs['financial_document_line_id']).first()
         if financial_document_line is None:
             return FAILED,'سطر پیدا نشد.',None
+        
+        if 'status' in kwargs:
+            financial_document_line.status=kwargs['status']
+            
         if 'title' in kwargs:
             financial_document_line.title=kwargs['title']
         if 'financial_event_id' in kwargs:

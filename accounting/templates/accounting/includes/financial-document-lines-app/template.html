@@ -57,6 +57,9 @@
                 <th>
                   ردیف
                 </th>
+                <th>
+                  وضعیت
+                </th>
                 <th>شرح</th>
 
                 {% if not financial_document %}
@@ -86,6 +89,13 @@
                 <tr v-for="(financial_document_line, index) in financial_document_lines" :key="financial_document_line.id">
                 <td>
                    <span v-text="index + 1"></span>
+                </td>
+
+                 <td>
+                  <span :class="'badge badge-'+financial_document_line.status_color">
+
+                    <span v-text="financial_document_line.status"></span>
+                  </span>
                 </td>
                 <td>
                    
@@ -202,10 +212,11 @@
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="9">&nbsp;</td>
+                  <td colspan="10">&nbsp;</td>
                 </tr>
               </tbody>
               <tfoot>
+                <th></th>
                 <th></th>
                 <th></th>
                  

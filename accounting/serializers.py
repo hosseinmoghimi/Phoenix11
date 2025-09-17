@@ -154,7 +154,7 @@ class FinancialDocumentLineSerializer(serializers.ModelSerializer):
        account=AccountSerializer()
        class Meta:
         model = FinancialDocumentLine
-        fields = ['id','account','rest','financial_document','amount','title','persian_date_time','balance','bedehkar','bestankar','financial_event', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','account','rest','status_color','status','financial_document','amount','title','persian_date_time','balance','bedehkar','bestankar','financial_event', 'get_absolute_url','get_edit_url','get_delete_url']
 
 class FinancialDocumentLineForPrintSerializer(serializers.ModelSerializer):
        class Meta:

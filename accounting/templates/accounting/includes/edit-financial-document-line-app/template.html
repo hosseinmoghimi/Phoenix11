@@ -175,6 +175,20 @@
               </div>
             </div>
 
+            
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="">وضعیت</label>
+                <select v-model="status" class="form-control">
+                  <option value="{{financial_document_line.status}}">{{financial_document_line.status}}</option>
+                  {% for status in financial_document_line_statuses %}
+                    
+                  <option value="{{status}}">{{status}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
             <div class="col-md-12">
               <button @click="edit_financial_document_line()" type="submit" class="btn btn-success">
                 <i class="fa fa-plus"></i>افزودن

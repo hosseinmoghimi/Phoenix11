@@ -224,6 +224,7 @@ def AddInvoiceLineItemUnitsContext(request,invoice_line_item,*args, **kwargs):
 def AddFinancialDocumentLineContext(request,*args, **kwargs):
     context={}
     if request.user.has_perm(APP_NAME+'.add_financialdocumentline'):
+        context['financial_document_line_statuses']=(i[0] for i in FinancialDocumentStatusEnum.choices)
         context['add_financial_document_line_form']=AddFinancialDocumentLineForm()
     # if 'financial_event' in kwargs:
     #     context['financial_event']='financial_event'
@@ -756,7 +757,7 @@ class FinancialDocumentLineView(View):
         context['persian_date_time']=financial_document_line.persian_date_time_[0:10]
         if request.user.has_perm(APP_NAME+'.change_financialdocumentline'):
             context['edit_financial_document_line_form']=EditFinancialDocumentLineForm()
-
+            context['financial_document_line_statuses']=(i[0] for i in FinancialDocumentStatusEnum.choices)
         return render(request,TEMPLATE_ROOT+"financial-document-line.html",context)
 
 

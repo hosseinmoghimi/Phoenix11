@@ -415,6 +415,7 @@ class FinancialDocument(models.Model,LinkHelper):
         message='با موفقیت نرمال سازی شد.'
         return result,message
 
+
 class Brand(models.Model,LinkHelper,ImageHelper):
     name=models.CharField(_("name"),max_length=100)
     logo_origin=models.ImageField(_("logo"),blank=True,null=True, upload_to=IMAGE_FOLDER+"brand", height_field=None, width_field=None, max_length=None)
@@ -441,7 +442,7 @@ class FinancialDocumentLine(models.Model,LinkHelper,DateTimeHelper):
     bestankar=models.IntegerField(_("بستانکار"),default=0)
     balance=models.IntegerField(_("بالانس"),default=0)
     rest=models.IntegerField(_("مانده"),default=0)
-
+    status=models.CharField(_("status"),choices=FinancialDocumentStatusEnum.choices,default=FinancialDocumentStatusEnum.DRAFT, max_length=50)
     @property
     def amount(self):
         return self.bestankar+self.bedehkar
@@ -522,6 +523,17 @@ class FinancialDocumentLine(models.Model,LinkHelper,DateTimeHelper):
             event=self.financial_event.title
         return f"{self.account.id} , {event} , {self.account.name} , {to_price(self.balance)}, {to_price(self.bestankar)}, {to_price(self.bedehkar)}"
 
+
+
+    @property 
+    def status_color(self):
+        if self.status==FinancialDocumentStatusEnum.ACCEPTED:
+            return "success"
+        if self.status==FinancialDocumentStatusEnum.DENIED:
+            return "danger"
+        if self.status==FinancialDocumentStatusEnum.DRAFT:
+            return "secondary"
+        return "primary"
 
 class FinancialYear(models.Model,LinkHelper,DateTimeHelper):
     name=models.CharField(_("نام"),max_length=50)
