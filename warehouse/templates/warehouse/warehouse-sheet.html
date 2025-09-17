@@ -13,6 +13,16 @@
     {% include "warehouse/includes/add-warehouse-sheet-signature-app/template.html" %}
   </div>
   {% endif %}
+  <div class="col-12">
+{% include "warehouse/includes/warehouse-sheet-labels-app/template.html" %}
+  </div>
+  
+  {% if add_warehouse_sheet_label_form %}
+  <div class="col-12">
+    {% include "warehouse/includes/add-warehouse-sheet-label-app/template.html" %}
+  </div>
+  {% endif %}
+
 </div>
 {% endblock content %} 
 {% block script %} 
@@ -24,5 +34,9 @@
 
 {% include "warehouse/includes/add-warehouse-sheet-signature-app/script.html" %}
  {% endif %} 
+{% include "warehouse/includes/warehouse-sheet-labels-app/script.html" %}
  
+  {% if add_warehouse_sheet_label_form %}
+    {% include "warehouse/includes/add-warehouse-sheet-label-app/script.html" %}
+  {% endif %}
  {% endblock script %}

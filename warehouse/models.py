@@ -1,6 +1,6 @@
 from django.db import models
 from core.models import _,reverse,Page,LinkHelper,DateTimeHelper,FAILED,SUCCEED,ImageHelper
-from phoenix.server_settings import CURRENCY
+from phoenix.server_settings import CURRENCY,MEDIA_URL
 from .apps import APP_NAME
 from accounting.models import Product,InvoiceLine,Invoice,CorePage
 from .enums import *
@@ -94,3 +94,31 @@ class WareHouseSheetSignature(models.Model,LinkHelper,DateTimeHelper):
     def __str__(self):
         return f'{self.employee}  {self.status}  {self.warehouse_sheet}'
  
+class WareHouseSheetLabel(models.Model,LinkHelper,DateTimeHelper):
+    warehouse_sheet=models.ForeignKey("warehousesheet", verbose_name=_("warehouse_sheet"), on_delete=models.PROTECT)
+    serial_no=models.CharField(_("serial_no"),null=True,blank=True, max_length=50)
+    lot_no=models.CharField(_("lot_no"),null=True,blank=True, max_length=50)
+    lot_no=models.CharField(_("lot_no"),null=True,blank=True, max_length=50)
+    barcode_1=models.CharField(_("barcode_1"),null=True,blank=True, max_length=50)
+    barcode_2=models.CharField(_("barcode_2"),null=True,blank=True, max_length=50)
+    barcode_3=models.CharField(_("barcode_3"),null=True,blank=True, max_length=50)
+    label_origin=models.ImageField(_("label_origin"),blank=True,null=True, upload_to=IMAGE_FOLDER+"label", height_field=None, width_field=None, max_length=None)
+    production_date=models.DateTimeField(_("production_date"),null=True,blank=True, auto_now=False, auto_now_add=False)
+    expiration_date=models.DateTimeField(_("expiration_date"),null=True,blank=True, auto_now=False, auto_now_add=False)
+    description=models.CharField(_("description"),null=True,blank=True, max_length=50)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    class_name='warehousesheetlabel'
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("WareHouseSheetLabel")
+        verbose_name_plural = _("WareHouseSheetLabels")
+
+    def __str__(self):
+        return f'{self.warehouse_sheet}'
+    @property
+    def label(self):
+          
+        if self.label_origin is None or str(self.label_origin)=="":
+            return None
+        else:
+            return f"{MEDIA_URL}{self.label_origin}"

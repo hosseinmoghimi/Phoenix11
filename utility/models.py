@@ -23,8 +23,11 @@ class DateHelper():
         return PersianCalendar().from_gregorian(self.date_created)
     def persian_date_modified(self):
         return PersianCalendar().from_gregorian(self.date_modified)
-
-
+    def persian_expiration_date(self):
+        return PersianCalendar().from_gregorian(self.expiration_date)
+    def persian_production_date(self):
+        return PersianCalendar().from_gregorian(self.production_date)
+ 
 class DateTimeHelper(DateHelper):
     def persian_enter_datetime(self):
         return PersianCalendar().from_gregorian(self.enter_datetime)

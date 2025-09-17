@@ -84,6 +84,13 @@ def SearchContext(request,search_for,*args, **kwargs):
         WAS_FOUND=True
 
 
+    remote_clients=RemoteClientRepo(request=request).list(search_for=search_for)
+    if len(remote_clients)>0:
+        context['remote_clients']=remote_clients
+        context['remote_clients_s']=json.dumps(RemoteClientSerializer(remote_clients,many=True).data)
+        WAS_FOUND=True
+
+
     context['WAS_FOUND']=WAS_FOUND
     return context
 

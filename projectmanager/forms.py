@@ -76,6 +76,7 @@ class AddRemoteClientForm(forms.Form):
     adsl_password=forms.CharField(max_length=50, required=False)
     telephone=forms.CharField(max_length=50, required=False)
     contact=forms.CharField(max_length=50, required=False)
+    pattern=forms.CharField(max_length=50, required=False)
     brand_id=forms.IntegerField(required=False)
     product_id=forms.IntegerField(required=False)
     model_name=forms.CharField(max_length=20, required=False)

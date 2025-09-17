@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import WareHouseRepo,WareHouseSheetRepo,WareHouseSheetSignatureRepo
-from .serializers import WareHouseSerializer,WareHouseSheetSerializer,WareHouseSheetSignatureSerializer
+from .repo import WareHouseRepo,WareHouseSheetRepo,WareHouseSheetSignatureRepo,WareHouseSheetLabelRepo
+from .serializers import WareHouseSheetLabelSerializer,WareHouseSerializer,WareHouseSheetSerializer,WareHouseSheetSignatureSerializer
 from django.views import View
 from utility.enums import *
 from .enums import *
@@ -100,6 +100,32 @@ class WareHouseView(View):
 
 
  
+class WareHouseSheetLabelsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        warehouse_sheet_labels=WareHouseSheetLabelRepo(request=request).list(*args, **kwargs)
+        context["WIDE_LAYOUT"]=True
+
+        context["warehouse_sheet_labels"]=warehouse_sheet_labels
+        warehouse_sheet_labels_s=json.dumps(WareHouseSheetLabelSerializer(warehouse_sheet_labels,many=True).data)
+        context["warehouse_sheet_labels_s"]=warehouse_sheet_labels_s
+        
+        return render(request,TEMPLATE_ROOT+"warehouse-sheet-labels.html",context)
+# Create your views here. 
+   
+ 
+class WareHouseSheetLabelView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        warehouse_sheet_label=WareHouseSheetLabelRepo(request=request).warehouse_sheet_label(*args, **kwargs)
+        context["warehouse_sheet_label"]=warehouse_sheet_label
+        warehouse_sheet_label_s=json.dumps(WareHouseSheetSerializer(warehouse_sheet_label,many=False).data)
+        context["warehouse_sheet_label_s"]=warehouse_sheet_label_s
+        return render(request,TEMPLATE_ROOT+"warehouse-sheet-label.html",context)
+# Create your views here. 
+
+
  
 def AddWareHouseSheetContext(request):
     context={}
@@ -138,6 +164,14 @@ class WareHouseSheetView(View):
         warehouse_sheet_signatures_s=json.dumps(WareHouseSheetSignatureSerializer(warehouse_sheet_signatures,many=True).data)
         context["warehouse_sheet_signatures_s"]=warehouse_sheet_signatures_s
 
+
+
+        warehouse_sheet_labels=WareHouseSheetLabelRepo(request=request).list(warehouse_sheet_id=warehouse_sheet.id,*args, **kwargs)
+        context["warehouse_sheet_labels"]=warehouse_sheet_labels
+        warehouse_sheet_labels_s=json.dumps(WareHouseSheetLabelSerializer(warehouse_sheet_labels,many=True).data)
+        context["warehouse_sheet_labels_s"]=warehouse_sheet_labels_s
+
+
         from organization.views import EmployeeRepo,EmployeeSerializer
         me_employee=EmployeeRepo(request=request).me
         
@@ -147,6 +181,11 @@ class WareHouseSheetView(View):
             context['me_employee_s']=me_employee_s
             context['warehouse_sheet_signature_statuses']=(i[0] for i in SignatureStatusEnum.choices)
             context['add_warehouse_sheet_signature_form']=AddWareHouseSheetSignatureForm()
+        if me_employee is not None:
+            context['me_employee']=me_employee
+            me_employee_s=json.dumps(EmployeeSerializer(me_employee).data)
+            context['me_employee_s']=me_employee_s
+            context['add_warehouse_sheet_label_form']=AddWareHouseSheetLabelForm()
         return render(request,TEMPLATE_ROOT+"warehouse-sheet.html",context)
 # Create your views here. 
 

@@ -149,6 +149,7 @@ class RemoteClient(models.Model,LinkHelper):
     id_name=models.CharField(_("id_name"),null=True,blank=True, max_length=50)
     mac_address=models.CharField(_("mac_address"),null=True,blank=True, max_length=50)
     serial_no=models.CharField(_("serial_no"),null=True,blank=True, max_length=50)
+    pattern=models.CharField(_("pattern"),null=True,blank=True, max_length=50)
     part_no=models.CharField(_("part_no"),null=True,blank=True, max_length=50)
     username=models.CharField(_("username"),null=True,blank=True, max_length=50)
     password=models.CharField(_("password"),null=True,blank=True, max_length=50)

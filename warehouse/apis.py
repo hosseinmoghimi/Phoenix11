@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import WareHouseRepo,WareHouseSheetRepo,WareHouseSheetSignatureRepo
-from .serializers import WareHouseSerializer,WareHouseSheetSerializer,WareHouseSheetSignatureSerializer
+from .repo import WareHouseRepo,WareHouseSheetRepo,WareHouseSheetSignatureRepo,WareHouseSheetLabelRepo
+from .serializers import WareHouseSerializer,WareHouseSheetSerializer,WareHouseSheetSignatureSerializer,WareHouseSheetLabelSerializer
  
 from django.http import JsonResponse
 from .forms import *
@@ -104,6 +104,29 @@ class AddWareHouseSheetSignatureApi(APIView):
             result,message,warehouse_sheet_signature=WareHouseSheetSignatureRepo(request=request).add_warehouse_sheet_signature(**cd)
             if warehouse_sheet_signature is not None:
                 context['warehouse_sheet_signature']=WareHouseSheetSignatureSerializer(warehouse_sheet_signature).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+   
+ 
+class AddWareHouseSheetLabelApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        add_warehouse_sheet_label_form=AddWareHouseSheetLabelForm(request.POST)
+        if add_warehouse_sheet_label_form.is_valid():
+            log=333
+            cd=add_warehouse_sheet_label_form.cleaned_data
+            result,message,warehouse_sheet_label=WareHouseSheetLabelRepo(request=request).add_warehouse_sheet_label(**cd)
+            if warehouse_sheet_label is not None:
+                context['warehouse_sheet_label']=WareHouseSheetLabelSerializer(warehouse_sheet_label).data
         context['message']=message
         context['result']=result
         context['log']=log

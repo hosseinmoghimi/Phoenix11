@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import WareHouse,WareHouseSheet,WareHouseSheetSignature
+from .models import WareHouse,WareHouseSheet,WareHouseSheetSignature,WareHouseSheetLabel
 from accounting.serializers import PersonAccountSerializer,InvoiceLineWithInvoiceSerializer
 from authentication.serializers import PersonSerializer
 from organization.serializers import EmployeeSerializer
@@ -24,4 +24,10 @@ class WareHouseSheetSignatureSerializer(serializers.ModelSerializer):
        class Meta:
         model = WareHouseSheetSignature
         fields = ['id', 'warehouse_sheet','status','description','persian_date_added','employee', 'get_edit_url','get_delete_url']
+  
+class WareHouseSheetLabelSerializer(serializers.ModelSerializer):
+       warehouse_sheet=WareHouseSheetSerializer()
+       class Meta:
+        model = WareHouseSheetLabel
+        fields = ['id', 'warehouse_sheet','label','serial_no','description','persian_date_added','get_edit_url','get_absolute_url','get_delete_url']
   
