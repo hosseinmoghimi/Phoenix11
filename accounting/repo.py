@@ -2466,6 +2466,7 @@ class FinancialDocumentLineRepo:
             if financial_document.status==FinancialDocumentStatusEnum.ACCEPTED:
                 message='سند مرتبط تایید شده می باشد.<br> نمی توان سطر های آن را تغییر داد.'
                 return FAILED,message,None
+            financial_document_line.financial_document_id=financial_document_id
         if 'description' in kwargs:
             financial_document_line.description=kwargs['description']
         if 'persian_date_time' in kwargs and kwargs['persian_date_time'] is not None and not kwargs['persian_date_time']=='':

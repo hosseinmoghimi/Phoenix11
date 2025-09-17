@@ -10,6 +10,10 @@ class InvoiceLineStatusEnum(TextChoices):
     UN_BOXED_CLEAN='کارکرده در حد نو',_('کارکرده در حد نو') 
     UN_BOXED_UN_USED='نو بدون جعبه',_('نو بدون جعبه') 
     REPAIRED='تعمیر شده',_('تعمیر شده')
+    BROKEN='خراب',_('خراب')
+    DAMAGED='داغون',_('داغون')
+    FAKE='قلابی',_('قلابی')
+    ORIGINAL='اصلی',_('اصلی')
 
 class PersonCategoryEnum(TextChoices):
     DEFAULT='پیش فرض',_('پیش فرض')
