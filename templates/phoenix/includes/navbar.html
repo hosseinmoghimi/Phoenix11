@@ -60,6 +60,13 @@
         
       {% endif %}
  
+
+      
+      {% if my_links %}
+      {% include "utility/includes/my-links-app/template.html" %}
+        
+      {% endif %}
+ 
       
     </ul>
     <form class="form-inline my-2 my-lg-0" method="POST" action="{% url 'core:search' %}">

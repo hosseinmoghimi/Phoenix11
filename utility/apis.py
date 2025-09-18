@@ -1,8 +1,8 @@
-from .serializers import ParameterSerializer 
+from .serializers import ParameterSerializer,MyLinkSerializer
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
-from .repo import ParameterRepo,ClipBoardItemRepo
+from .repo import ParameterRepo,ClipBoardItemRepo,MyLinkRepo
 from utility.constants import SUCCEED, FAILED
 from utility.utils import str_to_html
  
@@ -54,6 +54,56 @@ class AddClipBoardItemApi(APIView):
                     text=text,
                     name=name,
                     )
+                 
+        context['log'] = log
+        context['message'] = message
+        context['result'] = result
+        return JsonResponse(context)
+
+
+class DeleteMyLinkApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        result = FAILED
+        message=''
+        if request.method == 'POST':
+            log += 1
+            delete_my_link_form = DeleteMyLinkForm(request.POST)
+            if delete_my_link_form.is_valid():
+                log += 1
+                cd=delete_my_link_form.cleaned_data 
+                my_link_id = cd['my_link_id']
+                
+                result,my_links = MyLinkRepo(request=request).delete_my_link(
+                    my_link_id=my_link_id,
+                    )
+                context['my_links']=MyLinkSerializer(my_links,many=True).data
+                 
+        context['log'] = log
+        context['message'] = message
+        context['result'] = result
+        return JsonResponse(context)
+
+
+
+class AddMyLinkApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        result = FAILED
+        message=''
+        if request.method == 'POST':
+            log += 1
+            add_my_link_form = AddMyLinkForm(request.POST)
+            if add_my_link_form.is_valid():
+                log += 1
+                cd=add_my_link_form.cleaned_data 
+                
+                result,my_links = MyLinkRepo(request=request).add_my_link(
+                    **cd
+                    )
+                context['my_links']=MyLinkSerializer(my_links,many=True).data
                  
         context['log'] = log
         context['message'] = message

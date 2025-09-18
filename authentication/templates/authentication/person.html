@@ -17,13 +17,9 @@
   </div>
     
   {% endif %}
-  {% if clip_board_items %}
-    
-  <div class="col-12">
-    
-    {% include "authentication/includes/clip-board-items-app/template.html" %}
-  </div>
-  {% endif %}
+ 
+
+
   {% if pages %}
   <div class="col-12">
 
@@ -46,8 +42,6 @@
     {% include "authentication/includes/edit-person-app/script.html" %}
     
   {% endif %}
-  
-  {% if clip_board_items %}
-    {% include "authentication/includes/clip-board-items-app/script.html" %}
-  {% endif %}
+   
+
   {% endblock script %}

@@ -11,7 +11,8 @@ from phoenix.server_apps import phoenix_apps
 from django.utils import timezone
 from django.http import HttpResponse
 from .repo import ClipBoardItemRepo
-
+from .serializers import MyLinkSerializer
+import json
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='utility/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -38,6 +39,24 @@ def ClipBoardItemContext(request,*args, **kwargs):
     clipboard_items=ClipBoardItemRepo(request=request).list()
     if len(clipboard_items)>0:
         context['clipboard_items']=clipboard_items
+    return context
+
+
+def MyLinksContext(request,*args, **kwargs):
+    context={}
+    if 'person' in kwargs:
+        person=kwargs['person']
+    if person is None:
+        from authentication.repo import PersonRepo
+        person=PersonRepo(request=request).me
+    if person is None:
+        return {}
+    from .repo import MyLinkRepo
+    my_links=MyLinkRepo(request=request).list()
+    if len(my_links)>0:
+        context['my_links']=my_links
+        my_links_s=json.dumps(MyLinkSerializer(my_links,many=True).data)
+        context['my_links_s']=my_links_s
     return context
 
 def SearchContext(request,app_name,search_for,*args, **kwargs):

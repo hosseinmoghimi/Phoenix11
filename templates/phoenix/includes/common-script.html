@@ -79,6 +79,13 @@
         
       {% endif %}
 
+      
+  
+  {% if my_links %}
+    {% include "utility/includes/my-links-app/script.html" %}
+  {% endif %}
+  
+
 {% if PUSHER_IS_ENABLE %}
 {% include "phoenix/includes/pusher-script.html" %}
 {% endif %}

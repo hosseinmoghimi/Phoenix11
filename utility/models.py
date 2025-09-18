@@ -183,8 +183,6 @@ class Picture(models.Model, LinkHelper):
 
     def get_edit_url(self):
         return f"{ADMIN_URL}{APP_NAME}/picture/{self.pk}/change/"
-
-
  
 
 class Parameter(models.Model):
@@ -260,3 +258,17 @@ class ClipBoardItem(models.Model):
  
         return f'{self.person}  :  {self.name} :  {self.text}'
  
+
+class MyLink(models.Model):
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
+    link=models.ForeignKey("attachments.link", verbose_name=_("link"), on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _("MyLink")
+        verbose_name_plural = _("MyLinks")
+
+    def __str__(self):
+        return f"{self.person} : {self.link}"
+
+    def get_absolute_url(self):
+        return reverse("MyLink_detail", kwargs={"pk": self.pk})

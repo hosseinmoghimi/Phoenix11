@@ -16,6 +16,8 @@ urlpatterns = [
     path("download_db/",login_required(views.BackupDBView.as_view()),name="download_db"),
     path("download_media/",login_required(views.DownloadMediaView.as_view()),name="download_media"),
     path("download_privates/",login_required(views.DownloadPrivatesView.as_view()),name="download_privates"),
+    path("delete-my-link/",login_required(apis.DeleteMyLinkApi.as_view()),name="delete_my_link"),
+    path("add-my-link/",login_required(apis.AddMyLinkApi.as_view()),name="add_my_link"),
 
 ]
 

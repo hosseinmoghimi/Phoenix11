@@ -1,4 +1,4 @@
-from .models import Parameter,Picture,ClipBoardItem
+from .models import Parameter,Picture,ClipBoardItem,MyLink
 from utility.constants import *
 from django.db.models import Q
 from authentication.repo import PersonRepo
@@ -38,6 +38,59 @@ class ClipBoardItemRepo:
         clip_board_item_list=ClipBoardItem.objects.filter(person_id=self.me_person)
         if len(clip_board_item_list)>CLIPBODRD_MAX_LENGTH :
             clip_board_item_list.first().delete()
+        result=SUCCEED
+        return result
+
+
+
+
+class MyLinkRepo:
+    
+    def __init__(self,*args, **kwargs):
+        self.app_name=""
+        self.request=None
+        self.user=None
+        if 'app_name' in kwargs:
+            self.app_name=kwargs['app_name']
+        else:
+            self.app_name=None
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user 
+        self.me_person=PersonRepo(request=self.request).me
+        self.objects=MyLink.objects.filter(person=self.me_person).order_by('link__priority')
+
+
+    def list(self,*args, **kwargs):
+        return self.objects.all()
+    def delete_my_link(self,my_link_id):
+        result,my_links=FAILED,[]
+        my_link=MyLink.objects.filter(person_id=self.me_person.id).filter(id=my_link_id).first()
+        if my_link is not None:
+            my_link.delete()
+            result=SUCCEED
+            my_links= MyLink.objects.filter(person_id=self.me_person.id).order_by('link__priority')
+        return result,my_links
+    def add_my_link(self,*args,**kwargs):
+        result=FAILED
+        if self.me_person is None:
+            return FAILED
+        from attachments.models import Link
+        link=Link(*args, **kwargs)
+        my_link=MyLink(person_id=self.me_person.id,*args,**kwargs)
+        if 'title' in kwargs:
+            link.title=kwargs['title']
+        if 'url' in kwargs:
+            link.url=kwargs['url']
+        if 'priority' in kwargs:
+            link.priority=kwargs['priority']
+        link.save()
+        my_link.link=link
+        my_link.save()
+
+        my_link_list=MyLink.objects.filter(person_id=self.me_person).order_by('link__priority')
+        if len(my_link_list)>MY_LINKS_LENGTH :
+            my_link_list.first().delete()
         result=SUCCEED
         return result
 

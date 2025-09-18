@@ -53,6 +53,7 @@ class Comment(models.Model,DateTimeHelper,LinkHelper):
             return self.parent.id
         return None
  
+ 
 class Like(models.Model,DateTimeHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)

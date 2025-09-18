@@ -1,4 +1,5 @@
 from django import forms
+from attachments.forms import AddLinkForm
 class DateTimeForm(forms.Form):
     gregorian_datetime=forms.CharField(max_length=20, required=False)
     persian_datetime=forms.CharField(max_length=20, required=False)
@@ -13,6 +14,11 @@ class AddToClipBoradForm(forms.Form):
     name=forms.CharField(max_length=100,required=True)
     text=forms.CharField(max_length=100,required=True)
     
+class DeleteMyLinkForm(forms.Form):
+    my_link_id=forms.IntegerField(required=True)
+    
+class AddMyLinkForm(AddLinkForm):
+    pass    
     
 class GetParametersForm(forms.Form):
     app_name=forms.CharField(max_length=50,required=True)

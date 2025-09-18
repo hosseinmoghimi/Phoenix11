@@ -56,8 +56,9 @@ def CoreContext(request,*args, **kwargs):
         context['me_person']=me_person 
         me_person_s=json.dumps(PersonSerializer(me_person).data)
         context['me_person_s']=me_person_s 
-        from utility.views import ClipBoardItemContext
+        from utility.views import ClipBoardItemContext,MyLinksContext
         context.update(ClipBoardItemContext(request=request,person=me_person))
+        context.update(MyLinksContext(request=request,person=me_person))
     context['ADMIN_URL']=ADMIN_URL
     context['SITE_URL']=SITE_URL
     context['STATIC_URL']=STATIC_URL
