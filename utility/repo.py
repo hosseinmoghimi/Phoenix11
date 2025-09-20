@@ -58,7 +58,7 @@ class MyLinkRepo:
             self.request=kwargs['request']
             self.user=self.request.user 
         self.me_person=PersonRepo(request=self.request).me
-        self.objects=MyLink.objects.filter(person=self.me_person).order_by('link__priority')
+        self.objects=MyLink.objects.filter(person=self.me_person).order_by('priority')
 
 
     def list(self,*args, **kwargs):
@@ -76,16 +76,14 @@ class MyLinkRepo:
         if self.me_person is None:
             return FAILED
         from attachments.models import Link
-        link=Link(*args, **kwargs)
-        my_link=MyLink(person_id=self.me_person.id,*args,**kwargs)
+        my_link=MyLink(person_id=self.me_person.id)
         if 'title' in kwargs:
-            link.title=kwargs['title']
+            my_link.title=kwargs['title']
         if 'url' in kwargs:
-            link.url=kwargs['url']
+            my_link.url=kwargs['url']
         if 'priority' in kwargs:
-            link.priority=kwargs['priority']
-        link.save()
-        my_link.link=link
+            my_link.priority=kwargs['priority']
+        my_link.person_id=self.me_person.id
         my_link.save()
 
         my_link_list=MyLink.objects.filter(person_id=self.me_person).order_by('link__priority')

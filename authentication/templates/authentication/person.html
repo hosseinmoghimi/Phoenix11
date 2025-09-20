@@ -27,6 +27,10 @@
   </div>
     
   {% endif %}
+  <div class="col-12">
+    {% include "utility/includes/add-my-link-app/template.html" %}
+
+  </div>
 </div>
 {% endblock content %} {% block script %}
 
@@ -42,6 +46,7 @@
     {% include "authentication/includes/edit-person-app/script.html" %}
     
   {% endif %}
+    {% include "utility/includes/add-my-link-app/script.html" %}
    
 
   {% endblock script %}

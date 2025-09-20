@@ -17,8 +17,10 @@ class AddToClipBoradForm(forms.Form):
 class DeleteMyLinkForm(forms.Form):
     my_link_id=forms.IntegerField(required=True)
     
-class AddMyLinkForm(AddLinkForm):
-    pass    
+class AddMyLinkForm(forms.Form):
+    url=forms.CharField(max_length=5000,required=True)
+    title=forms.CharField(max_length=5000,required=True)
+    priority=forms.IntegerField(required=False)    
     
 class GetParametersForm(forms.Form):
     app_name=forms.CharField(max_length=50,required=True)

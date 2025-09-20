@@ -259,16 +259,19 @@ class ClipBoardItem(models.Model):
         return f'{self.person}  :  {self.name} :  {self.text}'
  
 
-class MyLink(models.Model):
+class MyLink(models.Model,LinkHelper):
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
-    link=models.ForeignKey("attachments.link", verbose_name=_("link"), on_delete=models.CASCADE)
-
+    title = models.CharField(_("url"), max_length=2000)
+    url = models.CharField(_("url"), max_length=2000)
+    priority = models.IntegerField(_("priority"), default=100)
+    
+    class_name='mylink'
+    app_name=APP_NAME
+    
     class Meta:
         verbose_name = _("MyLink")
         verbose_name_plural = _("MyLinks")
 
     def __str__(self):
-        return f"{self.person} : {self.link}"
-
-    def get_absolute_url(self):
-        return reverse("MyLink_detail", kwargs={"pk": self.pk})
+        return f"{self.person} : {self.title}"
+ 

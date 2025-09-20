@@ -13,8 +13,7 @@ class ParameterSerializer(serializers.ModelSerializer):
  
 class MyLinkSerializer(serializers.ModelSerializer):
     person=PersonSerializer()
-    link=LinkSerializer()
     class Meta:
         model=MyLink
-        fields=['id','person','link']
+        fields=['id','person','title','url','priority']
 
