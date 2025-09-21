@@ -535,6 +535,7 @@ class FinancialDocumentLine(models.Model,LinkHelper,DateTimeHelper):
             return "secondary"
         return "primary"
 
+
 class FinancialYear(models.Model,LinkHelper,DateTimeHelper):
     name=models.CharField(_("نام"),max_length=50)
     start_date=models.DateTimeField(_("تاریخ شروع"), auto_now=False, auto_now_add=False)

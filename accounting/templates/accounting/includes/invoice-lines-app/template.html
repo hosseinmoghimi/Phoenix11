@@ -401,8 +401,13 @@
                                     <div class="alert alert-success">
                                         <!-- <div style="text-decoration:  line-through;"
                                         v-text="to_price(sum_prices())"></div> -->
+{% if invoice %}
+{{invoice.sum_total|to_price}} 
+  
+{% else %}
+<span v-text="to_price(sum_total())"></span>
 
-                                        <span v-text="to_price(sum_total())"></span>
+{% endif %}
                                         <div>
                                             {{CURRENCY}}
                                         </div>
