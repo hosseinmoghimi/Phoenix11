@@ -31,7 +31,6 @@ class WareHouse(models.Model,LinkHelper,ImageHelper):
          return  (result,message,warehouse)
  
  
-
 class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
     source=models.ForeignKey("warehouse",related_name="material_from", verbose_name=_("source"), on_delete=models.PROTECT)
@@ -79,6 +78,7 @@ class WareHouseSheet(models.Model,LinkHelper,DateTimeHelper):
         if self.direction==WareHouseSheetDirectionEnum.OUT:
             return 0-self.quantity
   
+
 class WareHouseSheetSignature(models.Model,LinkHelper,DateTimeHelper):
     warehouse_sheet=models.ForeignKey("warehousesheet", verbose_name=_("warehouse_sheet"), on_delete=models.PROTECT)
     employee=models.ForeignKey("organization.employee", verbose_name=_("employee"), on_delete=models.PROTECT)
@@ -94,6 +94,7 @@ class WareHouseSheetSignature(models.Model,LinkHelper,DateTimeHelper):
     def __str__(self):
         return f'{self.employee}  {self.status}  {self.warehouse_sheet}'
  
+
 class WareHouseSheetLabel(models.Model,LinkHelper,DateTimeHelper):
     warehouse_sheet=models.ForeignKey("warehousesheet", verbose_name=_("warehouse_sheet"), on_delete=models.PROTECT)
     serial_no=models.CharField(_("serial_no"),null=True,blank=True, max_length=50)
@@ -122,3 +123,5 @@ class WareHouseSheetLabel(models.Model,LinkHelper,DateTimeHelper):
             return None
         else:
             return f"{MEDIA_URL}{self.label_origin}"
+
+
