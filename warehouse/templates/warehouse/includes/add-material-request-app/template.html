@@ -1,0 +1,57 @@
+<div id="accordion-add-material-request" class="rtl text-right farsi">
+  <div class="card" id="add-material-request-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-add-material-request"
+          aria-expanded="true"
+          aria-controls="collapse-add-material-request"
+        >
+          درخواست متریال جدید
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-add-material-request"
+      class="collapse"
+      aria-labelledby="heading-add-material-request"
+      data-parent="#accordion-add-material-request"
+    >
+      <div class="card-body">
+          <div class="row">
+            <div class="col-4">
+              <div class="form-group">
+                <label for=""> عنوان کالا </label>
+                <input v-model="title" type="text" class="form-control" />
+              </div>
+
+              <div class="form-group">
+                <label for=""> بارکد کالا </label>
+                <input v-model="barcode" type="text" class="form-control" />
+              </div>
+
+               <div class="form-group">
+                <label for=""> شناسه کالا </label>
+                <input v-model="product_id" type="text" class="form-control" />
+              </div>
+              <div class="my-2">
+                <button class="btn btn-info" @click="search()">
+                    جستجو
+                </button>
+              </div>
+            </div>
+
+            <div class="col-8">
+                <div v-for="product in [product]">
+                    {% include "accounting/includes/product-app/media.html" %}
+                </div>
+              <span v-text="product.title"></span>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

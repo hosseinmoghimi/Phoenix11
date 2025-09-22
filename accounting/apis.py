@@ -450,8 +450,7 @@ class AddChequeApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-
-
+    
 class AddInvoiceLineApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -747,7 +746,19 @@ class SelectProductApi(APIView):
             if select_product_form.is_valid():
                 log=333
                 cd=select_product_form.cleaned_data
-                product=ProductRepo(request=request).product(**cd)
+                product_repo=ProductRepo(request=request)
+                if 'title' in cd:
+                    title=cd['title']
+                    if len(title)>0:
+                        products=product_repo.list(title=title)
+                        context['products']=ProductSerializer(products,many=True).data
+                
+                if cd['barcode'] is not None and len(cd['barcode'])>0:
+                    product=product_repo.product(barcode=cd['barcode'])
+                
+                if cd['id'] is not None and cd['id']>0:
+                    product=product_repo.product(id=cd['id'])
+
                 if product is not None:
                     result=SUCCEED
                     message="موفقیت آمیز"

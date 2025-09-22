@@ -125,3 +125,23 @@ class WareHouseSheetLabel(models.Model,LinkHelper,DateTimeHelper):
             return f"{MEDIA_URL}{self.label_origin}"
 
 
+class MaterialRequest(models.Model):
+    invoice=models.ForeignKey("accounting.invoice", verbose_name=_("invoice"), on_delete=models.PROTECT)
+    product=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.PROTECT)
+    quantity=models.FloatField(_("quantity"))
+    unit_name=models.CharField(_("unit_name"), max_length=50)
+    unit_price=models.IntegerField(_("unit_price"))
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    organization_unit=models.ForeignKey("organization.organizationunit", verbose_name=_("organization_unit"), on_delete=models.PROTECT)
+    description=models.CharField(_("description"), max_length=5000)
+    warehouse=models.ForeignKey("warehouse", verbose_name=_("warehouse"),null=True,blank=True, on_delete=models.CASCADE)
+    
+    class Meta:
+        verbose_name = _("MaterialRequest")
+        verbose_name_plural = _("MaterialRequests")
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("MaterialRequest_detail", kwargs={"pk": self.pk})

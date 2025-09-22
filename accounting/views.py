@@ -761,6 +761,22 @@ class FinancialDocumentLineView(View):
         return render(request,TEMPLATE_ROOT+"financial-document-line.html",context)
 
 
+class AddInvoiceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        if request.user.has_perm(APP_NAME+'.add_invoice'):
+            
+            context.update(AddInvoiceContext(request=request))
+        else:
+            title='شما مجوز افزودن فاکتور ندارید.'
+            body='شما مجوز افزودن فاکتور ندارید.'
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
+        return render(request,TEMPLATE_ROOT+"add-invoice.html",context)
+    def post(self,request,*args, **kwargs):
+        from .apis import AddInvoiceApi
+        return AddInvoiceApi().post(request=request,*args, **kwargs)
+
 
 class FinancialDocumentLinesPrintView(View):
     def post(self,request,*args, **kwargs):

@@ -1,0 +1,14 @@
+{% extends "warehouse/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row rtl">
+    <div class="col-12">
+        {% include "warehouse/includes/add-material-request-app/template.html" %}
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+{% include "warehouse/includes/add-material-request-app/script.html" %}
+
+{% endblock script %}

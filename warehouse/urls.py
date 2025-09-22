@@ -11,6 +11,8 @@ urlpatterns = [
     path('add-warehouse/',login_required(apis.AddWareHouseApi.as_view()),name="add_warehouse"),
     path('warehouse/<int:pk>/',login_required(views.WareHouseView.as_view()),name="warehouse"), 
 
+    path('add-material-request/',login_required(views.AddMaterialRequestView.as_view()),name="add_material_request"), 
+ 
 
     path('warehouse-sheet-label/<int:pk>/',login_required(views.WareHouseSheetLabelView.as_view()),name="warehousesheetlabel"), 
     path('warehouse-sheet-labels/',login_required(views.WareHouseSheetLabelsView.as_view()),name="warehouse_sheet_labels"), 

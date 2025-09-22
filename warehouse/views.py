@@ -75,8 +75,24 @@ class WareHousesView(View):
             context['organization_units_s']=organization_units_s
         return render(request,TEMPLATE_ROOT+"warehouses.html",context)
 # Create your views here. 
-   
+    
+class AddMaterialRequestView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        context["WIDE_LAYOUT"]=True
+
+        warehouse=WareHouseRepo(request=request).warehouse(*args, **kwargs)
+        context["warehouse"]=warehouse
+        warehouse_s=json.dumps(WareHouseSerializer(warehouse,many=False).data)
+        context["warehouse_s"]=warehouse_s
  
+
+
+        return render(request,TEMPLATE_ROOT+"add-material-request.html",context)
+# Create your views here. 
+
+
 class WareHouseView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

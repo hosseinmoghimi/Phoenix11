@@ -1,0 +1,45 @@
+{% include "accounting/includes/product-app/select-script.html" %}
+<script>
+  let add_material_request_app = new Vue({
+    el: "#add-material-request-app",
+    data: {
+      title: "",
+      product_id: 0,
+      barcode: "",
+      list: [],
+      product: {},
+    },
+    methods: {
+      search: function () {
+        let url = "{% url 'accounting:select_product' %}";
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+        };
+        if (this.title.length > 2) {
+          payload.title = this.title;
+        }
+
+        if (this.product_id > 0 ){
+          payload.id = this.product_id;
+        }
+
+        if (this.barcode.length > 2) {
+          payload.barcode = this.barcode;
+        }
+        console.log(payload)
+        $.post(url, payload).done((data) => {
+          if (typeof data.products != "undefined") {
+            console.log(data.products);
+            this.products = data.products;
+          }
+          if (typeof data.product != "undefined") {
+            console.log(data.product);
+            this.product = data.product;
+          }
+        });
+      },
+      select_product: function () {},
+    },
+    components: {},
+  });
+</script>

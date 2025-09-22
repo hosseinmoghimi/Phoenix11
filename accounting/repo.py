@@ -1121,6 +1121,10 @@ class ProductRepo():
             search_for=kwargs["search_for"]
 
             objects=objects.filter(Q(title__contains=search_for) | Q(barcode=search_for)|Q(model__contains=search_for))
+        if "title" in kwargs:
+            title=kwargs["title"]
+
+            objects=objects.filter(Q(title__contains=title) | Q(barcode=title)|Q(model__contains=title))
         return objects.all()
     
     def add_product_to_category(self,*args, **kwargs):
@@ -1243,11 +1247,14 @@ class ProductRepo():
     def product(self,*args, **kwargs):
         product=None
         if "product_id" in kwargs and kwargs["product_id"] is not None:
-            product= self.objects.filter(pk=kwargs['product_id']).first() 
+            product= self.objects.filter(pk=kwargs['product_id']).first()
+            return product 
         if "barcode" in kwargs and kwargs["barcode"] is not None:
             a= self.objects.filter(barcode=kwargs['barcode']).first() 
             if product is None:
                 product= a 
+                return a
+        
         if "pk" in kwargs and kwargs["pk"] is not None:
             if product is None:
                 product= self.objects.filter(pk=kwargs['pk']).first() 

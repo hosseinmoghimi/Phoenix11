@@ -121,7 +121,7 @@ urlpatterns = [
     path('service/<int:pk>/',login_required(views.ServiceView.as_view()),name="service"),
     path("add-service/",login_required(apis.AddServiceApi.as_view()),name="add_service"),
  
-    path('add-invoice/',login_required(apis.AddInvoiceApi.as_view()),name="add_invoice"),
+    path('add-invoice/',login_required(views.AddInvoiceView.as_view()),name="add_invoice"),
     path("add-invoice-line/",login_required(apis.AddInvoiceLineApi.as_view()),name="add_invoice_line"),
     
     path("add-invoice-line-item-unit/",login_required(apis.AddInvoiceLineItemUnitApi.as_view()),name="add_invoice_line_item_unit"),

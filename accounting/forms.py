@@ -38,7 +38,10 @@ class PrintFinancialDocumentLinesForm(forms.Form):
     
     
 class SelectProductForm(forms.Form):
-    barcode=forms.CharField(max_length=100,required=True)
+    barcode=forms.CharField(max_length=100,required=False)
+    search_for=forms.CharField(max_length=100,required=False)
+    title=forms.CharField(max_length=100,required=False)
+    id=forms.IntegerField(required=False)
 
 class MergeProductForm(forms.Form):
     deleting_product_id=forms.IntegerField(required=True)
