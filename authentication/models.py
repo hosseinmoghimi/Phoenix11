@@ -27,7 +27,7 @@ class Person(models.Model,ImageHelper,LinkHelper):
     type=models.CharField(_("ماهیت"),choices=PersonTypeEnum.choices,default=PersonTypeEnum.FREE, max_length=50)
     type2=models.CharField(_("نوع"),choices=PersonType2Enum.choices,default=PersonType2Enum.HAGHIGHI, max_length=50)
     economic_no=models.CharField(_("شماره اقتصادی"),null=True,blank=True, max_length=20)
-    melli_code=models.CharField(_("کد ملی"),null=True,blank=True, max_length=10)
+    melli_code=models.CharField(_("کد ملی"),null=True,blank=True, max_length=12)
     tel=models.CharField(_("تلفن"),null=True,blank=True, max_length=50)
     mobile=models.CharField(_("موبایل"),null=True,blank=True, max_length=50)
     postal_code=models.CharField(_("کد پستی"),null=True,blank=True, max_length=20)
