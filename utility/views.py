@@ -221,7 +221,9 @@ class BackupDBView(View):
         file_path = str(DB_FILE_PATH)
         # return JsonResponse({'download:':str(file_path)})
         import os
-        filename=DB_PREFIX_NAME+"__"+timezone.now().strftime("%Y%m%d_%H_%M_%S")+".sqlite3"
+        from utility.calendar import PersianCalendar
+        sss=PersianCalendar().from_gregorian(greg_date_time=timezone.now())
+        filename=DB_PREFIX_NAME+"__"+sss+".sqlite3"
         if os.path.exists(file_path):
             with open(file_path, 'rb') as fh:
                 response = HttpResponse(
