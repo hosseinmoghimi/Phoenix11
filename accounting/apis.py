@@ -747,22 +747,23 @@ class SelectProductApi(APIView):
                 log=333
                 cd=select_product_form.cleaned_data
                 product_repo=ProductRepo(request=request)
+                
+                if cd['barcode'] is not None and len(cd['barcode'])>0:
+                    product=product_repo.product(barcode=cd['barcode'])
+                    context['product']=ProductSerializer(product).data
+                
+                if cd['id'] is not None and cd['id']>0:
+                    product=product_repo.product(id=cd['id'])
+                    context['product']=ProductSerializer(product).data
+
                 if 'title' in cd:
                     title=cd['title']
                     if len(title)>0:
                         products=product_repo.list(title=title)
                         context['products']=ProductSerializer(products,many=True).data
-                
-                if cd['barcode'] is not None and len(cd['barcode'])>0:
-                    product=product_repo.product(barcode=cd['barcode'])
-                
-                if cd['id'] is not None and cd['id']>0:
-                    product=product_repo.product(id=cd['id'])
-
-                if product is not None:
-                    result=SUCCEED
-                    message="موفقیت آمیز"
-                    context['product']=ProductSerializer(product).data
+                 
+                result=SUCCEED
+                message="موفقیت آمیز"
         context['message']=message
         context['result']=result
         context['log']=log

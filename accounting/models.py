@@ -977,7 +977,7 @@ class Invoice(FinancialEvent):
     
 
 class InvoiceLine(models.Model,LinkHelper):
-    invoice=models.ForeignKey("invoice", verbose_name=_("invoice"), on_delete=models.PROTECT)
+    invoice=models.ForeignKey("invoice", verbose_name=_("invoice"),null=True,blank=True, on_delete=models.PROTECT)
     invoice_line_item=models.ForeignKey("invoicelineitem", verbose_name=_("invoice_line_item"), on_delete=models.PROTECT)
     row=models.IntegerField(_("row"),default=0)
     quantity=models.FloatField(_("quantity"))
@@ -1014,7 +1014,7 @@ class InvoiceLine(models.Model,LinkHelper):
             normalize_row=kwargs['normalize_row']
         super(InvoiceLine,self).save()
         result,message=FAILED,''
-        if normalize_row:
+        if normalize_row and self.invoice is not None:
             self.invoice.normalize()
 
         if self.id is not None and self.id>0:

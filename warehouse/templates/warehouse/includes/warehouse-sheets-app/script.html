@@ -1,7 +1,15 @@
+<script>
+    let warehouse_sheets_for_warehouse_sheets_app=[]
+</script>
 {% if warehouse_sheets_s %}
 <script>
+
+    warehouse_sheets_for_warehouse_sheets_app=JSON.parse("{{warehouse_sheets_s|escapejs}}")
+</script>
+{% endif %}
+
+<script>
     
-    let warehouse_sheets_for_warehouse_sheets_app=JSON.parse("{{warehouse_sheets_s|escapejs}}")
     let warehouse_sheets_app = new Vue({
         el: "#warehouse_sheets-app",
         data: {
@@ -50,4 +58,3 @@
 </script>
 
   
-{% endif %}

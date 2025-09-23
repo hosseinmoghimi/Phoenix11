@@ -188,7 +188,97 @@ class WareHouseSheetRepo():
         if "id" in kwargs and kwargs["id"] is not None:
             return self.objects.filter(pk=kwargs['id']).first() 
         
+    def add_material_request(self,*args, **kwargs):
+        result,message,warehouse_sheet,invoice_line=FAILED,"",None,None
         
+        
+        if not self.request.user.has_perm(APP_NAME+".add_warehousesheet"):
+            message="دسترسی غیر مجاز"
+            return result,message,warehouse_sheet,invoice_line
+        
+
+        from accounting.repo import InvoiceLine,FinancialEventStatusEnum
+        invoice_line=InvoiceLine()
+        if 'invoice_line_item_id' in kwargs:
+            invoice_line_item_id=kwargs["invoice_line_item_id"]
+            invoice_line.invoice_line_item_id=invoice_line_item_id
+
+        if 'product_id' in kwargs:
+            invoice_line_item_id=kwargs["product_id"]
+            invoice_line.invoice_line_item_id=invoice_line_item_id
+
+        if 'invoice_id' in kwargs:
+            if kwargs['invoice_id']>0:
+                invoice_line.invoice_id=kwargs["invoice_id"]
+                invoice=invoice_line.invoice
+                if invoice.status==FinancialEventStatusEnum.APPROVED:
+                    message='فاکتور تایید شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+                    return FAILED,message,[],None
+                
+                if invoice.status==FinancialEventStatusEnum.DELIVERED:
+                    message='فاکتور تحویل شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+                    return FAILED,message,[],None
+                
+                if invoice.status==FinancialEventStatusEnum.FINISHED:
+                    message='فاکتور نهایی شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+                    return FAILED,message,[],None
+            
+        if 'description' in kwargs:
+            invoice_line.description=kwargs["description"]
+        if 'status' in kwargs:
+            invoice_line.status=kwargs["status"]
+        if 'quantity' in kwargs:
+            invoice_line.quantity=kwargs["quantity"]
+        if 'unit_price' in kwargs:
+            unit_price=kwargs["unit_price"]
+            invoice_line.unit_price=unit_price
+
+        if 'unit_name' in kwargs:
+            unit_name=kwargs["unit_name"]
+            invoice_line.unit_name=unit_name
+        if 'row' in kwargs:
+            row=kwargs["row"]
+            invoice_line.row=row
+        result,message,invoice_line=invoice_line.save()
+        # self.add_warehouse_sheet()
+        warehouse_sheet=WareHouseSheet()
+        warehouse_sheet.invoice_line_id=invoice_line.id
+        warehouse=WareHouse.objects.filter(pk=kwargs["warehouse_id"]).first()
+        if warehouse is None:
+            message='انبار درست انتخاب نشده است.'
+            return result,message,None    
+         
+        if 'warehouse_id' in kwargs:
+            warehouse_sheet.warehouse_id=kwargs["warehouse_id"]  
+          
+
+        if 'col' in kwargs:
+            warehouse_sheet.col=kwargs["col"]  
+
+
+            
+        if 'row' in kwargs:
+            warehouse_sheet.row=kwargs["row"]  
+
+            
+        if 'shelf' in kwargs:
+            warehouse_sheet.shelf=kwargs["shelf"]  
+
+
+
+        if 'description' in kwargs:
+            warehouse_sheet.description=kwargs["description"]  
+
+
+        if 'direction' in kwargs:
+            warehouse_sheet.direction=kwargs["direction"]  
+
+
+        warehouse_sheet.person=self.me_person
+        warehouse_sheet.save()
+        return result,message,warehouse_sheet,invoice_line
+
+
     def add_warehouse_sheet(self,*args,**kwargs):
         result,message,warehouse_sheet=FAILED,"",None
         

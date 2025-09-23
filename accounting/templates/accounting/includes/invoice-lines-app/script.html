@@ -2,12 +2,18 @@
   let currency_coef = 1;
 
   let tax_percentage = 0;
-  let invoice_lines_for_invoice_lines_app = JSON.parse("{{invoice_lines_s|escapejs}}");
+  let invoice_lines_for_invoice_lines_app = []
   let invoice_lines_app_data = {};
   let invoice_lines_app_methods = {
     calculate_sum: function () {},
   };
 </script>
+{% if invoice_lines_s %}
+
+<script>
+  invoice_lines_for_invoice_lines_app = JSON.parse("{{invoice_lines_s|escapejs}}");
+</script>
+{% endif %}
 {% if invoice %}
 
 <script>
@@ -64,6 +70,7 @@
   };
 </script> 
 <script>
+    
   let invoice_lines_app = new Vue({
     el: "#invoice-lines-app",
     data: invoice_lines_app_data,

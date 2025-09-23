@@ -1,5 +1,7 @@
 
 {% if warehouse_sheets_s %}
+{% endif %}
+
   <div id="accordion-warehouse-sheets" class="rtl text-right farsi">
   <div class="card" id="warehouse_sheets-app">
     <div class="card-header">
@@ -105,7 +107,7 @@
                 {% if not invoice %}
                   
                 <td>
-                  <div>
+                  <div v-if="warehouse_sheet.invoice_line.invoice">
                     <a :href="warehouse_sheet.invoice_line.invoice.get_absolute_url">
                     <span v-text="warehouse_sheet.invoice_line.invoice.title"></span>
                     </a>
@@ -213,4 +215,3 @@
     </div>
   </div>
 </div>
-{% endif %}

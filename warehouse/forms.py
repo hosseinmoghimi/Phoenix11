@@ -3,7 +3,20 @@ from accounting.forms import AddProductForm,forms
 class AddWareHouseForm(forms.Form):
     name=forms.CharField(max_length=50,required=True)
     person_account_id=forms.IntegerField(required=True) 
- 
+
+class AddMaterialRequestForm(forms.Form):
+    warehouse_id=forms.IntegerField(required=True)
+    product_id=forms.IntegerField(required=True)
+    row=forms.IntegerField(required=False)
+    invoice_id=forms.IntegerField(required=False)
+    quantity=forms.FloatField(required=True)
+    unit_price=forms.IntegerField(required=True)
+    status=forms.CharField(max_length=50,required=False)
+    direction=forms.CharField(max_length=50,required=False)
+    description=forms.CharField(max_length=500,required=False)
+    coef=forms.IntegerField(required=False)
+    unit_name=forms.CharField(max_length=100, required=True)
+
 class AddWareHouseSheetForm(forms.Form):
     invoice_line_id=forms.IntegerField(required=True) 
     warehouse_id=forms.IntegerField(required=True) 

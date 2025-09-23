@@ -86,10 +86,11 @@ class AddMaterialRequestView(View):
         context["warehouse"]=warehouse
         warehouse_s=json.dumps(WareHouseSerializer(warehouse,many=False).data)
         context["warehouse_s"]=warehouse_s
- 
-
-
+  
         return render(request,TEMPLATE_ROOT+"add-material-request.html",context)
+    def post(self,request,*args, **kwargs):
+        from .apis import AddMaterialRequestApi
+        return AddMaterialRequestApi().post(request=request)
 # Create your views here. 
 
 

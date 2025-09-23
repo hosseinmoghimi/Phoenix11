@@ -61,6 +61,32 @@ class AddWareHouseApi(APIView):
     
 
 
+
+class AddMaterialRequestApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        add_material_request_form=AddMaterialRequestForm(request.POST)
+        if add_material_request_form.is_valid():
+            log=333
+            cd=add_material_request_form.cleaned_data
+            result,message,warehouse_sheet,invoice_line=WareHouseSheetRepo(request=request).add_material_request(**cd)
+            if warehouse_sheet is not None:
+                context['warehouse_sheet']=WareHouseSheetSerializer(warehouse_sheet).data
+            if invoice_line is not None:
+                from accounting.apis import InvoiceLineSerializer
+                context['invoice_line']=InvoiceLineSerializer(invoice_line).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+    
     
  
 class AddWareHouseSheetApi(APIView):

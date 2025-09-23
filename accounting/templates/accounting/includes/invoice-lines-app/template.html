@@ -113,6 +113,8 @@
                                     {% endif %}
                                     {% if not invoice %}
                                     <td class="bordered farsi text-right">
+                                        <div v-if="invoice_line.invoice">
+                                        
                                         <a :href="invoice_line.invoice.get_absolute_url">
                                             <span v-text="invoice_line.invoice.title"></span>
                                         </a>
@@ -137,6 +139,8 @@
                                                 </a>
 
                                             </div>
+                                        </div>
+                                            
                                         </div>
                                     </td>
 

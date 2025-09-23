@@ -6,9 +6,19 @@
     <div class="col-12">
         {% include "warehouse/includes/add-material-request-app/template.html" %}
     </div>
+    <div class="col-12">
+        {% include "accounting/includes/invoice-lines-app/template.html" %}
+    </div>
+    
+    <div class="col-md-12">
+        
+        {% include "warehouse/includes/warehouse-sheets-app/template.html" %}
+    </div>
 </div>
 {% endblock content %}
 {% block script %}
 {% include "warehouse/includes/add-material-request-app/script.html" %}
+{% include "accounting/includes/invoice-lines-app/script.html" %}
+{% include "warehouse/includes/warehouse-sheets-app/script.html" %}
 
 {% endblock script %}
