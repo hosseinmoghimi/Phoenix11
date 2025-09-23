@@ -1,6 +1,11 @@
 {% extends "organization/layout.html" %} {% load to_price %} {% load static %}
 {% block content %}
 <div class="row rtl farsi">
+  <div class="col-12">
+     {% if organization_unit.parent %} 
+    <div class="rtl my-2">{{organization_unit.get_breadcrumb|safe}}</div>
+    {% endif %} 
+  </div>
   <div class="col-md-4">
     {% include "organization/includes/organization-unit-app/card.html" %}
   </div>
