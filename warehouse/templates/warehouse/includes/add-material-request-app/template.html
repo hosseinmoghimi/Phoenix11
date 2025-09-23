@@ -85,9 +85,28 @@
                 <label for=""> وضعیت </label>
                 <input v-model="status" type="text" class="form-control" />
               </div>
+
+              
+                <div class="form-group">
+                <label for=""> شماره فاکتور </label>
+                <input v-model="invoice_id" type="number" class="form-control" />
+              </div>
+
+              
+                <div class="form-group">
+                <label for=""> شناسه انبار </label>
+                <input v-model="warehouse_id" type="number" class="form-control" />
+              </div>
                <div class="form-group">
                 <label for=""> قیمت جزء </label>
                 <input v-model="unit_price" type="text" class="form-control" />
+              </div>
+               <div class="form-group">
+                <label for=""> جهت </label>
+                <select v-model="direction" type="text" class="form-control" >
+                  <option selected value="خروج">خروج</option>
+                  <option value="ورود">ورود</option>
+                </select>
               </div>
               <div class="my-2">
                 <button class="btn btn-info" @click="add_material_request()">
