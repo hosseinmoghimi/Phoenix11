@@ -46,7 +46,8 @@
    <tr>
           <td class="field_name">فاکتور</td>
           <td class="field_value">
-            <div class="media">
+            {% if warehouse_sheet.invoice_line.invoice %}
+              <div class="media">
               <a href="{{warehouse_sheet.invoice_line.invoice.get_absolute_url}}">
                 <img
                   src="{{warehouse_sheet.invoice_line.invoice.thumbnail}}"
@@ -61,10 +62,44 @@
                     {{warehouse_sheet.invoice_line.invoice.title}}
                   </a>
                 </h6>
+
+                <h6>
+                  <a href="{{warehouse_sheet.invoice_line.get_absolute_url}}">
+                    ردیف
+                    {{warehouse_sheet.invoice_line.row}}
+                  </a>
+                </h6>
+
               </div>
             </div>
+            {% else %}
+ 
+               ندارد
+ 
+
+            {% endif %}
+            
           </td>
         </tr>
+
+          <tr>
+          <td class="field_name">ردیف</td>
+          <td class="field_value">
+             
+ 
+                <h6>
+                  <a href="{{warehouse_sheet.invoice_line.get_absolute_url}}">
+                    ردیف
+                    {{warehouse_sheet.invoice_line.row}}
+                  </a>
+                </h6>
+ 
+
+           
+            
+          </td>
+        </tr>
+
         <tr>
           <td class="field_name">کالا</td>
           <td class="field_value">

@@ -10,13 +10,13 @@
       invoice_line_item_units: [],
       // invoice_line_item_unit:{id:0,unit_name:'عدد',unit_price:0,coef:1},
       unit_price: 0,
-      default11: false,
+      quantity: 0,
+      save: false,
+      default_price: false,
       coef: 1,
       unit_name: "عدد",
       unit_names:unit_names,
       discount_percentage: 0,
-      quantity: 0,
-      save: false,
       description:"",
       status:"",
       search_for: "",
@@ -104,6 +104,9 @@
         add_invoice_line_app.unit_price = invoice_line_item_unit.unit_price
         add_invoice_line_app.unit_name = invoice_line_item_unit.unit_name
         add_invoice_line_app.coef = invoice_line_item_unit.coef
+        
+        add_invoice_line_app.save = false
+        add_invoice_line_app.default_price = false
       },
       more: function () {
         add_invoice_line_app.list_length += 6;
@@ -211,7 +214,7 @@
           quantity: parseFloat(this.quantity),
           unit_price: parseInt(this.unit_price),
           unit_name: this.unit_name,
-          default: this.default11,
+          default_price: this.default_price,
           save: this.save,
           coef: parseInt(this.coef),
           discount_percentage: this.discount_percentage,

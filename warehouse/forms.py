@@ -12,6 +12,8 @@ class AddMaterialRequestForm(forms.Form):
     quantity=forms.FloatField(required=True)
     unit_price=forms.IntegerField(required=True)
     status=forms.CharField(max_length=50,required=False)
+    default_price=forms.BooleanField(required=False)
+    save=forms.BooleanField(required=False)
     direction=forms.CharField(max_length=50,required=False)
     description=forms.CharField(max_length=500,required=False)
     coef=forms.IntegerField(required=False)

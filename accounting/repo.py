@@ -174,17 +174,17 @@ class InvoiceLineRepo:
         if 'unit_name' in kwargs:
             unit_name=kwargs["unit_name"]
             invoice_line.unit_name=unit_name
-        if 'save' in kwargs or kwargs["default"]:
+        if 'save' in kwargs or kwargs["default_price"]:
             save=kwargs["save"]
-            if save or kwargs["default"]:
+            if save or kwargs["default_price"]:
                 if 'coef' in kwargs:
                     coef=kwargs["coef"]
-                if 'default' in kwargs:
-                    default11=kwargs["default"]
+                if 'default_price' in kwargs:
+                    default_price=kwargs["default_price"]
                 InvoiceLineItemUnitRepo(request=self.request).add_invoice_line_item_unit(
                     invoice_line_item_id=invoice_line_item_id,
                     coef=coef,
-                    default=default11,
+                    default=default_price,
                     unit_name=unit_name,
                     unit_price=unit_price,
                     )

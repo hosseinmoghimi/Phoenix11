@@ -282,7 +282,7 @@ class AddInvoiceLineForm(forms.Form):
     coef=forms.IntegerField(required=False)
     save=forms.BooleanField(required=False)
     unit_name=forms.CharField(max_length=100, required=True)
-    default=forms.BooleanField(required=False)
+    default_price=forms.BooleanField(required=False)
     search_for=forms.CharField(max_length=100, required=False)
 
 class SearchInvoiceLineItemForm(forms.Form):

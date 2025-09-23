@@ -190,15 +190,16 @@ class WareHouseSheetRepo():
         
     def add_material_request(self,*args, **kwargs):
         result,message,warehouse_sheet,invoice_line=FAILED,"",None,None
-        
+        leolog(add_material_request_kwargs=kwargs)
         
         if not self.request.user.has_perm(APP_NAME+".add_warehousesheet"):
             message="دسترسی غیر مجاز"
             return result,message,warehouse_sheet,invoice_line
         
 
-        from accounting.repo import InvoiceLine,FinancialEventStatusEnum
+        from accounting.repo import InvoiceLine,FinancialEventStatusEnum,InvoiceRepo
         invoice_line=InvoiceLine()
+        invoice_line_item_id=0
         if 'invoice_line_item_id' in kwargs:
             invoice_line_item_id=kwargs["invoice_line_item_id"]
             invoice_line.invoice_line_item_id=invoice_line_item_id
@@ -210,18 +211,22 @@ class WareHouseSheetRepo():
         if 'invoice_id' in kwargs:
             if kwargs['invoice_id']>0:
                 invoice_line.invoice_id=kwargs["invoice_id"]
-                invoice=invoice_line.invoice
+                invoice=InvoiceRepo(request=self.request).invoice(id=kwargs["invoice_id"])
+                if invoice is None:
+                    message='فاکتور مورد نظر وجود ندارد.'
+                    return FAILED,message,None,None
+                
                 if invoice.status==FinancialEventStatusEnum.APPROVED:
                     message='فاکتور تایید شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
-                    return FAILED,message,[],None
+                    return FAILED,message,None,None
                 
                 if invoice.status==FinancialEventStatusEnum.DELIVERED:
                     message='فاکتور تحویل شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
-                    return FAILED,message,[],None
+                    return FAILED,message,None,None
                 
                 if invoice.status==FinancialEventStatusEnum.FINISHED:
                     message='فاکتور نهایی شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
-                    return FAILED,message,[],None
+                    return FAILED,message,None,None
             
         if 'description' in kwargs:
             invoice_line.description=kwargs["description"]
@@ -236,6 +241,7 @@ class WareHouseSheetRepo():
         if 'unit_name' in kwargs:
             unit_name=kwargs["unit_name"]
             invoice_line.unit_name=unit_name
+
         if 'row' in kwargs:
             row=kwargs["row"]
             invoice_line.row=row
@@ -274,6 +280,22 @@ class WareHouseSheetRepo():
             warehouse_sheet.direction=kwargs["direction"]  
 
 
+        if 'save' in kwargs or kwargs["default_price"]:
+            save=kwargs["save"]
+            if save or kwargs["default_price"]:
+                if 'coef' in kwargs:
+                    coef=kwargs["coef"]
+                if 'default_price' in kwargs:
+                    default_price=kwargs["default_price"]
+                try:
+                    InvoiceLineItemUnitRepo(request=self.request).add_invoice_line_item_unit(
+                        invoice_line_item_id=invoice_line_item_id,
+                        coef=coef,
+                        default=default_price,
+                        unit_name=unit_name,
+                        unit_price=unit_price,)
+                except:
+                    pass
         warehouse_sheet.person=self.me_person
         warehouse_sheet.save()
         return result,message,warehouse_sheet,invoice_line
