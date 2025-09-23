@@ -86,6 +86,19 @@ class AddMaterialRequestView(View):
         context["warehouse"]=warehouse
         warehouse_s=json.dumps(WareHouseSerializer(warehouse,many=False).data)
         context["warehouse_s"]=warehouse_s
+
+
+
+        warehouse_sheets=WareHouseSheetRepo(request=request).list(*args, **kwargs).filter(invoice_line__invoice_id=None)
+        context["warehouse_sheets"]=warehouse_sheets
+        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+        context["warehouse_sheets_s"]=warehouse_sheets_s
+
+        from accounting.views import InvoiceLineRepo,InvoiceLineSerializer
+        invoice_lines=InvoiceLineRepo(request=request).list(*args, **kwargs).filter(invoice_id=None)
+        context["invoice_lines"]=invoice_lines
+        invoice_lines_s=json.dumps(InvoiceLineSerializer(invoice_lines,many=True).data)
+        context["invoice_lines_s"]=invoice_lines_s
   
         return render(request,TEMPLATE_ROOT+"add-material-request.html",context)
     def post(self,request,*args, **kwargs):
