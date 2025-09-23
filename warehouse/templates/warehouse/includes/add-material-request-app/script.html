@@ -66,14 +66,14 @@
           csrfmiddlewaretoken:csrfmiddlewaretoken,
           row:this.row,
           unit_name:this.unit_name,
-          product_id:this.product_id,
-          warehouse_id:this.warehouse_id,
+          product_id:(this.product_id),
+          warehouse_id:(this.warehouse_id),
           direction:this.direction,
-          invoice_id:this.invoice_id,
+          invoice_id:(this.invoice_id),
           status:this.status,
-          quantity:this.quantity,
-          unit_price:this.unit_price,
-          coef:this.coef,
+          quantity:parseFloat(this.quantity),
+          unit_price:(this.unit_price),
+          coef:parseFloat(this.coef),
         }
         console.log(payload)
         let url="{% url 'warehouse:add_material_request' %}"
