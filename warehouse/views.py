@@ -3,6 +3,8 @@ from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_UR
 from .repo import WareHouseRepo,WareHouseSheetRepo,WareHouseSheetSignatureRepo,WareHouseSheetLabelRepo
 from .serializers import WareHouseSheetLabelSerializer,WareHouseSerializer,WareHouseSheetSerializer,WareHouseSheetSignatureSerializer
 from django.views import View
+from organization.views import OrganizationUnitRepo,OrganizationUnitSerializer
+
 from utility.enums import *
 from .enums import *
 from .forms import *
@@ -81,12 +83,19 @@ class AddMaterialRequestView(View):
         context=getContext(request=request)
         context['name3']="name 3333"
         context["WIDE_LAYOUT"]=True
+        context.update(AddInvoiceLineContext(request=request))
 
-        warehouse=WareHouseRepo(request=request).warehouse(*args, **kwargs)
-        context["warehouse"]=warehouse
-        warehouse_s=json.dumps(WareHouseSerializer(warehouse,many=False).data)
-        context["warehouse_s"]=warehouse_s
 
+        warehouses=WareHouseRepo(request=request).list(*args, **kwargs)
+        context["warehouses"]=warehouses
+        warehouses_s=json.dumps(WareHouseSerializer(warehouses,many=True).data)
+        context["warehouses_s"]=warehouses_s
+
+
+        organization_units=OrganizationUnitRepo(request=request).list(*args, **kwargs)
+        context["organization_units"]=organization_units
+        organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+        context["organization_units_s"]=organization_units_s
 
 
         warehouse_sheets=WareHouseSheetRepo(request=request).list(*args, **kwargs).filter(invoice_line__invoice_id=None)

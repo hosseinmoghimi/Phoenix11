@@ -190,7 +190,6 @@ class WareHouseSheetRepo():
         
     def add_material_request(self,*args, **kwargs):
         result,message,warehouse_sheet,invoice_line=FAILED,"",None,None
-        leolog(add_material_request_kwargs=kwargs)
         
         if not self.request.user.has_perm(APP_NAME+".add_warehousesheet"):
             message="دسترسی غیر مجاز"

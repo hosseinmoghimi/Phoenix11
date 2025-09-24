@@ -1,12 +1,16 @@
 {% include "accounting/includes/product-app/select-script.html" %}
 <script>
+  let unit_names = JSON.parse("{{unit_names_for_edit_invoice_line_s|escapejs}}")
+
   let add_material_request_app = new Vue({
     el: "#add-material-request-app",
     data: {
       title: "",
+      unit_names:unit_names,
       product_id: 0,
       invoice_id: 0,
-      warehouse_id: 1,
+      warehouse_id: 0,
+      organization_unit_id: 0,
       direction: "خروج",
       barcode: "",
       status: "",
@@ -16,7 +20,7 @@
       products: [],
       product: {},
       quantity:0,
-      unit_name:"",
+      unit_name:"عدد",
       coef:1,
       unit_price:0,
       invoice_line_item_units:[],

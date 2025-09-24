@@ -78,13 +78,20 @@
           <div class="col-md-4">
             <div class="form-group">
               <label for=""> واحد </label>
+               <select v-model="unit_name" class="form-control">
+                  <option v-for="unit_name11 in unit_names" :nalue="unit_name11" v-text="unit_name11"></option>
+                </select>
               <input v-model="unit_name" type="text" class="form-control" />
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group">
               <label for=""> وضعیت </label>
-              <input v-model="status" type="text" class="form-control" />
+              <select v-model="status" class="form-control">
+                 {% for status in invoice_line_statuses %}
+                  <option value="{{status}}">{{status}}</option>
+                  {% endfor %}
+              </select>
             </div>
           </div>
           <div class="col-md-4">
@@ -96,6 +103,13 @@
           <div class="col-md-4">
             <div class="form-group">
               <label for=""> شناسه انبار </label>
+              <select class="form-control" v-model="warehouse_id" >
+                  {% for warehouse in warehouses %}
+                    
+                  <option value="{{warehouse.id}}">{{warehouse.name}}</option>
+                  {% endfor %}
+                </select>
+
               <input
                 v-model="warehouse_id"
                 type="number"
@@ -103,7 +117,24 @@
               />
             </div>
           </div>
+          
           <div class="col-md-4">
+            <div class="form-group">
+              <label for=""> شناسه واحد درخواست کننده </label>
+              <select class="form-control" v-model="organization_unit_id" >
+                  {% for organization_unit in organization_units %}
+                    
+                  <option value="{{organization_unit.id}}">{{organization_unit.title}}</option>
+                  {% endfor %}
+                </select>
+
+              <input
+                v-model="warehouse_id"
+                type="number"
+                class="form-control"
+              />
+            </div>
+          </div><div class="col-md-4">
             <div class="form-group">
               <label for=""> قیمت جزء </label>
               <input v-model="unit_price" type="text" class="form-control" />
