@@ -1,4 +1,4 @@
-from organization.repo import EmployeeRepo
+from organization.repo import EmployeeRepo,OrganizationUnitRepo
 from .models import WareHouse,WareHouseSheet,WareHouseSheetSignature,WareHouseSheetLabel
 from .apps import APP_NAME
 from .enums import *
@@ -12,6 +12,7 @@ from utility.calendar import PersianCalendar
 from utility.constants import FAILED,SUCCEED
 from utility.log import leolog
 from .enums import *
+from accounting.repo import InvoiceLine,FinancialEventStatusEnum,InvoiceRepo
 
 
 class WareHouseRepo():
@@ -193,10 +194,9 @@ class WareHouseSheetRepo():
         
         if not self.request.user.has_perm(APP_NAME+".add_warehousesheet"):
             message="دسترسی غیر مجاز"
-            return result,message,warehouse_sheet,invoice_line
+            return result,message,None,None
         
 
-        from accounting.repo import InvoiceLine,FinancialEventStatusEnum,InvoiceRepo
         invoice_line=InvoiceLine()
         invoice_line_item_id=0
         if 'invoice_line_item_id' in kwargs:
@@ -226,7 +226,7 @@ class WareHouseSheetRepo():
                 if invoice.status==FinancialEventStatusEnum.FINISHED:
                     message='فاکتور نهایی شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
                     return FAILED,message,None,None
-            
+        
         if 'description' in kwargs:
             invoice_line.description=kwargs["description"]
         if 'status' in kwargs:
@@ -241,9 +241,22 @@ class WareHouseSheetRepo():
             unit_name=kwargs["unit_name"]
             invoice_line.unit_name=unit_name
 
-        if 'row' in kwargs:
-            row=kwargs["row"]
-            invoice_line.row=row
+        if 'save' in kwargs or kwargs["default_price"]:
+            save=kwargs["save"]
+            if save or kwargs["default_price"]:
+                if 'coef' in kwargs:
+                    coef=kwargs["coef"]
+                if 'default_price' in kwargs:
+                    default_price=kwargs["default_price"]
+                try:
+                    InvoiceLineItemUnitRepo(request=self.request).add_invoice_line_item_unit(
+                        invoice_line_item_id=invoice_line_item_id,
+                        coef=coef,
+                        default=default_price,
+                        unit_name=unit_name,
+                        unit_price=unit_price,)
+                except:
+                    pass
         result,message,invoice_line=invoice_line.save()
         # self.add_warehouse_sheet()
         warehouse_sheet=WareHouseSheet()
@@ -251,7 +264,7 @@ class WareHouseSheetRepo():
         warehouse=WareHouse.objects.filter(pk=kwargs["warehouse_id"]).first()
         if warehouse is None:
             message='انبار درست انتخاب نشده است.'
-            return result,message,None    
+            return result,message,None,None   
          
         if 'warehouse_id' in kwargs:
             warehouse_sheet.warehouse_id=kwargs["warehouse_id"]  
@@ -277,24 +290,17 @@ class WareHouseSheetRepo():
 
         if 'direction' in kwargs:
             warehouse_sheet.direction=kwargs["direction"]  
+        
+        if 'organization_unit_id' in kwargs:
+            if kwargs['organization_unit_id'] is not None and kwargs['organization_unit_id']>0:
+                organization_unit_id=kwargs["organization_unit_id"]
+                organization_unit=OrganizationUnitRepo(request=self.request).organization_unit(pk=organization_unit_id)
+                if organization_unit is None:
+                    message='واحد مورد نظر وجود ندارد.'
+                    return FAILED,message,None,None
+                warehouse_sheet.organization_unit=organization_unit
+                 
 
-
-        if 'save' in kwargs or kwargs["default_price"]:
-            save=kwargs["save"]
-            if save or kwargs["default_price"]:
-                if 'coef' in kwargs:
-                    coef=kwargs["coef"]
-                if 'default_price' in kwargs:
-                    default_price=kwargs["default_price"]
-                try:
-                    InvoiceLineItemUnitRepo(request=self.request).add_invoice_line_item_unit(
-                        invoice_line_item_id=invoice_line_item_id,
-                        coef=coef,
-                        default=default_price,
-                        unit_name=unit_name,
-                        unit_price=unit_price,)
-                except:
-                    pass
         warehouse_sheet.person=self.me_person
         warehouse_sheet.save()
         return result,message,warehouse_sheet,invoice_line

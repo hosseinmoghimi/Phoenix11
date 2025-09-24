@@ -48,6 +48,12 @@
                   
                 <th>فاکتور</th>
                 {% endif %}
+
+                
+                {% if not organization_unit %}
+                  
+                <th>واحد درخواست کننده</th>
+                {% endif %}
                 <th>ثبت توسط</th>
                 <th>تاریخ</th>
                 <th></th>
@@ -118,6 +124,19 @@
                     <span v-text="warehouse_sheet.invoice_line.row"></span>
                     </a>
                   </div>
+                </td>
+                {% endif %}
+                
+
+                {% if not organization_unit %}
+                  
+                <td>
+                  <div v-if="warehouse_sheet.organization_unit">
+                    <a :href="warehouse_sheet.organization_unit.get_absolute_url">
+                    <span v-text="warehouse_sheet.organization_unit.title"></span>
+                    </a>
+                  </div>
+                  
                 </td>
                 {% endif %}
                 

@@ -1,22 +1,25 @@
 <div class="card">
-    {% load to_normal_number %}
-    {% load to_price %}
-    {% load to_persian_date %}
-    {% load to_text_color %}
-  <div class="card-header">
-    برگه انبار
-  </div>
+  {% load to_normal_number %} {% load to_price %} {% load to_persian_date %} {% load to_text_color %}
+  <div class="card-header">برگه انبار</div>
   <div class="card-body">
     {% if perms.warehouse.change_warehousesheet %}
-      <a href="{{warehouse_sheet.get_edit_url}}" target="_blank" title="ویرایش" class="text-warning mx-2 my-2">
-        <i class="fa fa-edit"></i>
-      </a>
-    {% endif %}
-
-        {% if perms.warehouse.change_warehousesheet %}
-      <a href="{{warehouse_sheet.get_delete_url}}" target="_blank" title="حذف" class="text-danger mx-2 my-2">
-        <i class="fa fa-trash"></i>
-      </a>
+    <a
+      href="{{warehouse_sheet.get_edit_url}}"
+      target="_blank"
+      title="ویرایش"
+      class="text-warning mx-2 my-2"
+    >
+      <i class="fa fa-edit"></i>
+    </a>
+    {% endif %} {% if perms.warehouse.change_warehousesheet %}
+    <a
+      href="{{warehouse_sheet.get_delete_url}}"
+      target="_blank"
+      title="حذف"
+      class="text-danger mx-2 my-2"
+    >
+      <i class="fa fa-trash"></i>
+    </a>
     {% endif %}
 
     <table class="table">
@@ -43,12 +46,45 @@
             </div>
           </td>
         </tr>
-   <tr>
+        <tr>
+          <td class="field_name">واحد درخواست کننده</td>
+          <td class="field_value">
+            {% if warehouse_sheet.organization_unit %}
+            <div class="media">
+              <a
+                href="{{warehouse_sheet.organization_unit.get_absolute_url}}"
+              >
+                <img
+                  src="{{warehouse_sheet.organization_unit.thumbnail}}"
+                  class="rounded"
+                  width="64"
+                  alt=""
+                />
+              </a>
+              <div class="media-body mr-2">
+                <h6>
+                  <a
+                    href="{{warehouse_sheet.organization_unit.get_absolute_url}}"
+                  >
+                    {{warehouse_sheet.organization_unit.title}}
+                  </a>
+                </h6>
+
+                
+              </div>
+            </div>
+            {% else %} ندارد {% endif %}
+          </td>
+        </tr>
+
+        <tr>
           <td class="field_name">فاکتور</td>
           <td class="field_value">
             {% if warehouse_sheet.invoice_line.invoice %}
-              <div class="media">
-              <a href="{{warehouse_sheet.invoice_line.invoice.get_absolute_url}}">
+            <div class="media">
+              <a
+                href="{{warehouse_sheet.invoice_line.invoice.get_absolute_url}}"
+              >
                 <img
                   src="{{warehouse_sheet.invoice_line.invoice.thumbnail}}"
                   class="rounded"
@@ -58,45 +94,32 @@
               </a>
               <div class="media-body mr-2">
                 <h6>
-                  <a href="{{warehouse_sheet.invoice_line.invoice.get_absolute_url}}">
+                  <a
+                    href="{{warehouse_sheet.invoice_line.invoice.get_absolute_url}}"
+                  >
                     {{warehouse_sheet.invoice_line.invoice.title}}
                   </a>
                 </h6>
 
                 <h6>
                   <a href="{{warehouse_sheet.invoice_line.get_absolute_url}}">
-                    ردیف
-                    {{warehouse_sheet.invoice_line.row}}
+                    ردیف {{warehouse_sheet.invoice_line.row}}
                   </a>
                 </h6>
-
               </div>
             </div>
-            {% else %}
- 
-               ندارد
- 
-
-            {% endif %}
-            
+            {% else %} ندارد {% endif %}
           </td>
         </tr>
 
-          <tr>
+        <tr>
           <td class="field_name">ردیف</td>
           <td class="field_value">
-             
- 
-                <h6>
-                  <a href="{{warehouse_sheet.invoice_line.get_absolute_url}}">
-                    ردیف
-                    {{warehouse_sheet.invoice_line.row}}
-                  </a>
-                </h6>
- 
-
-           
-            
+            <h6>
+              <a href="{{warehouse_sheet.invoice_line.get_absolute_url}}">
+                ردیف {{warehouse_sheet.invoice_line.row}}
+              </a>
+            </h6>
           </td>
         </tr>
 
@@ -104,7 +127,9 @@
           <td class="field_name">کالا</td>
           <td class="field_value">
             <div class="media">
-              <a href="{{warehouse_sheet.invoice_line.invoice_line_item.get_absolute_url}}">
+              <a
+                href="{{warehouse_sheet.invoice_line.invoice_line_item.get_absolute_url}}"
+              >
                 <img
                   src="{{warehouse_sheet.invoice_line.invoice_line_item.thumbnail}}"
                   class="rounded"
@@ -114,135 +139,104 @@
               </a>
               <div class="media-body mr-2">
                 <h6>
-                  <a href="{{warehouse_sheet.invoice_line.invoice_line_item.get_absolute_url}}">
+                  <a
+                    href="{{warehouse_sheet.invoice_line.invoice_line_item.get_absolute_url}}"
+                  >
                     {{warehouse_sheet.invoice_line.invoice_line_item.title}}
                   </a>
                 </h6>
                 <h6>
-                   {{warehouse_sheet.invoice_line.quantity|to_normal_number}}
-              {{warehouse_sheet.invoice_line.unit_name}}
+                  {{warehouse_sheet.invoice_line.quantity|to_normal_number}}
+                  {{warehouse_sheet.invoice_line.unit_name}}
                 </h6>
               </div>
             </div>
           </td>
         </tr>
 
-           <tr>
+        <tr>
           <td class="field_name">تعداد</td>
           <td class="field_value">
             <div class=" ">
               {{warehouse_sheet.invoice_line.quantity|to_normal_number}}
               {{warehouse_sheet.invoice_line.unit_name}}
               <small class="text-muted mx-2">
-
-                  {{warehouse_sheet.invoice_line.status}}
-                </small>
-            
+                {{warehouse_sheet.invoice_line.status}}
+              </small>
             </div>
           </td>
         </tr>
 
-          <tr>
+        <tr>
           <td class="field_name">مبلغ جزء</td>
           <td class="field_value">
             <div class=" ">
-              
-               {{warehouse_sheet.invoice_line.unit_price|to_price}}
-               {{CURRENCY}}
+              {{warehouse_sheet.invoice_line.unit_price|to_price}} {{CURRENCY}}
             </div>
           </td>
         </tr>
- 
 
-         <tr>
+        <tr>
           <td class="field_name">جمع</td>
           <td class="field_value">
             <div class=" ">
               {{warehouse_sheet.invoice_line.line_total|to_price}} {{CURRENCY}}
-               
             </div>
           </td>
         </tr>
 
-
-         <tr>
+        <tr>
           <td class="field_name">جهت</td>
           <td class="field_value">
             <div class="text-{{warehouse_sheet.direction|to_text_color}}">
               {{warehouse_sheet.direction}}
-                
             </div>
           </td>
         </tr>
- {% if warehouse_sheet.shelf %}
-        
-         <tr>
+        {% if warehouse_sheet.shelf %}
+
+        <tr>
           <td class="field_name">قفسه</td>
           <td class="field_value">
-            <div >
-                
-                {{warehouse_sheet.shelf}}
-              
-            </div>
+            <div>{{warehouse_sheet.shelf}}</div>
           </td>
         </tr>
-        {% endif %}
-        {% if warehouse_sheet.col %}
-        
-         <tr>
+        {% endif %} {% if warehouse_sheet.col %}
+
+        <tr>
           <td class="field_name">ستون</td>
           <td class="field_value">
-            <div >
-                
-                {{warehouse_sheet.col}}
-              
-            </div>
+            <div>{{warehouse_sheet.col}}</div>
           </td>
         </tr>
-        {% endif %}
+        {% endif %} {% if warehouse_sheet.row %}
 
-        
-
-         {% if warehouse_sheet.row %}
-        
-         <tr>
+        <tr>
           <td class="field_name">ردیف</td>
           <td class="field_value">
-            <div >
-                
-                {{warehouse_sheet.row}}
-              
-            </div>
+            <div>{{warehouse_sheet.row}}</div>
           </td>
         </tr>
         {% endif %}
 
-
-          <tr>
+        <tr>
           <td class="field_name">تاریخ</td>
           <td class="field_value">
             <div class=" ">
               {{warehouse_sheet.date_added|to_persian_datetime|safe}}
-                
             </div>
           </td>
         </tr>
 
-{% if warehouse_sheet.description %}
-        
-         <tr>
+        {% if warehouse_sheet.description %}
+
+        <tr>
           <td class="field_name">توضیحات</td>
           <td class="field_value">
-            <div >
-                
-                {{warehouse_sheet.description}}
-              
-            </div>
+            <div>{{warehouse_sheet.description}}</div>
           </td>
         </tr>
         {% endif %}
-
-
       </tbody>
     </table>
   </div>

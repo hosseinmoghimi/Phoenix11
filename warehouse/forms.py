@@ -9,6 +9,7 @@ class AddMaterialRequestForm(forms.Form):
     product_id=forms.IntegerField(required=True)
     row=forms.IntegerField(required=False)
     invoice_id=forms.IntegerField(required=False)
+    organization_unit_id=forms.IntegerField(required=False)
     quantity=forms.FloatField(required=True)
     unit_price=forms.IntegerField(required=True)
     status=forms.CharField(max_length=50,required=False)

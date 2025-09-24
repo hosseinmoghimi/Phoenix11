@@ -51,7 +51,8 @@ class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
 
 
 class WareHouseSheet(models.Model,LinkHelper,DateTimeHelper):
-    warehouse=models.ForeignKey("warehouse", verbose_name=_("warehouse"), on_delete=models.PROTECT)
+    warehouse=models.ForeignKey("warehouse", verbose_name=_("warehouse"),null=True,blank=True, on_delete=models.PROTECT)
+    organization_unit=models.ForeignKey("organization.organizationunit",null=True,blank=True, verbose_name=_("organization_unit"), on_delete=models.PROTECT)
     invoice_line=models.ForeignKey("accounting.invoiceline", verbose_name=_("invoice_line"), on_delete=models.PROTECT)
     direction=models.CharField(_("direction"),max_length=50,choices=WareHouseSheetDirectionEnum.choices)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)

@@ -35,9 +35,9 @@ def organization_unit_employees_link(organization_unit):
     result=''
     for employee in organization_unit.employee_set.all():
         result+=f"""
-        <a title="{employee.person.full_name}" href="{employee.get_absolute_url()}">
+        <a title="{employee.person_account.person.full_name}" href="{employee.get_absolute_url()}">
         <div class='text-center'>
-        <img class="rounded-circle" width="64" src="{employee.person.image()}">
+        <img class="rounded-circle" width="64" src="{employee.person_account.person.image()}">
         </div>
         <div class='text-center'>
               <small class="text-muted mr-1">{employee.job_title}</small>
