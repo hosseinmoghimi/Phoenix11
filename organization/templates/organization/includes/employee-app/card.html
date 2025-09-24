@@ -3,9 +3,9 @@
         <div class="media">
           <div class="row">
             <div class="col-6">
-              <a href="{{employee.person.get_absolute_url}}">
+              <a href="{{employee.person_account.person.get_absolute_url}}">
                 <img
-                  src="{{employee.person.image}}"
+                  src="{{employee.person_account.person.image}}"
                   width="128"
                   class="rounded"
                   alt=""
@@ -25,8 +25,8 @@
           </div>
           <div class="media-body mr-2">
             <h5>
-              <a href="{{employee.person.get_absolute_url}}">
-                {{employee.person.full_name}}
+              <a href="{{employee.person_account.person.get_absolute_url}}">
+                {{employee.person_account.person.full_name}}
               </a>
             </h5>
 
