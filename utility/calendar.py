@@ -193,9 +193,9 @@ class PersianCalendar:
         # delta=datetime.timedelta(hours=4,minutes=30)
         a=JalaliDatetime(datetime.datetime(year_, month_, day_, hour_, min_, sec_, 0, TehranTimezone())+delta)
         
-        delta2=datetime.timedelta(hours=0)
+        delta2=datetime.timedelta(hours=0,days=-1)
         if a.month<7 and DAY_LIGHT_SAVING:
-            delta2=datetime.timedelta(hours=1,days=-1)
+            delta2=datetime.timedelta(hours=1)
             a=JalaliDatetime(datetime.datetime(year_, month_, day_, hour_, min_, sec_, 0, TehranTimezone())+delta+delta2)
         strftime="%Y/%m/%d %H:%M:%S"
         if 'only_date' in kwargs:
