@@ -136,7 +136,11 @@
             </div>
           </div><div class="col-md-4">
             <div class="form-group">
-              <label for=""> قیمت جزء </label>
+              <label for=""> قیمت جزء 
+
+                <span v-text="to_price(unit_price)"></span>
+                {{CURRENCY}}
+              </label>
               <input v-model="unit_price" type="text" class="form-control" />
             </div>
           </div>

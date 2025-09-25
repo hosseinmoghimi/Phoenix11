@@ -83,10 +83,9 @@ class EmployeeRepo():
         self.me=None
         if me_person is not None:
             self.me=Employee.objects.filter(person_account__person_id=me_person.id).first()
-        if request.user.has_perm(APP_NAME+".view_account"):
+        if request.user.has_perm(APP_NAME+".view_employee"):
             self.objects=Employee.objects
-        elif me_person is not None:
-            self.my_accounts=Employee.objects.filter(person__user_id=me_person.id) 
+            
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:

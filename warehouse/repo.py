@@ -21,11 +21,15 @@ class WareHouseRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=WareHouse.objects.filter(id=0)
-        profile=PersonRepo(request=request).me
-        if profile is not None:
+        person=PersonRepo(request=request).me
+        me_employee=EmployeeRepo(request=request).me
+        if person is not None:
             if request.user.has_perm(APP_NAME+".view_account"):
                 self.objects=WareHouse.objects
-                self.my_accounts=self.objects 
+            elif me_employee is not None:
+                self.objects=WareHouse.objects.filter(person_account_id=me_employee.organization_unit.person_account.id)
+
+
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
@@ -152,8 +156,8 @@ class WareHouseSheetRepo():
         self.me=None
         self.my_accounts=[]
         self.request=request
-        self.objects=WareHouseSheet.objects.filter(id=0)
         self.me_person=PersonRepo(request=request).me
+        self.objects=WareHouseSheet.objects.filter(person_id=self.me_person.id)
         if self.me_person is not None:
             if request.user.has_perm(APP_NAME+".view_account"):
                 self.objects=WareHouseSheet.objects
@@ -191,12 +195,19 @@ class WareHouseSheetRepo():
     def add_material_request(self,*args, **kwargs):
         result,message,warehouse_sheet,invoice_line=FAILED,"",None,None
         
-        if not self.request.user.has_perm(APP_NAME+".add_warehousesheet"):
-            message="دسترسی غیر مجاز"
-            return result,message,None,None
-        
 
-        invoice_line=InvoiceLine()
+        me_employee=EmployeeRepo(request=self.request).me
+        sw=False
+        message="دسترسی غیر مجاز"
+        if self.request.user.has_perm(APP_NAME+".add_warehousesheet"):
+            sw=True
+        if not sw and me_employee is not None:
+            sw=True
+
+        if not sw:
+            return FAILED,message,None,None
+
+        invoice_line=InvoiceLine(person_id=self.me_person.id)
         invoice_line_item_id=0
         if 'invoice_line_item_id' in kwargs:
             invoice_line_item_id=kwargs["invoice_line_item_id"]
@@ -260,14 +271,21 @@ class WareHouseSheetRepo():
         # self.add_warehouse_sheet()
         warehouse_sheet=WareHouseSheet()
         warehouse_sheet.invoice_line_id=invoice_line.id
-        warehouse=WareHouse.objects.filter(pk=kwargs["warehouse_id"]).first()
-        if warehouse is None:
-            message='انبار درست انتخاب نشده است.'
-            return result,message,None,None   
+        
+
+        
          
         if 'warehouse_id' in kwargs:
-            warehouse_sheet.warehouse_id=kwargs["warehouse_id"]  
-          
+            warehouse=WareHouseRepo(request=self.request).warehouse(pk=kwargs["warehouse_id"])
+            if warehouse is not None:
+                warehouse_sheet.warehouse_id=warehouse.id
+ 
+ 
+        if 'invoice_id' in kwargs:
+            invoice=InvoiceRepo(request=self.request).invoice(pk=kwargs["invoice_id"])
+            if invoice is not None:
+                warehouse_sheet.invoice_id=invoice.id
+
 
         if 'col' in kwargs:
             warehouse_sheet.col=kwargs["col"]  
@@ -291,13 +309,11 @@ class WareHouseSheetRepo():
             warehouse_sheet.direction=kwargs["direction"]  
         
         if 'organization_unit_id' in kwargs:
-            if kwargs['organization_unit_id'] is not None and kwargs['organization_unit_id']>0:
-                organization_unit_id=kwargs["organization_unit_id"]
-                organization_unit=OrganizationUnitRepo(request=self.request).organization_unit(pk=organization_unit_id)
-                if organization_unit is None:
-                    message='واحد مورد نظر وجود ندارد.'
-                    return FAILED,message,None,None
-                warehouse_sheet.organization_unit=organization_unit
+            
+            organization_unit=OrganizationUnitRepo(request=self.request).organization_unit(pk=kwargs["organization_unit_id"])
+            if organization_unit is not None:
+                warehouse_sheet.organization_unit_id=organization_unit.id
+ 
                  
 
         warehouse_sheet.person=self.me_person

@@ -987,6 +987,7 @@ class InvoiceLine(models.Model,LinkHelper):
     tax_amount=models.IntegerField(_("tax_amount"),default=0)
     description=models.CharField(_("description"),null=True,blank=True, max_length=5000)
     status=models.CharField(_("status"),choices=InvoiceLineStatusEnum.choices,null=True,blank=True, max_length=5000)
+    person=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("person"), on_delete=models.CASCADE)
     class_name="invoiceline"
     app_name=APP_NAME
     class Meta:

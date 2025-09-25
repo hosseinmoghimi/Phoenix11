@@ -132,6 +132,26 @@
               </td>
             </tr>
 
+
+            
+            <tr>
+              <td class="field-name">ثبت توسط</td>
+
+              <td class="field-value">
+                <div class="media">
+                  <a href="{{invoice_line.person.get_accountig_absolute_url}}">
+                    <img src="{{invoice_line.person.image}}" width="48" class="rounded-circle" alt="">
+                  </a>
+                  <div class="media-body mr-2">
+                    <a href="{{invoice_line.person.get_accountig_absolute_url}}">
+                      {{invoice_line.person.full_name}}
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+
             <tr>
               <td class="field-name"></td>
 

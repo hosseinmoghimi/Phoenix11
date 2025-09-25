@@ -17,6 +17,8 @@ import json
 from utility.enums import UnitNameEnum
 from utility.log import leolog
 from accounting.views import AddInvoiceLineContext,InvoiceContext,ProductContext
+from utility.views import MessageView
+
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='warehouse/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -185,6 +187,11 @@ class WareHouseSheetView(View):
         context=getContext(request=request)
         context['name3']="name 3333"
         warehouse_sheet=WareHouseSheetRepo(request=request).warehouse_sheet(*args, **kwargs)
+        if warehouse_sheet is None:
+            title='برگه انبار پیدا نشد.'
+            body='برگه انبار پیدا نشد.'
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
         context["warehouse_sheet"]=warehouse_sheet
         warehouse_sheet_s=json.dumps(WareHouseSheetSerializer(warehouse_sheet,many=False).data)
         context["warehouse_sheet_s"]=warehouse_sheet_s

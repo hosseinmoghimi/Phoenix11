@@ -180,7 +180,10 @@
           <td class="field_name">جمع</td>
           <td class="field_value">
             <div class=" ">
-              {{warehouse_sheet.invoice_line.line_total|to_price}} {{CURRENCY}}
+              <h4>
+
+                {{warehouse_sheet.invoice_line.line_total|to_price}} {{CURRENCY}}
+              </h4>
             </div>
           </td>
         </tr>
@@ -237,6 +240,24 @@
           </td>
         </tr>
         {% endif %}
+
+         <tr>
+              <td class="field-name">ثبت توسط</td>
+
+              <td class="field-value">
+                <div class="media">
+                  <a href="{{warehouse_sheet.person.get_accountig_absolute_url}}">
+                    <img src="{{warehouse_sheet.person.image}}" width="48" class="rounded-circle" alt="">
+                  </a>
+                  <div class="media-body mr-2">
+                    <a href="{{warehouse_sheet.person.get_accountig_absolute_url}}">
+                      {{warehouse_sheet.person.full_name}}
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
       </tbody>
     </table>
   </div>

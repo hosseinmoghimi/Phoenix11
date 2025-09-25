@@ -18,28 +18,15 @@ from .constants import EXCEL_PRODUCTS_DATA_START_ROW,EXCEL_SERVICES_DATA_START_R
 from .defaults import default_accounts,default_persons,default_banks
 from .enums import AccountTypeEnum,AccountNatureEnum
 from .settings_on_server import ACCOUNT_LEVEL_NAMES
-# from processmanagement.models import Permission
+from authentication.models import Person
 class InvoiceLineItemUnitRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         
         
         self.objects=None
-        if request.user.has_perm(APP_NAME+".view_event"):
-            self.objects=InvoiceLineItemUnit.objects
-        elif request.user.is_authenticated:
-            accs=[]
-            from authentication.models import Person
-            for person in Person.objects.filter(profile__user_id=request.user.id):
-
-                my_accounts=AccountRepo(request=request).list()
-                for acc in my_accounts:
-                    accs.append(acc.id)
-            self.objects=I.objects.filter(Q(bedehkar_id__in=accs)|Q(bestankar_id__in=accs))
-        else:
-            self.objects=Event.objects.filter(pk=0)
+        self.objects=InvoiceLineItemUnit.objects
 
     def list(self,*args, **kwargs):
         objects=self.objects
@@ -98,7 +85,6 @@ class InvoiceLineRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         
         
         self.objects=None
@@ -108,11 +94,12 @@ class InvoiceLineRepo:
             accs=[]
             from authentication.repo import PersonRepo
             me_person=PersonRepo(request=request).me
+            self.me_person=me_person
             if me_person is not None:
                 my_accounts=AccountRepo(request=request).my_accounts
                 for acc in my_accounts:
                     accs.append(acc.id)
-            self.objects=InvoiceLine.objects.filter(Q(invoice__bedehkar_id__in=accs)|Q(invoice__bestankar_id__in=accs))
+            self.objects=InvoiceLine.objects.filter(person_id=me_person.id)
         else:
             self.objects=InvoiceLine.objects.filter(pk=0)
 
@@ -139,7 +126,7 @@ class InvoiceLineRepo:
             message="دسترسی غیر مجاز"
             return result,message,meal
 
-        invoice_line=InvoiceLine()
+        invoice_line=InvoiceLine(person_id=self.me_person.id)
         if 'invoice_line_item_id' in kwargs:
             invoice_line_item_id=kwargs["invoice_line_item_id"]
             invoice_line.invoice_line_item_id=invoice_line_item_id
@@ -825,7 +812,6 @@ class FinancialYearRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=FinancialYear.objects
 
         
@@ -838,9 +824,7 @@ class FinancialYearRepo():
                  
         else:
             self.objects=FinancialYear.objects.filter(pk=0)
-
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
+ 
     def list(self,*args, **kwargs):
         objects=self.objects
         pure_code="876454453342236"
@@ -922,10 +906,7 @@ class PersonCategoryRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=PersonCategory.objects
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
  
@@ -1045,7 +1026,6 @@ class ProductSpecificationRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         
         
         self.objects=None
@@ -1053,8 +1033,7 @@ class ProductSpecificationRepo:
             self.objects=ProductSpecification.objects
         elif request.user.is_authenticated:
             accs=[]
-            for person in Person.objects.filter(profile__user_id=request.user.id):
-
+            for person in Person.objects.filter(user_id=request.user.id):
                 my_accounts=AccountRepo(request=request).my_accounts
                 for acc in my_accounts:
                     accs.append(acc.id)
@@ -1110,10 +1089,7 @@ class ProductRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=Product.objects
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         
@@ -1417,10 +1393,7 @@ class InvoiceLineItemRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=InvoiceLineItem.objects
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         
@@ -1494,7 +1467,6 @@ class BankAccountRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me 
         me_person=PersonRepo(request=request).me
         if request.user.has_perm(APP_NAME+'.view_bankaccount'):
             self.objects=BankAccount.objects.all()
@@ -1580,10 +1552,7 @@ class FinancialDocumentRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=FinancialDocument.objects
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         
@@ -1713,12 +1682,9 @@ class BrandRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=Brand.objects
        
 
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
   
@@ -1803,12 +1769,9 @@ class AssetRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=Asset.objects
        
 
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
   
@@ -1878,7 +1841,6 @@ class BankRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=Bank.objects
        
         me_person=PersonRepo(request=request).me
@@ -1887,8 +1849,6 @@ class BankRepo():
         else:
             self.objects=Bank.objects.filter(id=0)
 
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
   
@@ -1973,10 +1933,7 @@ class ServiceRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=Service.objects
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         
@@ -2141,10 +2098,7 @@ class FinancialDocumentRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=FinancialDocument.objects
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     
     def list(self,*args, **kwargs):
         objects=self.objects
@@ -2260,7 +2214,6 @@ class FinancialDocumentLineRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=FinancialDocumentLine.objects
         
     def list(self,*args, **kwargs):
