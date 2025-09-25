@@ -118,6 +118,10 @@
                     <span v-text="warehouse_sheet.invoice_line.invoice.title"></span>
                     </a>
                   </div>
+                   <div v-else>
+              <i title="فاکتور ندارد" class="fa fa-exclamation-triangle text-warning"></i>
+
+                  </div>
                   <div>
                     <a :href="warehouse_sheet.invoice_line.get_absolute_url">
                     ردیف
@@ -135,6 +139,10 @@
                     <a :href="warehouse_sheet.organization_unit.get_absolute_url">
                     <span v-text="warehouse_sheet.organization_unit.title"></span>
                     </a>
+                  </div>
+                  <div v-else>
+              <i title="واحد درخواست کننده ندارد" class="fa fa-exclamation-triangle text-warning"></i>
+
                   </div>
                   
                 </td>
@@ -171,7 +179,8 @@
                     title="نمایش"
                     class="text-info mx-2"
                   >
-                    <i class="fa fa-edit text-info"> </i>
+                                            <i class="fa fa-info-circle text-info"></i>
+
                     نمایش
                   </a>
 

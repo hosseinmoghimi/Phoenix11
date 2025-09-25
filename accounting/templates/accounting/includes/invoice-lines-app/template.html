@@ -212,6 +212,10 @@
 
                                     </td>
                                     <td>
+                                        <a :href="invoice_line.get_absolute_url" target="_blank" title="نمایش">
+                                            <i class="fa fa-info-circle text-info mx-1"></i>
+                                        </a>
+
                                         {% if perms.accounting.change_invoiceline %}
                                         <a :href="invoice_line.get_edit_url" target="_blank" title="ویرایش">
                                             <i class="fa fa-edit text-warning mx-1"></i>

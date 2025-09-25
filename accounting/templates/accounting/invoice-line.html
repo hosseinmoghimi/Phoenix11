@@ -54,9 +54,15 @@
               <td class="field-name">فاکتور</td>
 
               <td class="field-value">
+                {% if invoice_line.invoice %}
                 <a href="{{invoice_line.invoice.get_absolute_url}}">
                   {{invoice_line.invoice.title}}
                 </a>
+                
+              {% else %}
+              <i class="fa fa-exclamation-triangle text-warning"></i>
+              ندارد
+              {% endif %}
               </td>
             </tr>
 
