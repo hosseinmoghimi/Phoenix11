@@ -22,6 +22,7 @@ class AddMaterialRequestForm(forms.Form):
 
 class AddWareHouseSheetForm(forms.Form):
     invoice_line_id=forms.IntegerField(required=True) 
+    organization_unit_id=forms.IntegerField(required=False) 
     warehouse_id=forms.IntegerField(required=True) 
     shelf=forms.CharField(required=False,max_length=50)
     row=forms.CharField(required=False,max_length=50)

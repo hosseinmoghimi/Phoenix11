@@ -30,7 +30,23 @@
           </div>
           {% if not warehouse %}
             
-          <div class="col-md-12">
+          <div class="col-md-6"> 
+                <div class="form-group">
+                  <label for="warehouse_id">انبار</label>
+                  
+                  <select v-model="warehouse_id" class="form-control" id="">
+                    {% for warehouse in warehouses %}
+                    <option value="{{warehouse.id}}">{{warehouse.name}}</option> 
+                    {% endfor %}
+                  </select>
+ 
+                </div> 
+
+               
+          </div>
+{% if nnnn %}
+  
+           <div class="col-md-12">
             <div class="row">
               <div class="col-6">
                 <div class="form-group">
@@ -41,7 +57,9 @@
                   >
                     <i class="fa fa-paste"></i>
                   </button>
-                  <input
+                  
+
+                  <input 
                     type="text"
                     placeholder=""
                     class="form-control"
@@ -67,8 +85,20 @@
               </div>
             </div>
           </div>
-          {% endif %}
+{% endif %}
 
+          {% endif %}
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="">واحد درخواست کننده</label>
+              <select v-model="organization_unit_id" class="form-control" id="">
+                {% for organization_unit in organization_units %}
+                <option value="{{organization_unit.id}}">{{organization_unit.title}}</option> 
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          
           {% if not invoice_line %}
             
           <div class="col-md-12">

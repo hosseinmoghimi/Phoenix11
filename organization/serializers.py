@@ -6,7 +6,7 @@ class OrganizationUnitSerializer(FinancialEventSerializer):
        person_account=AccountBriefSerializer()
        class Meta:
         model = OrganizationUnit
-        fields = ['id','title','person_account','thumbnail', 'get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','full_title','title','person_account','thumbnail', 'get_absolute_url','get_edit_url','get_delete_url']
  
  
 class EmployeeSerializer(FinancialEventSerializer):

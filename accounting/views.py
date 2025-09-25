@@ -1020,11 +1020,10 @@ class InvoiceLineView(View):
         warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
         context["warehouse_sheets_s"]=warehouse_sheets_s
 
-        
+        context['WIDE_LAYOUT']=True
         if request.user.has_perm('warehouse.add_warehousesheet'):
-            from warehouse.views import AddWareHouseSheetForm,WareHouseSheetDirectionEnum
-            context['directions_for_add_warehouse_sheet_app']=(i[0] for i in WareHouseSheetDirectionEnum.choices)
-            context['add_invoice_line_warehouse_sheet_form']=AddWareHouseSheetForm()
+            from warehouse.views import AddWareHouseSheetContext
+            context.update(AddWareHouseSheetContext(request=request)) 
         return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
     
 

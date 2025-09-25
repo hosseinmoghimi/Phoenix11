@@ -60,8 +60,6 @@ class AddWareHouseApi(APIView):
         return JsonResponse(context)
     
 
-
-
 class AddMaterialRequestApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -88,7 +86,6 @@ class AddMaterialRequestApi(APIView):
         return JsonResponse(context)
     
     
- 
 class AddWareHouseSheetApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -111,8 +108,7 @@ class AddWareHouseSheetApi(APIView):
         context['log']=log
         return JsonResponse(context)
    
-    
- 
+
 class AddWareHouseSheetSignatureApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

@@ -51,6 +51,20 @@ def SearchContext(request,search_for,*args, **kwargs):
  
 def AddWareHouseSheetContext(request):
     context={}
+    organization_units=OrganizationUnitRepo(request=request).list()
+    organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+    context['organization_units']=organization_units
+    context['organization_units_s']=organization_units_s
+
+    warehouses=WareHouseRepo(request=request).list()
+    warehouses_s=json.dumps(WareHouseSerializer(warehouses,many=True).data)
+    context['warehouses']=warehouses
+    context['warehouses_s']=warehouses_s
+
+    context['directions_for_add_warehouse_sheet_app']=(i[0] for i in WareHouseSheetDirectionEnum.choices)
+    context['add_invoice_line_warehouse_sheet_form']=AddWareHouseSheetForm()
+            
+
     return context
  
 class IndexView(View):
@@ -159,7 +173,7 @@ class WareHouseSheetLabelView(View):
         context['name3']="name 3333"
         warehouse_sheet_label=WareHouseSheetLabelRepo(request=request).warehouse_sheet_label(*args, **kwargs)
         context["warehouse_sheet_label"]=warehouse_sheet_label
-        warehouse_sheet_label_s=json.dumps(WareHouseSheetSerializer(warehouse_sheet_label,many=False).data)
+        warehouse_sheet_label_s=json.dumps(WareHouseSheetLabelSerializer(warehouse_sheet_label,many=False).data)
         context["warehouse_sheet_label_s"]=warehouse_sheet_label_s
         return render(request,TEMPLATE_ROOT+"warehouse-sheet-label.html",context)
 
@@ -185,7 +199,7 @@ class WareHouseSheetsView(View):
 class WareHouseSheetView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
+        context['expand_warehouse_sheet_signatures']=True
         warehouse_sheet=WareHouseSheetRepo(request=request).warehouse_sheet(*args, **kwargs)
         if warehouse_sheet is None:
             title='برگه انبار پیدا نشد.'

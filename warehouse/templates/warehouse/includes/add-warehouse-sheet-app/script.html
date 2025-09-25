@@ -25,6 +25,8 @@
 <script>
     console.log("invoice_line_id :"+invoice_line_id_for_add_warehouse_sheet_app)
     console.log("warehouse_id :"+warehouse_id_for_add_warehouse_sheet_app)
+    let organization_units=JSON.parse(`{{organization_units_s|escapejs}}`)
+
     let add_warehouse_sheet_app=new Vue({
         el:"#add-warehouse-sheet-app",
         data:{
@@ -34,18 +36,20 @@
             invoice_line:invoice_line_for_add_warehouse_sheet_app,
             description:"",
             shelf:"",
+            organization_unit_id:0,
             row:"",
             col:"",
+            organization_unit:{},
             direction:'',
             message:{show:false},
             waiting:false,
-
         },
-        methods:{
+        methods:{ 
             add_warehouse_sheet:function(){
                 let payload={
                     csrfmiddlewaretoken:csrfmiddlewaretoken,
                     warehouse_id:parseInt(this.warehouse_id),
+                    organization_unit_id:parseInt(this.organization_unit_id),
                     invoice_line_id:parseInt(this.invoice_line_id),
                     description:(this.description),
                     shelf:(this.shelf),

@@ -338,6 +338,9 @@ class WareHouseSheetRepo():
         if 'warehouse_id' in kwargs:
             warehouse_sheet.warehouse_id=kwargs["warehouse_id"]  
 
+        if 'organization_unit_id' in kwargs:
+            warehouse_sheet.organization_unit_id=kwargs["organization_unit_id"]
+          
 
         if 'invoice_line_id' in kwargs:
             warehouse_sheet.invoice_line_id=kwargs["invoice_line_id"]
