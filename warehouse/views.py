@@ -47,6 +47,10 @@ def SearchContext(request,search_for,*args, **kwargs):
     return context
 
  
+def AddWareHouseSheetContext(request):
+    context={}
+    return context
+ 
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -57,8 +61,6 @@ class IndexView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
-# Create your views here. 
-
  
  
 class WareHousesView(View):
@@ -76,8 +78,8 @@ class WareHousesView(View):
             organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
             context['organization_units_s']=organization_units_s
         return render(request,TEMPLATE_ROOT+"warehouses.html",context)
-# Create your views here. 
-    
+
+ 
 class AddMaterialRequestView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -113,7 +115,6 @@ class AddMaterialRequestView(View):
     def post(self,request,*args, **kwargs):
         from .apis import AddMaterialRequestApi
         return AddMaterialRequestApi().post(request=request)
-# Create your views here. 
 
 
 class WareHouseView(View):
@@ -135,8 +136,6 @@ class WareHouseView(View):
 
 
         return render(request,TEMPLATE_ROOT+"warehouse.html",context)
-# Create your views here. 
-
 
  
 class WareHouseSheetLabelsView(View):
@@ -150,7 +149,6 @@ class WareHouseSheetLabelsView(View):
         context["warehouse_sheet_labels_s"]=warehouse_sheet_labels_s
         
         return render(request,TEMPLATE_ROOT+"warehouse-sheet-labels.html",context)
-# Create your views here. 
    
  
 class WareHouseSheetLabelView(View):
@@ -162,13 +160,7 @@ class WareHouseSheetLabelView(View):
         warehouse_sheet_label_s=json.dumps(WareHouseSheetSerializer(warehouse_sheet_label,many=False).data)
         context["warehouse_sheet_label_s"]=warehouse_sheet_label_s
         return render(request,TEMPLATE_ROOT+"warehouse-sheet-label.html",context)
-# Create your views here. 
 
-
- 
-def AddWareHouseSheetContext(request):
-    context={}
-    return context
  
 class WareHouseSheetsView(View):
     def get(self,request,*args, **kwargs):
@@ -186,7 +178,6 @@ class WareHouseSheetsView(View):
             organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
             context['organization_units_s']=organization_units_s
         return render(request,TEMPLATE_ROOT+"warehouse-sheets.html",context)
-# Create your views here. 
    
  
 class WareHouseSheetView(View):
@@ -226,7 +217,6 @@ class WareHouseSheetView(View):
             context['me_employee_s']=me_employee_s
             context['add_warehouse_sheet_label_form']=AddWareHouseSheetLabelForm()
         return render(request,TEMPLATE_ROOT+"warehouse-sheet.html",context)
-# Create your views here. 
 
 
  
