@@ -63,7 +63,6 @@ class WareHouseRepo():
           
         (result,message,warehouse)=warehouse.save()
         return result,message,warehouse
- 
 
 
 class WareHouseSheetLabelRepo():
@@ -357,8 +356,6 @@ class WareHouseSheetRepo():
             message='برگه انبار با موفقیت ذخیره شد.'
         return result,message,warehouse_sheet
  
-
-
 
 class WareHouseSheetSignatureRepo():
     def __init__(self,request,*args, **kwargs):

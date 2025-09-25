@@ -105,7 +105,7 @@
                 {% if not warehouse %}
                   
                 <td>
-                  <div v-for="warehouse in [warehouse_sheet.warehouse]">
+                  <div v-if="warehouse" v-for="warehouse in [warehouse_sheet.warehouse]">
                     {% include "warehouse/includes/warehouse-app/media.html" %}
                   </div>
                 </td>

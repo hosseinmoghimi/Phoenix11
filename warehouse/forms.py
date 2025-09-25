@@ -5,7 +5,7 @@ class AddWareHouseForm(forms.Form):
     person_account_id=forms.IntegerField(required=True) 
 
 class AddMaterialRequestForm(forms.Form):
-    warehouse_id=forms.IntegerField(required=True)
+    warehouse_id=forms.IntegerField(required=False)
     product_id=forms.IntegerField(required=True)
     row=forms.IntegerField(required=False)
     invoice_id=forms.IntegerField(required=False)
