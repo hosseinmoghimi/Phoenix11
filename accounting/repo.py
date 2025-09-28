@@ -84,17 +84,17 @@ class InvoiceLineItemUnitRepo:
 class InvoiceLineRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
-        self.me=None
-        
+        self.me_person=None
+    
+        from authentication.repo import PersonRepo
+        me_person=PersonRepo(request=request).me
+        self.me_person=me_person
         
         self.objects=None
         if request.user.has_perm(APP_NAME+".view_invoiceline"):
             self.objects=InvoiceLine.objects
         elif request.user.is_authenticated:
             accs=[]
-            from authentication.repo import PersonRepo
-            me_person=PersonRepo(request=request).me
-            self.me_person=me_person
             if me_person is not None:
                 my_accounts=AccountRepo(request=request).my_accounts
                 for acc in my_accounts:
