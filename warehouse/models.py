@@ -12,7 +12,7 @@ class WareHouse(models.Model,LinkHelper,ImageHelper):
     name=models.CharField(_("نام"), max_length=50)
     thumbnail_origin=models.ImageField(_("thumbnail"),blank=True,null=True, upload_to=IMAGE_FOLDER+"warehouse", height_field=None, width_field=None, max_length=None)
     person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"),null=True,blank=True, on_delete=models.PROTECT)
-     
+    employees=models.ManyToManyField("organization.employee",blank=True, verbose_name=_("employees"))
     app_name=APP_NAME
     class_name="warehouse"
     class Meta:

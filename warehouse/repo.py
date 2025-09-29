@@ -27,7 +27,7 @@ class WareHouseRepo():
             if request.user.has_perm(APP_NAME+".view_account"):
                 self.objects=WareHouse.objects
             elif me_employee is not None:
-                self.objects=WareHouse.objects.filter(person_account_id=me_employee.organization_unit.person_account.id)
+                self.objects=me_employee.warehouse_set.all()
 
 
     def list(self,*args, **kwargs):
