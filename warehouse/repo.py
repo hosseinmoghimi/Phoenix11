@@ -24,7 +24,7 @@ class WareHouseRepo():
         person=PersonRepo(request=request).me
         me_employee=EmployeeRepo(request=request).me
         if person is not None:
-            if request.user.has_perm(APP_NAME+".view_account"):
+            if request.user.has_perm(APP_NAME+".view_warehouse"):
                 self.objects=WareHouse.objects
             elif me_employee is not None:
                 self.objects=me_employee.warehouse_set.all()
