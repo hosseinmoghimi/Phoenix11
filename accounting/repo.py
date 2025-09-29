@@ -660,9 +660,9 @@ class PersonAccountRepo():
         self.objects=PersonAccount.objects.filter(pk=0)
         me_person=PersonRepo(request=request).me
         if request.user.has_perm(APP_NAME+'.view_personaccount'):
-            self.objects=PersonAccount.objects.all()
+            self.objects=PersonAccount.objects.all().order_by('person__full_name')
         elif me_person is not None:
-            self.objects=PersonAccount.objects.filter(person__user_id=me_person.user.id) 
+            self.objects=PersonAccount.objects.filter(person__user_id=me_person.user.id).order_by('person__full_name')
     def list(self,*args, **kwargs):
         objects=self.objects
         pure_code="876454453342236"

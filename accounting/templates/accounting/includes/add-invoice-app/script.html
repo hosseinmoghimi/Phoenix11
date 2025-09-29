@@ -78,7 +78,9 @@
 
       select_bedehkar: function () {
           console.log(add_invoice_app.bedehkar);
-          select_account_by_code(add_invoice_app.bedehkar_code).done((data) => {
+       
+ setTimeout(() => {
+     select_account_by_code(add_invoice_app.bedehkar_code).done((data) => {
               add_invoice_app.bedehkar = data.account;
 
               if (data.result === "SUCCEED") {
@@ -91,11 +93,14 @@
             add_invoice_app.bedehkar = false
         }
         });
-    },
+ 
+ }, 200);
+      },
 
     select_bestankar: function () {
           console.log(add_invoice_app.bestankar);
-        select_account_by_code(add_invoice_app.bestankar_code).done((data) => {
+      setTimeout(() => {
+          select_account_by_code(add_invoice_app.bestankar_code).done((data) => {
           console.log(data);
           if (data.result === "SUCCEED") {
               console.log(data.account);
@@ -108,6 +113,9 @@
             add_invoice_app.bestankar = false
           }
         });
+      }, 200);
+        
+    
       },
 
       add_invoice: function () {

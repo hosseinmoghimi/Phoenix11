@@ -40,6 +40,13 @@
 
                   <input type="text" placeholder="" class="form-control" id="bedehkar_code" @input="select_bedehkar()"
                     v-model="bedehkar_code" />
+                     <select  @input="select_bedehkar()" v-model="bedehkar_code" class="form-control">
+                                            {% for person_account in person_accounts %}
+                                            <option value="{{person_account.code}}">{{person_account.title}}</option>
+                                              
+                                            {% endfor %}
+                                        </select>
+
                 </div>
               </div>
 
@@ -90,6 +97,13 @@
                   </button>
                   <input type="text" placeholder="" class="form-control" id="bestankar_code" @input="select_bestankar()"
                     v-model="bestankar_code" />
+                      <select  @input="select_bestankar()" v-model="bestankar_code" class="form-control">
+                                            {% for person_account in person_accounts %}
+                                            <option value="{{person_account.code}}">{{person_account.title}}</option>
+                                              
+                                            {% endfor %}
+                                        </select>
+
                 </div>
               </div>
               <div class="col-6 mt-3">

@@ -344,6 +344,8 @@ def ServiceContext(request,service,*args, **kwargs):
 def AddFinancialEventContext(request):
     context={}
     context['add_financial_event_form']=AddFinancialEventForm()
+    person_accounts=PersonAccountRepo(request=request).list()
+    context['person_accounts']=person_accounts
     return context
 
 def ChequeContext(request,cheque):

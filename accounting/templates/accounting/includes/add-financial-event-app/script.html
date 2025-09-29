@@ -145,7 +145,8 @@
 
             },
             select_bedehkar: function () {
-                select_account_by_code(this.bedehkar_code).done(data => {
+                setTimeout(() => {
+                        select_account_by_code(this.bedehkar_code).done(data => {
                     console.log(data)
 
                     if (data.result === "SUCCEED") {
@@ -161,9 +162,12 @@
 
                     }
                 })
-            },
+          
+                }, 200);
+              },
             select_bestankar: function () {
-                select_account_by_code(this.bestankar_code).done(data => {
+                setTimeout(() => {
+                            select_account_by_code(this.bestankar_code).done(data => {
                     console.log(data)
                     if (data.result === "SUCCEED") {
                         if(data.account.nature==="{{ONLY_BEDEHKAR}}"){
@@ -180,6 +184,8 @@
 
                     }
                 })
+        
+                }, 200);
             }
 
         },
