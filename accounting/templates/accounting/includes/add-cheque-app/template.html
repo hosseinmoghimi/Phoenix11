@@ -26,13 +26,12 @@
 
                     <a href="{% url 'accounting:tree_chart' pk=0 %}" target="_blank"> درخت حساب ها</a>
                 </h5>
-
-                <form @submit.prevent="add_cheque()">
+ 
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
 
-                                <label for="title">عنوان رویداد مالی جدید</label>
+                                <label for="title">عنوان چک جدید</label>
                                 <input type="text" required id="title" placeholder="" class="form-control"
                                     v-model="title">
 
@@ -90,9 +89,20 @@
                                     <div class="form-group">
 
                                         <label for="bedehkar_code">بدهکار</label>
-                                        <input type="text" placeholder="" class="form-control" id="bedehkar_code"
-                                            @input="select_bedehkar()" v-model="bedehkar.code">
+                                        
+                                        <button class="btn btn-info btn-sm" @click="paste_bedehkar()">
+                                            <i class="fa fa-paste"></i>
+                                        </button>
 
+                                        <input type="text" placeholder="" class="form-control" id="bedehkar_code"
+                                            @input="select_bedehkar()" v-model="bedehkar_code">
+                                        <select  @input="select_bedehkar()" v-model="bedehkar_code" class="form-control">
+                                        
+                                            {% for person_account in person_accounts %}
+                                            <option value="{{person_account.code}}">{{person_account.title}}</option>
+                                              
+                                            {% endfor %}
+                                        </select>
                                     </div>
                                 </div>
 
@@ -145,9 +155,20 @@
                                     <div class="form-group">
 
                                         <label for="bestankar_code">بستانکار</label>
-                                        <input type="text" placeholder="" class="form-control" id="bestankar_code"
-                                            @input="select_bestankar()" v-model="bestankar.code">
+                                        
+                                        <button class="btn btn-info btn-sm" @click="paste_bestankar()">
+                                            <i class="fa fa-paste"></i>
+                                        </button>
 
+                                        <input type="text" placeholder="" class="form-control" id="bestankar_code"
+                                            @input="select_bestankar()" v-model="bestankar_code">
+                                         <select  @input="select_bestankar()" v-model="bestankar_code" class="form-control">
+                                        
+                                            {% for person_account in person_accounts %}
+                                            <option value="{{person_account.code}}">{{person_account.title}}</option>
+                                              
+                                            {% endfor %}
+                                        </select>
 
                                     </div>
                                 </div>
@@ -196,7 +217,7 @@
 
 
                            
-                            <button class="btn btn-success" type="submit">
+                            <button @click="add_cheque()" class="btn btn-success" type="submit">
                                 <i class="fa fa-plus"></i>
                                 افزودن چک
                             </button>
@@ -217,7 +238,6 @@
 
 
                     </div>
-                </form>
                 <div>
                     <button @click="swap()" class="btn btn-info">
                         <i class="fa fa-swap"></i>

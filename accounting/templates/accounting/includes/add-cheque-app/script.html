@@ -17,6 +17,36 @@
 
         },
         methods: {
+            paste_bestankar:async ()=>{
+                console.log('paste_bestankar ')
+
+                try {
+                    const text = await navigator.clipboard.readText();
+                    add_cheque_app.bestankar_code=String(text)
+                    add_cheque_app.select_bestankar()
+                    
+                } catch (err) {
+                    console.error('Failed to read clipboard contents: ', err);
+                }
+
+            },
+            paste_bedehkar:async ()=>{
+                console.log('paste_bedehkar ')
+
+                try {
+                    const text = await navigator.clipboard.readText();
+                    add_cheque_app.bedehkar_code=String(text)
+                    add_cheque_app.select_bedehkar()
+                    
+                } catch (err) {
+                    console.error('Failed to read clipboard contents: ', err);
+                }
+
+            },
+      
+            
+            
+
             swap: function () {
                 let bed = add_cheque_app.bedehkar
                 let bes = add_cheque_app.bestankar
@@ -116,7 +146,9 @@
 
             },
             select_bedehkar: function () {
-                select_account_by_code(this.bedehkar.code).done(data => {
+              
+                setTimeout(() => {
+                     select_account_by_code(this.bedehkar_code).done(data => {
                     console.log(data)
 
                     if (data.result === "SUCCEED") {
@@ -132,9 +164,13 @@
 
                     }
                 })
+            
+                }, 200);
+           
             },
             select_bestankar: function () {
-                select_account_by_code(this.bestankar.code).done(data => {
+                setTimeout(() => {
+                    select_account_by_code(this.bestankar_code).done(data => {
                     console.log(data)
                     if (data.result === "SUCCEED") {
                         if(data.account.nature==="{{ONLY_BEDEHKAR}}"){
@@ -151,6 +187,8 @@
 
                     }
                 })
+                }, 200);
+                
             }
 
         },
