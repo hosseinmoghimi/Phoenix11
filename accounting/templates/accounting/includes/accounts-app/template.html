@@ -51,7 +51,10 @@
             <thead>
               <th> حساب</th>
               <th>کد</th>
+              {% if SHOW_BALANCE %}
+                
               <th>مانده</th>
+              {% endif %}
               <th></th>
             </thead>
             <tbody>
@@ -75,6 +78,7 @@
     </div>
                 </td>
               
+              {% if SHOW_BALANCE %}
                 <td> 
                   <div>
 
@@ -88,6 +92,9 @@
                   </div>
 
                 </td>
+                
+                
+              {% endif %}
                 <td>
                   {% if perms.accounting.change_account %}
                   <a

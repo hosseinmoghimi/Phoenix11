@@ -36,9 +36,13 @@
                             <th>
                                 دسته بندی
                             </th>
-                            <th>
-                                مانده
-                            </th>
+                            
+              {% if SHOW_BALANCE %}
+                
+              <th>
+                  مانده
+                </th>
+                {% endif %}
                             <th>
                             </th>
                         </thead>
@@ -66,19 +70,23 @@
                                     </a>
 
                                 </td>
-                                <td>
-                                    <btn @click="copy_balance_to_clipboard(person_account.balance)" class="btn btn-link">
-                                        
-                                    <span v-html="to_price(person_account.balance)"></span>
-                                    <small class="text-muted mr-1">
-
-                                        {{CURRENCY}}
-                                    </small>
-                                    </btn>
+                                
+              {% if SHOW_BALANCE %}
+                
+              <td>
+                  <btn @click="copy_balance_to_clipboard(person_account.balance)" class="btn btn-link">
+                      
+                      <span v-html="to_price(person_account.balance)"></span>
+                      <small class="text-muted mr-1">
+                          
+                          {{CURRENCY}}
+                        </small>
+                    </btn>
                                 </td>
+                                {% endif %}
                                 <td>
                                     <a target="_blank" :href="person_account.get_edit_url" title="ویرایش"
-                                        class=" text-warning mx-2">
+                                    class=" text-warning mx-2">
                                         <i class="fa fa-edit text-warning">
                                         </i>
                                         ویرایش

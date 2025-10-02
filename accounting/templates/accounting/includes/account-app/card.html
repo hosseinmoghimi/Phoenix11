@@ -35,6 +35,8 @@
     </div>
 
     <div>
+      {% if SHOW_BALANCE %}
+        
       <div class="text-center">
         <button
           @click="copy_balance_to_clipboard('{{account.balance}}')"
@@ -47,6 +49,7 @@
           <span v-if="show_balance_copied"> کپی شد </span>
         </button>
       </div>
+      {% endif %}
     </div>
 
     <h6>
@@ -54,10 +57,14 @@
 
       {{page.date_added|to_persian_datetime|safe}}
     </h6>
-    <h5 class="text-center mt-4">
-      <small class="text-muted"> مانده : </small>
-      {{account.balance|to_price_color|safe}} {{CURRENCY}}
-    </h5>
+    
+      {% if SHOW_BALANCE %}
+        
+      <h5 class="text-center mt-4">
+        <small class="text-muted"> مانده : </small>
+        {{account.balance|to_price_color|safe}} {{CURRENCY}}
+      </h5>
+      {% endif %}
     <div class="my-2">
       <a href="{% url 'accounting:tree_chart' pk=account.id %}" target="_blank">
         <img

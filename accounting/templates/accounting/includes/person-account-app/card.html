@@ -38,6 +38,7 @@
       </div>
     </div>
 
+      {% if SHOW_BALANCE %}
     <div>
       <div class="text-center">
         <button
@@ -52,6 +53,9 @@
         </button>
       </div>
     </div>
+    
+        
+      {% endif %}
 
     <h5 class="text-center mt-4">
       <small class="text-muted"> مانده : </small>
@@ -117,10 +121,13 @@
       >
     </div>
 
-    <div>
-      <small class="text-muted">مانده : </small>
-      {{account.balance }}
-    </div>
+      {% if SHOW_BALANCE %}
+        
+      <div>
+        <small class="text-muted">مانده : </small>
+        {{account.balance }}
+      </div>
+      {% endif %}
 
     <div>
       <small class="text-muted">شخص : </small>

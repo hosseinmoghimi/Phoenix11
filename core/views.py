@@ -56,16 +56,22 @@ def CoreContext(request,*args, **kwargs):
         from django.contrib.auth.models import Group
         price_group = Group.objects.get_or_create(name = PRICE_GROUP_NAME)
         quantity_group = Group.objects.get_or_create(name = QUANTITY_GROUP_NAME)
+        balance_group = Group.objects.get_or_create(name = BALANCE_GROUP_NAME)
         SHOW_PRICE=False
         SHOW_QUANTITY=False
+        SHOW_BALANCE=False
         if me_person is not None and me_person.user is not None:
             price_group=me_person.user.groups.filter(name=PRICE_GROUP_NAME).first()
             quantity_group=me_person.user.groups.filter(name=QUANTITY_GROUP_NAME).first()
+            balance_group=me_person.user.groups.filter(name=BALANCE_GROUP_NAME).first()
             if quantity_group is not None:
                 SHOW_QUANTITY=True 
+            if balance_group is not None:
+                SHOW_BALANCE=True 
             if price_group is not None:
                 SHOW_PRICE=True
         context['SHOW_QUANTITY']=SHOW_QUANTITY
+        context['SHOW_BALANCE']=SHOW_BALANCE
         context['SHOW_PRICE']=SHOW_PRICE
         context['me_person']=me_person 
         me_person_s=json.dumps(PersonSerializer(me_person).data)

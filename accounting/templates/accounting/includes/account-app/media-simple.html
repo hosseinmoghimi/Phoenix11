@@ -36,13 +36,16 @@
 
     </h6>
 
-    <h6 class="text-{{account.color}}">
-
-      <span class="mr-2">
-
-        {{account.balance|to_price_color|safe}}
-      </span>
-    </h6>
+      {% if SHOW_BALANCE %}
+        
+      <h6 class="text-{{account.color}}">
+        
+        <span class="mr-2">
+          
+          {{account.balance|to_price_color|safe}}
+        </span>
+      </h6>
+      {% endif %}
 
     <a href="">
 

@@ -25,14 +25,18 @@
 
         </div>
         <div>
-            <h6  >
-
-                <small>
-                    <span v-html="to_price(person_account.balance,'{{CURRENCY}}')"></span> 
-               
-
-                </small>
-            </h6>
+            
+      {% if SHOW_BALANCE %}
+        
+      <h6  >
+          
+          <small>
+              <span v-html="to_price(person_account.balance,'{{CURRENCY}}')"></span> 
+              
+              
+            </small>
+        </h6>
+        {% endif %}
         </div>
 
         

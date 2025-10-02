@@ -89,6 +89,8 @@
       {% endif %}
     </div>
     <div id="bank-account-app">
+      {% if SHOW_BALANCE %}
+        
     <div>
       <small class="text-muted">مانده : </small>
       {{account.balance }}
@@ -98,6 +100,9 @@
         {{account.balance|to_price_color_btn|safe}}
         <small class="text-muted" v-show="show_balance_copied">کپی شد.</small>
       </div>
+
+      
+      {% endif %}
       <div>
         <small class="text-muted">شخص : </small>
         <a href="{{person_account.person.get_absolute_url}}">

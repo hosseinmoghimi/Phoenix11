@@ -54,17 +54,17 @@
                 <i class="fa fa-trash text-danger"></i> حذف
             </a>
             {% endif %}
+        </div> 
+        
+      {% if SHOW_BALANCE %}
+        
+      <div id="account-balance-app">
+          <small class="text-muted">مانده : </small>
+          {{account.balance|to_price_color_btn|safe}}
+          <small class="text-muted" v-show="show_balance_copied">کپی شد.</small>
+          
         </div>
-        <!-- <div>
-            <small class="text-muted">مانده : </small>
-            {{account.balance|to_price}} {{CURRENCY}}
-        </div> -->
-        <div id="account-balance-app">
-            <small class="text-muted">مانده : </small>
-            {{account.balance|to_price_color_btn|safe}}
-            <small class="text-muted" v-show="show_balance_copied">کپی شد.</small>
-
-        </div>
+        {% endif %}
 
         <div>
             <small class="text-muted">سطح : </small>

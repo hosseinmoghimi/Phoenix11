@@ -25,13 +25,17 @@
                 </small>
         </div>
         <div>
-            <h6 >
-
-                <small>
-                    <span v-html="to_price_colored(account.balance,'{{CURRENCY}}')"></span> 
-                   
-                </small>
-            </h6>
+            
+      {% if SHOW_BALANCE %}
+        
+      <h6 >
+          
+          <small>
+              <span v-html="to_price_colored(account.balance,'{{CURRENCY}}')"></span> 
+              
+            </small>
+        </h6>
+        {% endif %}
         </div>
 
         <a :href="account.get_absolute_url">
