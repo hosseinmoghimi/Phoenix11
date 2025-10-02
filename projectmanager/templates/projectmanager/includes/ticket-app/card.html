@@ -1,0 +1,21 @@
+<div class="card">
+    <div class="card-header">
+        <h5>
+            تیکت
+        </h5>
+    </div>
+    <div class="card-body">
+        <h5>
+            <a href="{{ticket.get_absolute_url}}">
+                {{ticket.title}}
+            </a>
+        </h5>
+
+        <h5>
+            <a href="{{ticket.project.get_absolute_url}}">
+                {{ticket.project.title}}
+            </a>
+        </h5>
+
+    </div>
+</div>

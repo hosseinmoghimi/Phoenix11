@@ -88,6 +88,40 @@
         </div>
 
         <hr>
+         <h3>
+
+            لاگین
+        </h3>
+        <div class="row rtl">
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">username</label>
+                    <input type="text" class="form-control" v-model="username">
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">password</label>
+                    <input type="password" class="form-control" v-model="password">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">pattern</label>
+                    <input type="text" class="form-control" v-model="pattern">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">identity</label>
+                    <input type="text" class="form-control" v-model="identity">
+                </div>
+            </div>
+
+        </div>
+        <hr>
         <h3>
 
             AnyDesk
@@ -106,7 +140,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="">any_desk_password</label>
-                    <input type="text" class="form-control" v-model="any_desk_password">
+                    <input type="password" class="form-control" v-model="any_desk_password">
                 </div>
             </div>
 
@@ -131,7 +165,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="">dorsan_desk_password</label>
-                    <input type="text" class="form-control" v-model="dorsan_desk_password">
+                    <input type="password" class="form-control" v-model="dorsan_desk_password">
                 </div>
             </div>
 
@@ -139,35 +173,7 @@
         <hr>
 
 
-        <h3>
-
-            لاگین
-        </h3>
-        <div class="row rtl">
-
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="">username</label>
-                    <input type="text" class="form-control" v-model="username">
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="">password</label>
-                    <input type="text" class="form-control" v-model="password">
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="">identity</label>
-                    <input type="text" class="form-control" v-model="identity">
-                </div>
-            </div>
-
-        </div>
-        <hr>
+       
         <h3>
 
             مشخصات وایرلس
@@ -243,6 +249,7 @@
 
                         {% for brand in brands %}
 
+                        
                         <option value="{{brand.id}}">{{brand.name}}</option>
                         {% endfor %}
                     </select>
@@ -252,10 +259,19 @@
 
             <div class="col-md-4">
                 <div class="form-group">
+                    <label for="">کد کالا</label>
+                    <input type="number" class="form-control" v-model="product_id">
+                </div>
+            </div>
+
+            
+            <div class="col-md-4">
+                <div class="form-group">
                     <label for="">model_name</label>
                     <input type="text" class="form-control" v-model="model_name">
                 </div>
             </div>
+
 
             <div class="col-md-4">
                 <div class="form-group">
@@ -312,7 +328,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="">adsl_password</label>
-                    <input type="text" class="form-control" v-model="adsl_password">
+                    <input type="password" class="form-control" v-model="adsl_password">
                 </div>
             </div>
 

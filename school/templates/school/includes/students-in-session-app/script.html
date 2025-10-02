@@ -1,0 +1,77 @@
+<script>
+    let class_student_component_template=`{% include 'school/includes/students-in-session-app/component.html' %}`
+
+    let students_in_session=JSON.parse(`{{students_in_session_s|escapejs}}`)
+
+    let student_in_session_component = Vue.component('student-in-session-component', {
+        data: function () {
+            return {
+                confirm_delete: false,
+                show_add_reply:false,
+                score:0,
+                status:'',
+                description:'',
+            }
+        },
+        methods: {
+            set_attend:function(){
+                this.add_student_in_session('حاضر')
+
+            },
+            set_absent:function(){
+                this.add_student_in_session('غایب')
+
+            },
+            set_delayed:function(){
+                this.add_student_in_session('تاخیر')
+            },
+            add_student_in_session:function(status){
+                 
+                let payload={
+                    csrfmiddlewaretoken:csrfmiddlewaretoken,
+                    session_id:parseInt("{{session.id}}"),
+                    student_id:this.student_in_session.student.id,
+                    score:parseInt(this.student_in_session.score),
+                    description: this.student_in_session.description,
+                    status: status,
+                }
+                console.log(payload) 
+                let comment=this.comment
+                let posting = $.post("{% url 'school:add_student_in_session' %}", payload)
+                posting.done((data) => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                            students_in_session_app.students_in_session.forEach(student_in_session => {
+                                if(student_in_session.student.id==data.student_in_session.student.id){
+                                    student_in_session=data.student_in_session
+                                }
+                            });
+                    }
+                })
+
+            },
+             
+
+
+        },
+        props: ['student_in_session','raw'],
+        template: class_student_component_template,
+    })
+
+</script>
+
+<script>
+    let students_in_session_app=new Vue({
+        el:"#students-in-session-app",
+        components:{
+            student_in_session_component,
+        },
+        data:{
+            students_in_session:students_in_session,
+
+        },
+        methods:{
+
+        }
+    })
+</script>

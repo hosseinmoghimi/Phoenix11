@@ -15,11 +15,11 @@ class PersonRepo():
         self.me=None
         self.request=request
         if request.user.is_authenticated:
+            self.me=Person.objects.filter(user_id=request.user.id).first()
             if self.request.user.has_perm(APP_NAME+'.view_person'):
                 self.objects=Person.objects.all()
             else:
                 self.objects=Person.objects.filter(user_id=request.user.id) 
-        self.me=Person.objects.filter(user_id=request.user.id).first()
         # person=PersonRepo(request=request).me
 
         
@@ -32,7 +32,7 @@ class PersonRepo():
         from django.db.models import Q
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
-            objects=objects.filter(Q(first_name__contains=search_for) |Q(last_name__contains=search_for) | Q(melli_code__contains=search_for) )
+            objects=objects.filter(Q(full_name__contains=search_for)  | Q(melli_code__contains=search_for) )
         return objects.all()
     def change_image(self,person_id,image):
         person=self.person(person_id=person_id)
@@ -100,6 +100,13 @@ class PersonRepo():
                 message="کد ملی وارد شده تکراری است."
                 person=None
                 return result,message,person
+            
+        
+
+        if 'birth_date' in kwargs:
+            person.birth_date=kwargs["birth_date"]
+        if 'birth_location' in kwargs:
+            person.birth_location=kwargs["birth_location"]
 
   
         if 'type2' in kwargs:
@@ -110,10 +117,116 @@ class PersonRepo():
             person.melli_code=kwargs["melli_code"]
         if 'title' in kwargs:
             person.title=kwargs["title"]
+
+        if 'postal_code' in kwargs:
+            person.postal_code=kwargs["postal_code"]
+        if 'melli_code' in kwargs:
+            person.melli_code=kwargs["melli_code"]
+        if 'economic_no' in kwargs:
+            person.economic_no=kwargs["economic_no"]
+        if 'tel' in kwargs:
+            person.tel=kwargs["tel"]
             
-        if 'person_id' in kwargs and kwargs['person_id']>0:
-            person=PersonRepo(request=self.request).person(person_id=kwargs['person_id'])
-            person.person=person
+ 
+
+
+        if 'user_id' in kwargs :
+            user_id=kwargs['user_id']
+            if user_id is not None and user_id>0:
+                if len(Person.objects.filter(user_id=user_id))>0:
+                    message='این یوزر قبلا به شخصی واگذار شده است.'
+                    return FAILED,message,None
+                person.user_id=user_id
+        if 'color' in kwargs:
+            person.color=kwargs["color"]
+        if 'first_name' in kwargs:
+            person.first_name=kwargs["first_name"]
+        if 'last_name' in kwargs:
+            person.last_name=kwargs["last_name"]
+        if 'bio' in kwargs:
+            person.bio=kwargs["bio"]
+        if 'email' in kwargs:
+            person.email=kwargs["email"]
+        if 'mobile' in kwargs:
+            person.mobile=kwargs["mobile"]
+        if 'father_name' in kwargs:
+            person.father_name=kwargs["father_name"]
+        if 'prefix' in kwargs:
+            person.prefix=kwargs["prefix"]
+        if 'gender' in kwargs:
+            person.gender=kwargs["gender"]
+        if 'address' in kwargs:
+            person.address=kwargs["address"]  
+        if 'type' in kwargs:
+            person.type=kwargs["type"] 
+         
+          
+        (result,message,person)=person.save()
+        if result==FAILED:
+            return result,message,person
+        
+
+ 
+        return result,message,person
+
+
+    def edit_person(self,*args,**kwargs):
+        result,message,person=FAILED,"",None
+        person=Person.objects.filter(id=kwargs['person_id']).first()
+        if person is None:
+            message='چنین شخصی پیدا نشد.'
+            return FAILED,message,None
+        
+        if self.me is None:
+            if not person.id==self.me.id:
+                if not self.request.user.has_perm(APP_NAME+".add_person"):
+                    message="دسترسی غیر مجاز"
+                    return result,message,person
+ 
+        # if 'person_id' in kwargs:
+        #     if Person.objects.filter(person_id=kwargs['person_id']).first() is not None:
+        #         message="کد پروفایل وارد شده تکراری است."
+        #         person=None
+        #         return result,message,person
+        if 'melli_code' in kwargs:
+            melli_code=kwargs['melli_code']
+
+            if melli_code is not None and len(melli_code)>0 and Person.objects.exclude(id=person.id).filter(melli_code=melli_code).first() is not None:
+                message="کد ملی وارد شده تکراری است."
+                person=None
+                return result,message,person
+            
+        
+        if 'father_name' in kwargs:
+            person.father_name=kwargs["father_name"]
+
+        if 'birth_date' in kwargs:
+            person.birth_date=kwargs["birth_date"]
+        if 'birth_location' in kwargs:
+            person.birth_location=kwargs["birth_location"]
+
+  
+        if 'type2' in kwargs:
+            person.type2=kwargs["type2"]
+        if 'type' in kwargs:
+            person.type=kwargs["type"]
+        if 'melli_code' in kwargs:
+            person.melli_code=kwargs["melli_code"]
+        if 'title' in kwargs:
+            person.title=kwargs["title"]
+
+        if 'postal_code' in kwargs:
+            person.postal_code=kwargs["postal_code"]
+        if 'melli_code' in kwargs:
+            person.melli_code=kwargs["melli_code"]
+        if 'economic_no' in kwargs:
+            person.economic_no=kwargs["economic_no"]
+        if 'tel' in kwargs:
+            person.tel=kwargs["tel"]
+            
+ 
+
+ 
         if 'color' in kwargs:
             person.color=kwargs["color"]
         if 'first_name' in kwargs:

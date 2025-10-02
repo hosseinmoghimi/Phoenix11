@@ -1,0 +1,52 @@
+{% include "accounting/includes/account-app/select-script.html" %}
+<script>
+  let add_book_app = new Vue({
+    el: "#add-book-app",
+    data: {
+      title: "",
+      message: { show: false },
+      waiting: false,
+    },
+
+    components: {
+      DatePicker: VuePersianDatetimePicker,
+    },
+    methods: {
+      add_book: function () {
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          title: this.title,
+        };
+
+        console.log(payload);
+        let url = "{% url 'library:add_book' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if (data.result === "SUCCEED") {
+            show_message(
+              add_book_app,
+              "موفق",
+              data.message,
+              "success",
+              3000
+            );
+
+            add_book_app.title = "";
+            if (typeof books_app != "undefined") {
+              books_app.books.push(data.book);
+            }
+          } else {
+            show_message(
+              add_book_app,
+              "خطا",
+              data.message,
+              "danger",
+              3000
+            );
+          }
+        });
+      },
+    },
+  });
+</script>

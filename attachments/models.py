@@ -14,20 +14,45 @@ from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_UR
 IMAGE_FOLDER = "attachments/images/"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
  
-class Comment(models.Model,DateTimeHelper):
+class PagePrint(models.Model,DateTimeHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
-    comment=HTMLField(verbose_name="comment")
     datetime_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    type=models.CharField(_("type"),choices=PagePrintTypeEnum.choices,default=PagePrintTypeEnum.DRAFT, max_length=50)
+    printed=models.BooleanField(_("printed"), default=False)
 
     class Meta:
-        verbose_name = _("Comment")
-        verbose_name_plural = _("Comments")
+        verbose_name = _("PagePrint")
+        verbose_name_plural = _("PagePrints")
 
     def __str__(self):
         return f"{self.person} : {self.page}"
      
     
+class Comment(models.Model,DateTimeHelper,LinkHelper):
+    parent=models.ForeignKey("comment",related_name='replies',null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
+    page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
+    comment=HTMLField(verbose_name="comment")
+    datetime_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    class_name='comment'
+    app_name=APP_NAME
+    @property
+    def childs(self):
+        return Comment.objects.filter(parent_id=self.id)
+    class Meta:
+        verbose_name = _("Comment")
+        verbose_name_plural = _("Comments")
+
+    def __str__(self):
+        return f"{self.person} : {self.page} : {self.comment}"
+     
+    @property
+    def reply_to_id(self):
+        if self.parent is not None:
+            return self.parent.id
+        return None
+ 
 
 class Like(models.Model,DateTimeHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
@@ -60,12 +85,8 @@ class Like(models.Model,DateTimeHelper):
         my_likes=Like.objects.filter(page_id=page.id).filter(person_id=person_id)
         return len(my_likes)>0
     
-
-
-
-
     
-class Icon(models.Model,LinkHelper):
+class Icon(models.Model,LinkHelper,DateTimeHelper):
     title = models.CharField(_("title"), null=True, blank=True, max_length=300)
     icon_fa = models.CharField(
         _("icon fa"), null=True, blank=True, max_length=50)
@@ -200,7 +221,7 @@ class Download(Icon):
 
 class Link(Icon,LinkHelper):
     page = models.ForeignKey("core.page", verbose_name=_(
-        "page"), on_delete=models.CASCADE)
+        "page"),null=True,blank=True, on_delete=models.CASCADE)
     
     url = models.CharField(_("url"), max_length=2000)
     new_tab=models.BooleanField(_("new_tab"),default=False)
@@ -242,7 +263,6 @@ class Link(Icon,LinkHelper):
             generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
         return f"{QRCODE_URL}{file_name}"
   
-
 
 class Image(models.Model,LinkHelper,DateTimeHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
@@ -356,7 +376,6 @@ class Image(models.Model,LinkHelper,DateTimeHelper):
             return self.image
 
 
-
 class Tag(models.Model,LinkHelper):
     title=models.CharField(_("title"), max_length=50)  
     pages=models.ManyToManyField("core.page",blank=True, verbose_name=_("pages"))
@@ -418,6 +437,7 @@ class Location(models.Model,LinkHelper):
                 
             </a>
         """
+ 
  
 class Area(models.Model,LinkHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)

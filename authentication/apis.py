@@ -5,7 +5,7 @@ import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
 from .repo import PersonRepo,PersonRepo
-from .serializers import PersonSerializer,ProfileSerializer
+from .serializers import PersonSerializer
 from django.http import JsonResponse
 from .forms import *
    
@@ -18,7 +18,8 @@ class AddPersonApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_person_form=AddPersonForm(request.POST)
         if add_person_form.is_valid():
             log=333
@@ -40,7 +41,8 @@ class SelectPersonApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         select_person_form=SelectPersonForm(request.POST)
         if select_person_form.is_valid():
             log=333
@@ -50,6 +52,35 @@ class SelectPersonApi(APIView):
                 context['person']=PersonSerializer(person).data
                 result=SUCCEED
                 message='موفق'
+            else:
+                message='شخص پیدا نشد.'
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
+
+class EditPersonApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        edit_person_form=EditPersonForm(request.POST)
+        if edit_person_form.is_valid():
+            log=333
+            cd=edit_person_form.cleaned_data
+            result,message,person=PersonRepo(request=request).edit_person(**cd)
+            if person is not None:
+                context['person']=PersonSerializer(person).data
+                result=SUCCEED
+                message='موفق'
+            else:
+                message='شخص پیدا نشد.'
         context['message']=message
         context['result']=result
         context['log']=log
@@ -64,7 +95,8 @@ class SelectUserApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         select_person_form=SelectUserForm(request.POST)
         if select_person_form.is_valid():
             log=333
@@ -87,7 +119,8 @@ class SelectProfileApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         select_profile_form=SelectProfileForm(request.POST)
         if select_profile_form.is_valid():
             log=333

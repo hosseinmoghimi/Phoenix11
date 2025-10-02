@@ -28,7 +28,7 @@ class OrganizationUnitRepo():
         objects=self.objects
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
-            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+            objects=objects.filter(Q(person_account__person__full_name__contains=search_for)  )
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
@@ -76,20 +76,21 @@ class OrganizationUnitRepo():
 
 class EmployeeRepo():
     def __init__(self,request,*args, **kwargs):
-        self.me=None
         self.my_accounts=[]
         self.request=request
         self.objects=Employee.objects.filter(id=0)
-        profile=PersonRepo(request=request).me
-        if profile is not None:
-            if request.user.has_perm(APP_NAME+".view_account"):
-                self.objects=Employee.objects
-                self.my_accounts=self.objects 
+        me_person=PersonRepo(request=request).me
+        self.me=None
+        if me_person is not None:
+            self.me=Employee.objects.filter(person_account__person_id=me_person.id).first()
+        if request.user.has_perm(APP_NAME+".view_employee"):
+            self.objects=Employee.objects
+            
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
-            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+            objects=objects.filter(Q(job_title=search_for) | Q(person_account__person__full_name__contains=search_for)  )
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
@@ -106,7 +107,7 @@ class EmployeeRepo():
         
     def add_employee(self,*args,**kwargs):
         result,message,employee=FAILED,"",None
-        if len(Employee.objects.filter(job_title=kwargs['job_title']).filter(person_id=kwargs['person_id']).filter(organization_unit_id=kwargs['organization_unit_id']))>0:
+        if len(Employee.objects.filter(job_title=kwargs['job_title']).filter(person_account_id=kwargs['person_account_id']).filter(organization_unit_id=kwargs['organization_unit_id']))>0:
             message="پرسنل تکراری"
             return result,message,None
         
@@ -117,9 +118,9 @@ class EmployeeRepo():
         employee=Employee()
         if 'job_title' in kwargs:
             employee.job_title=kwargs["job_title"]
-        if 'person_id' in kwargs:
-            if kwargs["person_id"]>0:
-                employee.person_id=kwargs["person_id"]
+        if 'person_account_id' in kwargs:
+            if kwargs["person_account_id"]>0:
+                employee.person_account_id=kwargs["person_account_id"]
         if 'organization_unit_id' in kwargs:
             if kwargs["organization_unit_id"]>0:
                 employee.organization_unit_id=kwargs["organization_unit_id"]

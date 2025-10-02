@@ -1,16 +1,16 @@
 <script>
-    let invoices_app_invoices = JSON.parse(`{{maintenance_invoices_s|escapejs}}`)
+    let maintenance_invoices_for_maintenance_invoices_app = JSON.parse(`{{maintenance_invoices_s|escapejs}}`)
     let maintenance_invoices_app = new Vue({
         el: "#maintenance-invoices-app",
         data: {
-            maintenance_invoices: invoices_app_invoices,
+            maintenance_invoices: maintenance_invoices_for_maintenance_invoices_app,
             search_for: '',
             waiting: false,
 
         },
         methods: {
             filter: function () {
-                this.invoices = invoices_app_invoices.filter(function (invoice) {
+                this.invoices = maintenance_invoices_for_maintenance_invoices_app.filter(function (invoice) {
 
                     if (invoice.title.indexOf(this.search_for) > -1)
                         return true

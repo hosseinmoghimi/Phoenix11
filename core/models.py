@@ -4,6 +4,7 @@ from django.utils.translation import gettext as _
 from utility.qrcode import generate_qrcode
 from utility.enums import *
 from .enums import *
+from utility.enums import StatusColor
 from utility.calendar import PersianCalendar
 from utility.models import LinkHelper,ImageHelper,DateTimeHelper
 from tinymce.models import HTMLField
@@ -11,32 +12,35 @@ from django.shortcuts import reverse
 from django.core.files.storage import FileSystemStorage
 from utility.constants import FAILED,SUCCEED
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT,QRCODE_URL,STATIC_URL,MEDIA_URL,ADMIN_URL,FULL_SITE_URL
-IMAGE_FOLDER = "images/"
+IMAGE_FOLDER = APP_NAME+"/images/"
 PAGE_TITLE_SEPERATOR=' / '
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 from utility.enums import class_title
 
-class Page(models.Model,LinkHelper,ImageHelper):
+class Page(models.Model,LinkHelper,DateTimeHelper,ImageHelper):
+    title=models.CharField(_("عنوان"), max_length=200)
     parent=models.ForeignKey("page",null=True,blank=True,related_name="childs", verbose_name=_("parent"), on_delete=models.CASCADE)
     app_name=models.CharField(_("app_name"),blank=True, max_length=50)
     class_name=models.CharField(_("class_name"),blank=True, max_length=50)
-    title=models.CharField(_("title"), max_length=50)
-    short_description=HTMLField(_("short_description"),null=True,blank=True, max_length=5000)
-    description=HTMLField(_("description"),null=True,blank=True, max_length=50000)
-    related_pages=models.ManyToManyField("page",blank=True, verbose_name=_("related_pages"))
+    short_description=HTMLField(_("توضیح کوتاه"),null=True,blank=True, max_length=5000)
+    description=HTMLField(_("توضیحات کامل"),null=True,blank=True, max_length=50000)
     date_added = models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    meta_data=models.CharField(_("meta_data"),default="",null=True,blank=True, max_length=500)
+    date_updated = models.DateTimeField(_("date_updated"), auto_now=True, auto_now_add=False)
+    meta_data=models.CharField(_("متادیتا"),default="",null=True,blank=True, max_length=500)
     priority = models.IntegerField(_("ترتیب"), default=1000)
-    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
-    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'ImageBase/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'page/thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'page/header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
     color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY,max_length=50)
+    creator=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
+    related_pages=models.ManyToManyField("page",blank=True, verbose_name=_("related_pages"))
     locations=models.ManyToManyField("attachments.location", blank=True,verbose_name=_("locations"))
-    
-       
+    def get_status_color(self):
+        return StatusColor(self)
     def get_breadcrumb_link(self):
         aaa=f"""
                     <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">
-                    <span class="farsi">
+                    <span class="farsi mx-2">
+                    <img class="rounded" width="32" src="{self.thumbnail}">
                     {self.title}
                     </span>
                     </a></li> 
@@ -70,15 +74,20 @@ class Page(models.Model,LinkHelper,ImageHelper):
         return result,message,priority
 
     def save(self,*args, **kwargs):
+        if self.parent_id is not None and self.parent_id==self.id:
+            self.parent_id=None
         from django.utils import timezone
         now=timezone.now()
         self.date_added=now
-        if not bool(self.class_name)  :
+        if self.class_name is None or self.class_name =='':
             self.class_name="page"
         if self.app_name is None or self.app_name=="":
             self.app_name="core"
         super(Page,self).save()
-
+        page=self
+        message=''
+        result=SUCCEED
+        return result,message,self
     # def likes_count(self):
     #     return len(PageLike.objects.filter(page_id=self.id))
 
@@ -109,7 +118,7 @@ class Page(models.Model,LinkHelper,ImageHelper):
         verbose_name_plural = _("Pages")
 
     def __str__(self):
-        return self.title
+        return self.full_title
 
     def get_qrcode_url(self):
         if self.pk is None:
@@ -131,7 +140,19 @@ class Page(models.Model,LinkHelper,ImageHelper):
         if self.parent is None:
             return self.title
         return self.parent.full_title+PAGE_TITLE_SEPERATOR+self.title
- 
+    def all_sub_ids(self,*args, **kwargs):
+        ids=[]
+        children=Page.objects.filter(parent_id=self.id)
+        if 'same_class' in kwargs and kwargs['same_class']:
+            children=children.filter(class_name=self.class_name)
+        if 'my_id' in kwargs and kwargs['my_id']:
+            ids.append(self.id)
+        for child in children:
+            ids.append(child.id)
+            aa=child.all_sub_ids(*args, **kwargs)
+            for a in aa:
+                ids.append(a)
+        return ids
 
 
 class EventCategory(models.Model,LinkHelper):

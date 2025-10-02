@@ -37,14 +37,32 @@
               <tr v-for="organization_unit in organization_units">
 
                 <td>
-                  <a :href="organization_unit.get_absolute_url">
-                    <span v-text="organization_unit.title"></span>
-                  </a>
+                  <div class="media">
+                    <a :href="organization_unit.get_absolute_url">
+                      <img :src="organization_unit.thumbnail" width="64" class="rounded" alt="">
+                    </a>
+                    <div class="media-body mr-2">
+                    <a :href="organization_unit.get_absolute_url">
+                      <h5>
+                        <span v-text="organization_unit.title"></span>
+                      </h5>
+                    </a>
 
-                  <div></div>
+                      <a :href="organization_unit.person_account.get_absolute_url">
+                      <h6>
+                        <small>
+
+                          <span v-text="organization_unit.person_account.title"></span>
+                        </small>
+                      </h6>
+                    </a>
+
+                    </div>
+                  </div>
+                  
                 </td>
                 <td>
-                   <div v-for="account in [organization_unit.account]">
+                   <div v-for="account in [organization_unit.person_account]">
                     {% include "accounting/includes/account-app/media.html" %}
                    </div>
                 </td>

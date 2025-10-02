@@ -1,0 +1,27 @@
+
+{% extends "scheduler/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="row rtl farsi">
+    {% if add_task_form %}
+      <div class="col-md-12">
+          {% include "scheduler/includes/add-task-app/template.html" %}
+
+      </div>
+    {% endif %}
+    <div class="col-md-12">
+
+        
+        {% include "scheduler/includes/tasks-app/template.html" %}
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "scheduler/includes/tasks-app/script.html" %}
+{% if add_task_form %}
+{% include "scheduler/includes/add-task-app/script.html" %}
+{% endif %}
+{% endblock script %}

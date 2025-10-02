@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import VehicleRepo,MaintenanceInvoiceRepo,ServiceManRepo
-from .serializers import VehicleSerializer,MaintenanceInvoiceSerializer,ServiceManSerializer
+from .repo import VehicleRepo,MaintenanceInvoiceRepo,ServiceManRepo,MaintenanceRepo
+from .serializers import MaintenanceSerializer,VehicleSerializer,MaintenanceInvoiceSerializer,ServiceManSerializer
 from django.http import JsonResponse
 from .forms import *
 
@@ -18,7 +18,8 @@ class AddVehicleApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_vehicle_form=AddVehicleForm(request.POST)
         if add_vehicle_form.is_valid():
             log=333
@@ -44,7 +45,8 @@ class AddMaintenanceInvoiceApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_maintenance_invoice_form=AddMaintenanceInvoiceForm(request.POST)
         if add_maintenance_invoice_form.is_valid():
             log=333
@@ -52,6 +54,31 @@ class AddMaintenanceInvoiceApi(APIView):
             result,message,maintenance_invoice=MaintenanceInvoiceRepo(request=request).add_maintenance_invoice(**cd)
             if maintenance_invoice is not None:
                 context['maintenance_invoice']=MaintenanceInvoiceSerializer(maintenance_invoice).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+    
+
+    
+
+class AddMaintenanceApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        add_maintenance_form=AddMaintenanceForm(request.POST)
+        if add_maintenance_form.is_valid():
+            log=333
+            cd=add_maintenance_form.cleaned_data
+            result,message,maintenance=MaintenanceRepo(request=request).add_maintenance(**cd)
+            if maintenance is not None:
+                context['maintenance']=MaintenanceSerializer(maintenance).data
         context['message']=message
         context['result']=result
         context['log']=log
@@ -67,7 +94,8 @@ class AddServiceManApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_service_man_form=AddServiceManForm(request.POST)
         if add_service_man_form.is_valid():
             log=333

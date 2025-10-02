@@ -18,6 +18,19 @@
   <div class="col-md-12">
     {% include "accounting/includes/invoice-lines-app/template.html" %}
   </div>
+
+
+  <div class="col-md-12">
+    {% include "warehouse/includes/warehouse-sheets-app/template.html" %}
+  </div>
+ <div class="col-md-12">
+
+        
+        {% include "warehouse/includes/products-in-warehouse-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+        {% include "projectmanager/includes/remote-clients-app/template.html" %}
+    </div>
   <div class="col-md-4">
     {% include "attachments/includes/downloads-app/template.html" %}
   </div>
@@ -29,7 +42,7 @@
   </div>
 
   <div class="col-md-4">
-    {% include "accounting/includes/add-product-to-category-app/template.html" %}
+    {% include "accounting/includes/add-category-to-product-app/template.html" %}
   </div>
   <div class="col-md-4">
     {% include "accounting/includes/product-specifications-app/template.html" %}
@@ -53,7 +66,12 @@
 {% endblock content %}
  {% block script %} 
 {% include "accounting/includes/product-app/script.html" %} 
-{% include "accounting/includes/add-product-to-category-app/script.html" %} 
+{% include "accounting/includes/add-category-to-product-app/script.html" %} 
 {% include "accounting/includes/product-specifications-app/script.html" %} 
 {% include "accounting/includes/invoice-line-item-units-app/script.html" %} 
+{% include "warehouse/includes/warehouse-sheets-app/script.html" %}
+{% include "projectmanager/includes/remote-clients-app/script.html" %}
+{% include "warehouse/includes/products-in-warehouse-app/script.html" %}
+
 {% endblock script %}
+

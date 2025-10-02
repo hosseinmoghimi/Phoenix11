@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import SchoolRepo,CourseRepo,CourseClassRepo
-from .serializers import SchoolSerializer,CourseSerializer,CourseClassSerializer
+from .repo import SchoolRepo,CourseRepo,CourseClassRepo,TeacherRepo,StudentRepo,MajorRepo,SessionRepo,StudentInSessionRepo
+from .serializers import SchoolSerializer,CourseSerializer,CourseClassSerializer,SessionSerializer,StudentInSessionSerializer,TeacherSerializer,StudentSerializer,MajorSerializer
  
 from django.http import JsonResponse
 from .forms import *
@@ -19,7 +19,8 @@ class AddSchoolApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_school_form=AddSchoolForm(request.POST)
         if add_school_form.is_valid():
             log=333
@@ -27,6 +28,125 @@ class AddSchoolApi(APIView):
             result,message,school=SchoolRepo(request=request).add_school(**cd)
             if school is not None:
                 context['school']=SchoolSerializer(school).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+ 
+ 
+class AddSessionApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        add_session_form=AddSessionForm(request.POST)
+        if add_session_form.is_valid():
+            log=333
+            cd=add_session_form.cleaned_data
+            result,message,session=SessionRepo(request=request).add_session(**cd)
+            if session is not None:
+                context['session']=SessionSerializer(session).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+ 
+ 
+class AddTeacherApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        add_teacher_form=AddTeacherForm(request.POST)
+        if add_teacher_form.is_valid():
+            log=333
+            cd=add_teacher_form.cleaned_data
+            result,message,teacher=TeacherRepo(request=request).add_teacher(**cd)
+            if teacher is not None:
+                context['teacher']=TeacherSerializer(teacher).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+
+  
+class AddStudentInSessionApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        add_student_in_session_form=AddStudentInSessionForm(request.POST)
+        if add_student_in_session_form.is_valid():
+            log=333
+            cd=add_student_in_session_form.cleaned_data
+            result,message,student_in_session=StudentInSessionRepo(request=request).add_student_in_session(**cd)
+            if student_in_session is not None:
+                context['student_in_session']=StudentInSessionSerializer(student_in_session).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+
+ 
+
+class AddMajorApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        add_major_form=AddMajorForm(request.POST)
+        if add_major_form.is_valid():
+            log=333
+            cd=add_major_form.cleaned_data
+            result,message,major=MajorRepo(request=request).add_major(**cd)
+            if major is not None:
+                context['major']=MajorSerializer(major).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+ 
+class AddStudentApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        add_student_form=AddStudentForm(request.POST)
+        if add_student_form.is_valid():
+            log=333
+            cd=add_student_form.cleaned_data
+            result,message,student=StudentRepo(request=request).add_student(**cd)
+            if student is not None:
+                context['student']=StudentSerializer(student).data
         context['message']=message
         context['result']=result
         context['log']=log
@@ -41,7 +161,8 @@ class AddCourseApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_course_form=AddCourseForm(request.POST)
         if add_course_form.is_valid():
             log=333
@@ -62,7 +183,8 @@ class AddCourseClassApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_course_class_form=AddCourseClassForm(request.POST)
         if add_course_class_form.is_valid():
             log=333

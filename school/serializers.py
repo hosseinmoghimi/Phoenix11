@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import School,CourseClass,Course
+from .models import School,CourseClass,Course,Teacher,Student,Major,Session,StudentInSession
 from accounting.serializers import FinancialEventSerializer,InvoiceLineSerializer,AccountBriefSerializer,PersonAccountSerializer
-
+from authentication.serializers import PersonSerializer
 class CourseSerializer(serializers.ModelSerializer):
        class Meta:
         model = Course
@@ -13,9 +13,50 @@ class SchoolSerializer(serializers.ModelSerializer):
         model = School
         fields = ['id','name','person_account', 'get_absolute_url','get_edit_url','get_delete_url']
  
+class TeacherSerializer(FinancialEventSerializer):
+       person_account=PersonAccountSerializer()
+       class Meta:
+        model = Teacher
+        fields = ['id','person_account', 'get_absolute_url','get_edit_url','get_delete_url']
+
+ 
+class StudentSerializer(FinancialEventSerializer):
+       person_account=PersonAccountSerializer()
+       class Meta:
+        model = Student
+        fields = ['id','person_account','last_name','melli_code','father_name','first_name', 'get_absolute_url','get_edit_url','get_delete_url']
+
+ 
+class MajorSerializer(FinancialEventSerializer):
+       class Meta:
+        model = Major
+        fields = ['id','title','get_absolute_url','get_edit_url','get_delete_url']
+
+ 
 class CourseClassSerializer(FinancialEventSerializer):
+       major=MajorSerializer()
+       school=SchoolSerializer()
+       course=CourseSerializer()
        class Meta:
         model = CourseClass
-        fields = ['id','title','bedehkar','sum_total','bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','school','educational_year','course','level','major','room','get_absolute_url','get_edit_url','get_delete_url']
+
+ 
+class SessionSerializer(FinancialEventSerializer):
+       course_class=CourseClassSerializer()
+       class Meta:
+        model = Session
+        fields = ['id','title','course_class','session_no','persian_start_datetime','persian_end_datetime','get_absolute_url','get_edit_url','get_delete_url']
+ 
+
+ 
+ 
+class StudentInSessionSerializer(FinancialEventSerializer):
+       session=SessionSerializer()
+       student=StudentSerializer()
+       class Meta:
+        model = StudentInSession
+        fields = ['id', 'session', 'description','student','status','score','get_absolute_url','get_edit_url','get_delete_url']
+ 
 
  

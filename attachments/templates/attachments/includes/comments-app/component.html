@@ -26,6 +26,17 @@
             <div class="small farsi text-dark text-right" v-html="comment.comment">
             </div>
             <div>
+                {% if add_comment_form %}
+                <div>
+
+                    <button @click="show_add_reply=true" class="btn btn-link btn-primary text-light">پاسخ</button>
+                    <div v-if="show_add_reply">
+
+                        <input type="text" class="form-control" v-model="reply">
+                        <button @click="add_reply()" class="btn btn-sm btn-success">ارسال</button>
+                    </div>
+                </div>
+                {% endif %}
                 {% if me_person %}
                 <a v-if="comment.person.id=={{me_person.id}} && !confirm_delete" style="cursor:pointer"
                     class="small text-danger mr-auto1 mx-2" @click="confirm_delete=true">
@@ -49,5 +60,12 @@
                 {% endif %}
             </div>
         </div>
+
+        <div v-for="comment in comment.childs">
+            
+           {% include 'attachments/includes/comments-app/reply.html' %}
+        </div>
+
     </div>
+    
 </div>

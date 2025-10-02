@@ -48,6 +48,8 @@ class Customer(MarketPerson):
         for cart_item in self.cartitem_set.all():
             sum+=cart_item.sum
         return sum
+
+
 class Supplier(MarketPerson):
     level=models.CharField(_("level"),choices=ShopLevelEnum.choices,default=ShopLevelEnum.END_USER, max_length=50)
 

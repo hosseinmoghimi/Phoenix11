@@ -3,9 +3,10 @@ from .models import Category,FinancialYear,FinancialDocumentLine,FinancialDocume
 from .models import Account,FinancialEvent,InvoiceLineItemUnit,InvoiceLineItem 
 from .models import Service,Product,Invoice,InvoiceLine,Bank,PersonCategory,Brand
 from .models import BankAccount
-from .models import ProductSpecification,Asset
+from .models import ProductSpecification,Asset,Cheque
 
 
+admin.site.register(Cheque)
 admin.site.register(ProductSpecification)
 admin.site.register(Brand)
 admin.site.register(Category)

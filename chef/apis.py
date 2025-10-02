@@ -18,7 +18,8 @@ class AddMealItemApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_meal_item_form=AddMealItemForm(request.POST)
         if add_meal_item_form.is_valid():
             log=333
@@ -39,7 +40,8 @@ class AddMealApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_meal_form=AddMealForm(request.POST)
         if add_meal_form.is_valid():
             log=333
@@ -60,7 +62,8 @@ class AddFoodItemApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_food_item_form=AddFoodItemForm(request.POST)
         if add_food_item_form.is_valid():
             log=333

@@ -1,37 +1,48 @@
 from django.utils.translation import gettext as _
 from django.db.models import TextChoices
  
- 
+def StatusColor(page): 
+    if page.status=='ss':
+        return 'success'
+    return 'primary'
  
 class WeightUnitEnum(TextChoices):
     KILO_GRAM="کیلوگرم",_("کیلوگرم")
     GRAM="گرم",_("گرم")
     TON="تن",_("تن")
 
+ 
+class SignatureStatusEnum(TextChoices):
+    REQUESTED="درخواست می شود",_("درخواست می شود")
+    CONFIRMED="تایید می شود",_("تایید می شود")
+    DENIED="رد می شود",_("رد می شود")
+    DELIVERED="تحویل شد",_("تحویل شد")
+
 class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")
+    INSTANCE="مورد",_("مورد")
     KILOGERAM="کیلوگرم",_("کیلوگرم")
+    GERAM="گرم",_("گرم")
     METER="متر",_("متر")
+    METER2="متر مربع",_("متر مربع")
+    METER3="متر مکعب",_("متر مکعب")
     LITER="لیتر",_("لیتر")
+    MILI_LITER="میلی لیتر",_("میلی لیتر")
     CC="سی سی ",_("سی سی ")
+    SERVICE="سرویس",_("سرویس")
     SHAKHEH="شاخه",_("شاخه")
     Node="نود شبکه",_("نود شبکه")
     SHISHEH="شیشه",_("شیشه")
     DASTGAH="دستگاه",_("دستگاه")
-    GERAM="گرم",_("گرم")
     SHEET="ورق",_("ورق")
     TON="تن",_("تن")
     LINE="خط",_("خط")
     PORS="پورس",_("پورس")
-    METER2="متر مربع",_("متر مربع")
-    METER3="متر مکعب",_("متر مکعب")
     PART="قطعه",_("قطعه")
-    Roll="رول",_("رول")
-    DAY="روز",_("روز")
+    Roll="رول",_("رول") 
     TAKHTE="تخته",_("تخته")
     LINK="لینک",_("لینک")
-    SERVICE="سرویس",_("سرویس")
-    INSTANCE="مورد",_("مورد")
+    KHESHAB="خشاب",_("خشاب")
     PERSON="نفر",_("نفر")
     PACK="بسته",_("بسته")
     POCKET="کیسه",_("کیسه")
@@ -40,6 +51,8 @@ class UnitNameEnum(TextChoices):
     CUP="فنجان",_("فنجان")
     JOFT="جفت",_("جفت")
     DAST="دست",_("دست")
+    BOSHKEH="بشکه",_("بشکه")
+    GALON="گالن",_("گالن")
     CARTON="کارتن",_("کارتن")
     HOUR="ساعت",_("ساعت")
     MINUTE="دقیقه",_("دقیقه")
@@ -47,9 +60,22 @@ class UnitNameEnum(TextChoices):
     SABAD="سبد",_("سبد")
     RAS="راس",_("راس")
     BOTTLE="بطری",_("بطری")
+    JELD="جلد",_("جلد")
+    SHIFT="شیفت",_("شیفت")
+    DAY="روز",_("روز")
+    MONTH="ماه",_("ماه")
+    YEAR="سال",_("سال")
+    SESSION="جلسه",_("جلسه")
 
 
 class OperatingSystemNameEnum(TextChoices):
+    WINDOWS_12='Windows 12',_('Windows 12')
+    WINDOWS_11='Windows 11',_('Windows 11')
+    WINDOWS_10='Windows 10',_('Windows 10')
+    WINDOWS_8_1='Windows 8.1',_('Windows 8.1')
+    WINDOWS_8='Windows 8',_('Windows 8')
+    WINDOWS_7='Windows 7',_('Windows 7')
+    WINDOWS_XP='Windows XP',_('Windows XP')
     WIN_SERVER_2012='Windows Server 2012',_('Windows Server 2012')
     WIN_SERVER_2018='Windows Server 2018',_('Windows Server 2018')
     WIN_SERVER_2020='Windows Server 2020',_('Windows Server 2020')
@@ -60,7 +86,6 @@ class OperatingSystemNameEnum(TextChoices):
     LINUX_UBUNTU_24='Linux Ubuntu 2024',_('Linux Ubuntu 2024')
     ANDROID='ANDROID',_('ANDROID')
     IOS='IOS',_('IOS')
-    Ltr='ltr',_('ltr')
   
 class TextDirectionEnum(TextChoices):
     Rtl='rtl',_('rtl')
@@ -131,6 +156,9 @@ class PersonPrefixEnum(TextChoices):
     COMPLEX=" مجتمع",_(" مجتمع")
     SHOP="فروشگاه",_("فروشگاه")
     UNIVERSITY="دانشگاه",_("دانشگاه")
+    RESTAURANT="رستوران",_("رستوران")
+    SCHOOL="آموزشگاه",_("آموزشگاه")
+    OFFICE="اداره",_("اداره")
   
 class AppNameEnum(TextChoices):
     projectmanager='projectmanager',_('projectmanager')
@@ -206,12 +234,18 @@ def class_title(*args, **kwargs):
         class_title = "پرسش"
     if class_name == "account":
         class_title = "حساب"
+    if class_name == "course":
+        class_title = "واحد درسی"
     if class_name == "payment":
         class_title = "پرداخت"
+    if class_name == "prescription":
+        class_title = "نسخه"
     if class_name == "property":
         class_title = "ملک"
     if class_name == "book":
         class_title = "کتاب"
+    if class_name == "personaccount":
+        class_title = "حساب شخصی"
     if class_name == "page":
         class_title = "صفحه"
     if class_name == "appointment":
@@ -274,6 +308,5 @@ class ParameterNameEnum(TextChoices):
     FARSI_FONT_NAME="نام فونت فارسی",_("نام فونت فارسی")
     HOME_URL="لینک به خانه",_("لینک به خانه")
     THUMBNAIL_DIMENSION="عرض تصاویر کوچک",_("عرض تصاویر کوچک")
-    ONLY_HTTPS="فقط https",_("فقط https")
     SHOW_ARCHIVES="نمایش فایل های آرشیو شده",_("نمایش فایل های آرشیو شده")
     HAS_APP_BACKGROUND="اپ تصویر زمینه دارد؟",_("اپ تصویر زمینه دارد؟")

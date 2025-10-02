@@ -1,0 +1,31 @@
+<script>
+    
+    let sessions_for_sessions_app=JSON.parse("{{sessions_s|escapejs}}")
+    let sessions_app = new Vue({
+        el: "#sessions-app",
+        data: {
+            sessions: sessions_for_sessions_app,
+            session_no:parseInt("{{next_session_no}}"),
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            },
+            add_session:function(){
+                let payload={
+                    csrfmiddlewaretoken:csrfmiddlewaretoken,
+                    course_class_id:parseInt("{{course_class.id}}"),
+                    session_no:parseInt(this.session_no),
+                }
+                console.log(payload)
+                $.post("{% url 'school:add_session' %}",payload).done(data=>{
+                    console.log(data)
+                    if(data.result==="SUCCEED"){
+                        sessions_app.sessions.push(data.session)
+                        sessions_app.session_no=data.session.session_no+1
+                    }
+                })
+            },
+        }
+    })
+</script>

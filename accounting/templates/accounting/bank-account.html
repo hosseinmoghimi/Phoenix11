@@ -27,9 +27,14 @@
     </div>
 
     <div class="col-md-12">
+        {% include "accounting/includes/financial-events-app/template.html" %}
+    </div>
+    <div class="col-md-12">
         {% include "accounting/includes/add-account-app/template.html" %}
     </div>
-
+    <div class="col-md-12">
+        {% include "accounting/includes/set-account-parent-app/template.html" %}
+    </div>
     {% if add_financial_document_line_form %}
      
     <div class="col-md-12">
@@ -52,6 +57,7 @@
 
 {% block script %}
 {% include "accounting/includes/bank-app/script.html" %}
+{% include "accounting/includes/bank-account-app/script.html" %}
 
 {% include "accounting/includes/account-app/script.html" %}
         {% include "accounting/includes/set-account-parent-app/script.html" %}

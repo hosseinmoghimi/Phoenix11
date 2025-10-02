@@ -3,8 +3,8 @@ from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_UR
 from django.views import View
 from .forms import *
 from utility.enums import *
-from .serializers import ProjectSerializer,RemoteClientSerializer
-from .repo import ProjectRepo,RemoteClientRepo
+from .serializers import ProjectSerializer,RemoteClientSerializer,ProjectSerializerForGuantt,TicketSerializer
+from .repo import ProjectRepo,RemoteClientRepo,TicketRepo
 from organization.views import OrganizationUnitRepo,OrganizationUnitSerializer
 from .apps import APP_NAME
 from core.views import CoreContext,PageContext,MessageView
@@ -12,8 +12,10 @@ from utility.calendar import PersianCalendar
 from utility.currency import to_price
 import json
 from utility.enums import UnitNameEnum
+from utility.views import NoPersmissionView
 from utility.log import leolog
-from accounting.views import ProductContext,PageContext,AddInvoiceContext,InvoiceSerializer
+from accounting.views import ProductContext,PageContext,AddInvoiceContext,InvoiceSerializer,InvoiceLineWithInvoiceSerializer
+from core.views import EventSerializer
 from .enums import *
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='projectmanager/'
@@ -27,13 +29,31 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 
+def TicketContext(request,ticket,*args, **kwargs):
+    context={}
+    context['ticket']=ticket
+    ticket_s=json.dumps(TicketSerializer(ticket).data)
+    context['ticket_s']=ticket_s
+
+    project=ticket.project
+    context['project']=project
+    project_s=json.dumps(TicketSerializer(project).data)
+    context['project_s']=project_s
+
+    return context
+
+def AddTicketContext(request,project,*args, **kwargs):
+    context={}
+    context['add_ticket_form']=AddTicketForm() 
+    return context
+
 def ProjectContext(request,project,*args, **kwargs):
     context=PageContext(request=request,page=project)
     context['project']=project
     project_s=json.dumps(ProjectSerializer(project).data)
 
 
-    projects=project.childs.all()
+    projects=project.childs.all().order_by('priority')
     context['projects']=projects
     projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
     context['projects_s']=projects_s
@@ -41,13 +61,39 @@ def ProjectContext(request,project,*args, **kwargs):
         context['add_sub_project_form']=AddSubProjectForm()
     context['project_s']=project_s
     context['WIDE_LAYOUT']=True
+
     if request.user.has_perm(APP_NAME+'.change_project'):
         context['edit_project_form']=EditProjectForm()
+        context['colors_for_change_project']=(i[0] for i in ColorEnum.choices)
         all_organization_units=OrganizationUnitRepo(request=request).list()
         context['all_organization_units']=all_organization_units
         
         context['project_status_enum'] = (i[0] for i in ProjectStatusEnum.choices)
     return context
+
+
+def SearchContext(request,search_for,*args, **kwargs):
+    context={}
+    WAS_FOUND=False
+    
+
+    projects=ProjectRepo(request=request).list(search_for=search_for)
+    if len(projects)>0:
+        context['projects']=projects
+        context['projects_s']=json.dumps(ProjectSerializer(projects,many=True).data)
+        WAS_FOUND=True
+
+
+    remote_clients=RemoteClientRepo(request=request).list(search_for=search_for)
+    if len(remote_clients)>0:
+        context['remote_clients']=remote_clients
+        context['remote_clients_s']=json.dumps(RemoteClientSerializer(remote_clients,many=True).data)
+        WAS_FOUND=True
+
+
+    context['WAS_FOUND']=WAS_FOUND
+    return context
+
 
 
 class IndexView(View):
@@ -57,46 +103,29 @@ class IndexView(View):
         phoenix_apps=context["phoenix_apps"]
         phoenix_apps=phoenix_apps
 
+
+
+        
+        projects = ProjectRepo(request=request).list(parent_id=None,*args, **kwargs)
+        # context['expand_projects']=True
+        context['projects']=projects
+        projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
+        context['projects_s']=projects_s
+
         return render(request,TEMPLATE_ROOT+"index.html",context)
-# Create your views here. 
 
 
-class ProjectView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        project=ProjectRepo(request=request).project(*args, **kwargs)
-        project.normalize()
-        if project is None:
-            title='پروژه وجود ندارد'
-            body='پروژه وجود ندارد'
-            mv=MessageView(title=title,body=body)
-            return mv.get(request=request)
-        
-        context.update(ProjectContext(request=request,project=project))
-
-
-
-        
-        invoices=project.invoices.all()
-        invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
-        context['invoices']=invoices
-        context['invoices_s']=invoices_s
-        context['WIDE_LAYOUT']=True
-        if request.user.has_perm(APP_NAME+".add_invoice"):
-            context.update(AddInvoiceContext(request=request))
-
- 
-        
-        remote_clients = project.remote_clients.all()
-        context['remote_clients'] = remote_clients
-        remote_clients_s = json.dumps(RemoteClientSerializer(remote_clients, many=True).data)
-        context['remote_clients_s'] = remote_clients_s
-        if request.user.has_perm(APP_NAME+".add_remoteclient"):
-            operating_systems=(i[0] for i in OperatingSystemNameEnum.choices)
-            context['operating_systems']=operating_systems
-            context['add_remote_client_form'] = AddRemoteClientForm()
-        return render(request,TEMPLATE_ROOT+"project.html",context)
-# Create your views here. 
+class ProjectGuanttView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        if context is None:
+            return NoPersmissionView(request=request)
+        project = ProjectRepo(request=request).project(*args, **kwargs)
+        context['project'] = project
+        projects=ProjectRepo(request=request).list(parent_id=project.pk).order_by('priority')
+        context['projects'] = projects
+        context['projects_s'] = json.dumps(ProjectSerializerForGuantt(projects, many=True).data)
+        return render(request, TEMPLATE_ROOT+"guantt.html", context)
 
 
 class ProjectTreeChartView(View):
@@ -148,15 +177,104 @@ class ProjectTreeChartView(View):
         context['pages_s'] = json.dumps(pages)
         return render(request,TEMPLATE_ROOT+"tree-chart.html",context) 
 
+
+class ProjectView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        project=ProjectRepo(request=request).project(*args, **kwargs)
+        # project.normalize()
+        if project is None:
+            title='پروژه وجود ندارد'
+            body='پروژه وجود ندارد'
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
+        
+        context.update(ProjectContext(request=request,project=project))
+
+        all_sub_ids=project.all_sub_ids(same_class=True,my_id=True)
+
+
+        
+        invoices=project.invoices.order_by('-event_datetime')
+        invoices=project.all_invocie().order_by('-event_datetime')
+        invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
+        context['invoices']=invoices
+        context['invoices_s']=invoices_s
+
+
+
+
+        
+        invoice_lines=project.all_invocie_lines().order_by('invoice_line_item__title')
+        invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
+        context['invoice_lines']=invoice_lines
+        context['invoice_lines_s']=invoice_lines_s
+
+
+        events=project.events.order_by('-event_datetime')
+        events_s=json.dumps(EventSerializer(events,many=True).data)
+        context['events']=events
+        context['events_s']=events_s
+        if request.user.has_perm('core.add_event'):
+            context['add_event_to_project_form']=AddEventToProjectForm()
+
+
+        context['WIDE_LAYOUT']=True
+        if request.user.has_perm(APP_NAME+".add_invoice"):
+            context.update(AddInvoiceContext(request=request))
+
+
+            
+
+        context['WIDE_LAYOUT']=True
+        if request.user.has_perm(APP_NAME+".change_project"):
+            context['add_invoice_to_project_form']=AddInvoiceToProjectForm()
+
+        tickets=TicketRepo(request=request).list(project_id__in=all_sub_ids)
+        context['tickets']=tickets
+        tickets_s=json.dumps(TicketSerializer(tickets,many=True).data)
+        context['tickets_s']=tickets_s
+        if request.user.has_perm(APP_NAME+".add_ticket"):
+            context.update(AddTicketContext(request=request,project=project))
+  
+
  
-# Create your views here. 
+        
+        remote_clients = project.remote_clients.all()
+        context['remote_clients'] = remote_clients
+        remote_clients_s = json.dumps(RemoteClientSerializer(remote_clients, many=True).data)
+        context['remote_clients_s'] = remote_clients_s
+        if request.user.has_perm(APP_NAME+".add_remoteclient"):
+            context['operating_systems']=(i[0] for i in OperatingSystemNameEnum.choices)
+            from accounting.repo import BrandRepo
+            context['brands']=BrandRepo(request=request).list()
+            context['add_remote_client_form'] = AddRemoteClientForm()
+        return render(request,TEMPLATE_ROOT+"project.html",context)
 
 
 class ProjectsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
+        context['WIDE_LAYOUT']=True
         projects = ProjectRepo(request=request).list(parent_id=None,*args, **kwargs)
+
+        context['expand_projects']=True
+        context['projects']=projects
+        projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
+        context['projects_s']=projects_s
+        if request.user.has_perm(APP_NAME+".add_project"):
+            context['add_project_form']=AddProjectForm
+            organizations=OrganizationUnitRepo(request=request).list()
+            organizations_s=json.dumps(OrganizationUnitSerializer(organizations,many=True).data)
+            context['organizations_s']=organizations_s
+        return render(request,TEMPLATE_ROOT+"projects.html",context)
+
+
+class AllProjectsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['WIDE_LAYOUT']=True
+        projects = ProjectRepo(request=request).list(*args, **kwargs)
 
         context['projects']=projects
         projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
@@ -167,8 +285,6 @@ class ProjectsView(View):
             organizations_s=json.dumps(OrganizationUnitSerializer(organizations,many=True).data)
             context['organizations_s']=organizations_s
         return render(request,TEMPLATE_ROOT+"projects.html",context)
-# Create your views here. 
-
 
 
 class RemoteClientsView(View):
@@ -194,4 +310,37 @@ class RemoteClientView(View):
         remote_client = RemoteClientRepo(request=request).remote_client(*args, **kwargs)
         context['remote_client'] = remote_client
         return render(request, TEMPLATE_ROOT+"remote-client.html", context)
+
+
+class TicketView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        ticket=TicketRepo(request=request).ticket(*args, **kwargs)
+        if ticket is None:
+            title='تیکت وجود ندارد'
+            body='تیکت وجود ندارد'
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
+        
+        context.update(TicketContext(request=request,ticket=ticket))
+ 
+        if request.user.has_perm(APP_NAME+".add_ticket"):
+            context.update(AddTicketContext(request=request,project=ticket.project))
+  
+        return render(request,TEMPLATE_ROOT+"ticket.html",context)
+
+
+class TicketsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        tickets = TicketRepo(request=request).list(parent_id=None,*args, **kwargs)
+
+        context['tickets']=tickets
+        tickets_s=json.dumps(TicketSerializer(tickets,many=True).data)
+        context['tickets_s']=tickets_s
+        if request.user.has_perm(APP_NAME+".add_ticket"):
+            context.update(AddTicketContext(request=request,project=None))
+            
+        return render(request,TEMPLATE_ROOT+"tickets.html",context)
 

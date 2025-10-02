@@ -4,7 +4,7 @@ from authentication.repo import PersonRepo
 from utility.repo import ParameterRepo,PictureRepo
 from django.views import View
 from .forms import *
-from .serializer import CommentSerializer,LinkSerializer,DownloadSerializer
+from .serializer import CommentSerializer,LinkSerializer,DownloadSerializer,PagePrintSerializer
 from .apps import APP_NAME
 from django.http import Http404
 from phoenix.server_apps import phoenix_apps
@@ -12,7 +12,7 @@ from utility.calendar import PersianCalendar
 from utility.log import leolog
 from django.utils import timezone
 from core.views import MessageView,CoreContext,PageBriefSerializer,AddRelatedPageForm
-from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo, TagRepo
+from .repo import LikeRepo,CommentRepo,LinkRepo,DownloadRepo, TagRepo,PagePrintRepo
 import json
 
 
@@ -54,6 +54,18 @@ def PageCommentsContext(request,page,person,*args, **kwargs):
         if request.user.has_perm(APP_NAME+'.add_comment'):
             context['add_comment_form']=AddPageCommentForm()
             context['delete_comment_form']=DeletePageCommentForm()
+    return context
+ 
+def PagPrintsContext(request,page,person,*args, **kwargs):
+    context={}
+    page_print_repo = PagePrintRepo(request=request) 
+    page_prints=page_print_repo.list(page_id=page.id)
+    page_prints_s=json.dumps(PagePrintSerializer(page_prints,many=True).data)
+    context['page_prints']=page_prints  
+    context['page_prints_s']=page_prints_s  
+    # if person is not None:
+    #     if request.user.has_perm(APP_NAME+'.add_pageprint'):
+    #         context['add_page_print_form']=AddPagePrintForm()
     return context
  
 def PageLinksContext(request,page,person,*args, **kwargs):
@@ -107,7 +119,7 @@ def PageRelatedContext(request,page,*args, **kwargs):
 
 
 
-def PageImagesContext(request,page,person,*args, **kwargs):
+def PageImagesContext(request,page,*args, **kwargs):
     context={}
     image_repo = ImageRepo(request=request) 
     images=image_repo.list(page_id=page.id)
@@ -115,9 +127,7 @@ def PageImagesContext(request,page,person,*args, **kwargs):
     context['images']=images  
     context['images_s']=images_s  
     if request.user.has_perm(APP_NAME+'.add_image') :
-        context['add_image_form']=AddImageForm()
-    if person is not None :
-        context['add_image_form']=False
+        context['add_image_form']=AddImageForm() 
     return context
 
 
@@ -161,25 +171,63 @@ class DownloadView(View):
         #     return document.download_response()
         # from utility.views import MessageView
         from core.views import MessageView
-        message_view = MessageView(request=request)
+        message_view = MessageView()
         message_view.links = []
         message_view.message_color = 'warning'
         message_view.has_home_link = True
         message_view.header_color = "rose"
         message_view.message_icon = ''
         message_view.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
-        message_view.body = ' شما مجوز دسترسی به این صفحه را ندارید.'
-        message_view.title = 'دسترسی غیر مجاز'
+        body = ' شما مجوز دسترسی به این صفحه را ندارید.'
+        title = 'دسترسی غیر مجاز'
+        message_view = MessageView(title=title,body=body)
         if download is None:
-            message_view.body = 'دانلود مورد نظر شما پیدا نشد.'
-            message_view.title = 'دانلود مورد نظر پیدا نشد.'
+            message_view.body = 'موقعیت مورد نظر شما پیدا نشد.'
+            message_view.title = 'موقعیت مورد نظر پیدا نشد.'
         else:
             from .models import Link
             message_view.links.append(Link(title='تلاش مجدد', color="warning",
                                   icon_material="apartment", url=download.get_download_url))
 
-        return message_view.response()
-        
+        return message_view.get(request=request)
+      
+def SearchContext(request,search_for,*args, **kwargs):
+    context={}
+    WAS_FOUND=False
+
+
+    tags=TagRepo(request=request).list(search_for=search_for)
+    if len(tags)>0:
+        context['tags']=tags
+        context['tags_s']=json.dumps(TagSerializer(tags,many=True).data)
+        WAS_FOUND=True
+
+
+    downloads=DownloadRepo(request=request).list(search_for=search_for)
+    if len(downloads)>0:
+        context['downloads']=downloads
+        context['downloads_s']=json.dumps(DownloadSerializer(downloads,many=True).data)
+        WAS_FOUND=True
+
+
+    links=LinkRepo(request=request).list(search_for=search_for)
+    if len(links)>0:
+        context['links']=links
+        context['links_s']=json.dumps(LinkSerializer(links,many=True).data)
+        WAS_FOUND=True
+
+    images=ImageRepo(request=request).list(search_for=search_for)
+    if len(images)>0:
+        context['images']=images
+        context['images_s']=json.dumps(ImageSerializer(images,many=True).data)
+        WAS_FOUND=True
+
+
+          
+
+    context['WAS_FOUND']=WAS_FOUND
+    return context
+  
       
 class IndexView(View):
     def get(self, request, *args, **kwargs): 

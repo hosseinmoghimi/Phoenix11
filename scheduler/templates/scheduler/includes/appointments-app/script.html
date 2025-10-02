@@ -1,0 +1,15 @@
+<script>
+    
+    let appointments_for_appointments_app=JSON.parse("{{appointments_s|escapejs}}")
+    let appointments_app = new Vue({
+        el: "#appointments-app",
+        data: {
+            appointments: appointments_for_appointments_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>

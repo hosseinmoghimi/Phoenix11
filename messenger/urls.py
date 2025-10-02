@@ -12,6 +12,7 @@ urlpatterns = [
     path("message/<int:pk>/",login_required(views.MessageViews.as_view()),name="message"),
     path("send_message/",login_required(apis.SendMessageApi.as_view()),name="send_message"),
     
-    path("notification/<int:pk>/",login_required(views.MessageViews.as_view()),name="notification"),
+    path("notification/<int:pk>/",login_required(views.NotificationView.as_view()),name="notification"),
+    path("notifications/<int:pk>/",login_required(views.NotificationsView.as_view()),name="notifications"),
     path("send_notification/",login_required(apis.SendNotificationApi.as_view()),name="send_notification"),
 ]

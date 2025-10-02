@@ -1,14 +1,15 @@
+from utility.message import INVALID_FORM_VALUE_MESSAGE
 
 from utility.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from .repo import AssetRepo,CategoryRepo,BankRepo,PersonCategoryRepo,FinancialDocumentLineRepo,FinancialDocumentRepo,FinancialEventRepo,PersonAccountRepo,BrandRepo
-from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo
+from .repo import ServiceRepo,InvoiceRepo,InvoiceLineRepo,InvoiceLineItemUnitRepo,ProductRepo,AccountRepo,ChequeRepo
 from utility.log import leolog
 from .serializers import  InvoiceLineItemUnitBriefSerializer, ServiceSerializer,FinancialDocumentSerializer,FinancialEventSerializer,FinancialDocumentLineSerializer
 from .serializers import CategorySerializer,InvoiceSerializer,InvoiceLineItemUnitSerializer,ProductSerializer,AccountSerializer,InvoiceLineSerializer,BrandSerializer
-from .serializers import AssetSerializer
+from .serializers import AssetSerializer,ChequeSerializer
 from .serializers import BankAccountSerializer,BankSerializer
 from .repo import BankAccountRepo
 from django.http import JsonResponse
@@ -24,14 +25,17 @@ class AddProductToCategoryApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_product_to_category_form=AddProductToCategoryForm(request.POST)
         if add_product_to_category_form.is_valid():
             log=333
             cd=add_product_to_category_form.cleaned_data
-            result,message,product_categories=CategoryRepo(request=request).add_product_to_category(**cd)
+            result,message,product_categories,product,category=CategoryRepo(request=request).add_product_to_category(**cd)
             if result==SUCCEED:
                 context['product_categories']=CategorySerializer(product_categories,many=True).data
+                context['category']=CategorySerializer(category,many=False).data
+                context['product']=ProductSerializer(product,many=False).data
         context['message']=message
         context['result']=result
         context['log']=log
@@ -46,7 +50,8 @@ class AddPersonAccountApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_person_account_form=AddPersonAccountForm(request.POST)
         if add_person_account_form.is_valid():
             log=333
@@ -69,7 +74,8 @@ class AddBankAccountApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_bank_account_form=AddBankAccountForm(request.POST)
         if add_bank_account_form.is_valid():
             log=333
@@ -92,7 +98,8 @@ class AddBankApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_bank_form=AddBankForm(request.POST)
         if add_bank_form.is_valid():
             log=333
@@ -115,7 +122,8 @@ class AddPersonCategoryApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_person_category_form=AddPersonCategoryForm(request.POST)
         if add_person_category_form.is_valid():
             log=333
@@ -151,6 +159,48 @@ class AddProductSpecificationApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+class MergeProductApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            merge_product_form=MergeProductForm(request.POST)
+            if merge_product_form.is_valid():
+                log=333
+                cd=merge_product_form.cleaned_data 
+                result,message,merged_product=ProductRepo(request=request).merge_product(**cd)
+                if merged_product is not None:
+                    context['product']=ProductSerializer(merged_product).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+class MergeAccountApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            merge_account_form=MergeAccountForm(request.POST)
+            if merge_account_form.is_valid():
+                log=333
+                cd=merge_account_form.cleaned_data 
+                result,message,merged_account=AccountRepo(request=request).merge_account(**cd)
+                if merged_account is not None:
+                    context['account']=AccountSerializer(merged_account).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
 
 class AddInvoiceApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -160,7 +210,8 @@ class AddInvoiceApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_invoice_form=AddInvoiceForm(request.POST)
         if add_invoice_form.is_valid():
             log=333
@@ -182,7 +233,8 @@ class AddFinancialDocumentLineApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_financial_document_line_form=AddFinancialDocumentLineForm(request.POST)
         if add_financial_document_line_form.is_valid():
             log=333
@@ -377,11 +429,33 @@ class AddFinancialEventApi(APIView):
         return JsonResponse(context)
     
 
-class AddInvoiceLineApi(APIView):
+class AddChequeApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         result=FAILED
         message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_cheque_form=AddChequeForm(request.POST,request.FILES)
+            if add_cheque_form.is_valid():
+                log=333
+                 
+                cd=add_cheque_form.cleaned_data
+                result,message,cheque=ChequeRepo(request=request).add_cheque(**cd)
+                if cheque is not None:
+                    context['cheque']=ChequeSerializer(cheque,many=False).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+    
+class AddInvoiceLineApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=INVALID_FORM_VALUE_MESSAGE
         log=111
         context['result']=FAILED
         if request.method=='POST':
@@ -420,8 +494,8 @@ class AddFinancialYearApi(APIView):
         # context['result2']=result2
         context['log']=log
         return JsonResponse(context)
-
  
+
 class SetAccountParentApi(APIView): 
     def post(self,request,*args, **kwargs):
         context={}
@@ -489,7 +563,6 @@ class EditFinancialEventApi(APIView):
         return JsonResponse(context)
 
 
-
 class EditFinancialDocumentApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -506,6 +579,31 @@ class EditFinancialDocumentApi(APIView):
                 result,message,financial_document=FinancialDocumentRepo(request=request).edit_financial_document(**cd)
                 if financial_document is not None:
                     context['financial_document']=FinancialDocumentSerializer(financial_document).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
+
+
+
+class EditFinancialDocumentLineApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            edit_financial_document_line_form=EditFinancialDocumentLineForm(request.POST)
+            if edit_financial_document_line_form.is_valid():
+                log=333
+                cd=edit_financial_document_line_form.cleaned_data
+                result,message,financial_document_line=FinancialDocumentLineRepo(request=request).edit_financial_document_line(**cd)
+                if financial_document_line is not None:
+                    context['financial_document_line']=FinancialDocumentLineSerializer(financial_document_line).data
         context['message']=message
         context['result']=result
         context['log']=log
@@ -585,6 +683,31 @@ class SelectAccountApi(APIView):
         return JsonResponse(context)
 
 
+class EditPersonCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            edit_person_category_form=EditPersonCategoryForm(request.POST)
+            if edit_person_category_form.is_valid():
+                log=333
+                cd=edit_person_category_form.cleaned_data
+                result,message,person_category=PersonCategoryRepo(request=request).edit_person_category(**cd)
+                if result==SUCCEED:
+                    result=SUCCEED
+                    message="موفقیت آمیز"
+                    context['person_category']=PersonCategorySerializer(person_category).data
+                    context['account']=AccountSerializer(person_category.account).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+
+
 class SelectPersonAccountApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -609,8 +732,45 @@ class SelectPersonAccountApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+        
+class SelectProductApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            select_product_form=SelectProductForm(request.POST)
+            if select_product_form.is_valid():
+                log=333
+                cd=select_product_form.cleaned_data
+                product_repo=ProductRepo(request=request)
+                
+                if cd['barcode'] is not None and len(cd['barcode'])>0:
+                    product=product_repo.product(barcode=cd['barcode'])
+                    context['product']=ProductSerializer(product).data
+                
+                if cd['id'] is not None and cd['id']>0:
+                    product=product_repo.product(id=cd['id'])
+                    context['product']=ProductSerializer(product).data
 
-class InitALLAccountsApi(APIView):
+                if 'title' in cd:
+                    title=cd['title']
+                    if len(title)>0:
+                        products=product_repo.list(title=title)
+                        context['products']=ProductSerializer(products,many=True).data
+                 
+                result=SUCCEED
+                message="موفقیت آمیز"
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+    
+
+class InitAllAccountsApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         result=FAILED
@@ -631,7 +791,44 @@ class InitALLAccountsApi(APIView):
         return JsonResponse(context)
 
 
-class DeleteALLAccountsApi(APIView):
+
+
+class NormalizeAllAccountsApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        counter=0
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            (result,message,counter)=AccountRepo(request=request).normalize_all_accounts() 
+        context['counter']=counter
+        context['message']=message
+        context['result']=result 
+        context['log']=log
+        return JsonResponse(context)
+    
+    
+class NormalizeAllFinancialDocumentsApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        counter=0
+        message=""
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            (result,message,counter)=FinancialDocumentRepo(request=request).normalize_all_financial_documents() 
+        context['counter']=counter
+        context['message']=message
+        context['result']=result 
+        context['log']=log
+        return JsonResponse(context)
+
+
+
+class DeleteAllAccountsApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         result=FAILED
@@ -661,14 +858,14 @@ class EditInvoiceApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
          
         edit_invoice_form=EditInvoiceForm(request.POST)
         if edit_invoice_form.is_valid():
             log=333
             cd=edit_invoice_form.cleaned_data
             if 'invoice_lines' in cd and cd['invoice_lines'] is not None and not cd['invoice_lines']=='':
-                leolog(invoice_lines=cd['invoice_lines'])
                 cd['invoice_lines']=json.loads(cd['invoice_lines'])
             result,message,invoice=InvoiceRepo(request=request).edit_invoice(**cd)
             if invoice is not None:
@@ -687,7 +884,8 @@ class AddBrandApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_brand_form=AddBrandForm(request.POST)
         if add_brand_form.is_valid():
             log=333
@@ -709,7 +907,8 @@ class AddAssetApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_asset_form=AddAssetForm(request.POST)
         if add_asset_form.is_valid():
             log=333
@@ -723,7 +922,6 @@ class AddAssetApi(APIView):
         return JsonResponse(context)
 
 
-
 class AddProductApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -732,7 +930,8 @@ class AddProductApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_product_form=AddProductForm(request.POST)
         if add_product_form.is_valid():
             log=333
@@ -754,7 +953,8 @@ class AddServiceApi(APIView):
         log=111
         context['result']=FAILED 
         log=222
-        message="پارامتر های ورودی صحیح نمی باشند."
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
         add_service_form=AddServiceForm(request.POST)
         if add_service_form.is_valid():
             log=333

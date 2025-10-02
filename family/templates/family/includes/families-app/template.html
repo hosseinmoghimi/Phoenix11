@@ -1,0 +1,113 @@
+<div id="accordion-families" class="rtl text-right farsi">
+  <div class="card" id="families-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-families"
+          aria-expanded="true"
+          aria-controls="collapse-families"
+        >
+          خانواده ها
+          <span v-if="families.length>0">
+            <small class="text-danger mx-2">
+              <span v-text="families.length"></span>
+            </small>
+          </span>
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-families"
+      class="collapse {% if expand_families %} show {% endif %}"
+      aria-labelledby="heading-families"
+      data-parent="#accordion-families"
+    >
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <th>پدر</th>
+              <th>مادر</th>
+              <th>فرزندان</th>
+
+              <th></th>
+            </thead>
+            <tbody>
+              <tr v-for="family in families">
+                <td>
+                  <a :href="family.father.get_absolute_url"> 
+                    
+                    <div class="media">
+                      <img :src="family.father.image" class="rounded" width="32" alt="">
+                      <div class="media-body mr-2">
+                        <h6>
+                          <span v-text="family.father.full_name"></span>
+                        </h6>
+                      </div>
+                    </div>
+                    
+                  </a>
+                </td>
+                <td>
+                  <a :href="family.mother.get_absolute_url">
+                    <div class="media">
+                      <img :src="family.mother.image" class="rounded" width="32" alt="">
+                      <div class="media-body mr-2">
+                        <h6>
+                          <span v-text="family.mother.full_name"></span>
+                        </h6>
+                      </div>
+                    </div>
+                  </a>
+                </td>
+                <td>
+                  <div v-for="child in family.childs" class="my-1">
+                     <a :href="child.get_absolute_url"> 
+                    
+                    <div class="media">
+                      <img :src="child.image" class="rounded" width="32" alt="">
+                      <div class="media-body mr-2">
+                        <h6>
+                          <span v-text="child.full_name"></span>
+                        </h6>
+                      </div>
+                    </div>
+                    
+                  </a>
+                  </div>
+                </td>
+
+                <td>
+                  {% if perms.family.change_family %}
+                  <a
+                    target="_blank"
+                    :href="family.get_edit_url"
+                    title="ویرایش"
+                    class="text-warning mx-2"
+                  >
+                    <i class="fa fa-edit text-warning"> </i>
+                    ویرایش
+                  </a>
+                  {% endif %} {% if perms.family.delete_family %}
+                  <a
+                    target="_blank"
+                    :href="family.get_delete_url"
+                    title="حذف"
+                    class="text-danger mx-2"
+                  >
+                    <i class="fa fa-trash text-danger"> </i>
+                    حذف
+                  </a>
+                  {% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -25,6 +25,15 @@ urlpatterns = [
     path('archive/', include('archive.urls')),
     path('health/', include('health.urls')),
     path('messenger/', include('messenger.urls')),
+    path('bms/', include('bms.urls')),
+    path('resume/', include('resume.urls')),
+    path('tax/', include('tax.urls')),
+    path('blog/', include('blog.urls')),
+    path('library/', include('library.urls')),
+    path('traffic/', include('traffic.urls')),
+    path('family/', include('family.urls')),
+    path('scheduler/', include('scheduler.urls')),
+    path('polls/', include('polls.urls')),
     
     
     

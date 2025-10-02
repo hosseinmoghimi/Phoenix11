@@ -7,12 +7,17 @@
             person_accounts: person_accounts_for_person_accounts_app
         },
         methods: {
+ 
+            copy_code_to_clipboard: (vall,name)=>copy_to_clipboard(vall,name),
+            
+            copy_balance_to_clipboard:  (vall,name)=>copy_to_clipboard(vall,name),
+                        
             to_price: function(vall) {
                 let color="primary"
                 if(vall>0)color="success"
                 if(vall<0)color="danger"
-                return "<span class='text-"+color+"'>"+to_price(vall)+"</span>"
-            }
+                return "<span class='text-"+color+"'>"+to_price(vall)+' {{CURRENCY}}'+"</span>"
+            },
         }
     })
 </script>

@@ -20,6 +20,10 @@
     </div>
     <div class="my-3">
       <h5>{{organization_unit.title}}</h5>
+      <a href="{{organization_unit.person_account.get_absolute_url}}">
+
+        <h5>{{organization_unit.person_account.title}}</h5>
+      </a>
 
       <small class="text-muted">{{organization_unit.class_title}}</small>
     </div>

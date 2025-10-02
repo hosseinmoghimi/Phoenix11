@@ -1,0 +1,88 @@
+{% extends "scheduler/layout.html" %}
+
+
+{% block content %}
+    {% if appointment.parent %} 
+    <div class="rtl my-2">{{appointment.get_breadcrumb|safe}}</div>
+    {% endif %} 
+
+<div class="row rtl farsi">
+    <div class="col-md-4">
+        {% include "scheduler/includes/appointment-app/card.html" %}
+    </div>
+    <div class="col-md-4">
+        {% include "scheduler/includes/appointment-app/card-full.html" %}
+    </div>
+
+    <div class="col-md-12">
+        {% include "scheduler/includes/appointments-app/template.html" %}
+    </div>
+
+    <div class="col-md-12">
+        {% include "scheduler/includes/financial-document-lines-app/template.html" %}
+    </div>
+
+    <div class="col-md-12">
+        {% include "scheduler/includes/add-appointment-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+        {% include "scheduler/includes/set-appointment-parent-app/template.html" %}
+    </div>
+
+    
+    <div class="col-md-12">
+        {% include "attachments/includes/comments-app/template.html" %}
+    </div>
+
+    <div class="col-md-12">
+        {% include "scheduler/includes/financial-events-app/template.html" %}
+    </div>
+
+    <div class="col-md-4">
+        {% include "attachments/includes/links-app/template.html" %}
+    </div>
+
+    <div class="col-md-4">
+        {% include "attachments/includes/downloads-app/template.html" %}
+    </div>
+
+    <div class="col-md-4">
+        {% include "attachments/includes/tags-app/template.html" %}
+    </div>
+
+    <div class="col-md-12">
+        {% include "attachments/includes/images-app/template.html" %}
+    </div>
+
+    <div class="col-md-12">
+        {% include "scheduler/includes/financial-events-app/template.html" %}
+
+    </div>
+
+    {% if add_financial_document_line_form %}
+    <div class="col-md-12">
+        {% include "scheduler/includes/add-financial-document-line-app/template.html" %}
+    </div>
+    {% endif %}
+
+    
+     
+    {% if set_page_thumbnail_header_form %}
+     
+    <div class="col-md-12">
+        {% include "core/includes/page-thumbnail-header-app/template.html" %}
+
+    </div>
+  
+    {% endif %}
+
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+
+{% include "scheduler/includes/appointment-app/script.html" %}
+ 
+{% endblock script %}

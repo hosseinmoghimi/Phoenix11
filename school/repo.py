@@ -1,4 +1,4 @@
-from .models import School,Course,CourseClass
+from .models import School,Course,CourseClass,Teacher,Student,Major,Session,StudentInSession
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo 
@@ -63,6 +63,153 @@ class SchoolRepo():
           
         (result,message,school)=school.save()
         return result,message,school
+ 
+
+class StudentRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=Student.objects.filter(id=0)
+        profile=PersonRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_account"):
+                self.objects=Student.objects
+                self.my_accounts=self.objects 
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.all()
+        
+    def student(self,*args, **kwargs):
+        if "student_id" in kwargs and kwargs["student_id"] is not None:
+            return self.objects.filter(pk=kwargs['student_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_student(self,*args,**kwargs):
+        result,message,student=FAILED,"",None 
+        if len(Student.objects.filter(person_account_id=kwargs["person_account_id"]))>0:
+            message='حساب تکراری برای دانش آموز جدید'
+            return FAILED,message,None
+        if not self.request.user.has_perm(APP_NAME+".add_student"):
+            message="دسترسی غیر مجاز"
+            return result,message,student
+
+        student=Student() 
+        if 'person_account_id' in kwargs:
+            student.person_account_id=kwargs["person_account_id"]
+        if 'name' in kwargs:
+            student.name=kwargs["name"]
+          
+        (result,message,student)=student.save()
+        return result,message,student
+
+ 
+class TeacherRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=Teacher.objects.filter(id=0)
+        profile=PersonRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_account"):
+                self.objects=Teacher.objects
+                self.my_accounts=self.objects 
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.all()
+        
+    def teacher(self,*args, **kwargs):
+        if "teacher_id" in kwargs and kwargs["teacher_id"] is not None:
+            return self.objects.filter(pk=kwargs['teacher_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_teacher(self,*args,**kwargs):
+        result,message,teacher=FAILED,"",None 
+        if len(Teacher.objects.filter(person_account_id=kwargs["person_account_id"]))>0:
+            message='حساب تکراری برای دبیر جدید'
+            return FAILED,message,None
+        if not self.request.user.has_perm(APP_NAME+".add_teacher"):
+            message="دسترسی غیر مجاز"
+            return result,message,teacher
+
+        teacher=Teacher() 
+        if 'person_account_id' in kwargs:
+            teacher.person_account_id=kwargs["person_account_id"]
+        if 'name' in kwargs:
+            teacher.name=kwargs["name"]
+          
+        (result,message,teacher)=teacher.save()
+        return result,message,teacher
+
+ 
+class MajorRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=Major.objects.filter(id=0)
+        profile=PersonRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_account"):
+                self.objects=Major.objects
+                self.my_accounts=self.objects 
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.all()
+        
+    def major(self,*args, **kwargs):
+        if "major_id" in kwargs and kwargs["major_id"] is not None:
+            return self.objects.filter(pk=kwargs['major_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_major(self,*args,**kwargs):
+        result,message,major=FAILED,"",None
+        if len(Major.objects.filter(title=kwargs["title"]))>0:
+            message='نام تکراری برای رشته جدید'
+            return FAILED,message,None
+      
+        if not self.request.user.has_perm(APP_NAME+".add_major"):
+            message="دسترسی غیر مجاز"
+            return result,message,major
+
+        major=Major() 
+        if 'title' in kwargs:
+            major.title=kwargs["title"]
+        
+          
+        (result,message,major)=major.save()
+        return result,message,major
 
  
 class CourseRepo():
@@ -135,11 +282,20 @@ class CourseClassRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=CourseClass.objects.filter(id=0)
-        profile=PersonRepo(request=request).me
-        if profile is not None:
-            if request.user.has_perm(APP_NAME+".view_account"):
+        me_person=PersonRepo(request=request).me
+        if me_person is not None:
+            if request.user.has_perm(APP_NAME+".view_courseclass"):
                 self.objects=CourseClass.objects
                 self.my_accounts=self.objects 
+            else:
+                me_student=StudentRepo(request=request).me
+                if me_student is not None:
+                    self.objects=me_student.courseclass_set.all()
+                
+                else:
+                    me_teacher=TeacherRepo(request=request).me
+                    if me_teacher is not None:
+                        self.objects=me_teacher.courseclass_set.all()
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
@@ -148,6 +304,17 @@ class CourseClassRepo():
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
+        if "major_id" in kwargs:
+            major_id=kwargs["major_id"]
+            courses=CourseRepo(request=self.request).list(major_id=major_id)
+            courses_ids=[]
+            for course in courses:
+                courses_ids.append(course.id)
+            objects=objects.filter(course_id__in=courses_ids) 
+        if "school_id" in kwargs:
+            objects=objects.filter(school_id=kwargs['school_id'])  
+        if "course_id" in kwargs:
+            objects=objects.filter(course_id=kwargs['course_id'])  
         return objects.all()
         
     def course_class(self,*args, **kwargs):
@@ -192,3 +359,143 @@ class CourseClassRepo():
         (result,message,course_class)=course_class.save()
         return result,message,course_class
 
+
+class SessionRepo():
+    
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=Session.objects.filter(id=0)
+        me_person=PersonRepo(request=request).me
+        if me_person is not None:
+            if request.user.has_perm(APP_NAME+".view_courseclass"):
+                self.objects=Session.objects
+                self.my_accounts=self.objects 
+            else:
+                me_student=StudentRepo(request=request).me
+                if me_student is not None:
+                    self.objects=me_student.courseclass_set.all()
+                
+                else:
+                    me_teacher=TeacherRepo(request=request).me
+                    if me_teacher is not None:
+                        self.objects=me_teacher.courseclass_set.all()
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+        if "course_class_id" in kwargs:
+            course_class_id=kwargs["course_class_id"]
+            objects=objects.filter(course_class_id=course_class_id)  
+           
+        if "course_id" in kwargs:
+            objects=objects.filter(course_class__course_id=kwargs['course_id'])  
+        return objects.all()
+        
+    def session(self,*args, **kwargs):
+        if "session_id" in kwargs and kwargs["session_id"] is not None:
+            return self.objects.filter(pk=kwargs['session_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_session(self,*args,**kwargs):
+        result,message,session=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_session"):
+            message="دسترسی غیر مجاز"
+            return result,message,session
+        from django.utils import timezone
+        now=timezone.now()
+        session=Session()
+        if 'course_class_id' in kwargs:
+            session.course_class_id=kwargs["course_class_id"] 
+        if 'session_no' in kwargs:
+            session.session_no=kwargs["session_no"]
+        if 'start_datetime' in kwargs:
+            session.start_datetime=kwargs["start_datetime"]
+        else:
+             session.start_datetime=now
+        if 'end_datetime' in kwargs:
+            session.end_datetime=kwargs["end_datetime"]
+        else:
+             session.end_datetime=now 
+              
+        (result,message,session)=session.save()
+        student_in_session_repo=StudentInSessionRepo(request=self.request)
+        for student in session.course_class.students.all():
+            student_in_session_repo.add_student_in_session(student_id=student.id,session_id=session.id)
+        return result,message,session
+
+
+class StudentInSessionRepo():
+    
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=StudentInSession.objects.filter(id=0)
+        me_person=PersonRepo(request=request).me
+        if me_person is not None:
+            if request.user.has_perm(APP_NAME+".view_courseclass"):
+                self.objects=StudentInSession.objects
+                self.my_accounts=self.objects 
+            else:
+                me_student=StudentRepo(request=request).me
+                if me_student is not None:
+                    self.objects=me_student.courseclass_set.all()
+                
+                else:
+                    me_teacher=TeacherRepo(request=request).me
+                    if me_teacher is not None:
+                        self.objects=me_teacher.courseclass_set.all()
+    
+    def list(self,*args, **kwargs):
+        objects=self.objects 
+        if "session_id" in kwargs:
+            session_id=kwargs["session_id"]
+            objects=objects.filter(session_id=session_id) 
+        if "student_id" in kwargs:
+            student_id=kwargs["student_id"]
+            objects=objects.filter(student_id=student_id)  
+          
+        return objects.all()
+        
+    def student_in_session(self,*args, **kwargs):
+        if "student_in_session_id" in kwargs and kwargs["student_in_session_id"] is not None:
+            return self.objects.filter(pk=kwargs['student_in_session_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+    def add_student_in_session(self,*args,**kwargs):
+        result,message,student_in_session=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_student_in_session"):
+            message="دسترسی غیر مجاز"
+            return result,message,student_in_session
+        
+        StudentInSession.objects.filter(student_id=kwargs["student_id"]).filter(session_id=kwargs["session_id"]).delete()
+
+        student_in_session=StudentInSession()
+       
+        
+        if 'student_id' in kwargs:
+            student_in_session.student_id=kwargs["student_id"]
+        if 'session_id' in kwargs:
+            student_in_session.session_id=kwargs["session_id"]
+
+        if 'status' in kwargs:
+            student_in_session.status=kwargs["status"]
+        if 'score' in kwargs:
+            student_in_session.score=kwargs["score"]
+        if 'description' in kwargs:
+            student_in_session.description=kwargs["description"]
+
+        student_in_session.save()
+        if student_in_session.id is not None:    
+            (result,message,student_in_session)=(SUCCEED,'با موفقیت ذخیره شد.',student_in_session)
+        return result,message,student_in_session

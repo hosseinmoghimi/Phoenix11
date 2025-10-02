@@ -2,6 +2,10 @@
 
 
 {% block content %}
+    {% if account.parent %} 
+    <div class="rtl my-2">{{account.get_breadcrumb|safe}}</div>
+    {% endif %} 
+
 <div class="row rtl farsi">
     <div class="col-md-4">
         {% include "accounting/includes/account-app/card.html" %}
@@ -18,6 +22,10 @@
         {% include "accounting/includes/financial-document-lines-app/template.html" %}
     </div>
 
+
+    <div class="col-md-12">
+        {% include "accounting/includes/financial-events-app/template.html" %}
+    </div>
     <div class="col-md-12">
         {% include "accounting/includes/add-account-app/template.html" %}
     </div>
@@ -29,9 +37,12 @@
     <div class="col-md-12">
         {% include "attachments/includes/comments-app/template.html" %}
     </div>
-
+    
     <div class="col-md-12">
-        {% include "accounting/includes/financial-events-app/template.html" %}
+        {% include "core/includes/page-description-app/short-description.html" %}
+        {% include "core/includes/page-description-app/description.html" %}
+   
+        
     </div>
 
     <div class="col-md-4">
@@ -49,17 +60,26 @@
     <div class="col-md-12">
         {% include "attachments/includes/images-app/template.html" %}
     </div>
-
-    <div class="col-md-12">
-        {% include "accounting/includes/financial-events-app/template.html" %}
-
-    </div>
+ 
 
     {% if add_financial_document_line_form %}
     <div class="col-md-12">
         {% include "accounting/includes/add-financial-document-line-app/template.html" %}
     </div>
     {% endif %}
+
+    
+     
+    {% if set_page_thumbnail_header_form %}
+     
+    <div class="col-md-12">
+        {% include "core/includes/page-thumbnail-header-app/template.html" %}
+
+    </div>
+  
+    {% endif %}
+
+
 </div>
 {% endblock content %}
 

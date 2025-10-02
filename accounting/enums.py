@@ -1,7 +1,19 @@
 from django.utils.translation import gettext as _
 from utility.enums import UnitNameEnum
 from .enums import *
-from django.db.models import TextChoices 
+from django.db.models import TextChoices
+
+
+class InvoiceLineStatusEnum(TextChoices):
+    BOXED='نو',_('نو') 
+    UN_BOXED='کارکرده',_('کارکرده') 
+    UN_BOXED_CLEAN='کارکرده در حد نو',_('کارکرده در حد نو') 
+    UN_BOXED_UN_USED='نو بدون جعبه',_('نو بدون جعبه') 
+    REPAIRED='تعمیر شده',_('تعمیر شده')
+    BROKEN='خراب',_('خراب')
+    DAMAGED='داغون',_('داغون')
+    FAKE='قلابی',_('قلابی')
+    ORIGINAL='اصلی',_('اصلی')
 
 class PersonCategoryEnum(TextChoices):
     DEFAULT='پیش فرض',_('پیش فرض')

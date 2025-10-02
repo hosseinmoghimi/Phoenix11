@@ -3,6 +3,10 @@ from core.models import _,reverse,Page,LinkHelper,DateTimeHelper,FAILED,SUCCEED
 from phoenix.server_settings import CURRENCY
 from .apps import APP_NAME
 from accounting.models import Product,InvoiceLine,Invoice,CorePage
+from utility.num import to_tartib
+from .enums import *
+
+
 
 class School(models.Model,LinkHelper):
     name=models.CharField(_("نام"), max_length=50)
@@ -24,28 +28,43 @@ class School(models.Model,LinkHelper):
          result=SUCCEED
          message='آموزشگاه با موفقیت اضافه شد.'
          return  (result,message,school)
-class CourseClass(models.Model,LinkHelper):
-    course=models.ForeignKey("course", verbose_name=_("course"), on_delete=models.CASCADE) 
-    school=models.ForeignKey("school", verbose_name=_("school"), on_delete=models.CASCADE) 
+
+
+class Major(models.Model,LinkHelper):
+    title=models.CharField(_("title"), max_length=50)
+    courses=models.ManyToManyField("course",blank=True, verbose_name=_("واحد های درسی"))   
 
     app_name=APP_NAME
-    class_name="courseclass"
+    class_name='major'
+
     class Meta:
-        verbose_name = _("CourseClass")
-        verbose_name_plural = _("CourseClasses")
+        verbose_name = _("Major")
+        verbose_name_plural = _("Majors")
 
+   
     def __str__(self):
-        return self.name
- 
-
+        return self.title
+    def save(self):
+        (result,message,major)=FAILED,'',self
+        if self.class_name is None or self.class_name=="":
+            self.class_name='major'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        super(Major,self).save()
+        result=SUCCEED
+        message='رشته درسی با موفقیت اضافه شد.'
+        return (result,message,major)
+   
  
 class Course(CorePage,LinkHelper):
- 
+    # major=models.ForeignKey("major", verbose_name=_("رشته"), on_delete=models.CASCADE) 
+    books=models.ManyToManyField("library.book",blank=True, verbose_name=_("books"))
     class Meta:
         verbose_name = _("Course")
-        verbose_name_plural = _("Courses")
+        verbose_name_plural = _("واحد های درسی")
  
-    
+    def __str__(self):
+        return  f'{self.title} '
     def save(self):
         (result,message,course)=FAILED,'',self
         if self.class_name is None or self.class_name=="":
@@ -58,3 +77,141 @@ class Course(CorePage,LinkHelper):
         return (result,message,course)
  
   
+class CourseClass(models.Model,LinkHelper):
+    school=models.ForeignKey("school", verbose_name=_("school"), on_delete=models.CASCADE) 
+    course=models.ForeignKey("course", verbose_name=_("course"), on_delete=models.CASCADE) 
+    major=models.ForeignKey("major", verbose_name=_("major"), on_delete=models.CASCADE) 
+    level=models.IntegerField(_("پایه"))
+    room=models.CharField(_("room"),null=True,blank=True, max_length=50)
+    teachers=models.ManyToManyField("teacher",blank=True, verbose_name=_("teachers"))
+    students=models.ManyToManyField("student",blank=True, verbose_name=_("students"))
+    educational_year=models.CharField(_("educational_year"),null=True,blank=True, max_length=50)
+    app_name=APP_NAME
+    class_name="courseclass"
+    class Meta:
+        verbose_name = _("CourseClass")
+        verbose_name_plural = _("واحد های درسی جاری")
+
+    def __str__(self):
+        return f"{self.school} : {self.course} @ {self.room} @ {to_tartib(self.level)} {self.major} " 
+ 
+    def save(self):
+        (result,message,course)=FAILED,'',self
+        if self.class_name is None or self.class_name=="":
+            self.class_name='course'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        super(CourseClass,self).save()
+        result=SUCCEED
+        message='واحد درسی با موفقیت اضافه شد.'
+        return (result,message,course)
+ 
+
+class Session(models.Model,LinkHelper,DateTimeHelper):
+    session_no=models.IntegerField(_("session_no"))
+    room=models.CharField(_("room"),null=True,blank=True, max_length=50)
+    course_class=models.ForeignKey("courseclass", verbose_name=_("course_class"), on_delete=models.CASCADE)
+    start_datetime=models.DateTimeField(_("start_datetime"), auto_now=False, auto_now_add=False)
+    end_datetime=models.DateTimeField(_("end_datetime"), auto_now=False, auto_now_add=False)
+
+    class_name='session'
+    app_name=APP_NAME
+    
+    @property
+    def title(self):
+        return f'جلسه {self.session_no} - {self.course_class.course}'
+    
+    class Meta:
+        verbose_name = _("Session")
+        verbose_name_plural = _("Sessions")
+
+    def __str__(self):
+        return self.title
+ 
+    def save(self):
+        (result,message,course)=FAILED,'',self
+        if self.class_name is None or self.class_name=="":
+            self.class_name='course'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        super(Session,self).save()
+        result=SUCCEED
+        message='جلسه با موفقیت اضافه شد.'
+        return (result,message,course)
+class Student(models.Model,LinkHelper):
+    person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.PROTECT)
+    
+    class_name="student"
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("دانش آموز")
+        verbose_name_plural = _("دانش آموزان")
+
+    def __str__(self):
+        return self.person_account.person.full_name 
+
+    def save(self,*args, **kwargs):
+        result=FAILED
+        message=''
+        student=None
+
+        super(Student,self).save()
+        student=self
+        message='دانش آموز ذخیره شد.'
+        result=SUCCEED
+        return result,message,student
+    
+    @property
+    def last_name(self):
+        return self.person_account.person.last_name
+    @property
+    def first_name(self):
+        return self.person_account.person.first_name
+    @property
+    def image(self):
+        return self.person_account.person.image
+    
+    @property
+    def melli_code(self):
+        return self.person_account.person.melli_code
+    @property
+    def father_name(self):
+        return self.person_account.person.father_name
+    
+class StudentInSession(models.Model,LinkHelper):
+    session=models.ForeignKey("session", verbose_name=_("session"), on_delete=models.CASCADE)
+    student=models.ForeignKey("student", verbose_name=_("student"), on_delete=models.CASCADE)
+    status=models.CharField(_("وضعیت حضور"),default=_('نامشخص'), max_length=50)
+    score=models.IntegerField(_("score"),default=0)    
+    description=models.CharField(_("description"),null=True,blank=True, max_length=5000)
+
+    class_name="studentinsession"
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("StudentInSession")
+        verbose_name_plural = _("StudentInSessions")
+
+    def __str__(self):
+        return f'{self.session} - {self.student}- {self.status}- {self.score}'
+ 
+class Teacher(models.Model,LinkHelper):
+    person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.PROTECT)
+    
+    class_name="teacher"
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("مربی")
+        verbose_name_plural = _("مربی ها")
+
+    def __str__(self):
+        return self.person_account.person.full_name 
+    def save(self,*args, **kwargs):
+        result=FAILED
+        message=''
+        teacher=None
+
+        super(Teacher,self).save()
+        teacher=self
+        message='دبیر ذخیره شد.'
+        result=SUCCEED
+        return result,message,teacher

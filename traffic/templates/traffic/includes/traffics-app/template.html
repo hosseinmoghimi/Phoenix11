@@ -1,0 +1,106 @@
+<div id="accordion-traffics" class="rtl text-right farsi">
+  <div class="card" id="traffics-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-traffics"
+          aria-expanded="true"
+          aria-controls="collapse-traffics"
+        >
+          تردد ها
+          <span v-if="traffics.length>0">
+            <small class="text-danger mx-2">
+              <span v-text="traffics.length"></span>
+            </small>
+          </span>
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-traffics"
+      class="collapse {% if expand_traffics %} show {% endif %}"
+      aria-labelledby="heading-traffics"
+      data-parent="#accordion-traffics"
+    >
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <th></th>
+              <th>موقعیت</th>
+              <th>شخص</th>
+              <th>ورود</th>
+              <th>خروج</th>
+
+              <th></th>
+            </thead>
+            <tbody>
+              <tr v-for="traffic in traffics">
+                <td>
+                  <a :href="traffic.get_absolute_url">
+                    <span v-text="traffic.id"></span>
+                  </a>
+                </td>
+
+                <td>
+                  <a :href="traffic.location.get_absolute_url">
+                    <span v-text="traffic.location.title"></span>
+                  </a>
+                </td>
+
+
+                 <td>
+                  <a :href="traffic.person.get_absolute_url">
+                    <div class="media">
+                      <img :src="traffic.person.image" width="32" class="rounded" alt="">
+                      <div class="media mr-2">
+                        <span v-text="traffic.person.full_name"></span>
+                        
+                      </div>
+                    </div>
+                  </a>
+
+                </td>
+
+                 <td>
+                    <span v-text="traffic.persian_enter_datetime"></span>
+                </td>
+
+                 <td>
+                    <span v-text="traffic.persian_exit_datetime"></span>
+                </td>
+
+                <td>
+                  {% if perms.sample_app.change_traffic %}
+                  <a
+                    target="_blank"
+                    :href="traffic.get_edit_url"
+                    title="ویرایش"
+                    class="text-warning mx-2"
+                  >
+                    <i class="fa fa-edit text-warning"> </i>
+                    ویرایش
+                  </a>
+                  {% endif %} {% if perms.sample_app.delete_traffic %}
+                  <a
+                    target="_blank"
+                    :href="traffic.get_delete_url"
+                    title="حذف"
+                    class="text-danger mx-2"
+                  >
+                    <i class="fa fa-trash text-danger"> </i>
+                    حذف
+                  </a>
+                  {% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

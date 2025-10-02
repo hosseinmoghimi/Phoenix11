@@ -2,7 +2,7 @@
 <div class="media">
   <a href="{{account.get_absolute_url}}">
 
-    <img src="{{account.logo}}" width="72" alt="">
+    <img src="{{account.thumbnail}}" width="72" alt="">
   </a>
   <div class="media-body mr-2">
     <div>
@@ -36,13 +36,16 @@
 
     </h6>
 
-    <h6 class="text-{{account.color}}">
-
-      <span class="mr-2">
-
-        {{account.balance|to_price_color|safe}}
-      </span>
-    </h6>
+      {% if SHOW_BALANCE %}
+        
+      <h6 class="text-{{account.color}}">
+        
+        <span class="mr-2">
+          
+          {{account.balance|to_price_color|safe}}
+        </span>
+      </h6>
+      {% endif %}
 
     <a href="">
 

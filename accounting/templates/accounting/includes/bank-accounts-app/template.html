@@ -38,7 +38,11 @@
 
               <th>بانک</th>
               {% endif %}
+              
+              {% if SHOW_BALANCE %}
+                
               <th>مانده</th>
+              {% endif %}
               <th></th>
             </thead>
             <tbody>
@@ -77,10 +81,14 @@
                   </a>
                 </td>
                 {% endif %}
-                <td>
-                  <span v-html="to_price(bank_account.balance)"></span>
-                  <small class="text-muted mr-1"> {{CURRENCY}} </small>
-                </td>
+                
+              {% if SHOW_BALANCE %}
+                
+              <td>
+                <span v-html="to_price(bank_account.balance)"></span>
+                <small class="text-muted mr-1"> {{CURRENCY}} </small>
+              </td>
+              {% endif %}
                 <td>
                   <a
                     target="_blank"

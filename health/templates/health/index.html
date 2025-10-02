@@ -15,6 +15,48 @@
     </a>
   </div>
     
+
+  
+  <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+    <a href="{% url 'health:prescriptions' %}">
+      <img
+        src="{% static 'chef/img/logo.png' %}"
+        width="64em"
+        class="mb-2"
+        alt=""
+      />
+      <h6 class="text-center">نسخه ها</h6>
+    </a>
+  </div>
+    
+
+  
+  <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+    <a href="{% url 'health:patients' %}">
+      <img
+        src="{% static 'chef/img/logo.png' %}"
+        width="64em"
+        class="mb-2"
+        alt=""
+      />
+      <h6 class="text-center">بیمار ها</h6>
+    </a>
+  </div>
+    
+
+  
+  <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+    <a href="{% url 'health:doctors' %}">
+      <img
+        src="{% static 'chef/img/logo.png' %}"
+        width="64em"
+        class="mb-2"
+        alt=""
+      />
+      <h6 class="text-center">دکتر ها</h6>
+    </a>
+  </div>
+    
 </div>
 {% endblock content %}
 {% block script %}

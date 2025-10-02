@@ -1,4 +1,4 @@
-from .models import Vehicle,MaintenanceInvoice,ServiceMan
+from .models import Vehicle,MaintenanceInvoice,ServiceMan,Maintenance
 
 from .apps import APP_NAME
 from .enums import *
@@ -59,6 +59,60 @@ class VehicleRepo():
         return result,message,vehicle
 
 
+  
+
+class MaintenanceRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=Maintenance.objects.filter(id=0)
+        profile=PersonRepo(request=request).me
+        if profile is not None:
+            if request.user.has_perm(APP_NAME+".view_maintenance"):
+                self.objects=Maintenance.objects
+                self.my_accounts=self.objects 
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        if "vehicle_id" in kwargs:
+            vehicle_id=kwargs["vehicle_id"]
+            objects=objects.filter(vehicle_id=vehicle_id)  
+        return objects.all()
+        
+    def maintenance(self,*args, **kwargs):
+        if "maintenance_id" in kwargs and kwargs["maintenance_id"] is not None:
+            return self.objects.filter(pk=kwargs['maintenance_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_maintenance(self,*args,**kwargs):
+        result,message,maintenance=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_maintenance"):
+            message="دسترسی غیر مجاز"
+            return result,message,maintenance
+
+        maintenance=Maintenance()
+        if 'title' in kwargs:
+            maintenance.title=kwargs["title"]
+            if len(Maintenance.objects.filter(title=maintenance.title))>0:
+                message='نام تکراری برای وسیله نقلیه جدید'
+                return FAILED,message,None
+        if 'owner_id' in kwargs:
+            maintenance.owner_id=kwargs["owner_id"]
+          
+        (result,message,maintenance)=maintenance.save()
+        return result,message,maintenance
+
+
 class ServiceManRepo():
     def __init__(self,request,*args, **kwargs):
         self.me=None
@@ -90,7 +144,6 @@ class ServiceManRepo():
         
         
     def add_service_man(self,*args,**kwargs):
-        leolog(kwargs_add_service_man=kwargs)
         result,message,service_man=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_service_man"):
             message="دسترسی غیر مجاز"

@@ -7,6 +7,8 @@ urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),  
     path('search/',login_required(views.SearchView.as_view()),name="search"),  
+    path('add-clipboard-item/',login_required(apis.AddClipBoardItemApi.as_view()),name="add_clipboard_item"),
+    path('clear-all-clipboard-items/',login_required(apis.ClearAllClipBoardItemsApi.as_view()),name="clear_all_clipboard_items"),
     path('settings/',login_required(views.SettingsView.as_view()),name="settings"),  
     path('parameters/',login_required(views.ParametersView.as_view()),name="parameters"), 
     path("get_parameters/",login_required(apis.GetParametersApi.as_view()),name="get_parameters"),
@@ -14,6 +16,8 @@ urlpatterns = [
     path("download_db/",login_required(views.BackupDBView.as_view()),name="download_db"),
     path("download_media/",login_required(views.DownloadMediaView.as_view()),name="download_media"),
     path("download_privates/",login_required(views.DownloadPrivatesView.as_view()),name="download_privates"),
+    path("delete-my-link/",login_required(apis.DeleteMyLinkApi.as_view()),name="delete_my_link"),
+    path("add-my-link/",login_required(apis.AddMyLinkApi.as_view()),name="add_my_link"),
 
 ]
 

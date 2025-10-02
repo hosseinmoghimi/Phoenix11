@@ -17,7 +17,7 @@
       {% if perms.core.add_parameter %}
         
       <li class="nav-item">
-        <a class="nav-link text-right" href="{% url 'core:settings' %}">تنظیمات</a>
+        <a class="nav-link text-right" href="{% url 'utility:settings' %}">تنظیمات</a>
       </li>
       <li class="nav-item">
         <a class="nav-link text-right" href="{{ADMIN_URL}}{{APP_NAME}}/">ادمین</a>
@@ -31,13 +31,16 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           {% for phoenix_app in phoenix_apps %}
+          {% if phoenix_app.on_nav %}
+            
           <a class="dropdown-item" style="text-align: right;" href="{{phoenix_app.url}}">
             <img src="{{phoenix_app.logo}}" width="24" alt="">
             <span class="mr-2">
               {{phoenix_app.title}}
-
+              
             </span>
           </a>
+          {% endif %}
           {% endfor %}
 
           <div class="dropdown-divider"></div>
@@ -45,22 +48,28 @@
         </div>
       </li>
       
-      {% if APP_NAVBAR %}
+
+      
        
-      {% include APP_NAVBAR %}
+
+ 
+      {% include "core/includes/common-navbar.html" %}
+  
+      {% if clipboard_items %}
+      {% include "utility/includes/clipboard-items-app/template.html" %}
+        
       {% endif %}
+ 
 
- 
-       
-
- 
-      {% include "authentication/includes/common-navbar.html" %}
- 
- 
+      
+      {% if my_links %}
+      {% include "utility/includes/my-links-app/template.html" %}
+        
+      {% endif %}
  
       
     </ul>
-    <form class="form-inline my-2 my-lg-0" method="POST" action="{{SITE_URL}}{{APP_NAME}}/search/">
+    <form class="form-inline my-2 my-lg-0" method="POST" action="{% url 'core:search' %}">
       {% csrf_token %}
       <input  value="{{APP_NAME}}" type="hidden" name="app_name">
       <input class="form-control mr-sm-2"  style="border-radius: 0 0.5rem 0.5rem 0 !important;" value="{{search_for}}" type="search" name="search_for" placeholder="جستجو ..." aria-label="Search">

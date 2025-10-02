@@ -3,11 +3,32 @@
 {% load static %}
 {% block content %}
 <div class="row rtl farsi">
-      
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h4>
+                    {{warehouse.name}}
+                </h4>
+            </div>
+        </div>
+    </div>
     <div class="col-md-12">
 
         
-        {% include "warehouse/includes/warehouses-app/template.html" %}
+        {% include "warehouse/includes/warehouse-sheets-app/template.html" %}
+    </div>
+    
+    <div class="col-md-12">
+
+        
+        {% include "organization/includes/employees-app/template.html" %}
+    </div>
+
+    
+    <div class="col-md-12">
+
+        
+        {% include "warehouse/includes/products-in-warehouse-app/template.html" %}
     </div>
 
 </div>
@@ -15,8 +36,8 @@
 
 
 {% block script %}
-{% include "warehouse/includes/warehouses-app/script.html" %}
-{% if add_warehouse_form %}
-{% include "warehouse/includes/add-warehouse-app/script.html" %}
-{% endif %}
+{% include "warehouse/includes/warehouse-sheets-app/script.html" %}
+        {% include "organization/includes/employees-app/script.html" %}
+        {% include "warehouse/includes/products-in-warehouse-app/script.html" %}
+ 
 {% endblock script %}

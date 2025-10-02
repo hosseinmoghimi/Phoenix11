@@ -33,6 +33,7 @@
                
               <th>نام </th>
               <th>نام کاربری</th>
+              <th>تماس</th>
  
               <th>
 
@@ -62,6 +63,25 @@
                   <a target="_blank" :href="'{{ADMIN_URL}}auth/user/'+person.user_id">
                     <span v-text="person.username"></span>
                   </a>
+                </td>
+
+                <td>
+                  <div>
+
+                    <a class="my-2 text-primary" v-if="person.tel"   :href="'tel:'+person.tel">
+                      <span v-text="person.tel"></span>
+                      <i class="fa fa-phone "></i>
+                    </a>
+                  </div>
+
+                  
+                  <div>
+
+                    <a class="my-2  text-success" v-if="person.mobile"   :href="'tel:'+person.mobile">
+                      <span v-text="person.mobile"></span>
+                      <i class="fa fa-phone"></i>
+                    </a>
+                  </div>
                 </td>
 
                   

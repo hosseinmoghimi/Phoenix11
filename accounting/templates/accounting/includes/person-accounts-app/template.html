@@ -25,9 +25,7 @@
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
-                            <th>
-                                کد
-                            </th>
+                          
                             <th>
                                 نام حساب
                             </th>
@@ -36,42 +34,59 @@
                                 نام شخص
                             </th>
                             <th>
-                                مانده
+                                دسته بندی
                             </th>
+                            
+              {% if SHOW_BALANCE %}
+                
+              <th>
+                  مانده
+                </th>
+                {% endif %}
                             <th>
                             </th>
                         </thead>
                         <tbody>
                             <tr v-for="person_account in person_accounts">
                                 <td>
-                                    <a :href="person_account.get_absolute_url">
-                                        <span :class="'text-'+person_account.color" v-text="person_account.code"></span>
-                                    </a>
+                                    {% include "accounting/includes/person-account-app/media.html" %}
+                                    
                                 </td>
-                                <td>
-                                    <a :href="person_account.get_absolute_url">
-                                        <span :class="'text-'+person_account.color" v-text="person_account.name"></span>
-                                        <span :class="'badge badge-'+person_account.color" v-text="person_account.type"></span>
-                                    </a>
-
-                                </td>
+                                
 
                                  <td>
-                                    <a :href="person_account.person.get_accounting_absolute_url">
-                                        <span   v-text="person_account.person.full_name"></span>
+                                   
+                                      
+                                <div v-for="person in [person_account.person]">
+                                    {% include "accounting/includes/person-app/media.html" %}
+
+                                </div>
+                                </td>
+
+
+                                  <td>
+                                    <a :href="person_account.person_category.get_absolute_url">
+                                        <span   v-text="person_account.person_category.title"></span>
                                     </a>
 
                                 </td>
-                                <td>
-                                    <span v-html="to_price(person_account.balance)"></span>
-                                    <small class="text-muted mr-1">
-
-                                        {{CURRENCY}}
-                                    </small>
+                                
+              {% if SHOW_BALANCE %}
+                
+              <td>
+                  <btn @click="copy_balance_to_clipboard(person_account.balance)" class="btn btn-link">
+                      
+                      <span v-html="to_price(person_account.balance)"></span>
+                      <small class="text-muted mr-1">
+                          
+                          {{CURRENCY}}
+                        </small>
+                    </btn>
                                 </td>
+                                {% endif %}
                                 <td>
                                     <a target="_blank" :href="person_account.get_edit_url" title="ویرایش"
-                                        class=" text-warning mx-2">
+                                    class=" text-warning mx-2">
                                         <i class="fa fa-edit text-warning">
                                         </i>
                                         ویرایش

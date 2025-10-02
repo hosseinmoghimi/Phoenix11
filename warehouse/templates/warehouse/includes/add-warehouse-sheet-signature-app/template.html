@@ -1,0 +1,63 @@
+<div id="accordion-add-warehouse-sheet-signature" class="rtl text-right farsi">
+  <div class="card" id="add-warehouse-sheet-signature-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-add-warehouse-sheet-signature"
+          aria-expanded="true"
+          aria-controls="collapse-add-warehouse-sheet-signature"
+        >
+          افزودن امضا
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-add-warehouse-sheet-signature"
+      class="collapse"
+      aria-labelledby="heading-add-warehouse-sheet-signature"
+      data-parent="#accordion-add-warehouse-sheet-signature"
+    >
+      <div class="card-body">
+        <form @submit.prevent="add_warehouse_sheet_signature()">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">توضیحات</label>
+                <input v-model="description" type="text" class="form-control" />
+              </div>
+            </div>
+
+            
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="">وضعیت</label>
+                <select v-model="status" id="" class="form-control">
+                    {% for status in warehouse_sheet_signature_statuses %}
+                      
+                    <option value="{{status}}">{{status}}</option>
+                    {% endfor %}
+                </select>
+               
+              </div>
+            </div>
+
+ 
+
+
+                   
+
+            <div class="col-md-12">
+              <button class="btn btn-success" type="submit">
+                <i class="fa fa-plus"></i>
+                افزودن
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

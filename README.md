@@ -1,8 +1,9 @@
 # Phoenix11
 
 
-Version 1.0.0 beta
+Version 1.0.5
 
+WareHoues,School->zero migrations
 
 copy phoenix/local_settings.py to phoenix/server_settings.py and reconfig
 copy phoenix/local_apps.py to phoenix/server_apps.py and reconfig

@@ -1,0 +1,15 @@
+<script>
+    
+    let families_for_families_app=JSON.parse("{{families_s|escapejs}}")
+    let families_app = new Vue({
+        el: "#families-app",
+        data: {
+            families: families_for_families_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>

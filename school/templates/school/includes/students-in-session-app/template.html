@@ -1,0 +1,73 @@
+<div id="accordion-students-in-session" class="rtl text-right farsi">
+  <div class="card" id="students-in-session-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-students-in-session"
+          aria-expanded="true"
+          aria-controls="collapse-students-in-session"
+        >
+          وضعیت
+        دانش آموزان
+        </button>
+      </h5>
+    </div>
+    <div
+      id="collapse-students-in-session"
+      class="collapse "
+      aria-labelledby="heading-students-in-session"
+      data-parent="#accordion-students-in-session"
+    >
+      <div class="card-body">
+       <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <th>
+                   {% if not session %}
+                  
+                  جلسه
+                  
+                {% else %}
+                    ردیف
+                {% endif %}
+           
+                  </th>
+                <th>
+                    نام  
+                </th>
+                
+                
+                {% if not student %}
+                  
+                <th>
+                  نام پدر
+                </th>
+                <th>
+                  کد ملی
+                </th>
+                {% endif %}
+                <th>
+                  وضعیت
+                </th>
+                <th>
+نمره
+                </th>
+                <th>
+
+                </th>
+            </thead>
+            <tbody>
+                <template v-for="(student_in_session,raw) in students_in_session">
+                    <student-in-session-component :raw="raw"  :student_in_session="student_in_session"></student-in-session-component>
+                </template>
+               
+            </tbody>
+        </table>
+                
+       </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-from .models import Asset,Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit
+from .models import Asset,Category,FinancialDocument,FinancialDocumentLine,InvoiceLineItemUnit,Cheque
 from .models import InvoiceLine,InvoiceLineItem,Account,Product,Service,FinancialEvent,FinancialYear
 from .models import Invoice,Bank,PersonCategory,FinancialYear,PersonAccount,ProductSpecification
 from .models import BankAccount
@@ -18,28 +18,17 @@ from .constants import EXCEL_PRODUCTS_DATA_START_ROW,EXCEL_SERVICES_DATA_START_R
 from .defaults import default_accounts,default_persons,default_banks
 from .enums import AccountTypeEnum,AccountNatureEnum
 from .settings_on_server import ACCOUNT_LEVEL_NAMES
-# from processmanagement.models import Permission
+from authentication.models import Person
 class InvoiceLineItemUnitRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         
         
         self.objects=None
-        if request.user.has_perm(APP_NAME+".view_event"):
+        if request.user.has_perm(APP_NAME+'.view_invoicelineitemunit'):
             self.objects=InvoiceLineItemUnit.objects
-        elif request.user.is_authenticated:
-            accs=[]
-            from authentication.models import Person
-            for person in Person.objects.filter(profile__user_id=request.user.id):
-
-                my_accounts=AccountRepo(request=request).list()
-                for acc in my_accounts:
-                    accs.append(acc.id)
-            self.objects=I.objects.filter(Q(bedehkar_id__in=accs)|Q(bestankar_id__in=accs))
-        else:
-            self.objects=Event.objects.filter(pk=0)
+        self.objects=InvoiceLineItemUnit.objects.filter(pk=0)
 
     def list(self,*args, **kwargs):
         objects=self.objects
@@ -97,21 +86,22 @@ class InvoiceLineItemUnitRepo:
 class InvoiceLineRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
-        self.me=None
-        # profile=PersonRepo(request=request).me
-        
+        self.me_person=None
+    
+        from authentication.repo import PersonRepo
+        me_person=PersonRepo(request=request).me
+        self.me_person=me_person
         
         self.objects=None
-        if request.user.has_perm(APP_NAME+".view_event"):
+        if request.user.has_perm(APP_NAME+".view_invoiceline"):
             self.objects=InvoiceLine.objects
         elif request.user.is_authenticated:
             accs=[]
-            for person in Person.objects.filter(profile__user_id=request.user.id):
-
+            if me_person is not None:
                 my_accounts=AccountRepo(request=request).my_accounts
                 for acc in my_accounts:
                     accs.append(acc.id)
-            self.objects=InvoiceLine.objects.filter(Q(bedehkar_id__in=accs)|Q(bestankar_id__in=accs))
+            self.objects=InvoiceLine.objects.filter(person_id=me_person.id)
         else:
             self.objects=InvoiceLine.objects.filter(pk=0)
 
@@ -119,6 +109,8 @@ class InvoiceLineRepo:
         objects=self.objects
         if "search_for" in kwargs:
             objects=objects.filter(title__contains=kwargs['search_for']) 
+        if "invoice_line_item_id" in kwargs:
+            objects=objects.filter(invoice_line_item_id=kwargs['invoice_line_item_id']) 
         return objects.all()
     def invoice_line(self,*args, **kwargs):
         if "invoice_line_id" in kwargs:
@@ -136,13 +128,30 @@ class InvoiceLineRepo:
             message="دسترسی غیر مجاز"
             return result,message,meal
 
-        invoice_line=InvoiceLine()
+        invoice_line=InvoiceLine(person_id=self.me_person.id)
         if 'invoice_line_item_id' in kwargs:
             invoice_line_item_id=kwargs["invoice_line_item_id"]
             invoice_line.invoice_line_item_id=invoice_line_item_id
- 
+
         if 'invoice_id' in kwargs:
             invoice_line.invoice_id=kwargs["invoice_id"]
+            invoice=invoice_line.invoice
+            if invoice.status==FinancialEventStatusEnum.APPROVED:
+                message='فاکتور تایید شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+                return FAILED,message,None
+            
+            if invoice.status==FinancialEventStatusEnum.DELIVERED:
+                message='فاکتور تحویل شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+                return FAILED,message,None
+            
+            if invoice.status==FinancialEventStatusEnum.FINISHED:
+                message='فاکتور نهایی شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+                return FAILED,message,None
+            
+        if 'description' in kwargs:
+            invoice_line.description=kwargs["description"]
+        if 'status' in kwargs:
+            invoice_line.status=kwargs["status"]
         if 'discount_percentage' in kwargs:
             invoice_line.discount_percentage=kwargs["discount_percentage"]
         if 'quantity' in kwargs:
@@ -154,25 +163,23 @@ class InvoiceLineRepo:
         if 'unit_name' in kwargs:
             unit_name=kwargs["unit_name"]
             invoice_line.unit_name=unit_name
-        if 'save' in kwargs or kwargs["default"]:
+        if 'save' in kwargs or kwargs["default_price"]:
             save=kwargs["save"]
-            if save or kwargs["default"]:
+            if save or kwargs["default_price"]:
                 if 'coef' in kwargs:
                     coef=kwargs["coef"]
-                if 'default' in kwargs:
-                    default11=kwargs["default"]
+                if 'default_price' in kwargs:
+                    default_price=kwargs["default_price"]
                 InvoiceLineItemUnitRepo(request=self.request).add_invoice_line_item_unit(
                     invoice_line_item_id=invoice_line_item_id,
                     coef=coef,
-                    default=default11,
+                    default=default_price,
                     unit_name=unit_name,
                     unit_price=unit_price,
                     )
-
-        result=SUCCEED
-        message="سطر فاکتور با موفقیت اضافه شد."     
+        invoice_line.row=len(invoice_line.invoice.invoiceline_set.all())+1
+        result,message,invoice_line=invoice_line.save()
  
-        invoice_line.save()
         return result,message,invoice_line
            
 
@@ -181,13 +188,13 @@ class AccountRepo():
         self.me=None
         self.request=request
         self.objects=Account.objects.filter(id=0)
-        person=PersonRepo(request=request).me
-        self.my_accounts=Account.objects.filter(pk=0)
-        if person is not None:
-            self.my_accounts=PersonAccount.objects.filter(person_id=person.id)
+        me_person=PersonRepo(request=request).me
+        self.my_accounts=PersonAccount.objects.filter(person_id=me_person.id)
+        if me_person is not None:
+            self.my_accounts=PersonAccount.objects.filter(person_id=me_person.id)
         if request.user.has_perm(APP_NAME+".view_account"):
-            self.objects=Account.objects
-        elif person is not None:
+            self.objects=Account.objects.all()
+        elif me_person is not None:
             self.objects=self.my_accounts
     def list(self,*args, **kwargs):
         objects=self.objects
@@ -206,8 +213,196 @@ class AccountRepo():
     def roots(self,*args, **kwargs):
         objects=self.objects.filter(parent_id=None)
         return objects.all()
+    
+    def merge_account(self,*args, **kwargs):
+           
+        result,message,merged_account=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+'.change_account'):
+            message='شما مجوز دسترسی برای این عملکرد را ندارید.'
+            return FAILED,message,None
+        deleting_account=self.account(pk=kwargs['deleting_account_id'])
+        updating_account=self.account(pk=kwargs['updating_account_id'])
+
+        i=0
+        from core.models import Page
+        from attachments.models import Comment,Image,Link,Download,Location
+        for child in Page.objects.filter(parent_id=deleting_account.id):
+            i+=1
+            child.parent_id=updating_account.id
+            child.save()
+        message+='<br>'+f'( {i} )'+'فرزند با موفقیت همگام سازی شد.'    
+ 
+        i=0
+        for comment in Comment.objects.filter(page_id=deleting_account.id):
+            i+=1
+            comment.page_id=updating_account.id
+            comment.save()
+        message+='<br>'+f'( {i} )'+'کامنت ها با موفقیت همگام سازی شد.'    
+        i=0
+        for link in Link.objects.filter(page_id=deleting_account.id):
+            i+=1
+            link.page_id=updating_account.id
+            link.save()
+        message+='<br>'+f'( {i} )'+'لینک ها با موفقیت همگام سازی شد.'    
+            
+        i=0
+        for download in Download.objects.filter(page_id=deleting_account.id):
+            i+=1
+            download.page_id=updating_account.id
+            download.save()
+        message+='<br>'+f'( {i} )'+'دانلود ها با موفقیت همگام سازی شد.'    
 
 
+
+        for image in Image.objects.filter(page_id=deleting_account.id):
+            i+=1
+            image.page_id=updating_account.id
+            image.save()
+        message+='<br>'+f'( {i} )'+'تصاویر با موفقیت همگام سازی شد.'    
+
+
+
+        i=0
+        for financial_document_line in FinancialDocumentLine.objects.filter(account_id=deleting_account.id):
+            i+=1
+            financial_document_line.account_id=updating_account.id
+            financial_document_line.save()
+        message+='<br>'+f'( {i} )'+'سطر های اسناد مالی با موفقیت همگام سازی شد.'    
+
+            
+        from warehouse.models import WareHouse
+        i=0
+        for warehouse in WareHouse.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            warehouse.person_account_id=updating_account.id
+            warehouse.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'انبارها با موفقیت همگام سازی شد.'    
+        
+
+        from transport.models import ServiceMan
+        i=0
+        for service_man in ServiceMan.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            service_man.person_account_id=updating_account.id
+            service_man.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'تعمیرکار ها با موفقیت همگام سازی شد.'    
+        
+
+
+        from organization.models import OrganizationUnit
+        i=0
+        for organization_unit in OrganizationUnit.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            organization_unit.person_account_id=updating_account.id
+            organization_unit.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'واحد های سازمانی با موفقیت همگام سازی شد.'    
+        
+        from market.models import MarketPerson
+        i=0
+        for market_person in MarketPerson.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            market_person.person_account_id=updating_account.id
+            market_person.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'افراد فروشگاه با موفقیت همگام سازی شد.'    
+        
+
+            
+        from health.models import Doctor,Patient
+        i=0
+        for doctor in Doctor.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            doctor.person_account_id=updating_account.id
+            doctor.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'دکتر ها با موفقیت همگام سازی شد.'    
+        
+
+        i=0
+        for patient in Patient.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            patient.person_account_id=updating_account.id
+            patient.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'بیمار ها با موفقیت همگام سازی شد.'    
+        
+
+        from school.models import School,Teacher,Student
+        i=0
+        for school in School.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            school.person_account_id=updating_account.id
+            school.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'مدرسه ها با موفقیت همگام سازی شد.'    
+        
+
+
+        i=0
+        for teacher in Teacher.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            teacher.person_account_id=updating_account.id
+            teacher.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'دبیر ها با موفقیت همگام سازی شد.'    
+        
+
+
+        i=0
+        for student in Student.objects.filter(person_account_id=deleting_account.id):
+            i+=1
+            student.person_account_id=updating_account.id
+            student.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'دانش آموزان با موفقیت همگام سازی شد.'    
+        
+
+
+        i=0
+        for financial_event in FinancialEvent.objects.filter(Q(bedehkar_id=deleting_account.id)|Q(bestankar_id=deleting_account.id)):
+            i+=1
+            if financial_event.bedehkar_id==deleting_account.id:
+                financial_event.bedehkar_id=updating_account.id
+            if financial_event.bestankar_id==deleting_account.id:
+                financial_event.bestankar_id=updating_account.id
+            financial_event.save()
+        message+='<br>'+f'( {i} )'+'رویدادهای مالی با موفقیت همگام سازی شد.'    
+
+        result=SUCCEED
+        message+='<br>'+'با موفقیت همگام سازی شد.'    
+        return result,message,merged_account
+ 
+    def normalize_all_accounts(self,*args, **kwargs):
+        result,message,counter=FAILED,'',0
+        if not self.request.user.has_perm(APP_NAME+".change_account"):
+            message="دسترسی غیر مجاز"
+            message='شما مجوز دسترسی به این عملکرد را ندارید.'
+            return result,message,counter
+        
+        # for account in Account.objects.all():
+        #     account.bedehkar=0
+        #     account.bestankar=0
+        #     account.balance=0
+        #     account.save()
+        
+
+        sw=1
+        if sw==1:
+            for account in Account.objects.filter(parent_id=None):
+                result,message,counter2=account.normalize_to_top()
+                counter+=counter2
+
+        if sw==2:
+            for account in Account.objects.all():
+                counter+=1
+                account.normalize()
+            result=SUCCEED
+            message=f'{counter} حساب مالی با موفقیت نرمال سازی شد.'
+        
+        return result,message,counter
         
     def import_accounts_from_excel(self,*args,**kwargs):
         result,message,accounts=FAILED,"",[]
@@ -251,15 +446,15 @@ class AccountRepo():
                 code=(ws['D'+i].value)
                 title=(ws['E'+i].value)
                 color=(ws['F'+i].value)
-                logo_origin=(ws['G'+i].value)
-                # leolog(account='account',i=i,id=id,title=title,code=code,parent_id=parent_id,logo_origin=logo_origin)  
+                thumbnail_origin=(ws['G'+i].value)
+                # leolog(account='account',i=i,id=id,title=title,code=code,parent_id=parent_id,thumbnail_origin=thumbnail_origin)  
 
                 account['id']=id
                 account['parent_code']=parent_code
                 account['code']=code
                 account['title']=title
                 account['color']=color
-                account['logo_origin']=logo_origin
+                account['thumbnail_origin']=thumbnail_origin
                 if account['title'] is not None and not account['title']=="":
                     accounts_to_import.append(account) 
         modified=added=0
@@ -268,7 +463,7 @@ class AccountRepo():
             if old_account is not None:
                 old_account.title=account["title"]
                 # old_account.unit_name=account["unit_name"]
-                old_account.logo_origin=account["logo_origin"]
+                old_account.thumbnail_origin=account["thumbnail_origin"]
                 # old_account.unit_price=account["unit_price"] 
                 # old_account.thumbnail_origin=account["thumbnail_origin"] 
                 old_account.save()
@@ -280,7 +475,7 @@ class AccountRepo():
                                                                 parent_code=account["parent_code"],
                                                                 id=account["id"],
                                                                 color=account["color"],
-                                                                logo_origin=account["logo_origin"] ,
+                                                                thumbnail_origin=account["thumbnail_origin"] ,
                                                                 )
                     accounts.append(new_account)
                 except:
@@ -467,9 +662,9 @@ class PersonAccountRepo():
         self.objects=PersonAccount.objects.filter(pk=0)
         me_person=PersonRepo(request=request).me
         if request.user.has_perm(APP_NAME+'.view_personaccount'):
-            self.objects=PersonAccount.objects.all()
+            self.objects=PersonAccount.objects.all().order_by('person__full_name')
         elif me_person is not None:
-            self.objects=PersonAccount.objects.filter(person__user_id=me_person.user.id) 
+            self.objects=PersonAccount.objects.filter(person__user_id=me_person.user.id).order_by('person__full_name')
     def list(self,*args, **kwargs):
         objects=self.objects
         pure_code="876454453342236"
@@ -485,6 +680,9 @@ class PersonAccountRepo():
         if "category" in kwargs:
             category=kwargs["category"]
             objects=objects.filter(Q(category=category)   )
+        if "person_id" in kwargs:
+            person_id=kwargs["person_id"]
+            objects=objects.filter(Q(person_id=person_id)   )
         return objects.all()
   
     def add_person_account(self,*args, **kwargs):
@@ -616,7 +814,6 @@ class FinancialYearRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=FinancialYear.objects
 
         
@@ -629,9 +826,7 @@ class FinancialYearRepo():
                  
         else:
             self.objects=FinancialYear.objects.filter(pk=0)
-
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
+ 
     def list(self,*args, **kwargs):
         objects=self.objects
         pure_code="876454453342236"
@@ -713,10 +908,7 @@ class PersonCategoryRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=PersonCategory.objects
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
  
@@ -726,8 +918,24 @@ class PersonCategoryRepo():
             objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(pure_code=pure_code ) )
         return objects.all()
      
+    def edit_person_category(self,*args, **kwargs):
+        result,message,person_category=FAILED,'',None
+        if not self.request.user.has_perm(APP_NAME+".change_personcategory"):
+            message="دسترسی غیر مجاز"
+            return result,message,None
 
-     
+        person_category=self.person_category(person_category_id=kwargs['person_category_id'])
+        account=AccountRepo(request=self.request).account(account_id=kwargs['account_id'])
+        if account is None or person_category is None:
+            message="داده های مرتبط پیدا نشد."
+            return result,message,None
+        person_category.account_id=account.id
+        person_category.title=kwargs['title']
+        person_category.code_length=kwargs['code_length']
+        person_category.save()
+        message='با موفقیت اصلاح شد.'
+        return SUCCEED,message,person_category
+
     def delete_all(self,*args,**kwargs):
         result,message=FAILED,''
         if not self.request.user.has_perm(APP_NAME+".delete_personcategory"):
@@ -740,8 +948,8 @@ class PersonCategoryRepo():
         return result,message
 
     def person_category(self,*args, **kwargs):
-        if "person_id" in kwargs and kwargs["person_id"] is not None:
-            return self.objects.filter(pk=kwargs['person_id']).first()
+        if "person_category_id" in kwargs and kwargs["person_category_id"] is not None:
+            return self.objects.filter(pk=kwargs['person_category_id']).first()
         if "pk" in kwargs and kwargs["pk"] is not None:
             return self.objects.filter(pk=kwargs['pk']).first() 
         if "id" in kwargs and kwargs["id"] is not None:
@@ -795,7 +1003,6 @@ class PersonCategoryRepo():
             person_category.priority=kwargs["priority"] 
         if 'code_length' in kwargs:
             person_category.code_length=kwargs["code_length"] 
-        leolog(kwargs=kwargs)
         person_category.save()
         result=SUCCEED
         message="دسته بندی جدید برای اشخاص با موفقیت اضافه گردید."
@@ -821,7 +1028,6 @@ class ProductSpecificationRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         
         
         self.objects=None
@@ -829,8 +1035,7 @@ class ProductSpecificationRepo:
             self.objects=ProductSpecification.objects
         elif request.user.is_authenticated:
             accs=[]
-            for person in Person.objects.filter(profile__user_id=request.user.id):
-
+            for person in Person.objects.filter(user_id=request.user.id):
                 my_accounts=AccountRepo(request=request).my_accounts
                 for acc in my_accounts:
                     accs.append(acc.id)
@@ -886,17 +1091,18 @@ class ProductRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=Product.objects
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
 
-            objects=objects.filter(Q(title__contains=search_for))
+            objects=objects.filter(Q(title__contains=search_for) | Q(barcode=search_for)|Q(model__contains=search_for))
+        if "title" in kwargs:
+            title=kwargs["title"]
+
+            objects=objects.filter(Q(title__contains=title) | Q(barcode=title)|Q(model__contains=title))
         return objects.all()
     
     def add_product_to_category(self,*args, **kwargs):
@@ -919,21 +1125,126 @@ class ProductRepo():
             result=SUCCEED
             product_categories=product.category_set.all()
         return result,message,category,product_categories
-       
+    
+    def merge_product(self,*args, **kwargs):
+           
+        result,message,merged_product=FAILED,"",None
+        deleting_product=self.product(pk=kwargs['deleting_product_id'])
+        updating_product=self.product(pk=kwargs['updating_product_id'])
+
+        i=0
+        for invoice_line in InvoiceLine.objects.filter(invoice_line_item_id=deleting_product.id):
+            i+=1
+            invoice_line.invoice_line_item_id=updating_product.id
+            invoice_line.save()
+        message+='<br>'+f'( {i} )'+'سطر فاکتور ها با موفقیت همگام سازی شد.'    
+
+            
+        i=0
+        for invoice_line_item_unit in InvoiceLineItemUnit.objects.filter(invoice_line_item_id=deleting_product.id):
+            i+=1
+            invoice_line_item_unit.invoice_line_item_id=updating_product.id
+            invoice_line_item_unit.save()
+        message+='<br>'+f'( {i} )'+'قیمت ها با موفقیت همگام سازی شد.'    
+        
+        
+        i=0
+        for product_specification in ProductSpecification.objects.filter(product_id=deleting_product.id):
+            i+=1
+            product_specification.product_id=updating_product.id
+            product_specification.save()
+        message+='<br>'+f'( {i} )'+'ویژگی ها با موفقیت همگام سازی شد.'    
+
+        i=0
+
+        
+        from projectmanager.models import RemoteClient
+        
+        i=0
+        for remote_client in RemoteClient.objects.filter(product_id=deleting_product.id):
+            i+=1
+            remote_client.product_id=updating_product.id
+            remote_client.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'ریموت کلاینت ها با موفقیت همگام سازی شد.'    
+
+        from market.models import Shop
+        
+        i=0
+        for shop in Shop.objects.filter(product_id=deleting_product.id):
+            i+=1
+            shop.product_id=updating_product.id
+            shop.save()
+        if i>0:
+            message+='<br>'+f'( {i} )'+'ریموت کلاینت ها با موفقیت همگام سازی شد.'    
+
+
+
+        from attachments.models import Image,Link,Download,Comment,Location
+         
+        i=0
+        for image in Image.objects.filter(page_id=deleting_product.id):
+            i+=1
+            image.page_id=updating_product.id
+            image.save()
+        message+='<br>'+f'( {i} )'+'تصویر ها با موفقیت همگام سازی شد.'    
+
+        i=0
+        for link in Link.objects.filter(page_id=deleting_product.id):
+            i+=1
+            link.page_id=updating_product.id
+            link.save()
+        message+='<br>'+f'( {i} )'+'لینک ها با موفقیت همگام سازی شد.'    
+
+        i=0
+        for download in Download.objects.filter(page_id=deleting_product.id):
+            i+=1
+            download.page_id=updating_product.id
+            download.save()
+        message+='<br>'+f'( {i} )'+'دانلود ها با موفقیت همگام سازی شد.'    
+
+        i=0
+        for comment in Comment.objects.filter(page_id=deleting_product.id):
+            i+=1
+            comment.page_id=updating_product.id
+            comment.save()
+        message+='<br>'+f'( {i} )'+'کامنت ها با موفقیت همگام سازی شد.'    
+ 
+        # for location in Location.objects.filter(page_id=deleting_product.id):
+        #     location.page_id=updating_product.id
+        #     message+='<br>'+'موقعیت ها با موفقیت همگام سازی شد.'    
+        #     location.save()
+
+        result=SUCCEED
+        message+='<br>'+'با موفقیت همگام سازی شد.'    
+        return result,message,merged_product
+
+
+        return result,message,merged_product 
+    
     def product(self,*args, **kwargs):
+        product=None
         if "product_id" in kwargs and kwargs["product_id"] is not None:
-            return self.objects.filter(pk=kwargs['product_id']).first() 
-        if "pk" in kwargs and kwargs["pk"] is not None:
-            return self.objects.filter(pk=kwargs['pk']).first() 
-        if "id" in kwargs and kwargs["id"] is not None:
-            return self.objects.filter(pk=kwargs['id']).first() 
-        if "code" in kwargs and kwargs["code"] is not None:
-            return self.objects.filter(barcode=kwargs['code']).first()
-             
+            product= self.objects.filter(pk=kwargs['product_id']).first()
+            return product 
         if "barcode" in kwargs and kwargs["barcode"] is not None:
             a= self.objects.filter(barcode=kwargs['barcode']).first() 
-            return a 
-           
+            if product is None:
+                product= a 
+                return a
+        
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            if product is None:
+                product= self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            if product is None:
+                product= self.objects.filter(pk=kwargs['id']).first() 
+        if "code" in kwargs and kwargs["code"] is not None:
+            if product is None:
+                product= self.objects.filter(barcode=kwargs['code']).first()
+             
+        return product
+       
     def add_product(self,*args,**kwargs):
         result,message,product=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_product"):
@@ -980,12 +1291,20 @@ class ProductRepo():
                     ili_unit.invoice_line_item_id=product.id
                     ili_unit.default=True
                     ili_unit.save()
-
+        else:
+            pass
+            ili_unit=InvoiceLineItemUnit()
+            ili_unit.unit_name=UnitNameEnum.ADAD
+            ili_unit.coef=1
+            ili_unit.unit_price=0
+            ili_unit.invoice_line_item_id=product.id
+            ili_unit.default=True
+            ili_unit.save()
                  
 
         if 'category_id' in kwargs:
-            if kwargs['category_id']>0:
-                category_id=kwargs["category_id"]
+            category_id=kwargs['category_id']
+            if category_id is not None and category_id>0:
                 category=Category.objects.filter(pk=category_id).first()
                 if category is not None:
                     category.products.add(product.id)
@@ -1031,7 +1350,6 @@ class ProductRepo():
                 unit_name=(ws['E'+i].value)
                 unit_price=int(ws['F'+i].value)
                 thumbnail_origin=(ws['G'+i].value)
-                # leolog(product='product',i=i,id=id,title=title,barcode=barcode,unit_name=unit_name,unit_price=unit_price,thumbnail_origin=thumbnail_origin)                      
                 product['id']=id
                 product['title']=title
                 product['barcode']=barcode
@@ -1077,10 +1395,7 @@ class InvoiceLineItemRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=InvoiceLineItem.objects
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         
@@ -1154,12 +1469,11 @@ class BankAccountRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
-        self.objects=BankAccount.objects
-       
-
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
+        me_person=PersonRepo(request=request).me
+        if request.user.has_perm(APP_NAME+'.view_bankaccount'):
+            self.objects=BankAccount.objects.all()
+        else:
+            self.objects=BankAccount.objects.filter(id=0)
     def list(self,*args, **kwargs):
         objects=self.objects
   
@@ -1234,20 +1548,13 @@ class BankAccountRepo():
         # result,message,bank_account=bank_account.save()
         # return result,message,bank_account 
         return bank_account.save()
-
-
-
-
  
  
 class FinancialDocumentRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=FinancialDocument.objects
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         
@@ -1377,18 +1684,15 @@ class BrandRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=Brand.objects
        
 
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
   
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
-            objects=objects.filter(Q(full_name__contains=search_for) | Q(melli_code__contains=search_for) | Q(code=search_for))
+            objects=objects.filter(Q(name__contains=search_for) )
         return objects.all()
      
     def brand(self,*args, **kwargs):
@@ -1467,12 +1771,9 @@ class AssetRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=Asset.objects
        
 
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
   
@@ -1542,12 +1843,14 @@ class BankRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=Bank.objects
        
+        me_person=PersonRepo(request=request).me
+        if request.user.has_perm(APP_NAME+'.view_bank'):
+            self.objects=Bank.objects.all()
+        else:
+            self.objects=Bank.objects.filter(id=0)
 
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
   
@@ -1632,10 +1935,7 @@ class ServiceRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=Service.objects
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         
@@ -1800,10 +2100,7 @@ class FinancialDocumentRepo():
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=FinancialDocument.objects
-        # if profile is not None:
-        #     self.me=self.objects.filter(profile=profile).first()
     
     def list(self,*args, **kwargs):
         objects=self.objects
@@ -1812,6 +2109,19 @@ class FinancialDocumentRepo():
         if "search_for" in kwargs:
             objects=objects.filter(title__contains=kwargs['search_for']) 
         return objects.all()
+    
+    def normalize_all_financial_documents(self,*args, **kwargs):
+        result,message,counter=FAILED,'',0
+        if not self.request.user.has_perm(APP_NAME+".change_financialdocument"):
+            message="دسترسی غیر مجاز"
+            message='شما مجوز دسترسی به این عملکرد را نداریـــد.'
+            return result,message,counter
+        for financial_document in FinancialDocument.objects.all():
+            result,message=financial_document.normalize()
+            counter+=1
+        message=f'{counter} سند مالی با موفقیت نرمال سازی شد.'
+        return result,message,counter
+    
     
     def financial_document(self,*args, **kwargs):
         if "financial_document_id" in kwargs:
@@ -1829,6 +2139,11 @@ class FinancialDocumentRepo():
             message="دسترسی غیر مجاز"
             return result,message,financial_document
         
+
+        old=FinancialDocument.objects.filter(title=kwargs['title']).first()
+        if old is not None:
+            message='از قبل سندی با همین عنوان موجود می باشد و نمی توان با نام تکراری سندی ایجاد کرد.'
+            return FAILED,message,None
         f_year=FinancialYear.objects.filter(status=FinancialYearStatusEnum.IN_PROGRESS).first()
         if f_year is None:
             url=reverse(APP_NAME+":financial_years")
@@ -1901,7 +2216,6 @@ class FinancialDocumentLineRepo:
     def __init__(self,request,*args, **kwargs):
         self.request=request
         self.me=None
-        # profile=PersonRepo(request=request).me
         self.objects=FinancialDocumentLine.objects
         
     def list(self,*args, **kwargs):
@@ -1909,6 +2223,9 @@ class FinancialDocumentLineRepo:
         if "start_date" in kwargs and kwargs["start_date"] is not None :
             start_date=kwargs["start_date"]
             objects=objects.filter(date_time__gte=start_date) 
+        if "id__in" in kwargs :
+            id__in=kwargs["id__in"]
+            objects=objects.filter(id__in=id__in) 
         if "end_date" in kwargs and kwargs["end_date"] is not None :
             end_date=kwargs["end_date"]
             objects=objects.filter(date_time__lte=end_date) 
@@ -1921,6 +2238,9 @@ class FinancialDocumentLineRepo:
         if "bestankar" in kwargs and kwargs["bestankar"] is not None:
             objects=objects.filter(Q(bestankar=kwargs['bestankar']) )
 
+            
+        if "account_id__in" in kwargs :
+            objects=objects.filter(Q(account_id__in=kwargs['account_id__in']) )
         if "bedehkar" in kwargs and kwargs["bedehkar"] is not None:
             objects=objects.filter(Q(bedehkar=kwargs['bedehkar']) )
 
@@ -1980,6 +2300,8 @@ class FinancialDocumentLineRepo:
         financial_document_line=FinancialDocumentLine()
         if 'title' in kwargs:
             financial_document_line.title=kwargs['title']
+        if 'status' in kwargs:
+            financial_document_line.status=kwargs['status']
         if 'financial_event_id' in kwargs:
             financial_event_id=kwargs['financial_event_id']
             financial_event=FinancialEvent.objects.filter(pk=financial_event_id).first()
@@ -1990,6 +2312,7 @@ class FinancialDocumentLineRepo:
         if 'financial_document_id' in kwargs:
             financial_document_id=kwargs['financial_document_id']
             if int(financial_document_id)==0 and 'financial_document_title' in kwargs:
+                
                 result,message,financial_document=FinancialDocumentRepo(request=self.request).add_financial_document(title=kwargs['financial_document_title'])
                 if financial_document is not None:
                     financial_document_id=financial_document.id
@@ -2045,8 +2368,7 @@ class FinancialDocumentLineRepo:
 
         result,message,financial_document_line=financial_document_line.save()
         if result==FAILED:
-            return result,message,financial_document_line
-        # financial_document_line.account.normalize_total()
+            return result,message,financial_document_line 
         result=SUCCEED
         message="با موفقیت اضافه گردید."
          
@@ -2061,6 +2383,119 @@ class FinancialDocumentLineRepo:
         LogRepo(request=self.request).add_log(**new_log)
         return result,message,financial_document_line
     
+
+       
+    def edit_financial_document_line(self,*args, **kwargs):
+        financial_document_line,message,result=(None,"",FAILED)
+    
+        bestankar=kwargs['bestankar']
+        bedehkar=kwargs['bedehkar']
+        if bedehkar==0 and bestankar==0:
+            message="مبلغ بدهکار و بستانکار صفر وارد شده است."
+            return result,message,financial_document_line
+
+            
+        if bedehkar>0 and bestankar>0:
+            message="مبلغ بدهکار و بستانکار ، هر دو وارد شده است."
+            return result,message,financial_document_line
+
+        if bedehkar<0 or bestankar<0:
+            message="مبلغ بدهکار یا بستانکار منفی وارد شده است."
+            return result,message,financial_document_line
+
+        # if not Permission(request=self.request).is_permitted(APP_NAME,OperationEnum.ADD,"accountingdocumentline"):
+        if not self.request.user.has_perm(APP_NAME+".change_accountingdocumentline"):
+            message="دسترسی غیر مجاز"
+            return result,message,financial_document_line
+        
+        financial_document_line=FinancialDocumentLine.objects.filter(pk=kwargs['financial_document_line_id']).first()
+        if financial_document_line is None:
+            return FAILED,'سطر پیدا نشد.',None
+        
+        if 'status' in kwargs:
+            financial_document_line.status=kwargs['status']
+            
+        if 'title' in kwargs:
+            financial_document_line.title=kwargs['title']
+        if 'financial_event_id' in kwargs:
+            financial_event_id=kwargs['financial_event_id']
+            financial_event=FinancialEvent.objects.filter(pk=financial_event_id).first()
+            if financial_event is None:
+                message='رویداد مالی درست انتخاب نشده است.'
+                return result,message,None
+            financial_document_line.financial_event_id=financial_event_id
+        if 'financial_document_id' in kwargs:
+            financial_document_id=kwargs['financial_document_id']
+            financial_document=FinancialDocument.objects.filter(pk=financial_document_id).first()
+            if financial_document is None:
+                message='سند مالی درست انتخاب نشده است.'
+                return FAILED,message,None
+ 
+            if financial_document.status==FinancialDocumentStatusEnum.ACCEPTED:
+                message='سند مرتبط تایید شده می باشد.<br> نمی توان سطر های آن را تغییر داد.'
+                return FAILED,message,None
+            financial_document_line.financial_document_id=financial_document_id
+        if 'description' in kwargs:
+            financial_document_line.description=kwargs['description']
+        if 'persian_date_time' in kwargs and kwargs['persian_date_time'] is not None and not kwargs['persian_date_time']=='':
+            persian_date_time=kwargs['persian_date_time']
+            date_time=PersianCalendar().to_gregorian(persian_date_time)
+            # date_time=date_time,persian_date_time=kwargs['persian_date_time'])
+            # financial_document_line.date_time=date_time
+        if 'bestankar' in kwargs  :
+            financial_document_line.bestankar=kwargs['bestankar']
+        if 'bedehkar' in kwargs :
+            financial_document_line.bedehkar=kwargs['bedehkar'] 
+        if 'date_time' in kwargs :
+
+            date_time=kwargs['date_time']
+            year=date_time[:2]
+            if year=="13" or year=="14":
+                date_time=PersianCalendar().to_gregorian(kwargs["date_time"])
+            financial_document_line.date_time=date_time 
+
+        if 'account_code' in kwargs and kwargs['account_code'] is not None:
+            account=AccountRepo(request=self.request).account(code=kwargs['account_code']) 
+            if account is not None:
+                financial_document_line.account=account
+        if 'account_id' in kwargs and kwargs['account_id'] is not None:
+            financial_document_line.account_id=kwargs['account_id'] 
+        
+        if financial_document_line.account is None:
+            message='حساب درست انتخاب نشده است.'
+            return FAILED,message,None
+        # if 'financial_year_id' in kwargs:
+        #     payment.financial_year_id=kwargs['financial_year_id']
+        # else:
+        #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
+
+        if financial_document_line.account.nature==AccountNatureEnum.ONLY_BESTANKAR and financial_document_line.bedehkar>0:
+            message=financial_document_line.account.name+" ماهیت فقط بستانکار دارد"
+            financial_document_line=None
+            return result,message,financial_document_line
+        if financial_document_line.account.nature==AccountNatureEnum.ONLY_BEDEHKAR and financial_document_line.bestankar>0:
+            message=financial_document_line.account.name+" ماهیت فقط بدهکار دارد"
+            financial_document_line=None
+            return result,message,financial_document_line
+
+        result,message,financial_document_line=financial_document_line.save()
+        if result==FAILED:
+            return result,message,financial_document_line 
+        result=SUCCEED
+        message="با موفقیت تغییر یافت."
+         
+
+        me_person=PersonRepo(request=self.request).me
+        new_log={}
+        new_log['title']="تغییر سند مالی "
+        new_log['app_name']=APP_NAME
+        new_log['url']=financial_document_line.get_absolute_url()
+        new_log['person']=me_person
+        new_log['description']="خط سند مالی جدید با موفقیت اضافه گردید."
+        LogRepo(request=self.request).add_log(**new_log)
+        return result,message,financial_document_line
+    
+
     def delete_all(self,*args,**kwargs):
         result,message=FAILED,''
         if not self.request.user.has_perm(APP_NAME+".delete_accountingdocumentline"):
@@ -2120,12 +2555,10 @@ class FinancialEventRepo():
         self.request=request
         self.objects=FinancialEvent.objects.filter(id=0)
         person=PersonRepo(request=request).me
-        if person is not None:
-                self.objects=FinancialEvent.objects
 
 
         if request.user.has_perm(APP_NAME+".view_financialevent"):
-            self.objects=FinancialEvent.objects
+            self.objects=FinancialEvent.objects 
         elif person is not None:
             my_accounts=AccountRepo(request=request).my_accounts
             ids=[]
@@ -2139,8 +2572,7 @@ class FinancialEventRepo():
         objects=self.objects
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
-            codeee=str(filter_number(search_for))
-            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
+            objects=objects.filter(Q(title__contains=search_for)  )
         if "account_code" in kwargs:
             account_code=kwargs["account_code"]
             objects=objects.filter(Q(bedehkar__code=account_code) | Q(bestankar__code=account_code)  )
@@ -2150,7 +2582,7 @@ class FinancialEventRepo():
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
-        return objects.all()
+        return objects.order_by('-event_datetime')
        
     def roots(self,*args, **kwargs):
         objects=self.objects.filter(parent_id=None)
@@ -2167,7 +2599,6 @@ class FinancialEventRepo():
             return self.objects.filter(pk=kwargs['event_id']).first() 
          
     def edit_financial_event(self,*args, **kwargs):
-        leolog(edit_financial_event_kwargs=kwargs)
         result,message,financial_event=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_financialevent"):
             message="دسترسی غیر مجاز"
@@ -2197,8 +2628,8 @@ class FinancialEventRepo():
         if "shipping_fee" in kwargs and kwargs["shipping_fee"] is not None:
             financial_event.shipping_fee=kwargs['shipping_fee'] 
 
-        if "discount_percentage" in kwargs and kwargs["discount_percentage"] is not None:
-            financial_event.discount_percentage=kwargs['discount_percentage']
+        if "discount" in kwargs and kwargs["discount"] is not None:
+            financial_event.discount=kwargs['discount']
         if "tax_percentage" in kwargs and kwargs["tax_percentage"] is not None:
             financial_event.tax_percentage=kwargs['tax_percentage']
 
@@ -2350,8 +2781,7 @@ class InvoiceRepo(FinancialEventRepo):
         objects=self.objects
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
-            codeee=str(filter_number(search_for))
-            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
+            objects=objects.filter(Q(title__contains=search_for)  )
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
@@ -2419,33 +2849,74 @@ class InvoiceRepo(FinancialEventRepo):
             return result,message,invoice
 
         invoice=Invoice.objects.filter(pk=kwargs['invoice_id']).first()
+
+         
+        if invoice.status==FinancialEventStatusEnum.APPROVED:
+            message='فاکتور تایید شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+            return FAILED,message,None
+        
+        if invoice.status==FinancialEventStatusEnum.DELIVERED:
+            message='فاکتور تحویل شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+            return FAILED,message,None
+        
+        if invoice.status==FinancialEventStatusEnum.FINISHED:
+            message='فاکتور نهایی شده و امکان تغییر ، ویرایش و افزودن سطر وجود ندارد.'
+            return FAILED,message,None
+    
         if invoice is None:
             message="فاکتور پیدا نشد."
             return result,message,invoice
         if 'title' in kwargs:
             invoice.title=kwargs['title'] 
 
-        if 'bedehkar_id' in kwargs and kwargs['bedehkar_id'] is not None:
-            invoice.bedehkar_id=kwargs['bedehkar_id'] 
+        if 'bedehkar_id' in kwargs and kwargs['bedehkar_id'] is not None and not kwargs['bedehkar_id']=='':
+            invoice.bedehkar_id=kwargs['bedehkar_id']
+            
+        if 'discount' in kwargs and kwargs['discount'] is not None and not kwargs['discount']=='':
+            invoice.discount=kwargs['discount'] 
+
+        if 'tax_percentage' in kwargs and kwargs['tax_percentage'] is not None and not kwargs['tax_percentage']=='':
+            invoice.tax_percentage=kwargs['tax_percentage'] 
+            
+        if 'shipping_fee' in kwargs and kwargs['shipping_fee'] is not None:
+            invoice.shipping_fee=kwargs['shipping_fee']
+            
+        if 'status' in kwargs and kwargs['status'] is not None and not kwargs['status']=='':
+            invoice.status=kwargs['status']
+            
+            
+        if 'event_datetime' in kwargs and kwargs['event_datetime'] is not None and not kwargs['event_datetime']=='':
+            year=kwargs['event_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
+            invoice.event_datetime=kwargs["event_datetime"]
+        if 'payment_method' in kwargs and kwargs['payment_method'] is not None and not kwargs['payment_method']=='':
+            invoice.payment_method=kwargs['payment_method']
 
             
+        if 'description' in kwargs  :
+            invoice.description=kwargs['description']   
+            
+        if 'short_description' in kwargs  :
+            invoice.short_description=kwargs['short_description']   
+
         if 'bestankar_id' in kwargs and kwargs['bestankar_id'] is not None:
             invoice.bestankar_id=kwargs['bestankar_id']   
 
         if 'invoice_lines' in kwargs and kwargs['invoice_lines'] is not None and not kwargs['invoice_lines']=='':
             invoice_lines=kwargs['invoice_lines']   
-            leolog(invoice_lines=invoice_lines)
             for new_invoice_line in invoice_lines:
-                leolog(new_invoice_line=new_invoice_line)
                 invoice_line=InvoiceLineRepo(request=self.request).invoice_line(pk=int(new_invoice_line['invoice_line_id']))
                 if invoice_line is not None:
                     invoice_line.row=int(new_invoice_line['row'])
-                    invoice_line.quantity=int(new_invoice_line['quantity'])
+                    invoice_line.quantity=float(new_invoice_line['quantity'])
                     invoice_line.unit_name=new_invoice_line['unit_name']
                     invoice_line.unit_price=int(new_invoice_line['unit_price'])
                     invoice_line.discount_percentage=int(new_invoice_line['discount_percentage'])
-                    invoice_line.save()
-                    
+                    invoice_line.save(normalize_row=False)
+                    if invoice_line.quantity==0:
+                        invoice_line.delete()
+
         return invoice.save()
 
 
@@ -2595,11 +3066,11 @@ class CategoryRepo():
         (result,message,category)=category.save()
         return result,message,category
     def add_product_to_category(self,*args, **kwargs):
-        result,message,product_categories=FAILED,'',[]
+        result,message,product_categories,product,category=FAILED,'',[],None,None
             
         if not self.request.user.has_perm(APP_NAME+".add_category"):
             message="دسترسی غیر مجاز"
-            return result,message,product_categories
+            return result,message,product_categories,product,category
         # product_id=0
         # category_id=0
         # if 'category_id' in kwargs:
@@ -2610,19 +3081,243 @@ class CategoryRepo():
         category=self.category(*args, **kwargs)
         if product is None:
             message="کالایی پیدا نشد"
-            return result,message,product_categories
+            return result,message,product_categories,product,category
         if category is None:
             message="دسته بندی پیدا نشد"
-            return result,message,product_categories
+            return result,message,product_categories,product,category
         if product in category.products.all():
             message='با موفقیت کالا از این دسته بندی حذف شد.'
             result=SUCCEED
             category.products.remove(product.id)
             product_categories=product.category_set.all()
-            return result,message,product_categories
+            return result,message,product_categories,product,category
         category.products.add(product.id)
         result=SUCCEED
         message='با موفقیت کالا به دسته بندی اضافه شد.'
         product_categories=product.category_set.all()
-        return result,message,product_categories
+        return result,message,product_categories,product,category
     
+
+
+class ChequeRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_cheques=[]
+        self.request=request
+        self.objects=Cheque.objects.filter(id=0)
+        person=PersonRepo(request=request).me
+
+
+        if request.user.has_perm(APP_NAME+".view_financialevent"):
+            self.objects=Cheque.objects 
+        elif person is not None:
+            my_accounts=AccountRepo(request=request).my_accounts
+            ids=[]
+            for acc in my_accounts:
+                ids.append(acc.id)
+            
+             
+            self.my_cheques=Cheque.objects.filter(Q(bedehkar_id__in=ids)|Q(bestankar_id__in=ids))
+            self.objects=self.my_cheques
+    
+    def change_image(self,cheque_id,image):
+        result,message,cheque=FAILED,'',None
+        cheque=self.cheque(cheque_id=cheque_id)
+        if cheque is not None:
+            cheque.image_origin = image
+            cheque.save()
+            return SUCCEED,message,cheque
+        return FAILED,message,cheque
+    
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if "search_for" in kwargs:
+            search_for=kwargs["search_for"]
+            codeee=str(filter_number(search_for))
+            objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(code=codeee) )
+        if "account_code" in kwargs:
+            account_code=kwargs["account_code"]
+            objects=objects.filter(Q(bedehkar__code=account_code) | Q(bestankar__code=account_code)  )
+        if "account_id" in kwargs:
+            account_id=kwargs["account_id"]
+            objects=objects.filter(Q(bedehkar_id=account_id) | Q(bestankar_id=account_id)  )
+        if "parent_id" in kwargs:
+            parent_id=kwargs["parent_id"]
+            objects=objects.filter(parent_id=parent_id)  
+        return objects.order_by('-event_datetime')
+       
+    def roots(self,*args, **kwargs):
+        objects=self.objects.filter(parent_id=None)
+        return objects.all()
+
+    def cheque(self,*args, **kwargs):
+        if "cheque_id" in kwargs and kwargs["cheque_id"] is not None:
+            return self.objects.filter(pk=kwargs['cheque_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        if "event_id" in kwargs and kwargs["event_id"] is not None:
+            return self.objects.filter(pk=kwargs['event_id']).first() 
+         
+    def edit_cheque(self,*args, **kwargs):
+        result,message,cheque=FAILED,"",None
+        if not self.request.user.has_perm(APP_NAME+".add_financialevent"):
+            message="دسترسی غیر مجاز"
+            return result,message,cheque
+    
+        if "cheque_id" in kwargs and kwargs["cheque_id"] is not None:
+            cheque=Cheque.objects.filter(pk=kwargs['cheque_id']).first()  
+            if cheque is None:
+                message="رویداد پیدا نشد."
+                return result,message,cheque
+
+        if "title" in kwargs and kwargs["title"] is not None:
+            cheque.title=kwargs['title']
+
+
+        if "status" in kwargs  :
+            cheque.status=kwargs['status']
+
+
+        if "amount" in kwargs and kwargs["amount"] is not None:
+            cheque.amount=kwargs['amount']
+
+        if "payment_method" in kwargs and kwargs["payment_method"] is not None:
+            cheque.payment_method=kwargs['payment_method']
+
+            
+        if "shipping_fee" in kwargs and kwargs["shipping_fee"] is not None:
+            cheque.shipping_fee=kwargs['shipping_fee'] 
+
+        if "discount" in kwargs and kwargs["discount"] is not None:
+            cheque.discount=kwargs['discount']
+        if "tax_percentage" in kwargs and kwargs["tax_percentage"] is not None:
+            cheque.tax_percentage=kwargs['tax_percentage']
+
+        if "shipping_fee" in kwargs and kwargs["shipping_fee"] is not None:
+            cheque.shipping_fee=kwargs['shipping_fee']
+
+        if "bedehkar_id" in kwargs and kwargs["bedehkar_id"] is not None:
+            cheque.bedehkar_id=kwargs['bedehkar_id']
+
+        if "bestankar_id" in kwargs and kwargs["bestankar_id"] is not None:
+            cheque.bestankar_id=kwargs['bestankar_id']
+        
+        if 'event_datetime1' in kwargs and kwargs['event_datetime'] is not None:
+            event_datetime=kwargs["event_datetime"]
+            cheque.event_datetime=event_datetime
+
+           
+            year=event_datetime[:2]
+            if year=="13" or year=="14":
+                event_datetime=PersianCalendar().to_gregorian(event_datetime)
+            cheque.event_datetime=event_datetime
+
+        # if 'start_datetime' in kwargs:
+        #     start_datetime=kwargs["start_datetime"]
+        #     cheque.start_datetime=start_datetime
+
+           
+        #     year=start_datetime[:2]
+        #     if year=="13" or year=="14":
+        #         start_datetime=PersianCalendar().to_gregorian(start_datetime)
+        #     cheque.start_datetime=start_datetime
+
+        # if 'end_datetime' in kwargs:
+        #     end_datetime=kwargs["end_datetime"]
+        #     cheque.end_datetime=end_datetime
+
+           
+        #     year=end_datetime[:2]
+        #     if year=="13" or year=="14":
+        #         end_datetime=PersianCalendar().to_gregorian(end_datetime)
+        #     cheque.end_datetime=end_datetime
+
+        result,message,cheque=cheque.save()
+
+        return result,message,cheque
+       
+    def delete_all(self,*args, **kwargs):
+        result,message=FAILED,""
+        if not self.request.user.has_perm(APP_NAME+".delete_financialevent"):
+            message="دسترسی غیر مجاز"
+            return result,message
+        cheques=Cheque.objects.all()
+        cheques.delete()
+        result=SUCCEED
+        message='همه رویداد ها حذف شدند.'
+        return result,message
+    
+    def add_cheque(self,*args,**kwargs):
+        result,message,cheque=FAILED,"",None
+        
+        if len(Cheque.objects.filter(title=kwargs['title']))>0:
+            message='عنوان تکراری' 
+            return result,message,None
+        
+        if not self.request.user.has_perm(APP_NAME+".add_financialevent"):
+            message="دسترسی غیر مجاز"
+            return result,message,cheque
+
+        cheque=Cheque()
+        if 'bedehkar_id' in kwargs:
+            cheque.bedehkar_id=kwargs["bedehkar_id"]
+        if 'bestankar_id' in kwargs:
+            cheque.bestankar_id=kwargs["bestankar_id"]
+
+            
+        if "shipping_fee" in kwargs and kwargs["shipping_fee"] is not None:
+            cheque.shipping_fee=kwargs['shipping_fee'] 
+
+        if "payment_method" in kwargs and kwargs["payment_method"] is not None:
+            cheque.payment_method=kwargs['payment_method'] 
+
+        if 'title' in kwargs and kwargs["title"] is not None:
+            cheque.title=kwargs["title"]
+        if 'description' in kwargs and kwargs["description"] is not None:
+            cheque.description=kwargs["description"]
+        if 'parent_id' in kwargs and kwargs["parent_id"] is not None:
+            if kwargs["parent_id"]>0:
+                cheque.parent_id=kwargs["parent_id"]
+        if 'color' in kwargs and kwargs["color"] is not None:
+            cheque.color=kwargs["color"]
+        if 'amount' in kwargs and kwargs["amount"] is not None:
+            cheque.amount=kwargs["amount"]
+        if 'priority' in kwargs and kwargs["priority"] is not None:
+            cheque.priority=kwargs["priority"]
+        if 'type' in kwargs and kwargs["type"] is not None:
+            cheque.type=kwargs["type"]
+        if 'event_datetime' in kwargs and kwargs["event_datetime"] is not None:
+            event_datetime=kwargs["event_datetime"]
+            cheque.event_datetime=event_datetime
+
+           
+            year=event_datetime[:2]
+            if year=="13" or year=="14":
+                event_datetime=PersianCalendar().to_gregorian(event_datetime)
+            cheque.event_datetime=event_datetime
+
+        # if 'start_datetime' in kwargs:
+        #     start_datetime=kwargs["start_datetime"]
+        #     cheque.start_datetime=start_datetime
+
+           
+        #     year=start_datetime[:2]
+        #     if year=="13" or year=="14":
+        #         start_datetime=PersianCalendar().to_gregorian(start_datetime)
+        #     cheque.start_datetime=start_datetime
+
+        # if 'end_datetime' in kwargs:
+        #     end_datetime=kwargs["end_datetime"]
+        #     cheque.end_datetime=end_datetime
+
+           
+        #     year=end_datetime[:2]
+        #     if year=="13" or year=="14":
+        #         end_datetime=PersianCalendar().to_gregorian(end_datetime)
+        #     cheque.end_datetime=end_datetime
+
+        (result,message,cheque)=cheque.save()
+        return result,message,cheque
+ 

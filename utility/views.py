@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-
+from .log import leolog
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
@@ -10,7 +10,9 @@ from phoenix.server_settings import DB_PREFIX_NAME,PUSHER_IS_ENABLE,DEBUG, MEDIA
 from phoenix.server_apps import phoenix_apps
 from django.utils import timezone
 from django.http import HttpResponse
-
+from .repo import ClipBoardItemRepo
+from .serializers import MyLinkSerializer
+import json
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='utility/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -23,11 +25,50 @@ def getContext(request,*args, **kwargs):
  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
+
+def ClipBoardItemContext(request,*args, **kwargs):
+    context={}
+    if 'person' in kwargs:
+        person=kwargs['person']
+    if person is None:
+        from authentication.repo import PersonRepo
+        person=PersonRepo(request=request).me
+    if person is None:
+        return {}
+    from .repo import ClipBoardItemRepo
+    clipboard_items=ClipBoardItemRepo(request=request).list()
+    if len(clipboard_items)>0:
+        context['clipboard_items']=clipboard_items
+    return context
+
+
+def MyLinksContext(request,*args, **kwargs):
+    context={}
+    if 'person' in kwargs:
+        person=kwargs['person']
+    if person is None:
+        from authentication.repo import PersonRepo
+        person=PersonRepo(request=request).me
+    if person is None:
+        return {}
+    from .repo import MyLinkRepo
+    my_links=MyLinkRepo(request=request).list()
+    if len(my_links)>0:
+        context['my_links']=my_links
+        my_links_s=json.dumps(MyLinkSerializer(my_links,many=True).data)
+        context['my_links_s']=my_links_s
+    return context
+
 def SearchContext(request,app_name,search_for,*args, **kwargs):
     context={}
     return context
 
 
+def NoPersmissionView(request,*args, **kwargs):
+        body="اکانت شما مجوز دسترسی لازم را دارا نمی باشد."
+        title="عدم دسترسی"
+        mv=MessageView(title=title,body=body)
+        return mv.get(request=request)
 
 class SearchView(View):
     def get(self,request,*args, **kwargs):
@@ -160,6 +201,8 @@ class ParametersView(View):
         context['WIDE_LAYOUT']=True
         context['phoenix_apps']=phoenix_apps
 
+        if not self.request.user.has_perm(APP_NAME+'.change_parameter'):
+            return NoPersmissionView(request=request)
         return render(request,TEMPLATE_ROOT+"parameters.html",context) 
 
  
@@ -178,7 +221,9 @@ class BackupDBView(View):
         file_path = str(DB_FILE_PATH)
         # return JsonResponse({'download:':str(file_path)})
         import os
-        filename=DB_PREFIX_NAME+"__"+timezone.now().strftime("%Y%m%d_%H_%M_%S")+".sqlite3"
+        from utility.calendar import PersianCalendar
+        sss=PersianCalendar().from_gregorian(greg_date_time=timezone.now())
+        filename=DB_PREFIX_NAME+"__"+sss+".sqlite3"
         if os.path.exists(file_path):
             with open(file_path, 'rb') as fh:
                 response = HttpResponse(

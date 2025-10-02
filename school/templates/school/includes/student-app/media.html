@@ -1,0 +1,13 @@
+{% load to_price %}
+<div class="media">
+  <img :src="student.person_account.person.image" class="rounded" width="64" alt="" />
+  <div class="media-body mr-2">
+    <h5 class="text-primary">
+      <a :href="student.get_absolute_url">
+        <span v-text="student.last_name"></span>
+       ،
+        <span v-text="student.first_name"></span>
+      </a>
+    </h5>
+  </div>
+</div>

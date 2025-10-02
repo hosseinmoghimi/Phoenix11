@@ -1,0 +1,27 @@
+
+{% extends "scheduler/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="row rtl farsi">
+    {% if add_appointment_form %}
+      <div class="col-md-12">
+          {% include "scheduler/includes/add-appointment-app/template.html" %}
+
+      </div>
+    {% endif %}
+    <div class="col-md-12">
+
+        
+        {% include "scheduler/includes/appointments-app/template.html" %}
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "scheduler/includes/appointments-app/script.html" %}
+{% if add_appointment_form %}
+{% include "scheduler/includes/add-appointment-app/script.html" %}
+{% endif %}
+{% endblock script %}

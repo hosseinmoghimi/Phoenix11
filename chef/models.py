@@ -19,7 +19,6 @@ class Food(models.Model,LinkHelper):
         return self.name
  
 
-
 class FoodItem(Product,LinkHelper):
     
     app_name=APP_NAME
@@ -40,6 +39,7 @@ class FoodItem(Product,LinkHelper):
         result=SUCCEED
         message="آیتم غذایی با موفقیت اضافه شد."
         return (result,message,food_item)
+
 
 class Meal(Invoice):
      

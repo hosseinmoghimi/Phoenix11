@@ -1,25 +1,42 @@
-from accounting.forms import AddProductForm,forms,AddInvoiceForm
+from accounting.forms import AddProductForm,forms,AddInvoiceForm,AddEventForm
+from core.forms import EditPageForm
 
 class AddSubProjectForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)
     parent_id=forms.IntegerField(required=True)
      
- 
-class AddProjectForm(forms.Form):
+class AddTicketForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)
+    parent_id=forms.IntegerField(required=False)
+    project_id=forms.IntegerField(required=True)
+    person_id=forms.IntegerField(required=True)
+    description=forms.CharField(max_length=5000,required=False)
+    
+class SelectProjectForm(forms.Form):
+    project_id=forms.IntegerField(required=True)
+ 
+class AddProjectForm(AddEventForm):
     contractor_id=forms.IntegerField(required=True)
     employer_id=forms.IntegerField(required=True)
     percentage_completed=forms.IntegerField(required=True)
-    event_datetime=forms.CharField(max_length=50,required=False)
-    start_datetime=forms.CharField(max_length=50,required=False)
-    end_datetime=forms.CharField(max_length=50,required=False)
     type=forms.CharField(max_length=50,required=False)
     weight=forms.IntegerField(required=False)
+     
 
-class EditProjectForm(forms.Form):
-    parent_id=forms.IntegerField(required=False)
-    title=forms.CharField(max_length=100, required=False)
-    priority=forms.IntegerField(required=True)
+
+
+class AddEventToProjectForm(AddEventForm):
+    project_id=forms.IntegerField(required=True)
+    event_id=forms.IntegerField(required=True)
+    
+
+class AddInvoiceToProjectForm(forms.Form):
+    invoice_id=forms.IntegerField(required=True)
+    project_id=forms.IntegerField(required=True)
+     
+ 
+
+class EditProjectForm(EditPageForm):
     project_id=forms.IntegerField(required=True)
     weight=forms.IntegerField(required=False)
     percentage_completed=forms.IntegerField(required=True)
@@ -27,7 +44,6 @@ class EditProjectForm(forms.Form):
     contractor_id=forms.IntegerField(required=False)
     start_datetime=forms.CharField(max_length=20, required=True)
     end_datetime=forms.CharField(max_length=20, required=True)
-    status=forms.CharField(max_length=50, required=False)
     archive=forms.BooleanField(required=False)
         
 class AddProjectInvoiceForm(AddInvoiceForm):
@@ -60,7 +76,9 @@ class AddRemoteClientForm(forms.Form):
     adsl_password=forms.CharField(max_length=50, required=False)
     telephone=forms.CharField(max_length=50, required=False)
     contact=forms.CharField(max_length=50, required=False)
+    pattern=forms.CharField(max_length=50, required=False)
     brand_id=forms.IntegerField(required=False)
+    product_id=forms.IntegerField(required=False)
     model_name=forms.CharField(max_length=20, required=False)
     id_name=forms.CharField(max_length=20, required=False)
     part_no=forms.CharField(max_length=20, required=False)

@@ -123,10 +123,12 @@ class PersianCalendar:
         if value=="":
             return None
         shamsi_date_time=value
-
+        a=shamsi_date_time.replace('/','')
+        from .log import leolog
+        shamsi_date_time=a
         year_=int(shamsi_date_time[0:4])
-        month_=int(shamsi_date_time[5:7])
-        day_=int(shamsi_date_time[8:10])
+        month_=int(shamsi_date_time[4:6])
+        day_=int(shamsi_date_time[6:8])
         padding=shamsi_date_time.find(':')
         
         hour_=0
@@ -187,14 +189,17 @@ class PersianCalendar:
             sec_=0
             
         sss=TehranTimezone()
-        delta=datetime.timedelta(days=-1,hours=HOURS_OFFSET,minutes=MINUTES_OFFSET)
+        delta=datetime.timedelta(days=0,hours=HOURS_OFFSET,minutes=MINUTES_OFFSET)
         # delta=datetime.timedelta(hours=4,minutes=30)
         a=JalaliDatetime(datetime.datetime(year_, month_, day_, hour_, min_, sec_, 0, TehranTimezone())+delta)
         
         delta2=datetime.timedelta(hours=0)
+        delta3=datetime.timedelta(hours=0)
+        if a.month<7 :
+            delta3=datetime.timedelta(days=-1)
         if a.month<7 and DAY_LIGHT_SAVING:
             delta2=datetime.timedelta(hours=1)
-            a=JalaliDatetime(datetime.datetime(year_, month_, day_, hour_, min_, sec_, 0, TehranTimezone())+delta+delta2)
+        a=JalaliDatetime(datetime.datetime(year_, month_, day_, hour_, min_, sec_, 0, TehranTimezone())+delta+delta2+delta3)
         strftime="%Y/%m/%d %H:%M:%S"
         if 'only_date' in kwargs:
             if kwargs['only_date']:

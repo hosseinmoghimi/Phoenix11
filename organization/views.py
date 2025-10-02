@@ -24,8 +24,10 @@ def getContext(request,*args, **kwargs):
     return context
 
 
-def OrganizationUnitContext(request,food_item,*args, **kwargs):
-    context=PageContext(request=request,page=food_item)
+def OrganizationUnitContext(request,organization_unit,*args, **kwargs):
+    context=PageContext(request=request,page=organization_unit)
+    context['organization_unit']=organization_unit
+
     return context
   
  
@@ -33,9 +35,9 @@ def organization_unit_employees_link(organization_unit):
     result=''
     for employee in organization_unit.employee_set.all():
         result+=f"""
-        <a title="{employee.person.full_name}" href="{employee.get_absolute_url()}">
+        <a title="{employee.person_account.person.full_name}" href="{employee.get_absolute_url()}">
         <div class='text-center'>
-        <img class="rounded-circle" width="64" src="{employee.person.image()}">
+        <img class="rounded-circle" width="64" src="{employee.person_account.person.image()}">
         </div>
         <div class='text-center'>
               <small class="text-muted mr-1">{employee.job_title}</small>
@@ -58,6 +60,29 @@ def AddEmployeeContext(request,*args, **kwargs):
     return context
   
 
+def SearchContext(request,search_for,*args, **kwargs):
+    context={}
+    WAS_FOUND=False
+    
+
+    organization_units=OrganizationUnitRepo(request=request).list(search_for=search_for)
+    if len(organization_units)>0:
+        context['organization_units']=organization_units
+        context['organization_units_s']=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+        WAS_FOUND=True
+
+
+    employees=EmployeeRepo(request=request).list(search_for=search_for)
+    if len(employees)>0:
+        context['employees']=employees
+        context['employees_s']=json.dumps(EmployeeSerializer(employees,many=True).data)
+        WAS_FOUND=True
+
+
+    context['WAS_FOUND']=WAS_FOUND
+    return context
+
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -72,12 +97,20 @@ class OrganizationUnitView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request) 
         organization_unit=OrganizationUnitRepo(request=request).organization_unit(*args, **kwargs)
-        context['organization_unit']=organization_unit
+        context.update(OrganizationUnitContext(request=request,organization_unit=organization_unit))
 
         employees = organization_unit.employee_set.all()
         context['employees']=employees
         employees_s=json.dumps(EmployeeSerializer(employees,many=True).data)
         context['employees_s']=employees_s
+
+        
+        from projectmanager.views import ProjectRepo,ProjectSerializer
+        projects = ProjectRepo(request=request).list(organization_unit_id=organization_unit.id)
+        context['projects']=projects
+        projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
+        context['projects_s']=projects_s
+
 
 
 
@@ -115,11 +148,18 @@ class OrganizationUnitsView(View):
 class EmployeeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
+        employee=EmployeeRepo(request=request).employee(*args, **kwargs)
+        if employee is None:
+            cc={
+                'title':'',
+                'body':'',
+            }
+            mv=MessageView(**cc)
+            return mv.get(request=request)
+        context['employee']=employee
         phoenix_apps=context["phoenix_apps"]
         phoenix_apps=phoenix_apps
         phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
-
         return render(request,TEMPLATE_ROOT+"employee.html",context)
 
 

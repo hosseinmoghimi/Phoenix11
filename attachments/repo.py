@@ -1,7 +1,10 @@
 from core.repo import PageRepo,PersonRepo,FAILED,SUCCEED
-from .models import Like,Comment,Link,Download,Image,Location,Area, Tag
+from .models import Like,Comment,Link,Download,Image,Location,Area, Tag,PagePrint
 from .apps import APP_NAME
 from django.db.models import Q
+from .enums import PagePrintTypeEnum
+from utility.log import leolog
+
 
 class ImageRepo():
 
@@ -12,6 +15,8 @@ class ImageRepo():
         objects=Image.objects
         if 'page_id' in kwargs:
             objects=objects.filter(page_id=kwargs['page_id'])
+        if 'search_for' in kwargs:
+            objects=objects.filter(Q(title__contains=kwargs['search_for']))
         return objects.all()
     def image(self,*args, **kwargs):
         if 'pk' in kwargs and kwargs['pk'] is not None:
@@ -55,7 +60,62 @@ class ImageRepo():
         result=SUCCEED
         message="کامنت با موفقیت حذف گردید."
         return result,message
-     
+
+
+   
+class PagePrintRepo():
+
+    def __init__(self,request,*args, **kwargs):
+        self.objects=PagePrint.objects
+        self.request=request
+    def list(self,*args, **kwargs):
+        objects=PagePrint.objects
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        if 'person_id' in kwargs:
+            objects=objects.filter(person_id=kwargs['person_id'])
+        return objects.all()
+
+    def add_page_print(self,*args, **kwargs):
+        result,message,page_print=FAILED,"",None
+        me_person=PersonRepo(request=self.request).me
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if me_person is None:
+            return result,message,page_print
+        if page is None:
+            return result,message,page_print
+        page_print=PagePrint(person_id=me_person.id,page_id=page.id)
+        if 'page_print' in kwargs:
+            page_print_text=kwargs['page_print']
+            
+        if 'printed' in kwargs:
+            printed=kwargs['printed']
+            page_print.printed=kwargs['printed']
+
+        from .enums import PagePrintTypeEnum        
+        if 'draft' in kwargs:
+            draft=kwargs['draft']
+            if draft:
+                page_print.type=PagePrintTypeEnum.DRAFT
+        
+        
+
+        if 'type' in kwargs: 
+            page_print.type=kwargs['type']
+        
+        if 'official' in kwargs:
+            official=kwargs['official']
+            if official:
+                page_print.type=PagePrintTypeEnum.OFFICIAL
+        
+        
+        page_print.save()
+
+        result=SUCCEED
+        message='پرینت صفحه با موفقیت اضافه شد.'
+         
+        return result,message,page_print
+
 
 class CommentRepo():
 
@@ -64,6 +124,8 @@ class CommentRepo():
         self.request=request
     def list(self,*args, **kwargs):
         objects=Comment.objects
+        if 'search_for' in kwargs:
+            objects=objects.filter(Q(comment__contains=kwargs['search_for']))
         if 'page_id' in kwargs:
             objects=objects.filter(page_id=kwargs['page_id'])
         return objects.all()
@@ -74,13 +136,15 @@ class CommentRepo():
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if me_person is None:
             return None
-        if page is None:
-            return None
         if 'comment' in kwargs:
             comment_text=kwargs['comment']
         if comment_text is None:
             return result,message,comment
         comment=Comment(person_id=me_person.id,page_id=page.id,comment=comment_text)
+        if 'parent_id' in kwargs:
+            parent_id=kwargs['parent_id']
+            if parent_id is not None and parent_id>0:
+                comment.parent_id=parent_id
         comment.save()
         result=SUCCEED
         message='کامنت با موفقیت اضافه شد.'
@@ -160,6 +224,14 @@ class LikeRepo():
     def __init__(self,request,*args, **kwargs):
         self.objects=Like.objects
         self.request=request
+        self.me_person=PersonRepo(request=request).me
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'person_id' in kwargs:
+            objects=objects.filter(person_id=kwargs['person_id'])
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        return objects.all()
     def toggle_like(self,*args, **kwargs):
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is None:
@@ -193,8 +265,11 @@ class LikeRepo():
         if page is None:
             return None
         return len(Like.objects.filter(page_id=page.pk))    
+    def my_likes(self,*args, **kwargs):
+        if self.me_person is not None:
+            return Like.objects.filter(person_id=self.me_person.id)
+ 
     
-
 
 class LinkRepo():
     def __init__(self,request,*args, **kwargs):
@@ -202,6 +277,8 @@ class LinkRepo():
         self.request=request
     def list(self,*args, **kwargs):
         objects=self.objects
+        if 'search_for' in kwargs:
+            objects=objects.filter(Q(title__contains=kwargs['search_for']))
         if 'page_id' in kwargs:
             page_id=kwargs['page_id']
             objects=objects.filter(page_id=page_id)
@@ -230,6 +307,9 @@ class DownloadRepo():
             return self.objects.filter(pk=kwargs['pk']).first()
     def list(self,*args, **kwargs):
         objects=self.objects
+        if 'search_for' in kwargs:
+            objects=objects.filter(Q(title__contains=kwargs['search_for']))
+        
         if 'page_id' in kwargs:
             page_id=kwargs['page_id']
             objects=objects.filter(page_id=page_id)
@@ -313,7 +393,6 @@ class LocationRepo():
 
     def add_location(self,*args, **kwargs):
         from utility.log import leolog
-        leolog(kwargs=kwargs)
         result,message,location=FAILED,'',self
         if not self.user.has_perm(APP_NAME+".add_location"):
             return result,message,None

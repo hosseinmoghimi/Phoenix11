@@ -1,0 +1,29 @@
+<script>
+    let prescriptions_for_prescriptions_app=JSON.parse("{{prescriptions_s|escapejs}}")
+    let prescriptions_app = new Vue({
+        el: "#prescriptions-app",
+        data: {
+            prescriptions: prescriptions_for_prescriptions_app,
+            search_for:"",
+        },
+        methods: {
+            filter: () => {
+                let search_for = (prescriptions_app.search_for).toUpperCase()
+                console.log(search_for)
+                prescriptions_app.prescriptions = prescriptions_for_prescriptions_app.filter(function (prescription) {
+                    let title=(prescription.title).toUpperCase()
+                    
+                    if(title.indexOf(search_for) > -1){
+                        return true
+                    }
+                    return false
+                })
+
+            },
+
+            to_price: (vall) => {
+                return to_price(vall)
+            }
+        }
+    })
+</script>

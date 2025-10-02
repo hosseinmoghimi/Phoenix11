@@ -1,0 +1,24 @@
+<div class="media">
+  <a :href="appointment.get_absolute_url">
+    <img :src="appointment.thumbnail" class="rounded" width="64" alt="" />
+  </a>
+  <div class="media-body mr-2">
+    <h5>
+      <a :href="appointment.get_absolute_url">
+        <span v-text="appointment.title"></span>
+      </a>
+    </h5>
+
+    
+    {% for person_to_meet in appointment.persons_to_meet.all %}
+       <h6>
+          
+        <a :href="person_to_meet.get_absolute_url">
+          <img :src="person_to_meet.image" width="32" class="rounded-circle" alt="">
+          <span v-text="person_to_meet.full_name"></span>
+        </a>
+      </h6>
+      {% endfor %}
+    
+  </div>
+</div>

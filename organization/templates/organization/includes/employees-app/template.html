@@ -29,6 +29,7 @@
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
+              <th>کارمند</th> 
               <th>شخص</th> 
 
               
@@ -40,11 +41,14 @@
             </thead>
             <tbody>
               <tr v-for="employee in employees">
+              <td>
+                {% include "organization/includes/employee-app/media.html" %}
 
+              </td>
                 <td>
-                  <a :href="employee.person.get_absolute_url">
-                    <span v-text="employee.person.full_name"></span>
-                  </a>
+                  <div v-for="person_account in [employee.person_account]">
+                    {% include "accounting/includes/person-account-app/media.html" %}
+                  </div>
 
                 </td>
 
@@ -55,9 +59,17 @@
                 {% if not organization_unit %}
                   
                 <td>
-                  <a :href="employee.organization_unit.get_absolute_url">
-                    <span v-text="employee.organization_unit.title"></span>
+                  <div class="media">
+                      <a :href="employee.organization_unit.get_absolute_url">
+                    <img :src="employee.organization_unit.thumbnail" class="rounded" width="48">
                   </a>
+                    <div class="media-body mr-2">
+  <a :href="employee.organization_unit.get_absolute_url">
+                    <h5 v-text="employee.organization_unit.title"></h5>
+                  </a>
+                    </div>
+                  </div>
+                
                 </td>
                 {% endif %}
 

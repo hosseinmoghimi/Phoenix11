@@ -5,7 +5,7 @@
 <div class="card rtl text-right">
     <div class="card-header">
         <h5 class="text-center">
-            حساب
+            حساب فول
         </h5>
     </div>
     <div class="card-body">
@@ -14,8 +14,8 @@
             {{account.parent_account.get_breadcrumb_link|safe}}
         </div>
         {% endif %}
-        <div class="mt-2" id="account-code-app">
-            <h5 class="ltr" @click="copy_code()" style="cursor: pointer;">
+        <div class="mt-2" id="account-code-app" vcloack>
+            <h5 class="ltr" @click="copy_code_to_clipboard(account.code)" style="cursor: pointer;">
                 <span class="ltr">
                     {{account.code | account_code_seperator}}
                 </span>
@@ -54,17 +54,17 @@
                 <i class="fa fa-trash text-danger"></i> حذف
             </a>
             {% endif %}
+        </div> 
+        
+      {% if SHOW_BALANCE %}
+        
+      <div id="account-balance-app">
+          <small class="text-muted">مانده : </small>
+          {{account.balance|to_price_color_btn|safe}}
+          <small class="text-muted" v-show="show_balance_copied">کپی شد.</small>
+          
         </div>
-        <!-- <div>
-            <small class="text-muted">مانده : </small>
-            {{account.balance|to_price}} {{CURRENCY}}
-        </div> -->
-        <div id="account-balance-app">
-            <small class="text-muted">مانده : </small>
-            {{account.balance|to_price_color_btn|safe}}
-            <small class="text-muted" v-show="show_balance_copied">کپی شد.</small>
-
-        </div>
+        {% endif %}
 
         <div>
             <small class="text-muted">سطح : </small>
@@ -86,8 +86,6 @@
             <small class="text-muted">ماهیت : </small>
             {{account.nature}}
         </div>
-        <div class="my-3">
-            {% include "core/includes/page-priority-app/template.html" %}
-        </div>
+      
     </div>
 </div>

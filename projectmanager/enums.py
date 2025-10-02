@@ -12,7 +12,18 @@ class ProjectTypeEnum(TextChoices):
 
 
 
-
+def StatusColor(project):
+    if project.status==ProjectStatusEnum.DRAFT:
+        return 'muted'
+    if project.status==ProjectStatusEnum.FINISHED:
+        return 'success'
+    if project.status==ProjectStatusEnum.IN_PROGRESS:
+        return 'info'
+    if project.status==ProjectStatusEnum.STARTED:
+        return 'warning'
+    if project.status==ProjectStatusEnum.SUSPENDED:
+        return 'danger'
+    return 'primary'
 
 
 class ProjectStatusEnum(TextChoices):
@@ -20,6 +31,8 @@ class ProjectStatusEnum(TextChoices):
     STARTED="شروع شده",_("شروع شده")
     IN_PROGRESS="در جریان",_("در جریان")
     FINISHED="پایان یافته",_("پایان یافته") 
+    SUSPENDED="معلق",_("معلق") 
+
 
 class TicketTypeEnum(TextChoices):
     TYPE_A="تایپ A",_("تایپ A")

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import CourseRepo,SchoolRepo,CourseClassRepo
-from .serializers import CourseClassSerializer,SchoolSerializer,CourseSerializer
+from .repo import CourseRepo,SchoolRepo,CourseClassRepo,TeacherRepo,StudentRepo,MajorRepo,SessionRepo,StudentInSessionRepo
+from .serializers import CourseClassSerializer,SchoolSerializer,CourseSerializer,TeacherSerializer,StudentInSessionSerializer,SessionSerializer,StudentSerializer,MajorSerializer
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
@@ -9,9 +9,11 @@ from core.views import CoreContext
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 import json
+from library.serializers import BookSerializer
+
 from utility.enums import UnitNameEnum
 from utility.log import leolog
-from accounting.views import AddInvoiceLineContext,InvoiceContext,ProductContext
+from accounting.views import AddInvoiceLineContext,InvoiceContext,ProductContext,AccountContext
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='school/'
 WIDE_LAYOUT="WIDE_LAYOUT"
@@ -24,7 +26,10 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 
- 
+def AddCourseClassContext(request,*args, **kwargs):
+    context={}
+    context['add_course_class_form']=AddCourseClassForm()
+    return context
  
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -36,10 +41,82 @@ class IndexView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
-# Create your views here. 
 
+def AddTeacherContext(request):
+    context={}
+    context['add_teacher_form']=AddTeacherForm()
+    return context
+
+def AddMajorContext(request):
+    context={}
+    context['add_major_form']=AddMajorForm()
+    return context
+
+class TeachersView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        teachers=TeacherRepo(request=request).list(*args, **kwargs)
+        context["teachers"]=teachers
+        teachers_s=json.dumps(TeacherSerializer(teachers,many=True).data)
+        context["teachers_s"]=teachers_s
+        if request.user.has_perm(APP_NAME+'.add_teacher'):
+            context.update(AddTeacherContext(request=request))
+        return render(request,TEMPLATE_ROOT+"teachers.html",context)
+# Create your views here. 
+   
+class StudentsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        students=StudentRepo(request=request).list(*args, **kwargs)
+        context["students"]=students
+        students_s=json.dumps(StudentSerializer(students,many=True).data)
+        context["students_s"]=students_s
+        if request.user.has_perm(APP_NAME+'.add_student'):
+            context['add_student_form']=AddStudentForm()
+        return render(request,TEMPLATE_ROOT+"students.html",context)
+# Create your views here. 
+   
  
  
+class StudentView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        student=StudentRepo(request=request).student(*args, **kwargs)
+        context["student"]=student
+        student_s=json.dumps(StudentSerializer(student,many=False).data)
+        context["student_s"]=student_s
+
+
+
+
+
+        students_in_session=StudentInSessionRepo(request=request).list(student_id=student.id).order_by('session__session_no')
+        context["students_in_session"]=students_in_session
+        students_in_session_s=json.dumps(StudentInSessionSerializer(students_in_session,many=True).data)
+        context["students_in_session_s"]=students_in_session_s
+
+
+
+        context.update(AccountContext(request=request,account=student.person_account))
+         
+        return render(request,TEMPLATE_ROOT+"student.html",context)
+ 
+ 
+class TeacherView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        teacher=TeacherRepo(request=request).teacher(*args, **kwargs)
+        context["teacher"]=teacher
+        teacher_s=json.dumps(TeacherSerializer(teacher,many=False).data)
+        context["teacher_s"]=teacher_s
+
+        context.update(AccountContext(request=request,account=teacher.person_account))
+
+        return render(request,TEMPLATE_ROOT+"teacher.html",context)
+
+
 class SchoolsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -50,8 +127,7 @@ class SchoolsView(View):
         if request.user.has_perm(APP_NAME+'.add_school'):
             context['add_school_form']=AddSchoolForm()
         return render(request,TEMPLATE_ROOT+"schools.html",context)
-# Create your views here. 
-   
+    
  
 class SchoolView(View):
     def get(self,request,*args, **kwargs):
@@ -62,11 +138,16 @@ class SchoolView(View):
         school_s=json.dumps(SchoolSerializer(school,many=False).data)
         context["school_s"]=school_s
 
+
+
+        course_classes=CourseClassRepo(request=request).list(school_id=school.id,*args, **kwargs)
+        context["course_classes"]=course_classes
+        course_classes_s=json.dumps(CourseClassSerializer(course_classes,many=True).data)
+        context["course_classes_s"]=course_classes_s
+
+
         return render(request,TEMPLATE_ROOT+"school.html",context)
-# Create your views here. 
-
-
-
+ 
  
 class CoursesView(View):
     def get(self,request,*args, **kwargs):
@@ -78,7 +159,6 @@ class CoursesView(View):
         if request.user.has_perm(APP_NAME+'.add_course'):
             context['add_course_form']=AddCourseForm()
         return render(request,TEMPLATE_ROOT+"courses.html",context)
-# Create your views here. 
    
  
 class CourseView(View):
@@ -90,21 +170,69 @@ class CourseView(View):
         course_s=json.dumps(CourseSerializer(course,many=False).data)
         context["course_s"]=course_s
 
-        return render(request,TEMPLATE_ROOT+"course.html",context)
-# Create your views here. 
 
+        books=course.books.all()
+        context["books"]=books
+        books_s=json.dumps(BookSerializer(books,many=True).data)
+        context["books_s"]=books_s
+
+
+        course_classes=CourseClassRepo(request=request).list(course_id=course.id,*args, **kwargs)
+        context["course_classes"]=course_classes
+        course_classes_s=json.dumps(CourseClassSerializer(course_classes,many=True).data)
+        context["course_classes_s"]=course_classes_s
+
+
+
+        return render(request,TEMPLATE_ROOT+"course.html",context)
+
+
+class MajorView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        major=MajorRepo(request=request).major(*args, **kwargs)
+        context["major"]=major
+        major_s=json.dumps(MajorSerializer(major,many=False).data)
+        context["major_s"]=major_s
+
+
+        course_classes=CourseClassRepo(request=request).list(major_id=major.id,*args, **kwargs)
+        context["course_classes"]=course_classes
+        course_classes_s=json.dumps(CourseClassSerializer(course_classes,many=True).data)
+        context["course_classes_s"]=course_classes_s
+
+        
+        courses=major.courses.all()
+        context["courses"]=courses
+        courses_s=json.dumps(CourseSerializer(courses,many=True).data)
+        context["courses_s"]=courses_s
+
+        return render(request,TEMPLATE_ROOT+"major.html",context)
 
 
 class CourseClassesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        course_classs=CourseClassRepo(request=request).list(*args, **kwargs)
-        context["course_classs"]=course_classs
-        course_classs_s=json.dumps(CourseClassSerializer(course_classs,many=True).data)
-        context["course_classs_s"]=course_classs_s
-
+        course_classes=CourseClassRepo(request=request).list(*args, **kwargs)
+        context["course_classes"]=course_classes
+        course_classes_s=json.dumps(CourseClassSerializer(course_classes,many=True).data)
+        context["course_classes_s"]=course_classes_s
+        if request.user.has_perm(APP_NAME+'.add_courseclass'):
+            context.update(AddCourseClassContext(request=request))
         return render(request,TEMPLATE_ROOT+"course-classes.html",context)
-# Create your views here. 
+
+   
+class MajorsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        majors=MajorRepo(request=request).list(*args, **kwargs)
+        context["majors"]=majors
+        majors_s=json.dumps(MajorSerializer(majors,many=True).data)
+        context["majors_s"]=majors_s
+        if request.user.has_perm(APP_NAME+'.add_major'):
+            context.update(AddMajorContext(request=request))
+        return render(request,TEMPLATE_ROOT+"majors.html",context)
    
  
 class CourseClassView(View):
@@ -116,7 +244,109 @@ class CourseClassView(View):
         course_class_s=json.dumps(CourseClassSerializer(course_class,many=False).data)
         context["course_class_s"]=course_class_s
 
-        return render(request,TEMPLATE_ROOT+"course-class.html",context)
-# Create your views here. 
 
+        books=course_class.course.books.all()
+        context["books"]=books
+        books_s=json.dumps(BookSerializer(books,many=True).data)
+        context["books_s"]=books_s
+        
+        teachers=course_class.teachers.all()
+        context["teachers"]=teachers
+        teachers_s=json.dumps(TeacherSerializer(teachers,many=True).data)
+        context["teachers_s"]=teachers_s
  
+
+        sessions=SessionRepo(request=request).list(course_class_id=course_class.id).order_by('session_no')
+        context["sessions"]=sessions
+        sessions_s=json.dumps(SessionSerializer(sessions,many=True).data)
+        context["sessions_s"]=sessions_s
+
+        next_session_no=1
+        if len(sessions)>0:
+            next_session_no=sessions.last().session_no+1
+        context["next_session_no"]=next_session_no
+        
+        students=course_class.students.all()
+        context["students"]=students
+        students_s=json.dumps(StudentSerializer(students,many=True).data)
+        context["students_s"]=students_s
+ 
+
+        return render(request,TEMPLATE_ROOT+"course-class.html",context)
+
+
+class SessionsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        
+        sessions=SessionRepo(request=request).list(*args, **kwargs) 
+        context["sessions"]=sessions
+        sessions_s=json.dumps(SessionSerializer(sessions,many=True).data)
+        context["sessions_s"]=sessions_s
+
+        return render(request,TEMPLATE_ROOT+"sessions.html",context)
+
+
+
+class SessionView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        
+        session=SessionRepo(request=request).session(*args, **kwargs) 
+        context["session"]=session
+        session_s=json.dumps(SessionSerializer(session,many=False).data)
+        context["session_s"]=session_s
+
+
+        students=session.course_class.students.all()
+        context["students"]=students
+        students_s=json.dumps(StudentSerializer(students,many=True).data)
+        context["students_s"]=students_s
+
+
+
+      
+
+
+        students_in_session=StudentInSessionRepo(request=request).list(session_id=session.id).order_by('student__person_account__person__last_name')
+        context["students_in_session"]=students_in_session
+        students_in_session_s=json.dumps(StudentInSessionSerializer(students_in_session,many=True).data)
+        context["students_in_session_s"]=students_in_session_s
+
+
+
+        return render(request,TEMPLATE_ROOT+"session.html",context)
+
+
+class StudentInSessionsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        
+        sessions=SessionRepo(request=request).list(*args, **kwargs) 
+        context["sessions"]=sessions
+        sessions_s=json.dumps(SessionSerializer(sessions,many=True).data)
+        context["sessions_s"]=sessions_s
+
+        return render(request,TEMPLATE_ROOT+"sessions.html",context)
+
+
+class StudentInSessionView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        
+        session=SessionRepo(request=request).session(*args, **kwargs) 
+        context["session"]=session
+        session_s=json.dumps(SessionSerializer(session,many=False).data)
+        context["session_s"]=session_s
+
+
+        students=session.course_class.students.all()
+        context["students"]=students
+        students_s=json.dumps(StudentSerializer(students,many=True).data)
+        context["students_s"]=students_s
+
+        return render(request,TEMPLATE_ROOT+"session.html",context)

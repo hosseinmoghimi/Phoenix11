@@ -11,17 +11,17 @@
             message: { show: false },
         },
         methods: {
-            select_person:function(){
-                select_person_by_id(add_asset_app.owner_id).done(data=>{
-                    console.log(data.person)
-                    if(data.person){
-                        add_asset_app.owner=data.person
-                    }
-                    else{
-                        add_asset_app.owner={}
-                    }
-                })
-            },
+                select_person:function(){
+                    select_person_by_id(add_asset_app.owner_id).done(data=>{
+                        console.log(data.person)
+                        if(data.person){
+                            add_asset_app.owner=data.person
+                        }
+                        else{
+                            add_asset_app.owner={}
+                        }
+                    })
+                },
             add_asset: function () {
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,

@@ -62,6 +62,8 @@
               <th>قیمت واحد</th>
               <th>تاریخ</th>
               <th>ضریب</th>
+              <th>قیمت جزء</th>
+              <th>درصد</th>
               <th></th>
             </thead>
             <tbody>
@@ -72,7 +74,7 @@
                   <div class="media">
                     <a :href="invoice_line_item_unit.invoice_line_item.get_absolute_url">
                       <img
-                        :src="invoice_line_item_unit.invoice_line_item.logo"
+                        :src="invoice_line_item_unit.invoice_line_item.thumbnail"
                         class="rounded"
                         width="32"
                         alt=""
@@ -117,11 +119,20 @@
                 </td>
                 <td>
                   <span v-text="invoice_line_item_unit.coef"> </span>
-               *
+               
+                </td>
+                <td>
+                  
                   <span
                     v-text="to_price(invoice_line_item_unit.unit_price/invoice_line_item_unit.coef)"
                   >
                   </span>
+                 
+                </td>
+                <td>
+                  <div v-html="invoice_line_item_unit.percentage_tag">
+                  </div>
+                 
                 </td>
                 <td>
                   {% if perms.accounting.change_productprice %}
@@ -179,6 +190,7 @@
                   <option value="{{unit_name}}">{{unit_name}}</option>
                   {% endfor %}
                 </select>
+                <input type="text" v-model="new_item.unit_name" class="form-control">
               </div>
             </div>
 

@@ -1,0 +1,51 @@
+{% extends "school/layout.html" %} {% load static %} {% block content %}
+<div class="row rtl farsi">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5>{{course_class}}</h5>
+
+        {% if perms.school.change_course_class %}
+        <a
+          href="{{course_class.get_edit_url}}"
+          class="my-2 text-warning mx-2"
+          title="ویرایش"
+          target="_blank"
+        >
+          <i class="fa fa-edit text-warning"></i>
+          ویرایش
+        </a>
+        {% endif %} {% if perms.school.delete_course_class %}
+
+        <a
+          href="{{course_class.get_delete_url}}"
+          class="my-2 text-danger mx-2"
+          title="حذف"
+          target="_blank"
+        >
+          <i class="fa fa-trash text-danger"></i>
+          حذف
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    {% include "school/includes/teachers-app/template.html" %}
+   </div>
+
+  <div class="col-md-12">
+       {% include "school/includes/students-app/template.html" %}
+  </div>
+</div>
+{% endblock content %} {% block script %}
+<script>
+  console.log("name1: {{name1}}");
+  console.log("name2: {{name2}}");
+  console.log("name3: {{name3}}");
+</script>
+    {% include "school/includes/teachers-app/script.html" %}
+    {% include "school/includes/students-app/script.html" %}
+
+{% endblock script %}

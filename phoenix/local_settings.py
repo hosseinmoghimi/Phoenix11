@@ -61,6 +61,16 @@ INSTALLED_APPS = [
     'archive',
     'health',
     'messenger',
+    'bms',
+    'resume',
+    'tax',
+    'blog',
+    'library',
+    'traffic',
+    'family',
+    'scheduler',
+    'polls',
+
 ]
  
 

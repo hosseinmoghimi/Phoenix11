@@ -1,5 +1,5 @@
 from messenger.serializers import MessageSerializer, NotificationSerializer
-from authentication.serializers import ProfileSerializer
+from authentication.serializers import PersonSerializer
 import pusher
 from django.db.models.query_utils import Q
 from pusher.http import request_method
@@ -92,7 +92,7 @@ class MessageRepo:
             ssl=True
             )
         # import json
-        # sender=(ProfileSerializer(message.sender).data)
+        # sender=(PersonSerializer(message.sender).data)
         # message_object={'sender':sender,'title':message.title,'body':message.body}
         message_object=MessageSerializer(message).data
         pusher_client.trigger(channel.channel_name, event, message_object)
@@ -121,7 +121,12 @@ class NotificationRepo:
             pk=kwargs['pk']
         if 'id' in kwargs:
             pk=kwargs['id']
-        return self.objects.filter(pk=pk).first()
+        notification= self.objects.filter(pk=pk).first()
+        if 'read' in kwargs:
+            notification.read=kwargs['read']
+            notification.save()
+        return notification
+    
     def send_notification(self,*args, **kwargs):
         member=MemberRepo(request=self.request).member(*args, **kwargs)
         if member is None:
@@ -150,7 +155,7 @@ class NotificationRepo:
             ssl=True
             )
         # import json
-        # sender=(ProfileSerializer(message.sender).data)
+        # sender=(PersonSerializer(message.sender).data)
         # message_object={'sender':sender,'title':message.title,'body':message.body}
         message_object=NotificationSerializer(notification).data
         pusher_client.trigger(channel.channel_name, event, message_object)

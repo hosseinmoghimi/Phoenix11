@@ -1,18 +1,18 @@
 from django.db import models
-from core.models import _,reverse,Page,LinkHelper,DateTimeHelper,FAILED,SUCCEED
-from phoenix.server_settings import CURRENCY
+from core.models import _,reverse,Page,LinkHelper,DateTimeHelper,FAILED,SUCCEED,ImageHelper
+from phoenix.server_settings import CURRENCY,MEDIA_URL
 from .apps import APP_NAME
 from accounting.models import Product,InvoiceLine,Invoice,CorePage
 from .enums import *
-from utility.enums import *
-from projectmanager.models import Request
+from utility.enums import * 
 
+IMAGE_FOLDER = APP_NAME+"/images/"
 
-class WareHouse(models.Model,LinkHelper):
+class WareHouse(models.Model,LinkHelper,ImageHelper):
     name=models.CharField(_("نام"), max_length=50)
+    thumbnail_origin=models.ImageField(_("thumbnail"),blank=True,null=True, upload_to=IMAGE_FOLDER+"warehouse", height_field=None, width_field=None, max_length=None)
     person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"),null=True,blank=True, on_delete=models.PROTECT)
-    organization_unit=models.ForeignKey("organization.organizationunit", verbose_name=_("organization_unit"),null=True,blank=True, on_delete=models.PROTECT)
-
+    employees=models.ManyToManyField("organization.employee",blank=True, verbose_name=_("employees"))
     app_name=APP_NAME
     class_name="warehouse"
     class Meta:
@@ -31,7 +31,6 @@ class WareHouse(models.Model,LinkHelper):
          return  (result,message,warehouse)
  
  
-
 class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
     source=models.ForeignKey("warehouse",related_name="material_from", verbose_name=_("source"), on_delete=models.PROTECT)
@@ -40,7 +39,6 @@ class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     quantity=models.IntegerField(_("quantity"),default=1)
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD,max_length=100)
-    direction=models.CharField(_("direction"),max_length=50,choices=MaterialPortDirectionEnum.choices)
     class_name="materialport"
     app_name=APP_NAME
 
@@ -52,47 +50,123 @@ class MaterialPort(models.Model,LinkHelper,DateTimeHelper):
         return f"{self.person}  {self.product}  {self.direction}"
 
 
-class WareHouseMaterialSheet(models.Model,LinkHelper):
-    ware_house=models.ForeignKey("warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
-    material=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.PROTECT)
-    direction=models.CharField(_("direction"),max_length=50,choices=MaterialPortDirectionEnum.choices)
+class WareHouseSheet(models.Model,LinkHelper,DateTimeHelper):
+    warehouse=models.ForeignKey("warehouse", verbose_name=_("warehouse"),null=True,blank=True, on_delete=models.PROTECT)
+    organization_unit=models.ForeignKey("organization.organizationunit",null=True,blank=True, verbose_name=_("organization_unit"), on_delete=models.PROTECT)
+    invoice_line=models.ForeignKey("accounting.invoiceline", verbose_name=_("invoice_line"), on_delete=models.PROTECT)
+    direction=models.CharField(_("direction"),max_length=50,choices=WareHouseSheetDirectionEnum.choices)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
-    unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD,max_length=100)
-    quantity=models.IntegerField(_("quantity"))
-    shelf=models.CharField(_("shelf"),max_length=50)
-    row=models.CharField(_("row"),max_length=50)
-    col=models.CharField(_("col"),max_length=50)
-
-    class_name="warehousematerialsheet"
+    shelf=models.CharField(_("shelf"),null=True,blank=True,max_length=50)
+    row=models.CharField(_("row"),null=True,blank=True,max_length=50)
+    col=models.CharField(_("col"),null=True,blank=True,max_length=50)
+    description=models.CharField(_("description"),null=True,blank=True,max_length=500)
+    status=models.CharField(_("status"),choices=SignatureStatusEnum.choices, max_length=50)
+    class_name="warehousesheet"
     app_name=APP_NAME
     class Meta:
-        verbose_name = _("WareHouseMaterialSheet")
-        verbose_name_plural = _("WareHouseMaterialSheets")
-
+        verbose_name = _("WareHouseSheet")
+        verbose_name_plural = _("WareHouseSheets")
+    @property
+    def sum(self):
+        return self.invoice_line.line_total
+    # @property
+    # def status(self):
+    #     signature=WareHouseSheetSignature.objects.filter(warehouse_sheet_id=self.id).last()
+    #     return signature
     def __str__(self):
-        return f"{self.ware_house} - {self.material} - {self.direction}     "
+        return f"{self.warehouse} - {self.invoice_line.invoice_line_item} - {self.invoice_line.quantity} {self.invoice_line.unit_name} - {self.direction}     "
 
     def balance(self):
-        if self.direction==MaterialPortDirectionEnum.IN:
+        if self.direction==WareHouseSheetDirectionEnum.IN:
             return self.quantity
-        if self.direction==MaterialPortDirectionEnum.OUT:
+        if self.direction==WareHouseSheetDirectionEnum.OUT:
             return 0-self.quantity
+  
 
-
-class MaterialTerminal(models.Model):
-    employee=models.ForeignKey("organization.employee",null=True,blank=True, verbose_name=_("employee"), on_delete=models.CASCADE)
-    ware_house=models.ForeignKey("warehouse",null=True,blank=True, verbose_name=_("warehouse"), on_delete=models.CASCADE)
-    
-
+class WareHouseSheetSignature(models.Model,LinkHelper,DateTimeHelper):
+    warehouse_sheet=models.ForeignKey("warehousesheet", verbose_name=_("warehouse_sheet"), on_delete=models.PROTECT)
+    employee=models.ForeignKey("organization.employee", verbose_name=_("employee"), on_delete=models.PROTECT)
+    status=models.CharField(_("status"),choices=SignatureStatusEnum.choices, max_length=50)
+    description=models.CharField(_("description"),null=True,blank=True, max_length=50)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    class_name='warehousesheetsignature'
+    app_name=APP_NAME
     class Meta:
-        verbose_name = _("MaterialTerminal")
-        verbose_name_plural = _("MaterialTerminals")
+        verbose_name = _("WareHouseSheetSignature")
+        verbose_name_plural = _("WareHouseSheetSignatures")
 
     def __str__(self):
-        employee=ware_house=''
-        if self.employee is not None:
-            employee= f"{self.employee}"
-        if self.ware_house is not None:
-            ware_house= f"{str(self.ware_house)}"
-        return ware_house+"___"+employee
+        return f'{self.employee}  {self.status}  {self.warehouse_sheet}'
+ 
+    def save(self):
+        self.warehouse_sheet.status=self.status
+        self.warehouse_sheet.save()
+        return super(WareHouseSheetSignature,self).save()
+
+
+class WareHouseSheetLabel(models.Model,LinkHelper,DateTimeHelper):
+    warehouse_sheet=models.ForeignKey("warehousesheet", verbose_name=_("warehouse_sheet"), on_delete=models.PROTECT)
+    serial_no=models.CharField(_("serial_no"),null=True,blank=True, max_length=50)
+    lot_no=models.CharField(_("lot_no"),null=True,blank=True, max_length=50)
+    lot_no=models.CharField(_("lot_no"),null=True,blank=True, max_length=50)
+    barcode_1=models.CharField(_("barcode_1"),null=True,blank=True, max_length=50)
+    barcode_2=models.CharField(_("barcode_2"),null=True,blank=True, max_length=50)
+    barcode_3=models.CharField(_("barcode_3"),null=True,blank=True, max_length=50)
+    label_origin=models.ImageField(_("label_origin"),blank=True,null=True, upload_to=IMAGE_FOLDER+"label", height_field=None, width_field=None, max_length=None)
+    production_date=models.DateTimeField(_("production_date"),null=True,blank=True, auto_now=False, auto_now_add=False)
+    expiration_date=models.DateTimeField(_("expiration_date"),null=True,blank=True, auto_now=False, auto_now_add=False)
+    description=models.CharField(_("description"),null=True,blank=True, max_length=50)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    class_name='warehousesheetlabel'
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("WareHouseSheetLabel")
+        verbose_name_plural = _("WareHouseSheetLabels")
+
+    def __str__(self):
+        return f'{self.warehouse_sheet}'
+    @property
+    def label(self):
+          
+        if self.label_origin is None or str(self.label_origin)=="":
+            return None
+        else:
+            return f"{MEDIA_URL}{self.label_origin}"
+
+
+class MaterialRequest(models.Model):
+    invoice=models.ForeignKey("accounting.invoice", verbose_name=_("invoice"), on_delete=models.PROTECT)
+    product=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.PROTECT)
+    quantity=models.FloatField(_("quantity"))
+    unit_name=models.CharField(_("unit_name"), max_length=50)
+    unit_price=models.IntegerField(_("unit_price"))
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    organization_unit=models.ForeignKey("organization.organizationunit", verbose_name=_("organization_unit"), on_delete=models.PROTECT)
+    description=models.CharField(_("description"), max_length=5000)
+    warehouse=models.ForeignKey("warehouse", verbose_name=_("warehouse"),null=True,blank=True, on_delete=models.CASCADE)
+    
+    class Meta:
+        verbose_name = _("MaterialRequest")
+        verbose_name_plural = _("MaterialRequests")
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("MaterialRequest_detail", kwargs={"pk": self.pk})
+
+
+class ProductInWareHouse(models.Model):
+    product=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.PROTECT)
+    warehouse=models.ForeignKey("warehouse", verbose_name=_("warehouse"),null=True,blank=True, on_delete=models.CASCADE)
+    unit_name=models.CharField(_("unit_name"), max_length=50)
+    quantity=models.FloatField(_("quantity"))
+
+
+    class Meta:
+        verbose_name = _("ProductInWareHouse")
+        verbose_name_plural = _("ProductInWareHouses")
+
+    def __str__(self):
+        return f"{self.warehouse} : {self.product} @ {self.quantity}  {self.unit_name}"

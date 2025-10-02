@@ -16,7 +16,7 @@ class LogRepo():
         if self.user.has_perm(APP_NAME+".view_log"):
             self.objects = Log.objects
         elif self.person is not None:
-            self.objects=Log.objects.filter(profile_id=self.person.id)
+            self.objects=Log.objects.filter(person_id=self.person.id)
         else:
             self.objects = Log.objects.filter(pk=0)
 
@@ -47,11 +47,9 @@ class LogRepo():
         if 'app_name' in kwargs:     
             log.app_name=kwargs['app_name']
         if 'person' in kwargs:            
-            log.person=kwargs['person']
-        if 'profile' in kwargs:            
-            log.profile=kwargs['profile']
-        if 'profile_id' in kwargs:            
-            log.profile_id=kwargs['profile_id']
+            log.person=kwargs['person'] 
+        if 'person_id' in kwargs:            
+            log.person_id=kwargs['person_id']
         if 'description' in kwargs:            
             log.description=kwargs['description']
         log.save()

@@ -8,6 +8,7 @@ from .apps import APP_NAME
 from utility.models import ImageHelper
 from utility.constants import FAILED,SUCCEED
 IMAGE_FOLDER=APP_NAME+"/images/"
+from django.shortcuts import reverse
 from utility.enums import *
  
 
@@ -18,16 +19,24 @@ class Person(models.Model,ImageHelper,LinkHelper):
     title=models.CharField(_("عنوان"),null=True,blank=True, max_length=50)
     first_name=models.CharField(_("نام"),null=True,blank=True, max_length=50)
     last_name=models.CharField(_("نام خانوادگی"),null=True,blank=True, max_length=50)
-    mobile=models.CharField(_("شماره همراه"),null=True,blank=True, max_length=50)
     email=models.CharField(_("email"),null=True,blank=True, max_length=50)
     bio=models.CharField(_("بیو"),null=True,blank=True, max_length=50)
-    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=50)
+    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=200)
     full_name=models.CharField(_("full_name"),null=True,blank=True, max_length=150)
     image_origin=models.ImageField(_("تصویر"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/", height_field=None, width_field=None, max_length=None)
     gender=models.CharField(_("جنسیت"),choices=GenderEnum.choices,default=GenderEnum.MALE, max_length=50)
     type=models.CharField(_("ماهیت"),choices=PersonTypeEnum.choices,default=PersonTypeEnum.FREE, max_length=50)
     type2=models.CharField(_("نوع"),choices=PersonType2Enum.choices,default=PersonType2Enum.HAGHIGHI, max_length=50)
-    melli_code=models.CharField(_("کد ملی"),null=True,blank=True, max_length=10)
+    economic_no=models.CharField(_("شماره اقتصادی"),null=True,blank=True, max_length=20)
+    melli_code=models.CharField(_("کد ملی"),null=True,blank=True, max_length=12)
+    tel=models.CharField(_("تلفن"),null=True,blank=True, max_length=50)
+    mobile=models.CharField(_("موبایل"),null=True,blank=True, max_length=50)
+    postal_code=models.CharField(_("کد پستی"),null=True,blank=True, max_length=20)
+    birth_date=models.CharField(_("تاریخ تولد"),null=True,blank=True, max_length=20)
+    birth_location=models.CharField(_("محل تولد"),null=True,blank=True, max_length=20)
+    father_name=models.CharField(_("نام پدر"),null=True,blank=True, max_length=20)
+    
+    
     class_name='person'
     app_name=APP_NAME
 
@@ -42,31 +51,25 @@ class Person(models.Model,ImageHelper,LinkHelper):
     def full_name_(self):
         full_name=""
         if self.prefix:
-            full_name=self.prefix
-            
-        if len(full_name)>0:
-            full_name+=" "
+            full_name=self.prefix+" "
+             
+        if self.title:
+            full_name+=self.title +" "
            
         if self.first_name:
-            full_name+=self.first_name 
+            full_name+=self.first_name +" "
 
+             
             
-            
-        if len(full_name)>0:
-            full_name+=" "
-            
-        if self.title:
-            full_name+=self.title 
-
-            
-            
-        if len(full_name)>0:
-            full_name+=" "
            
         if self.last_name:
-            full_name+=self.last_name 
+            full_name+=self.last_name +" "
+            
 
-        return full_name
+            
+             
+
+        return full_name.replace('  ',' ')
 
 
 
@@ -112,5 +115,6 @@ class Person(models.Model,ImageHelper,LinkHelper):
             return f'{STATIC_URL}{APP_NAME}/img/person.png'
         
         return f'{MEDIA_URL}{self.image_origin}'
-
+    def get_change_password_url(self):
+        return reverse(APP_NAME+":change_password",kwargs={'pk':self.pk})
 Profile=Person

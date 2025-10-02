@@ -1,6 +1,6 @@
 from django.db import models
-from core.models import Event,LinkHelper,FAILED,SUCCEED,DateTimeHelper
-from utility.models import DateHelper
+from core.models import Event,FAILED,SUCCEED
+from utility.models import DateHelper,DateTimeHelper,LinkHelper
 from .enums import *
 from tinymce.models import HTMLField
 from django.utils.translation import gettext as _
@@ -9,17 +9,18 @@ from accounting.models import InvoiceLine,Invoice
 from django.core.files.storage import FileSystemStorage
 
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT
-IMAGE_FOLDER = "images/"
+IMAGE_FOLDER = APP_NAME+"/images/"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
-
+from .enums import StatusColor
 # Create your models here.
-class Project(Event,LinkHelper,DateHelper): 
+class Project(Event,LinkHelper,DateHelper):
     employer=models.ForeignKey("organization.organizationunit", verbose_name=_("employer"),related_name="project_employed", on_delete=models.CASCADE)
     contractor=models.ForeignKey("organization.organizationunit", verbose_name=_("contractor"),related_name="project_contracted", on_delete=models.CASCADE)
     type=models.CharField(_("تایپ"),max_length=50,choices=ProjectTypeEnum.choices,default=ProjectTypeEnum.TYPE_A)
     percentage_completed=models.IntegerField(_("درصد پیشرفت"),default=0)
     weight=models.IntegerField(_("وزن پروژه"),default=1)
     invoices=models.ManyToManyField("accounting.invoice", blank=True, verbose_name=_("invoices"))
+    events=models.ManyToManyField("core.event",related_name="project_events", blank=True, verbose_name=_("events"))
     remote_clients=models.ManyToManyField("remoteclient", blank=True,verbose_name=_("remote_clients"))
     amount=models.IntegerField(_("ارزش پروژه"),default=0)
     @property
@@ -37,7 +38,6 @@ class Project(Event,LinkHelper,DateHelper):
             sum+=inv.amount
         self.amount=sum
         from utility.log import leolog
-        leolog(project=self,sum=sum)
         super(Project,self).save()
         if self.parent_project is not None:
             self.parent_project.normalize()
@@ -61,56 +61,40 @@ class Project(Event,LinkHelper,DateHelper):
     def childs(self):
         return self.children
     
-    def all_sub_projects(self):
-        ids=[]
-        for proj in self.children.all():
-            ids.append(proj.id)
-            for i in proj.all_sub_projects():
-                ids.append(i.id)
-        return Project.objects.filter(id__in=ids)
     @property    
     def total_price(self):
         return self.amount
+
+    def all_invocie(self):
+        ids=self.all_sub_ids(same_class=True,my_id=True)
+        
+        projects=Project.objects.filter(id__in=ids)
+        invoice_ids=[]
+        for proj in projects:
+            for inv in proj.invoices.all():
+                invoice_ids.append(inv.id) 
+        return Invoice.objects.filter(id__in=invoice_ids)
     
-class Request(InvoiceLine):
-    ware_house=models.ForeignKey("warehouse.warehouse", verbose_name=_("ware_house"), on_delete=models.PROTECT)
-
-    
-
-    class Meta:
-        verbose_name = _("Request")
-        verbose_name_plural = _("Requests")
-    def save(self):
-        super(Request,self).save()
-
-
-class MaterialRequest(Request):
-    
-
-    class Meta:
-        verbose_name = _("MaterialRequest")
-        verbose_name_plural = _("MaterialRequests")
-    def save(self):
-        super(MaterialRequest,self).save()
-
-
-class ServiceRequest(Request):
-    
-
-    class Meta:
-        verbose_name = _("ServiceRequest")
-        verbose_name_plural = _("ServiceRequests")
-    def save(self):
-        super(ServiceRequest,self).save()
-
-
-
+    def all_invocie_lines(self):
+        ids=self.all_sub_ids(same_class=True,my_id=True)
+         
+        projects=Project.objects.filter(id__in=ids)
+        invoice_ids=[]
+        for proj in projects:
+            for inv in proj.invoices.all():
+                invoice_ids.append(inv.id)
+        from accounting.models import InvoiceLine
+        return InvoiceLine.objects.filter(invoice_id__in=invoice_ids)
+  
+    def get_status_color(self):
+        return StatusColor(self)
+ 
 
 class Ticket(models.Model,DateTimeHelper,LinkHelper):
     parent=models.ForeignKey("ticket",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
     title=models.CharField(_("title"),max_length=500)
     description=HTMLField(_("description"),max_length=5000,blank=True,null=True)
-    person=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("پروفایل"), on_delete=models.PROTECT)
+    person=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("شخص"), on_delete=models.PROTECT)
     project=models.ForeignKey("project",null=True,blank=True, verbose_name=_("پروژه"), on_delete=models.CASCADE)
     datetime_added=models.DateTimeField(_("date added"),auto_now=False,auto_now_add=True)
     type=models.CharField(_("تایپ"),max_length=50,choices=TicketTypeEnum.choices)
@@ -118,13 +102,16 @@ class Ticket(models.Model,DateTimeHelper,LinkHelper):
     file = models.FileField(_("فایل ضمیمه"), null=True, blank=True,upload_to=APP_NAME+'/ticket-files', storage=upload_storage, max_length=100)
     class_name="ticket"
     app_name=APP_NAME
+
     class Meta:
         verbose_name = _("Ticket")
         verbose_name_plural = _("Tickets")
 
     def __str__(self):
         return self.title
-    def status_color(self):
+     
+    
+    def get_status_color(self):
         color="primary"
         if self.status==TicketStatusEnum.FINISHED:
             color="secondary"
@@ -135,10 +122,13 @@ class Ticket(models.Model,DateTimeHelper,LinkHelper):
         return color
  
     def save(self,*args, **kwargs):
-        return super(Ticket,self).save()
-
-
- 
+        result,message,ticket=FAILED,'',None
+        super(Ticket,self).save()
+        if self.id is not None and self.id>0:
+            ticket=self
+            result=SUCCEED
+            message='تیکت با موفقیت ثبت شد.'
+        return result,message,ticket
 
 class RemoteClient(models.Model,LinkHelper):
    
@@ -154,10 +144,12 @@ class RemoteClient(models.Model,LinkHelper):
     dorsan_desk_address=models.CharField(_("dorsan_desk_address"),null=True,blank=True, max_length=50)
     dorsan_desk_password=models.CharField(_("dorsan_desk_password"),null=True,blank=True, max_length=50)
     brand=models.ForeignKey("accounting.brand",null=True,blank=True, verbose_name=_("brand"), on_delete=models.SET_NULL)
+    product=models.ForeignKey("accounting.product",null=True,blank=True, verbose_name=_("product"), on_delete=models.SET_NULL)
     model_name=models.CharField(_("model name"),null=True,blank=True, max_length=50)
     id_name=models.CharField(_("id_name"),null=True,blank=True, max_length=50)
     mac_address=models.CharField(_("mac_address"),null=True,blank=True, max_length=50)
     serial_no=models.CharField(_("serial_no"),null=True,blank=True, max_length=50)
+    pattern=models.CharField(_("pattern"),null=True,blank=True, max_length=50)
     part_no=models.CharField(_("part_no"),null=True,blank=True, max_length=50)
     username=models.CharField(_("username"),null=True,blank=True, max_length=50)
     password=models.CharField(_("password"),null=True,blank=True, max_length=50)

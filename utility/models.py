@@ -5,7 +5,7 @@ from phoenix.settings import ADMIN_URL,STATIC_URL,MEDIA_URL
 from django.shortcuts import reverse 
 from .calendar import PersianCalendar
 from .apps import APP_NAME
-IMAGE_FOLDER = "images/"
+IMAGE_FOLDER = APP_NAME+"/images/"
 
 
 class DateHelper():
@@ -23,9 +23,18 @@ class DateHelper():
         return PersianCalendar().from_gregorian(self.date_created)
     def persian_date_modified(self):
         return PersianCalendar().from_gregorian(self.date_modified)
-
-
+    def persian_expiration_date(self):
+        return PersianCalendar().from_gregorian(self.expiration_date)
+    def persian_production_date(self):
+        return PersianCalendar().from_gregorian(self.production_date)
+ 
 class DateTimeHelper(DateHelper):
+    def persian_enter_datetime(self):
+        return PersianCalendar().from_gregorian(self.enter_datetime)
+    def persian_date_time(self):
+        return PersianCalendar().from_gregorian(self.date_time)
+    def persian_exit_datetime(self):
+        return PersianCalendar().from_gregorian(self.exit_datetime)
     def persian_start_datetime(self):
         return PersianCalendar().from_gregorian(self.start_datetime)
     def persian_end_datetime(self):
@@ -50,6 +59,9 @@ class DateTimeHelper(DateHelper):
 
     def persian_start_datetime(self):
         return PersianCalendar().from_gregorian(self.start_datetime)
+    
+    def persian_date_updated(self):
+        return PersianCalendar().from_gregorian(self.date_updated)
 
     def persian_end_datetime(self):
         return PersianCalendar().from_gregorian(self.end_datetime)
@@ -80,6 +92,7 @@ class ImageHelper:
         return image
     @property
     def thumbnail(self):
+         
         thumbnail=""
         if self.thumbnail_origin is None or str(self.thumbnail_origin)=="":
             try:
@@ -90,6 +103,21 @@ class ImageHelper:
             thumbnail= f"{MEDIA_URL}{self.thumbnail_origin}"
 
         return thumbnail
+    
+
+    @property
+    def logo(self):
+        logo=""
+        if self.logo_origin is None or str(self.logo_origin)=="":
+            try:
+                logo= f"{STATIC_URL}{self.app_name}/img/pages/logo/{self.class_name}.png/"
+            except:
+                pass
+        else:
+            logo= f"{MEDIA_URL}{self.logo_origin}"
+
+        return logo
+    
 
     @property
     def header(self):
@@ -104,21 +132,7 @@ class ImageHelper:
 
         return header
 
-
-        
-    @property
-    def logo(self):
-        logo=""
-        if self.logo_origin is None or str(self.logo_origin)=="":
-            try:
-                logo= f"{STATIC_URL}{self.app_name}/img/pages/thumbnail/{self.class_name}.png/"
-            except:
-                pass
-        else:
-            logo= f"{MEDIA_URL}{self.logo_origin}"
-
-        return logo
-
+ 
 
 
 class LinkHelper():
@@ -169,8 +183,6 @@ class Picture(models.Model, LinkHelper):
 
     def get_edit_url(self):
         return f"{ADMIN_URL}{APP_NAME}/picture/{self.pk}/change/"
-
-
  
 
 class Parameter(models.Model):
@@ -233,3 +245,33 @@ class Parameter(models.Model):
         """
 
 
+class ClipBoardItem(models.Model):
+    name=models.CharField(_("name"), max_length=100)
+    text=models.CharField(_("text"), max_length=100)
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _("ClipBoardItem")
+        verbose_name_plural = _("ClipBoardItems")
+
+    def __str__(self):
+ 
+        return f'{self.person}  :  {self.name} :  {self.text}'
+ 
+
+class MyLink(models.Model,LinkHelper):
+    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.CASCADE)
+    title = models.CharField(_("url"), max_length=2000)
+    url = models.CharField(_("url"), max_length=2000)
+    priority = models.IntegerField(_("priority"), default=100)
+    
+    class_name='mylink'
+    app_name=APP_NAME
+    
+    class Meta:
+        verbose_name = _("MyLink")
+        verbose_name_plural = _("MyLinks")
+
+    def __str__(self):
+        return f"{self.person} : {self.title}"
+ 

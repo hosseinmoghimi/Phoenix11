@@ -69,8 +69,22 @@
         $(".notification-divider:last").addClass("d-none")
     })
 </script>
+<script>
+    url_add_clipboard_item="{% url 'utility:add_clipboard_item'  %}"
+    url_clear_all_clipboard_item="{% url 'utility:clear_all_clipboard_items'  %}"
+</script>
 
+      {% if clipboard_items %}
+      {% include "utility/includes/clipboard-items-app/script.html" %}
+        
+      {% endif %}
 
+      
+  
+  {% if my_links %}
+    {% include "utility/includes/my-links-app/script.html" %}
+  {% endif %}
+  
 
 {% if PUSHER_IS_ENABLE %}
 {% include "phoenix/includes/pusher-script.html" %}
@@ -79,4 +93,10 @@
 {% if APP_SCRIPT %}
 
 {% include APP_SCRIPT %}
+{% endif %}
+
+{% if me_person %}
+  <script>
+    let me_person=JSON.parse(`{{me_person_s|escapejs}}`)
+  </script>
 {% endif %}

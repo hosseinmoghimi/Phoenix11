@@ -17,6 +17,7 @@
 </script>
 <script>
     let status = "{{project.status}}"
+    let color = "{{project.color}}"
     let weight = parseInt("{{project.weight}}")
     let url_edit_project = "{% url 'projectmanager:edit_project' %}"
     let employer_id = 0
@@ -43,6 +44,7 @@
             percentage_completed: parseInt("{{project.percentage_completed}}"),
             status: status,
             waiting: false,
+            color: color,
             priority: parseInt("{{project.priority}}"),
             employer_id: employer_id,
             contractor_id: contractor_id,
@@ -66,6 +68,7 @@
                     priority: parseInt(this.priority),
                     parent_id: this.super_project.id,
                     status: this.status,
+                    color: this.color,
                     archive: this.archive,
                     employer_id: parseInt(this.employer_id),
                     title: this.title,

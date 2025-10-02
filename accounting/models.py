@@ -21,21 +21,106 @@ from .settings_on_server import  NO_DUPLICATED_ACCOUNT_NAME,NO_DUPLICATED_ACCOUN
 from django.utils import timezone
 from utility.log import leolog
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
-IMAGE_FOLDER = "images/"
+IMAGE_FOLDER = APP_NAME+"/images/"
 try:
     from accounting.settings_on_server import DELETE_OLD_ITEM_UNIT
 except:
     DELETE_OLD_ITEM_UNIT=True
+
+class PersonAccountHelper:
+
+    @property
+    def economic_no(self):
+        economic_no=''
+        person_account=PersonAccount.objects.filter(pk=self.pk).first()
+        if person_account is not None:
+            economic_no=person_account.person.economic_no
+        return economic_no
     
-class Account(CorePage,LinkHelper):
+    @property
+    def person(self):
+        pa= PersonAccount.objects.filter(pk=self.pk).first()
+        if pa is not None:
+            return pa.person
+        
+    
+    @property
+    def melli_id(self):
+        return self.melli_code
+    
+    @property 
+    def thumbnail(self):
+         
+        thumbnail=""
+        if self.thumbnail_origin is None or str(self.thumbnail_origin)=="":
+            try:
+                person_account=PersonAccount.objects.filter(pk=self.pk).first()
+                if person_account is not None:
+                    person=person_account.person
+                    if person.image_origin is None or str(person.image_origin)=="":
+                        return person.image
+            except:
+                pass
+        else:
+            thumbnail= f"{MEDIA_URL}{self.thumbnail_origin}"
+
+        return thumbnail
+    @property
+    def melli_code(self):
+        melli_code=''
+        person_account=PersonAccount.objects.filter(pk=self.pk).first()
+        if person_account is not None:
+            melli_code=person_account.person.melli_code
+        return melli_code
+    
+
+    
+    @property
+    def tel(self):
+        tel=''
+        person_account=PersonAccount.objects.filter(pk=self.pk).first()
+        if person_account is not None:
+            tel=person_account.person.tel
+        return tel
+    
+    @property
+    def postal_code(self):
+        postal_code=''
+        person_account=PersonAccount.objects.filter(pk=self.pk).first()
+        if person_account is not None:
+            postal_code=person_account.person.postal_code
+        return postal_code
+    
+
+    @property
+    def address(self):
+        address=''
+        person_account=PersonAccount.objects.filter(pk=self.pk).first()
+        if person_account is not None:
+            address=person_account.person.address
+        return address
+    
+
+class Account(CorePage,LinkHelper,PersonAccountHelper):
     code=models.CharField(_("code"),null=True,blank=True, max_length=50)
     type=models.CharField(_("نوع"),choices=AccountTypeEnum.choices, max_length=50)
     nature=models.CharField(_("ماهیت"),choices=AccountNatureEnum.choices,default=AccountNatureEnum.FREE, max_length=50)
-    logo_origin=models.ImageField(_("logo"),blank=True,null=True, upload_to=IMAGE_FOLDER+"account", height_field=None, width_field=None, max_length=None)
     level=models.IntegerField(_("level"))
     bedehkar=models.IntegerField(_("bedehkar"),default=0)
     bestankar=models.IntegerField(_("bestankar"),default=0)
     balance=models.IntegerField("balance",default=0)
+    
+ 
+    def balance_color(self):
+        if self.balance==0:
+            return 'primary'
+        if self.balance>0:
+            return 'success'
+        if self.balance<0:
+            return 'danger'
+ 
+     
+    
     @property
     def name(self):
         return self.title    
@@ -48,10 +133,10 @@ class Account(CorePage,LinkHelper):
         verbose_name_plural = _("حساب ها")
 
     def __str__(self):
-        return f'{self.code}-level {self.level} - {self.type} - {self.name}'
+        return f'{self.code}-level {self.level} - {self.type} - {self.title}'
     def get_link(self):
             return f"""
-                    <a href="{self.get_absolute_url()}" class="ml-2 text-{self.color}"><span>{self.code}</span> {self.name} <span class="badge badge-{self.color}">{self.type}</span></a>
+                    <a href="{self.get_absolute_url()}" class="ml-2 text-{self.color}"><span>{self.code}</span> {self.title} <span class="badge badge-{self.color}">{self.type}</span></a>
                     """
      
 
@@ -111,13 +196,16 @@ class Account(CorePage,LinkHelper):
         account=self
         if self.id is not None:
             result=SUCCEED
-            message="حساب با موفقیت اضافه گردید."
+            message="حساب با موفقیت ذخیره گردید."
         return result,message,account
  
   
     
     def all_sub_accounts_lines(self):
-        ids=self.all_sub_accounts_id()
+        ids=[self.id]
+        for child in self.childs:
+            for id in child.all_sub_accounts_id():
+                ids.append(id)
         return FinancialDocumentLine.objects.filter(account_id__in=ids)
 
     def all_sub_accounts_id(self):
@@ -127,13 +215,26 @@ class Account(CorePage,LinkHelper):
                 ids.append(id)
         return ids
 
-    @property
-    def person(self):
-        pa= PersonAccount.objects.filter(pk=self.pk).first()
-        if pa is not None:
-            return pa.person
-        
-        
+    def normalize_to_top(self):
+        result,message,counter=FAILED,'',0
+        counter=1
+        bestankar=0
+        bedehkar=0
+        for financial_document_line in self.financialdocumentline_set.all():
+            bestankar+=financial_document_line.bestankar
+            bedehkar+=financial_document_line.bedehkar
+        for child in Account.objects.filter(parent_id=self.id):
+            result2,message2,counter2=child.normalize_to_top()
+            bestankar+=child.bestankar
+            bedehkar+=child.bedehkar
+            counter+=counter2
+        self.bestankar=bestankar
+        self.bedehkar=bedehkar
+        self.balance=bestankar-bedehkar
+        super(Account,self).save()
+        result=SUCCEED
+        message='با موفقیت نرمال سازی شد.'
+        return result,message,counter
 
     def normalize(self):
         # print(self.full_title)
@@ -158,11 +259,7 @@ class Account(CorePage,LinkHelper):
             parent=Account.objects.filter(id=self.parent.id).first()
             if parent is not None:
                 parent.normalize()
-    @property
-    def logo(self):
-        if not self.logo_origin :
-            return f"{STATIC_URL}{APP_NAME}/img/pages/thumbnail/account.png"
-        return f"{MEDIA_URL}{self.logo_origin}"
+     
    #test
     @property
     def balance_colored(self):
@@ -179,15 +276,29 @@ class Account(CorePage,LinkHelper):
     @property  
     def full_name(self):
         if self.parent is None:
-            return self.name
+            return self.title
         return self.parent_account.full_name+ACCOUNT_NAME_SEPERATOR+self.title
  
- 
+    
 class PersonAccount(Account,LinkHelper):
     person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
     person_category=models.ForeignKey("personcategory", verbose_name=_("person_category"), on_delete=models.PROTECT)
     
     
+    @property
+    def thumbnail(self):
+        if self.thumbnail_origin is not None and not self.thumbnail_origin=='':
+            return f"{MEDIA_URL}{self.thumbnail_origin}"
+         
+        if self.thumbnail_origin is None or str(self.thumbnail_origin)=="":
+            if self.person.image_origin is not None and not self.person.image_origin=='':
+                return self.person.image
+            try:
+                return f"{STATIC_URL}{self.app_name}/img/pages/thumbnail/{self.class_name}.png/"
+            except:
+                pass 
+
+
     class_name='personaccount'
     app_name=APP_NAME
 
@@ -215,11 +326,10 @@ class PersonAccount(Account,LinkHelper):
                 is_available=False
         return self.person_category.account.code+code
     def save(self,*args, **kwargs):
-        leolog(account_ptr_id_person_account=self.account_ptr_id)
         
         result,message,person_account=FAILED,"",None
         p_a=PersonAccount.objects.filter(person_id=self.person_id).filter(person_category_id=self.person_category_id).first()
-        if p_a is not None:
+        if p_a is not None and self.id is None:
             message="از قبل برای این دسته بندی و شخص حساب مرتبط ایجاد شده است. "
             return result,message,person_account
 
@@ -278,7 +388,7 @@ class FinancialDocument(models.Model,LinkHelper):
         #     message="تاریخ سند خارج از محدوده تاریخ سال مالی جاری است."
         super(FinancialDocument,self).save()
         result=SUCCEED
-        message="با موفقیت اضافه شد."
+        message="با موفقیت ذخیره شد."
         return result,message,self
 
     class_name="financialdocument"
@@ -301,15 +411,17 @@ class FinancialDocument(models.Model,LinkHelper):
         self.bestankar=bestankar
         self.balance=bestankar-bedehkar
         self.save()
+        result=SUCCEED
+        message='با موفقیت نرمال سازی شد.'
+        return result,message
 
 
-class Brand(models.Model,LinkHelper):
+class Brand(models.Model,LinkHelper,ImageHelper):
     name=models.CharField(_("name"),max_length=100)
-
+    logo_origin=models.ImageField(_("logo"),blank=True,null=True, upload_to=IMAGE_FOLDER+"brand", height_field=None, width_field=None, max_length=None)
     class_name="brand"
     app_name=APP_NAME
-
-
+ 
     class Meta:
         verbose_name = _("برند")
         verbose_name_plural = _("برند ها")
@@ -318,8 +430,8 @@ class Brand(models.Model,LinkHelper):
         return self.name
 
 
-class FinancialDocumentLine(models.Model,LinkHelper):
-    financial_document=models.ForeignKey("financialdocument", verbose_name=_("accountingdocument"), on_delete=models.CASCADE)
+class FinancialDocumentLine(models.Model,LinkHelper,DateTimeHelper):
+    financial_document=models.ForeignKey("financialdocument", verbose_name=_("accountingdocument"), on_delete=models.PROTECT)
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
     financial_event=models.ForeignKey("financialevent", null=True,blank=True,verbose_name=_("event"), on_delete=models.PROTECT)
     title=models.CharField(_("title"), max_length=500)
@@ -329,6 +441,8 @@ class FinancialDocumentLine(models.Model,LinkHelper):
     bedehkar=models.IntegerField(_("بدهکار"),default=0)
     bestankar=models.IntegerField(_("بستانکار"),default=0)
     balance=models.IntegerField(_("بالانس"),default=0)
+    rest=models.IntegerField(_("مانده"),default=0)
+    status=models.CharField(_("status"),choices=FinancialDocumentStatusEnum.choices,default=FinancialDocumentStatusEnum.DRAFT, max_length=50)
     @property
     def amount(self):
         return self.bestankar+self.bedehkar
@@ -340,6 +454,12 @@ class FinancialDocumentLine(models.Model,LinkHelper):
                     <small class="text-muted mr-1">{a[11:]}</small>
 
                 """
+    
+    @property
+    def persian_date_time_(self):
+        a= PersianCalendar().from_gregorian(self.date_time)    
+        return a
+    
     def delete(self,*args, **kwargs): 
         account=self.account
         financial_document=self.financial_document
@@ -382,7 +502,7 @@ class FinancialDocumentLine(models.Model,LinkHelper):
         self.financial_document.normalize()
         self.account.normalize()
         result=SUCCEED
-        message='سطر سند مالی با موفقیت اضافه شد.'
+        message='سطر سند مالی با موفقیت ذخیره شد.'
         return result,message,financial_document_line
     @property
     def rest(self):
@@ -402,6 +522,18 @@ class FinancialDocumentLine(models.Model,LinkHelper):
         if self.financial_event is not None :
             event=self.financial_event.title
         return f"{self.account.id} , {event} , {self.account.name} , {to_price(self.balance)}, {to_price(self.bestankar)}, {to_price(self.bedehkar)}"
+
+
+
+    @property 
+    def status_color(self):
+        if self.status==FinancialDocumentStatusEnum.ACCEPTED:
+            return "success"
+        if self.status==FinancialDocumentStatusEnum.DENIED:
+            return "danger"
+        if self.status==FinancialDocumentStatusEnum.DRAFT:
+            return "secondary"
+        return "primary"
 
 
 class FinancialYear(models.Model,LinkHelper,DateTimeHelper):
@@ -442,11 +574,14 @@ class PersonCategory(models.Model,LinkHelper):
     title=models.CharField(_("title"),choices=PersonCategoryEnum.choices,default=PersonCategoryEnum.DEFAULT, max_length=50)
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
     code_length=models.IntegerField(_("code_length"),default=5)
-    
+   
     class_name="personcategory"
     app_name=APP_NAME
 
-
+    @property
+    def count_of_accounts(self):
+        return len(self.personaccount_set.all())
+    
     @property
     def count(self):
         return len(PersonAccount.objects.filter(category=self.category))
@@ -457,6 +592,7 @@ class PersonCategory(models.Model,LinkHelper):
         person_ids=[]
         for p_a in person_accounts:
             person_ids.append(p_a.person_id)
+        from authentication.models import Person
         return Person.objects.filter(pk__in=person_ids)
     class Meta:
         verbose_name = _("دسته بندی اشخاص")
@@ -469,21 +605,15 @@ class PersonCategory(models.Model,LinkHelper):
 class FinancialEvent(CoreEvent,DateTimeHelper):
     bedehkar=models.ForeignKey("account", related_name="bedehkar_events",verbose_name=_("دریافت کننده"), on_delete=models.PROTECT)
     bestankar=models.ForeignKey("account",related_name="bestankar_events", verbose_name=_("پرداخت کننده"), on_delete=models.PROTECT)
-    creator=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
-    tax_percentage=models.IntegerField(_("درصد مالیات"),default=0)
-    amount=models.IntegerField(_("مبلغ"),default=0)
-    discount_percentage=models.IntegerField(_("درصد تخفیف"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
+    amount=models.IntegerField(_("مبلغ"),default=0)
+    tax_percentage=models.IntegerField(_("درصد مالیات"),default=0)
+    tax_amount=models.IntegerField(_("مالیات"),default=0)
+    discount=models.IntegerField(_("تخفیف"),default=0)
     shipping_fee=models.IntegerField(_("هزینه حمل"),default=0)
+    sum_total=models.IntegerField(_("مبلغ نهایی"),default=0)
     # status=models.CharField(_("status"),choices=FinancialEventStatusEnum.choices,default=FinancialEventStatusEnum.DRAFT, max_length=50)
-
-    @property
-    def tax_amount(self):
-        return self.amount*self.tax_percentage/100
-    @property
-    def sum_total(self):
-        return self.tax_amount+self.amount-self.discount
-
+  
     class Meta:
         verbose_name = _("رویداد مالی")
         verbose_name_plural = _("رویداد های مالی")
@@ -503,10 +633,20 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         result=SUCCEED
-        message='رویداد مالی با موفقیت اضافه شد.'
+        message='رویداد مالی با موفقیت ذخیره شد.'
+        self.tax_amount=self.amount*self.tax_percentage/100
+        self.sum_total=self.amount+self.tax_amount+self.shipping_fee-self.discount
         super(FinancialEvent,self).save()
         return result,message,financial_event
  
+    @property
+    def balance(self):
+        balance=0
+        for financial_document_line in FinancialDocumentLine.objects.filter(financial_event_id=self.id):
+            balance+=financial_document_line.bestankar
+            balance-=financial_document_line.bedehkar
+        return balance
+
 
 class InvoiceLineItem(CorePage,LinkHelper):
     class_name="invoicelineitem"
@@ -528,6 +668,20 @@ class InvoiceLineItem(CorePage,LinkHelper):
             return unit.unit_price
         return 0
 
+    @property    
+    def model(self):
+        product= Product.objects.filter(id=self.id).first()
+        if product is not None:
+            return product.model
+        return ""
+
+    @property    
+    def brand_name(self):
+        product= Product.objects.filter(id=self.id).first()
+        if product is not None:
+            return product.brand.name
+        return ""
+
 
 class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     invoice_line_item=models.ForeignKey("invoicelineitem",related_name="units" ,verbose_name=_("invoicelineitem"), on_delete=models.CASCADE)
@@ -538,7 +692,27 @@ class InvoiceLineItemUnit(models.Model,LinkHelper,DateTimeHelper):
     default=models.BooleanField(_("default"),default=False)
     class_name="invoicelineitemunit"
     app_name=APP_NAME
-    
+
+    @property
+    def percentage_tag(self):
+        base=InvoiceLineItemUnit.objects.filter(invoice_line_item_id=self.invoice_line_item_id).filter(coef=1).first()
+        if base is not None:
+            base_price=base.unit_price
+            if base_price==0:
+                return ""
+            color='primary'
+            perc=(base_price-(self.unit_price/self.coef))/base_price*100
+            perc=int(perc)
+            if base_price>(self.unit_price/self.coef):
+                color='success'
+
+            if base_price<(self.unit_price/self.coef):
+                color='danger'
+                perc=0-perc
+            if perc==0:
+                return ""
+            return f"""<span class='text-{color}'>{perc} %</span>"""
+        return ""
     class Meta:
         verbose_name = _("InvoiceLineItemUnit")
         verbose_name_plural = _("واحد های قابل فروش")
@@ -579,8 +753,8 @@ class Category(models.Model,LinkHelper,ImageHelper):
     parent=models.ForeignKey("category", verbose_name=_("parent"),null=True,blank=True, on_delete=models.SET_NULL)
     title=models.CharField(_("title"),max_length=100)
     priority=models.IntegerField(_("priority"),default=100)
-    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
-    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'ImageBase/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'category/thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'category/header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
     products=models.ManyToManyField("product",blank=True, verbose_name=_("products"))
     def get_link(self):
             return f"""
@@ -641,14 +815,14 @@ class Category(models.Model,LinkHelper,ImageHelper):
         result,message,category=FAILED,'',self
         super(Category,self).save()
         result=SUCCEED
-        message='دسته بندی با موفقیت اضافه شد.'
+        message='دسته بندی با موفقیت ذخیره شد.'
         return result,message,category
 
 
 class Product(InvoiceLineItem):
     brand=models.ForeignKey("brand",null=True,blank=True, verbose_name=_("brand"), on_delete=models.CASCADE)
     model=models.CharField(_("model"),null=True,blank=True, max_length=50)
-    barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=50)
+    barcode=models.CharField(_("barcode"),null=True,blank=True, max_length=500)
     
     class_name="product"
     app_name=APP_NAME
@@ -674,6 +848,20 @@ class Product(InvoiceLineItem):
         return reverse("market:product",kwargs={'pk':self.pk})
     
   
+    def get_market_qrcode_url(self):
+     
+        if self.pk is None:
+            super(Product,self).save()
+        import os
+        file_path = QRCODE_ROOT
+        file_name=self.class_name+str(self.pk)+".svg"
+        file_address=os.path.join(QRCODE_ROOT,file_name)
+        if not os.path.exists(file_address):
+            content=FULL_SITE_URL[0:-1]+self.get_market_absolute_url()
+            generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
+        return f"{QRCODE_URL}{file_name}"
+  
+
 class ProductSpecification(models.Model,LinkHelper):
     product=models.ForeignKey("product", verbose_name=_("product"), on_delete=models.CASCADE)
     name=models.CharField(_("name"),max_length=50)
@@ -707,12 +895,33 @@ class Service(InvoiceLineItem):
             self.app_name=APP_NAME
         super(Service,self).save()
         result=SUCCEED
-        message='سرویس جدید با موفقیت اضافه شد.'
+        message='سرویس جدید با موفقیت ذخیره شد.'
         return (result,message,service)
+
+
+class Cheque(FinancialEvent,ImageHelper):
+    image_origin=models.ImageField(_("تصویر"),null=True,blank=True, upload_to=IMAGE_FOLDER+"cheque/", height_field=None, width_field=None, max_length=None)
+    def get_print_url(self):
+        return reverse(APP_NAME+':invoice_print',kwargs={'pk':self.pk})
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name="cheque"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+
+        result,message,cheque=FAILED,"",self
+        result=SUCCEED
+        message='چک با موفقیت ذخیره شد.'
+        
+        super(Cheque,self).save()
+        return result,message,cheque
 
 
 class Invoice(FinancialEvent):
     
+    @property
+    def lines(self):
+        return InvoiceLine.objects.filter(invoice_id=self.id).order_by('row')
     @property
     def line_discount_amount(self):
         line_discount_amount=0
@@ -732,50 +941,43 @@ class Invoice(FinancialEvent):
             self.app_name=APP_NAME
 
         result,message,invoice=FAILED,"",self
-
-        super(Invoice,self).save()
         result=SUCCEED
-        message='فاکتور با موفقیت اضافه شد.'
+        message='فاکتور با موفقیت ذخیره شد.'
+        if self.id is not None:
+            self.normalize()
+        else:
+            super(Invoice,self).save()
         return result,message,invoice
 
 
     def normalize(self): 
         
-        total=0
-        discount=0
-        tax=0
-        amount=0
-        shipping_fee=self.shipping_fee
-        for line in self.invoiceline_set.all():
-            total+=line.unit_price*line.quantity 
-            discount+=line.discount
-        total_after_discount=total-discount
-        tax=(total_after_discount)*(self.tax_percentage)/100
-        amount=total-discount+tax+shipping_fee
-        self.amount=amount
+        lines_total=0 
+        i=1
+        
+        if self.id is not None:
+            for line in self.invoiceline_set.order_by('row'):
+                lines_total+=line.unit_price*line.quantity-line.discount 
+                line.row=i
+                i+=1 
+                super(InvoiceLine,line).save()
+ 
+            self.amount=lines_total 
         super(Invoice,self).save()
-
-    @property
-    def statistics(self):
-        total=0
-        discount=0
-        tax=0
-        amount=0
-        shipping_fee=0
-        for line in self.invoiceline_set.all():
-            total+=line.unit_price*line.quantity 
-            discount+=line.discount
-        total_after_discount=total-discount
-        tax=(total_after_discount)*(self.tax_percentage)/100
-        amount=total-discount+tax+shipping_fee
-        return (total,discount,total_after_discount,tax,amount)
+        try:
+            for project in self.project_set.all():
+                project.normalize()
+                pass
+        except:
+            pass
+ 
     
     def get_edit_view_url(self):
         return reverse(APP_NAME+':invoice_edit',kwargs={'pk':self.pk})
     
 
 class InvoiceLine(models.Model,LinkHelper):
-    invoice=models.ForeignKey("invoice", verbose_name=_("invoice"), on_delete=models.PROTECT)
+    invoice=models.ForeignKey("invoice", verbose_name=_("invoice"),null=True,blank=True, on_delete=models.PROTECT)
     invoice_line_item=models.ForeignKey("invoicelineitem", verbose_name=_("invoice_line_item"), on_delete=models.PROTECT)
     row=models.IntegerField(_("row"),default=0)
     quantity=models.FloatField(_("quantity"))
@@ -784,7 +986,8 @@ class InvoiceLine(models.Model,LinkHelper):
     discount_percentage=models.IntegerField(_("discount_percentage"),default=0)
     tax_amount=models.IntegerField(_("tax_amount"),default=0)
     description=models.CharField(_("description"),null=True,blank=True, max_length=5000)
-
+    status=models.CharField(_("status"),choices=InvoiceLineStatusEnum.choices,null=True,blank=True, max_length=5000)
+    person=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("person"), on_delete=models.CASCADE)
     class_name="invoiceline"
     app_name=APP_NAME
     class Meta:
@@ -794,15 +997,31 @@ class InvoiceLine(models.Model,LinkHelper):
     def discount(self):
         return self.discount_percentage*self.unit_price*self.quantity/100
     
+
+    def delete(self,*args, **kwargs):
+        invoice=self.invoice
+        super(InvoiceLine,self).delete()
+        self.invoice.normalize()
+
+
+
     @property
     def line_total(self):
         return (100-self.discount_percentage)*self.unit_price*self.quantity/100
 
     def save(self,*args, **kwargs):
-
+        normalize_row=True
+        if 'normalize_row' in kwargs:
+            normalize_row=kwargs['normalize_row']
         super(InvoiceLine,self).save()
-        self.invoice.normalize()
+        result,message=FAILED,''
+        if normalize_row and self.invoice is not None:
+            self.invoice.normalize()
 
+        if self.id is not None and self.id>0:
+            result=SUCCEED
+            message='سطر فاکتور با موفقیت ذخیره شد.'
+        return result,message,self
     def __str__(self):
         return f'{self.invoice}>{self.invoice_line_item}*{self.quantity}'
 
@@ -847,11 +1066,15 @@ class BankAccount(Account):
         if self.class_name is None or self.class_name=='':
             self.class_name='bankaccount'
               
-        result,message,bank_account=FAILED,'',self 
-        # result,message,bank_account=
-        super(BankAccount,self).save(*args, **kwargs)
+        if self.shaba_no is not None and len(self.shaba_no)>0:
+            self.shaba_no=self.shaba_no.replace(' ' ,'')
+        if self.account_no is not None and len(self.account_no)>0:
+            self.account_no=self.account_no.replace(' ' ,'')
+        if self.card_no is not None and len(self.card_no)>0:
+            self.card_no=self.card_no.replace(' ' ,'')
+        result,message,bank_account= super(BankAccount,self).save(*args, **kwargs)
         if result==SUCCEED:
-            message='حساب بانکی با موفقیت اضافه شد'
+            message='حساب بانکی با موفقیت ذخیره شد'
         return result,message,bank_account
  
 
@@ -867,7 +1090,7 @@ class Asset(CorePage):
             self.class_name="asset"
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        super(Asset,self).save()
+        result,message,self=super(Asset,self).save()
         result,message,asset=SUCCEED,"دارایی با موفقیت افزوده شد.",self
         return result,message,asset
     

@@ -1,0 +1,88 @@
+{% load static %} {% load to_price %} {% load to_persian_date %} {% load account_code_seperator %}
+ {% load to_price_color_btn %}
+<div class="card rtl text-right" id="student-app">
+  <div class="card-header">
+    <h5 class="text-center">دانش آموز</h5>
+  </div>
+  <div class="card-body">
+    <div class="text-center">
+      <img src="{{student.person_account.person.image}}" width="128" alt="" />
+    </div>
+
+    <h5 class="text-center mt-2">
+      {{student.person_account.person.full_name}}
+      <span class="badge badge-{{student.person_account.color}}">{{student.person_account.type}}</span>
+    </h5>
+
+    <a href="{{student.person_account.get_absolute_url}}">
+      <div class="text-center">
+        <img width="128" src="{{student.person_account.get_qrcode_url}}" alt="" />
+      </div>
+    </a>
+    <div>
+      <div class="text-center">
+        <div class="my-2">
+          <button
+             
+            class="my-2 btn btn-{{student.person_account.color}}"
+          >
+            <small class=""> کد : </small>
+            {{student.person_account.code}}
+            <i class="fa fa-copy"></i>
+           
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="text-center">
+        <button
+           
+          class="my-2 btn btn-{{account.balance_color}}"
+        >
+          <small class=""> مانده : </small>
+          {{student.person_account.balance|to_price}}
+          <i class="fa fa-copy"></i>
+
+         
+        </button>
+      </div>
+    </div>
+
+    
+    <h5 class="text-center mt-4">
+      <small class="text-muted"> مانده : </small>
+      {{student.person_account.balance|to_price_color|safe}} {{CURRENCY}}
+    </h5>
+    
+    <div>
+      <div class="text-center">
+        <small class="text-muted"> شناسه : </small>
+        <a href="{{account.get_absolute_url}}">
+          <span class=" text-{{account.color}}">{{account.id}}</span>
+        </a>
+      </div>
+
+      {% if perms.school.change_student %}
+      <a
+        href="{{student.get_edit_url}}"
+        class="my-2 text-warning mx-2"
+        title="ویرایش"
+        target="_blank"
+      >
+        <i class="fa fa-edit text-warning"></i> ویرایش
+      </a>
+      {% endif %} {% if perms.school.delete_student %}
+      <a
+        href="{{student.get_delete_url}}"
+        class="my-2 text-danger mx-2"
+        title="حذف"
+        target="_blank"
+      >
+        <i class="fa fa-trash text-danger"></i> حذف
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>

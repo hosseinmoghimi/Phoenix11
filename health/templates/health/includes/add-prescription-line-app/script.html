@@ -1,0 +1,240 @@
+<script>
+  let invoice_line_items_for_add_prescription_line_items_app = JSON.parse("{{invoice_line_items_s|escapejs}}")
+  
+ 
+  let add_prescription_line_app = new Vue({
+    el: "#add-prescription-line-app",
+    data: {
+      invoice_line_item_id: 0,
+      invoice_line_items: invoice_line_items_for_add_prescription_line_items_app,
+      invoice_line_item_units: [],
+      // prescription_line_item_unit:{id:0,unit_name:'عدد',unit_price:0,coef:1},
+      unit_price: 0,
+      default11: false,
+      coef: 1,
+      unit_name: "عدد",
+      unit_names:unit_names,
+      discount_percentage: 0,
+      quantity: 0,
+      save: false,
+      search_for: "",
+      buffer_items: [],
+      list_length: 6,
+      waiting: false,
+      message: { show: false },
+      show_add_btn: true,
+    },
+    methods: {
+      add_drug:()=>{
+        
+        add_prescription_line_app.waiting=true
+        let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: add_prescription_line_app.search_for,
+                    unit_name: add_prescription_line_app.unit_name,
+                    coef: add_prescription_line_app.coef,
+                    barcode: '',
+                    unit_price: parseInt(add_prescription_line_app.unit_price),
+                }
+                console.log(payload)
+                let url = "{% url 'health:add_drug' %}"
+                let posting = $.post(url, payload)
+                posting.done(data => {
+                    add_prescription_line_app.waiting=false
+                    
+                    if (data.result === "SUCCEED") {
+                      invoice_line_items_for_add_prescription_line_items_app.push(data.drug)
+                      add_prescription_line_app.invoice_line_items.push(data.drug)
+                      add_prescription_line_app.select_item(data.drug)
+                        if (typeof drugs_app != "undefined") {
+                            drugs_app.drugs.push(data.drug)
+                        }
+
+                        show_message(add_prescription_line_app, "موفقیت آمیز", data.message, "success", 5000)
+                    }
+
+
+                    if (data.result != "SUCCEED") {
+                        show_message(add_prescription_line_app, "خطا", data.message, "danger", 5000)
+                    }
+
+                })
+      },
+      add_service:()=>{
+        console.log("add_service!")
+
+        
+        add_prescription_line_app.waiting=true
+        let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: add_prescription_line_app.search_for,
+                    unit_name: add_prescription_line_app.unit_name,
+                    coef: add_prescription_line_app.coef,
+                    unit_price: parseInt(add_prescription_line_app.unit_price),
+                }
+                console.log(payload)
+                let url = "{% url 'accounting:add_service' %}"
+                let posting = $.post(url, payload)
+                posting.done(data => {
+                    add_prescription_line_app.waiting=false
+                    
+                    if (data.result === "SUCCEED") {
+                      prescription_line_items_for_add_prescription_line_items_app.push(data.service)
+                      add_prescription_line_app.prescription_line_items.push(data.service)
+                      add_prescription_line_app.select_item(data.service)
+                        if (typeof services_app != "undefined") {
+                            services_app.services.push(data.service)
+                        }
+
+                        show_message(add_prescription_line_app, "موفقیت آمیز", data.message, "success", 5000)
+                    }
+
+
+                    if (data.result != "SUCCEED") {
+                        show_message(add_prescription_line_app, "خطا", data.message, "danger", 5000)
+                    }
+
+                })
+
+
+      },
+      select_prescription_line_item_unit: function (prescription_line_item_unit) {
+        add_prescription_line_app.unit_price = prescription_line_item_unit.unit_price
+        add_prescription_line_app.unit_name = prescription_line_item_unit.unit_name
+        add_prescription_line_app.coef = prescription_line_item_unit.coef
+      },
+      more: function () {
+        add_prescription_line_app.list_length += 6;
+        add_prescription_line_app.filter(add_prescription_line_app.list_length);
+      },
+      less: function () {
+        add_prescription_line_app.list_length -= 6;
+        add_prescription_line_app.filter(add_prescription_line_app.list_length);
+      },
+      select_item: function (prescription_line_item) {
+        add_prescription_line_app.prescription_line_item_id = prescription_line_item.id
+        add_prescription_line_app.unit_name = prescription_line_item.unit_name
+        add_prescription_line_app.unit_price = prescription_line_item.unit_price
+        add_prescription_line_app.prescription_line_items = [prescription_line_item]
+        add_prescription_line_app.buffer_items = [prescription_line_item]
+        let url = "{% url 'accounting:get_invoice_line_item_units' %}"
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          prescription_line_item_id: prescription_line_item.id
+        }
+        $.post(url, payload).done(data => {
+          console.log(data)
+          console.log(data.prescription_line_item_units)
+          add_prescription_line_app.prescription_line_item_units = data.prescription_line_item_units
+        })
+      },
+      filter: function (count = 6) {
+         add_prescription_line_app.prescription_line_item_units=[]
+
+        add_prescription_line_app.list_length = count
+        // if (add_prescription_line_app.search_for.length < 1) return;
+        let search_for = add_prescription_line_app.search_for.toUpperCase();
+        add_prescription_line_app.prescription_line_items =
+          prescription_line_items_for_add_prescription_line_items_app.filter(function (
+            prescription_line_item
+          ) {
+            let title = prescription_line_item.title.toUpperCase();
+
+            if (title.indexOf(search_for) > -1) {
+              return true;
+            }
+            return false;
+          });
+        if (add_prescription_line_app.prescription_line_items.length == 0) {
+          add_prescription_line_app.prescription_line_item_id =0
+
+        add_prescription_line_app.unit_name = 'عدد'
+        add_prescription_line_app.unit_price = 0
+        add_prescription_line_app.prescription_line_items = []
+         add_prescription_line_app.prescription_line_item_units=[]
+          add_prescription_line_app.buffer_items = []
+        }
+        if (add_prescription_line_app.prescription_line_items.length > 0) {
+          add_prescription_line_app.buffer_items =
+            add_prescription_line_app.prescription_line_items.slice(
+              0,
+              add_prescription_line_app.list_length
+            );
+          add_prescription_line_app.prescription_line_item_id =
+            add_prescription_line_app.prescription_line_items[0].id;
+        }
+      },
+      to_price: function (vall) {
+        return to_price(vall);
+      },
+      add_prescription_line: function () {
+        let failure=false
+        let quantity=0
+        try {
+          quantity=parseFloat(this.quantity)
+        } catch (error) {
+            show_message(add_prescription_line_app, 'خطا', ',عدد به درستی در فیلد تعداد وارد نشده است', 'danger', 2000)
+            failure=true
+        }
+        if(failure){
+          return
+        }
+
+        add_prescription_line_app.show_add_btn = false
+        add_prescription_line_app.waiting = true
+        add_prescription_line_app.message.show = false
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          prescription_id: prescription_id,
+          search_for: this.search_for,
+          prescription_line_item_id: this.prescription_line_item_id,
+          quantity: parseFloat(this.quantity),
+          unit_price: parseInt(this.unit_price),
+          unit_name: this.unit_name,
+          default: this.default11,
+          save: this.save,
+          coef: parseInt(this.coef),
+          discount_percentage: this.discount_percentage,
+        };
+        console.log(payload)
+        let url = "{% url 'accounting:add_invoice_line' %}";
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+
+
+
+          add_prescription_line_app.waiting = false
+          if (data.result != "SUCCEED") {
+            setTimeout(() => {
+              add_prescription_line_app.show_add_btn = true
+            }, 1000);
+            title = 'خطا'
+            body = data.message
+            show_message(add_prescription_line_app, title, body, 'danger', 2000)
+          }
+
+          if (data.result === "SUCCEED") {
+
+            setTimeout(() => {
+              add_prescription_line_app.show_add_btn = true
+              add_prescription_line_app.quantity = 0
+
+            }, 2000);
+            title = 'موفق'
+            body = data.message
+            show_message(add_prescription_line_app, title, body, 'success', 2000)
+            if (typeof prescription_lines_app != "undefined") {
+              prescription_lines_app.prescription_lines.push(data.prescription_line);
+              // prescription_lines_app.calculate_total();
+            } 
+            
+            if (typeof prescription_edit_app != "undefined") {
+              console.log("prescription_edit_app.prescription_lines.push(data.prescription_line);")
+              prescription_edit_app.prescription_lines.push(data.prescription_line);
+            }
+          }
+        });
+      },
+    },
+  });
+</script>

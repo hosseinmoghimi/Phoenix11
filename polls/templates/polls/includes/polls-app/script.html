@@ -1,0 +1,15 @@
+<script>
+    
+    let polls_for_polls_app=JSON.parse("{{polls_s|escapejs}}")
+    let polls_app = new Vue({
+        el: "#polls-app",
+        data: {
+            polls: polls_for_polls_app
+        },
+        methods: {
+            to_price: function(vall) { 
+                return  to_price(vall) 
+            }
+        }
+    })
+</script>

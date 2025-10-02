@@ -1,7 +1,9 @@
 from django.contrib import admin
-from .models import WareHouse,WareHouseMaterialSheet,MaterialTerminal,MaterialPort 
+from .models import ProductInWareHouse,WareHouse,WareHouseSheet,MaterialPort,WareHouseSheetSignature,WareHouseSheetLabel
 
 admin.site.register(WareHouse)
-admin.site.register(WareHouseMaterialSheet)
-admin.site.register(MaterialTerminal)
+admin.site.register(WareHouseSheet)
 admin.site.register(MaterialPort)
+admin.site.register(WareHouseSheetSignature)
+admin.site.register(WareHouseSheetLabel)
+admin.site.register(ProductInWareHouse)
