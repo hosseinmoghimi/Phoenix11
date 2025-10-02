@@ -26,7 +26,9 @@ class InvoiceLineItemUnitRepo:
         
         
         self.objects=None
-        self.objects=InvoiceLineItemUnit.objects
+        if request.user.has_perm(APP_NAME+'.view_invoicelineitemunit'):
+            self.objects=InvoiceLineItemUnit.objects
+        self.objects=InvoiceLineItemUnit.objects.filter(pk=0)
 
     def list(self,*args, **kwargs):
         objects=self.objects

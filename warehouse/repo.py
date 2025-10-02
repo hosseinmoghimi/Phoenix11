@@ -2,6 +2,7 @@ from organization.repo import EmployeeRepo,OrganizationUnitRepo
 from .models import ProductInWareHouse,WareHouse,WareHouseSheet,WareHouseSheetSignature,WareHouseSheetLabel
 from .apps import APP_NAME
 from .enums import *
+from utility.enums import *
 from log.repo import LogRepo 
 from django.db.models import Q
 from django.shortcuts import reverse
@@ -156,11 +157,17 @@ class WareHouseSheetRepo():
         self.my_accounts=[]
         self.request=request
         self.me_person=PersonRepo(request=request).me
+        self.me_employee=EmployeeRepo(request=request).me
         self.objects=WareHouseSheet.objects.filter(person_id=self.me_person.id)
         if self.me_person is not None:
-            if request.user.has_perm(APP_NAME+".view_account"):
+            if request.user.has_perm(APP_NAME+".view_warehousesheet"):
                 self.objects=WareHouseSheet.objects
-                self.my_accounts=self.objects 
+                
+            elif self.me_employee is not None :
+                for warehouse in self.me_employee.warehouse_set.all():
+                    
+                    self.objects=WareHouseSheet.objects.filter(warehouse_id=warehouse.id).filter(status=SignatureStatusEnum.CONFIRMED)
+
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
@@ -390,6 +397,7 @@ class ProductInWareHouseRepo():
 
 
     def list(self,*args, **kwargs):
+        # if self.request.user 
         objects=self.objects
         leolog(sdssd_kwargs=kwargs)
         if "product_id" in kwargs:

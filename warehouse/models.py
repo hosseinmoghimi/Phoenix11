@@ -61,7 +61,7 @@ class WareHouseSheet(models.Model,LinkHelper,DateTimeHelper):
     row=models.CharField(_("row"),null=True,blank=True,max_length=50)
     col=models.CharField(_("col"),null=True,blank=True,max_length=50)
     description=models.CharField(_("description"),null=True,blank=True,max_length=500)
-
+    status=models.CharField(_("status"),choices=SignatureStatusEnum.choices, max_length=50)
     class_name="warehousesheet"
     app_name=APP_NAME
     class Meta:
@@ -70,6 +70,10 @@ class WareHouseSheet(models.Model,LinkHelper,DateTimeHelper):
     @property
     def sum(self):
         return self.invoice_line.line_total
+    # @property
+    # def status(self):
+    #     signature=WareHouseSheetSignature.objects.filter(warehouse_sheet_id=self.id).last()
+    #     return signature
     def __str__(self):
         return f"{self.warehouse} - {self.invoice_line.invoice_line_item} - {self.invoice_line.quantity} {self.invoice_line.unit_name} - {self.direction}     "
 
@@ -95,7 +99,10 @@ class WareHouseSheetSignature(models.Model,LinkHelper,DateTimeHelper):
     def __str__(self):
         return f'{self.employee}  {self.status}  {self.warehouse_sheet}'
  
-
+    def save(self):
+        self.warehouse_sheet.status=self.status
+        self.warehouse_sheet.save()
+        return super(WareHouseSheetSignature,self).save()
 class WareHouseSheetLabel(models.Model,LinkHelper,DateTimeHelper):
     warehouse_sheet=models.ForeignKey("warehousesheet", verbose_name=_("warehouse_sheet"), on_delete=models.PROTECT)
     serial_no=models.CharField(_("serial_no"),null=True,blank=True, max_length=50)

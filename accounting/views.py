@@ -204,8 +204,8 @@ def InvoiceLineItemContext(request,invoice_line_item,*args, **kwargs):
     invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
     context['invoice_lines_s']=invoice_lines_s
 
- 
-    invoice_line_item_units=invoice_line_item.units.all()
+    from .repo import InvoiceLineItemUnitRepo
+    invoice_line_item_units=InvoiceLineItemUnitRepo(request=request).list(invoice_line_item_id=invoice_line_item.id)
     invoice_line_item_units_s=json.dumps(InvoiceLineItemUnitSerializer(invoice_line_item_units,many=True).data)
     context['invoice_line_item_units']=invoice_line_item_units
     context['invoice_line_item_units_s']=invoice_line_item_units_s

@@ -248,6 +248,17 @@
         </tr>
         {% endif %}
 
+        
+        {% if warehouse_sheet.status %}
+
+        <tr>
+          <td class="field_name">وضعیت</td>
+          <td class="field_value">
+            <div>{{warehouse_sheet.status}}</div>
+          </td>
+        </tr>
+        {% endif %}
+
          <tr>
               <td class="field-name">ثبت توسط</td>
 

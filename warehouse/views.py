@@ -144,6 +144,13 @@ class WareHouseView(View):
         warehouse_s=json.dumps(WareHouseSerializer(warehouse,many=False).data)
         context["warehouse_s"]=warehouse_s
 
+
+        employees=warehouse.employees.all()
+        context["employees"]=employees
+        from organization.serializers import EmployeeSerializer
+        employees_s=json.dumps(EmployeeSerializer(employees,many=True).data)
+        context["employees_s"]=employees_s
+
         
         warehouse_sheets=WareHouseSheetRepo(request=request).list(warehouse_id=warehouse.id)
         context["warehouses"]=warehouse_sheets
@@ -181,7 +188,21 @@ class WareHouseSheetLabelView(View):
 class WareHouseSheetsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        warehouse_sheets=WareHouseSheetRepo(request=request).list(*args, **kwargs)
+        from organization.repo import EmployeeRepo
+        me_employee=EmployeeRepo(request=request).me
+        warehouse_sheets=WareHouseSheetRepo(request=request).list()
+        # if request.user.has_perm(APP_NAME+".view_warehousesheet"):
+        #     warehouse_sheets=WareHouseSheetRepo(request=request).list(*args, **kwargs)
+
+        # elif me_employee is not None :
+        #     for warehouse in me_employee.warehouse_set.all():
+        #         print(warehouse)
+        #         warehouse_sheets=WareHouseSheetRepo(request=request).list(warehouse_id=warehouse.id,*args, **kwargs)
+                 
+
+        # warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=None,*args, **kwargs)
+        leolog(warehouse_sheets=warehouse_sheets)
+        
         context["WIDE_LAYOUT"]=True
         context["warehouses"]=warehouse_sheets
         warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)

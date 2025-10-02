@@ -16,13 +16,12 @@ import json
 from .repo import PageRepo,FAILED,SUCCEED
 from .serializers import PageSerializer,PageBriefSerializer,EventSerializer
 from utility.enums import ColorEnum
+from utility.constants import *
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='core/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
-
-
 def CoreContext(request,*args, **kwargs):
     context={}
     app_name='core'
@@ -52,7 +51,22 @@ def CoreContext(request,*args, **kwargs):
 
 
     me_person=PersonRepo(request=request).me
+
     if me_person is not None:
+        from django.contrib.auth.models import Group
+        price_group = Group.objects.get_or_create(name = PRICE_GROUP_NAME)
+        quantity_group = Group.objects.get_or_create(name = QUANTITY_GROUP_NAME)
+        SHOW_PRICE=False
+        SHOW_QUANTITY=False
+        if me_person is not None and me_person.user is not None:
+            price_group=me_person.user.groups.filter(name=PRICE_GROUP_NAME).first()
+            quantity_group=me_person.user.groups.filter(name=QUANTITY_GROUP_NAME).first()
+            if quantity_group is not None:
+                SHOW_QUANTITY=True 
+            if price_group is not None:
+                SHOW_PRICE=True
+        context['SHOW_QUANTITY']=SHOW_QUANTITY
+        context['SHOW_PRICE']=SHOW_PRICE
         context['me_person']=me_person 
         me_person_s=json.dumps(PersonSerializer(me_person).data)
         context['me_person_s']=me_person_s 
