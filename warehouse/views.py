@@ -201,7 +201,6 @@ class WareHouseSheetsView(View):
                  
 
         # warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=None,*args, **kwargs)
-        leolog(warehouse_sheets=warehouse_sheets)
         
         context["WIDE_LAYOUT"]=True
         context["warehouses"]=warehouse_sheets
