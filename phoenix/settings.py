@@ -2,7 +2,7 @@
 from pathlib import Path
 from . import server_settings 
 BASE_DIR = Path(__file__).resolve().parent.parent 
-
+VERSION='1.0.5'
 SECRET_KEY=server_settings.SECRET_KEY
 DEBUG=server_settings.DEBUG
 ALLOWED_HOSTS=server_settings.ALLOWED_HOSTS
