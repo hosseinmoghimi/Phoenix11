@@ -415,7 +415,6 @@ class ProductInWareHouseRepo():
     def list(self,*args, **kwargs):
         # if self.request.user 
         objects=self.objects
-        leolog(sdssd_kwargs=kwargs)
         if "product_id" in kwargs:
             product_id=kwargs["product_id"]
             if product_id is not None:
