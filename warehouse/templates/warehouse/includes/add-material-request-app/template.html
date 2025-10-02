@@ -21,10 +21,10 @@
       data-parent="#accordion-add-material-request"
     >
       <div class="card-body">
-        <form @submit.prevent="search()">
-          
+        
         <div class="row rtl">
           <div class="col-4">
+            <form @submit.prevent="search()">
             <div class="form-group">
               <label for=""> عنوان کالا </label>
               <input v-model="title" type="text" class="form-control" />
@@ -42,6 +42,7 @@
             <div class="my-2">
               <button class="btn btn-info" type="submit">جستجو</button>
             </div>
+          </form>
           </div>
 
           <div class="col-8">
@@ -58,9 +59,16 @@
                 v-text="' هر '+ invoice_line_item_unit.unit_name +' ' +to_price(invoice_line_item_unit.unit_price)+' {{CURRENCY}}'"
               ></button>
             </div>
+
+            <div v-for="product_in_warehouse in product_in_warehouses">
+              <button
+                class="btn btn-block my-2 btn-success"
+                @click="select_product_in_warehouse(product_in_warehouse)"
+                v-text=" product_in_warehouse.quantity +' ' +product_in_warehouse.unit_name+'   در' +product_in_warehouse.warehouse.name"
+              ></button>
+            </div>
           </div>
         </div>
-        </form>
 
         <div class="row rtl">
           <div class="col-4">

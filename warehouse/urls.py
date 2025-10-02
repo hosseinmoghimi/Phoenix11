@@ -23,6 +23,7 @@ urlpatterns = [
     path('add_warehouse_sheet/',login_required(apis.AddWareHouseSheetApi.as_view()),name="add_warehouse_sheet"), 
     path('warehouse_sheet/<int:pk>/',login_required(views.WareHouseSheetView.as_view()),name="warehousesheet"), 
 
+    path('product_in_warehouse/',login_required(apis.ProductInWareHouseApi.as_view()),name="product_in_warehouse"), 
  
      path('select_warehouse/',login_required(apis.SelectWareHouseApi.as_view()),name="select_warehouse"), 
  

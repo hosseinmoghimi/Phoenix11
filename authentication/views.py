@@ -207,9 +207,26 @@ class LoginView(View):
 class ChangePasswordView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request) 
-           
-        return render(request,TEMPLATE_ROOT+"login.html",context)
-
+        person_repo=PersonRepo(request=request)
+        person=person_repo.person(*args, **kwargs)
+        if person is None:
+            person=PersonRepo(request=request).me
+        if person is None:
+            body='فرد مورد نظر پیدا نشد.'
+            title='خطا'
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
+        if person.user is None:
+            body='فرد مورد نظر نام کاربری ندارد..'
+            title='خطا'
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)
+        context['username']=person.user.username
+        return render(request,TEMPLATE_ROOT+"change-password.html",context)
+    def post(self,request,*args, **kwargs):
+        context={}
+        from django.http import JsonResponse
+        return JsonResponse(context)
 
 class LogoutView(View):
     def get(self,request,*args, **kwargs):

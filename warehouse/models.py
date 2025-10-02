@@ -146,3 +146,18 @@ class MaterialRequest(models.Model):
 
     def get_absolute_url(self):
         return reverse("MaterialRequest_detail", kwargs={"pk": self.pk})
+
+
+class ProductInWareHouse(models.Model):
+    product=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.PROTECT)
+    warehouse=models.ForeignKey("warehouse", verbose_name=_("warehouse"),null=True,blank=True, on_delete=models.CASCADE)
+    unit_name=models.CharField(_("unit_name"), max_length=50)
+    quantity=models.FloatField(_("quantity"))
+
+
+    class Meta:
+        verbose_name = _("ProductInWareHouse")
+        verbose_name_plural = _("ProductInWareHouses")
+
+    def __str__(self):
+        return f"{self.warehouse} : {self.product} @ {self.quantity}  {self.unit_name}"

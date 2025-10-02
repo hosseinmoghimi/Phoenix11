@@ -24,6 +24,7 @@
       coef:1,
       unit_price:0,
       invoice_line_item_units:[],
+      product_in_warehouses:[],
       message:{show:false},
       waiting:false,
     },
@@ -120,6 +121,15 @@
           }
         })
       },
+      select_product_in_warehouse:(product_in_warehouse)=>{
+        console.log(product_in_warehouse.product.title)
+        console.log(product_in_warehouse.warehouse.name)
+        console.log(product_in_warehouse.quantity)
+        console.log(product_in_warehouse.unit_name)
+        add_material_request_app.unit_name = product_in_warehouse.unit_name
+        add_material_request_app.quantity = product_in_warehouse.quantity
+
+      },
       select_item: function (invoice_line_item) {
         add_material_request_app.products = [invoice_line_item]
         add_material_request_app.title = invoice_line_item.title
@@ -129,15 +139,20 @@
         add_material_request_app.unit_price = invoice_line_item.unit_price
         add_material_request_app.invoice_line_items = [invoice_line_item]
         add_material_request_app.buffer_items = [invoice_line_item]
-        let url = "{% url 'accounting:get_invoice_line_item_units' %}"
+        let url = "{% url 'warehouse:product_in_warehouse' %}"
         let payload = {
           csrfmiddlewaretoken: csrfmiddlewaretoken,
-          invoice_line_item_id: invoice_line_item.id
+          product_id: parseInt(invoice_line_item.id),
         }
+        
+        console.log('1542')
+        console.log(payload)
         $.post(url, payload).done(data => {
           console.log(data)
-          console.log(data.invoice_line_item_units)
-          add_material_request_app.invoice_line_item_units = data.invoice_line_item_units
+          if(data.result==='SUCCEED'){
+            add_material_request_app.product_in_warehouses=data.product_in_warehouses
+          }
+          // add_material_request_app.invoice_line_item_units = data.invoice_line_item_units
         })
       },
       

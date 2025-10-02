@@ -196,7 +196,23 @@
     ویرایش
   </a>
 </div>
-{% endif %} {% if perms.core.delete_person %}
+{% endif %}
+
+
+{% if perms.core.change_person %}
+<div>
+  <a
+    href="{{person.get_change_password_url}}"
+    class="my-2 text-danger mx-2"
+    title="تغییر کلمه عبور"
+    target="_blank"
+  >
+    <i class="fa fa-key text-danger"></i>
+    تغییر دادن کلمه عبور
+  </a>
+</div>
+{% endif %}{% if perms.core.delete_person %}
+
 <div>
   <a
     href="{{person.get_delete_url}}"

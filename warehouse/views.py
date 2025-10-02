@@ -238,6 +238,3 @@ class WareHouseSheetView(View):
             context['me_employee_s']=me_employee_s
             context['add_warehouse_sheet_label_form']=AddWareHouseSheetLabelForm()
         return render(request,TEMPLATE_ROOT+"warehouse-sheet.html",context)
-
-
- 

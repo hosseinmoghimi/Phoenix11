@@ -1,5 +1,5 @@
 from organization.repo import EmployeeRepo,OrganizationUnitRepo
-from .models import WareHouse,WareHouseSheet,WareHouseSheetSignature,WareHouseSheetLabel
+from .models import ProductInWareHouse,WareHouse,WareHouseSheet,WareHouseSheetSignature,WareHouseSheetLabel
 from .apps import APP_NAME
 from .enums import *
 from log.repo import LogRepo 
@@ -13,7 +13,6 @@ from utility.constants import FAILED,SUCCEED
 from utility.log import leolog
 from .enums import *
 from accounting.repo import InvoiceLine,FinancialEventStatusEnum,InvoiceRepo
-
 
 class WareHouseRepo():
     def __init__(self,request,*args, **kwargs):
@@ -374,7 +373,65 @@ class WareHouseSheetRepo():
             result=SUCCEED
             message='برگه انبار با موفقیت ذخیره شد.'
         return result,message,warehouse_sheet
- 
+
+
+class ProductInWareHouseRepo():
+    def __init__(self,request,*args, **kwargs):
+        self.me=None
+        self.my_accounts=[]
+        self.request=request
+        self.objects=ProductInWareHouse.objects.filter(id=0)
+        person=PersonRepo(request=request).me
+        me_employee=EmployeeRepo(request=request).me
+        if person is not None:
+            if request.user.has_perm(APP_NAME+".view_productinwarehouse"):
+                self.objects=ProductInWareHouse.objects.all()
+             
+
+
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        leolog(sdssd_kwargs=kwargs)
+        if "product_id" in kwargs:
+            product_id=kwargs["product_id"]
+            if product_id is not None:
+                objects=objects.filter(product_id=product_id)  
+
+        if "warehouse_id" in kwargs:
+            warehouse_id=kwargs["warehouse_id"]
+            if warehouse_id is not None:
+                objects=objects.filter(warehouse_id=warehouse_id)  
+
+        return objects.all()
+        
+    def product_in_warehouse(self,*args, **kwargs):
+        if "product_in_warehouse_id" in kwargs and kwargs["product_in_warehouse_id"] is not None:
+            return self.objects.filter(pk=kwargs['product_in_warehouse_id']).first()  
+        if "pk" in kwargs and kwargs["pk"] is not None:
+            return self.objects.filter(pk=kwargs['pk']).first() 
+        if "id" in kwargs and kwargs["id"] is not None:
+            return self.objects.filter(pk=kwargs['id']).first() 
+        
+        
+    def add_product_in_warehouse(self,*args,**kwargs):
+        result,message,product_in_warehouse=FAILED,"",None
+        
+        if len(ProductInWareHouse.objects.filter(name=kwargs["name"]))>0:
+            message='نام تکراری برای انبار جدید'
+            return FAILED,message,None 
+        if not self.request.user.has_perm(APP_NAME+".add_product_in_warehouse"):
+            message="دسترسی غیر مجاز"
+            return result,message,product_in_warehouse
+
+        product_in_warehouse=ProductInWareHouse()
+        if 'name' in kwargs:
+            product_in_warehouse.name=kwargs["name"]  
+        if 'person_account_id' in kwargs:
+            product_in_warehouse.person_account_id=kwargs["person_account_id"]
+          
+        (result,message,product_in_warehouse)=product_in_warehouse.save()
+        return result,message,product_in_warehouse
+
 
 class WareHouseSheetSignatureRepo():
     def __init__(self,request,*args, **kwargs):

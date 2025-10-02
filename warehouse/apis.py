@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import WareHouseRepo,WareHouseSheetRepo,WareHouseSheetSignatureRepo,WareHouseSheetLabelRepo
-from .serializers import WareHouseSerializer,WareHouseSheetSerializer,WareHouseSheetSignatureSerializer,WareHouseSheetLabelSerializer
+from .repo import WareHouseRepo,WareHouseSheetRepo,WareHouseSheetSignatureRepo,WareHouseSheetLabelRepo,ProductInWareHouseRepo
+from .serializers import ProductInWareHouseSerializer,WareHouseSerializer,WareHouseSheetSerializer,WareHouseSheetSignatureSerializer,WareHouseSheetLabelSerializer
  
 from django.http import JsonResponse
 from .forms import *
@@ -103,6 +103,34 @@ class AddWareHouseSheetApi(APIView):
             result,message,warehouse_sheet=WareHouseSheetRepo(request=request).add_warehouse_sheet(**cd)
             if warehouse_sheet is not None:
                 context['warehouse_sheet']=WareHouseSheetSerializer(warehouse_sheet).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+   
+
+
+
+class ProductInWareHouseApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        product_in_warehouse_form=ProductInWareHouseForm(request.POST)
+        if product_in_warehouse_form.is_valid():
+            log=333
+            cd=product_in_warehouse_form.cleaned_data
+            product_in_warehouses=ProductInWareHouseRepo(request=request).list(**cd)
+            # product_in_warehouses=ProductInWareHouseRepo(request=request).list()
+            if True or product_in_warehouses:
+                context['product_in_warehouses']=ProductInWareHouseSerializer(product_in_warehouses,many=True).data
+                message='موجودی انبار گرفته شد.'
+                result=SUCCEED
         context['message']=message
         context['result']=result
         context['log']=log

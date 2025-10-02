@@ -8,6 +8,7 @@ from .apps import APP_NAME
 from utility.models import ImageHelper
 from utility.constants import FAILED,SUCCEED
 IMAGE_FOLDER=APP_NAME+"/images/"
+from django.shortcuts import reverse
 from utility.enums import *
  
 
@@ -114,5 +115,6 @@ class Person(models.Model,ImageHelper,LinkHelper):
             return f'{STATIC_URL}{APP_NAME}/img/person.png'
         
         return f'{MEDIA_URL}{self.image_origin}'
-
+    def get_change_password_url(self):
+        return reverse(APP_NAME+":change_password",kwargs={'pk':self.pk})
 Profile=Person
