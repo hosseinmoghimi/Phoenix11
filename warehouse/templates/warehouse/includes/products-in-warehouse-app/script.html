@@ -1,19 +1,19 @@
 <script>
-    let warehouse_sheets_for_warehouse_sheets_app=[]
+    let products_in_warehouse_for_products_in_warehouse_app=[]
 </script>
-{% if warehouse_sheets_s %}
+{% if products_in_warehouse_s %}
 <script>
 
-    warehouse_sheets_for_warehouse_sheets_app=JSON.parse("{{warehouse_sheets_s|escapejs}}")
+    products_in_warehouse_for_products_in_warehouse_app=JSON.parse("{{products_in_warehouse_s|escapejs}}")
 </script>
 {% endif %}
 
 <script>
     
-    let warehouse_sheets_app = new Vue({
-        el: "#warehouse-sheets-app",
+    let products_in_warehouse_app = new Vue({
+        el: "#products-in-warehouse-app",
         data: {
-            warehouse_sheets: warehouse_sheets_for_warehouse_sheets_app,
+            products_in_warehouse: products_in_warehouse_for_products_in_warehouse_app,
             sum_in:0,
             sum_out:0,
         },

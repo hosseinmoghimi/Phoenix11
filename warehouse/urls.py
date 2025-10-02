@@ -6,6 +6,8 @@ app_name=APP_NAME
 urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),  
+    path('settings/',login_required(views.SettingsView.as_view()),name="settings"),  
+    path('normalize_product_in_warehouse/',login_required(apis.NormalizeProductInWareHouseApi.as_view()),name="normalize_product_in_warehouse"),  
 
     path('warehouses/',login_required(views.WareHousesView.as_view()),name="warehouses"),  
     path('add-warehouse/',login_required(apis.AddWareHouseApi.as_view()),name="add_warehouse"),

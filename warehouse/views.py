@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .repo import WareHouseRepo,WareHouseSheetRepo,WareHouseSheetSignatureRepo,WareHouseSheetLabelRepo
-from .serializers import WareHouseSheetLabelSerializer,WareHouseSerializer,WareHouseSheetSerializer,WareHouseSheetSignatureSerializer
+from .repo import ProductInWareHouseRepo,WareHouseRepo,WareHouseSheetRepo,WareHouseSheetSignatureRepo,WareHouseSheetLabelRepo
+from .serializers import ProductInWareHouseSerializer,WareHouseSheetLabelSerializer,WareHouseSerializer,WareHouseSheetSerializer,WareHouseSheetSignatureSerializer
 from django.views import View
 from organization.views import OrganizationUnitRepo,OrganizationUnitSerializer
 
@@ -67,6 +67,7 @@ def AddWareHouseSheetContext(request):
 
     return context
  
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -79,6 +80,17 @@ class IndexView(View):
         return render(request,TEMPLATE_ROOT+"index.html",context)
  
  
+class SettingsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['name3']="name 3333"
+        phoenix_apps=context["phoenix_apps"]
+        phoenix_apps=phoenix_apps
+        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
+        context['phoenix_apps']=phoenix_apps
+        return render(request,TEMPLATE_ROOT+"settings.html",context)
+ 
+
 class WareHousesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -140,9 +152,19 @@ class WareHouseView(View):
         context["WIDE_LAYOUT"]=True
 
         warehouse=WareHouseRepo(request=request).warehouse(*args, **kwargs)
+        if warehouse is None:
+            mv=MessageView()
+            return mv.get(request=request)
+        
         context["warehouse"]=warehouse
         warehouse_s=json.dumps(WareHouseSerializer(warehouse,many=False).data)
         context["warehouse_s"]=warehouse_s
+
+        products_in_warehouse=ProductInWareHouseRepo(request=request).list(warehouse_id=warehouse.id)
+
+        context["products_in_warehouse"]=products_in_warehouse
+        products_in_warehouse_s=json.dumps(ProductInWareHouseSerializer(products_in_warehouse,many=True).data)
+        context["products_in_warehouse_s"]=products_in_warehouse_s
 
 
         employees=warehouse.employees.all()

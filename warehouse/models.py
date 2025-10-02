@@ -103,6 +103,8 @@ class WareHouseSheetSignature(models.Model,LinkHelper,DateTimeHelper):
         self.warehouse_sheet.status=self.status
         self.warehouse_sheet.save()
         return super(WareHouseSheetSignature,self).save()
+
+
 class WareHouseSheetLabel(models.Model,LinkHelper,DateTimeHelper):
     warehouse_sheet=models.ForeignKey("warehousesheet", verbose_name=_("warehouse_sheet"), on_delete=models.PROTECT)
     serial_no=models.CharField(_("serial_no"),null=True,blank=True, max_length=50)

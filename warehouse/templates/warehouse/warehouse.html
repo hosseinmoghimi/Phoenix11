@@ -24,6 +24,13 @@
         {% include "organization/includes/employees-app/template.html" %}
     </div>
 
+    
+    <div class="col-md-12">
+
+        
+        {% include "warehouse/includes/products-in-warehouse-app/template.html" %}
+    </div>
+
 </div>
 {% endblock content %}
 
@@ -31,5 +38,6 @@
 {% block script %}
 {% include "warehouse/includes/warehouse-sheets-app/script.html" %}
         {% include "organization/includes/employees-app/script.html" %}
+        {% include "warehouse/includes/products-in-warehouse-app/script.html" %}
  
 {% endblock script %}

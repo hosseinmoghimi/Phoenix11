@@ -19,14 +19,18 @@
     {% include "accounting/includes/invoice-lines-app/template.html" %}
   </div>
 
-    <div class="col-md-12">
-        {% include "projectmanager/includes/remote-clients-app/template.html" %}
-    </div>
 
   <div class="col-md-12">
     {% include "warehouse/includes/warehouse-sheets-app/template.html" %}
   </div>
+ <div class="col-md-12">
 
+        
+        {% include "warehouse/includes/products-in-warehouse-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+        {% include "projectmanager/includes/remote-clients-app/template.html" %}
+    </div>
   <div class="col-md-4">
     {% include "attachments/includes/downloads-app/template.html" %}
   </div>
@@ -67,6 +71,7 @@
 {% include "accounting/includes/invoice-line-item-units-app/script.html" %} 
 {% include "warehouse/includes/warehouse-sheets-app/script.html" %}
 {% include "projectmanager/includes/remote-clients-app/script.html" %}
+{% include "warehouse/includes/products-in-warehouse-app/script.html" %}
 
 {% endblock script %}
 

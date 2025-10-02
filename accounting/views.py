@@ -994,12 +994,21 @@ class ProductView(View):
         context.update(ProductContext(request=request,product=product))
 
 
-        from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer
+        from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer,ProductInWareHouseRepo,ProductInWareHouseSerializer
 
         warehouse_sheets=WareHouseSheetRepo(request=request).list(product_id=product.id)
         context["warehouses"]=warehouse_sheets
         warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
         context["warehouse_sheets_s"]=warehouse_sheets_s
+
+
+
+        products_in_warehouse=ProductInWareHouseRepo(request=request).list(product_id=product.id)
+
+        context["products_in_warehouse"]=products_in_warehouse
+        products_in_warehouse_s=json.dumps(ProductInWareHouseSerializer(products_in_warehouse,many=True).data)
+        context["products_in_warehouse_s"]=products_in_warehouse_s
+
 
         from projectmanager.views import RemoteClientRepo,RemoteClientSerializer
 

@@ -20,6 +20,10 @@ class AddMaterialRequestForm(forms.Form):
     coef=forms.IntegerField(required=False)
     unit_name=forms.CharField(max_length=100, required=True)
 
+class NormalizeProductInWareHouseForm(forms.Form):
+    warehouse_id=forms.IntegerField(required=True) 
+    product_id=forms.IntegerField(required=False) 
+
 class AddInvoiceWareHouseSheetsForm(forms.Form):
     invoice_id=forms.IntegerField(required=True) 
     organization_unit_id=forms.IntegerField(required=False) 

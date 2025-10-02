@@ -122,12 +122,13 @@
         })
       },
       select_product_in_warehouse:(product_in_warehouse)=>{
-        console.log(product_in_warehouse.product.title)
-        console.log(product_in_warehouse.warehouse.name)
-        console.log(product_in_warehouse.quantity)
-        console.log(product_in_warehouse.unit_name)
+        // console.log(product_in_warehouse.product.title)
+        // console.log(product_in_warehouse.warehouse.name)
+        // console.log(product_in_warehouse.quantity)
+        // console.log(product_in_warehouse.unit_name)
         add_material_request_app.unit_name = product_in_warehouse.unit_name
         add_material_request_app.quantity = product_in_warehouse.quantity
+        add_material_request_app.warehouse_id = product_in_warehouse.warehouse.id
 
       },
       select_item: function (invoice_line_item) {

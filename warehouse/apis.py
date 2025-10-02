@@ -60,6 +60,29 @@ class AddWareHouseApi(APIView):
         return JsonResponse(context)
     
 
+class NormalizeProductInWareHouseApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        normalize_product_in_warehouse_form=NormalizeProductInWareHouseForm(request.POST)
+        if normalize_product_in_warehouse_form.is_valid():
+            log=333
+            cd=normalize_product_in_warehouse_form.cleaned_data
+            result,message,warehouse=ProductInWareHouseRepo(request=request).normalize_product_in_warehouse(**cd)
+            if warehouse is not None:
+                context['product_in_warehouse']=WareHouseSerializer(warehouse).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+    
+
 class AddMaterialRequestApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

@@ -3,7 +3,7 @@
 {% endif %}
 
   <div id="accordion-warehouse-sheets" class="rtl text-right farsi">
-  <div class="card" id="warehouse_sheets-app">
+  <div class="card" id="warehouse-sheets-app">
     <div class="card-header">
       <h5 class="text-center">
         <button
@@ -71,24 +71,30 @@
                   </span>
                 </td>
                  <td>
-                    <span v-text="warehouse_sheet.invoice_line.quantity"></span>
-                    <span v-text="warehouse_sheet.invoice_line.unit_name"></span>
-                    <div v-if="warehouse_sheet.invoice_line.status && warehouse_sheet.invoice_line.status!='نو'" >
-                      <small class="text-muted">
-                        (
-                          <span v-text="warehouse_sheet.invoice_line.status"></span>
+                  {% if SHOW_QUANTITY %}
+                    
+                  <span v-text="warehouse_sheet.invoice_line.quantity"></span>
+                  <span v-text="warehouse_sheet.invoice_line.unit_name"></span>
+                  <div v-if="warehouse_sheet.invoice_line.status && warehouse_sheet.invoice_line.status!='نو'" >
+                    <small class="text-muted">
+                      (
+                        <span v-text="warehouse_sheet.invoice_line.status"></span>
                         )
                       </small>
                     </div>
+                    {% endif %}
+                    {% if SHOW_PRICE %}
+                      
                     <div>
-                          <span v-text="warehouse_sheet.invoice_line.quantity"></span>
-                          *
-                          <span v-text="to_price(warehouse_sheet.invoice_line.unit_price)"></span>
-                          =
-                          <span v-text="to_price(warehouse_sheet.sum)"></span>
-                    {{CURRENCY}}
-
+                      <span v-text="warehouse_sheet.invoice_line.quantity"></span>
+                      *
+                      <span v-text="to_price(warehouse_sheet.invoice_line.unit_price)"></span>
+                      =
+                      <span v-text="to_price(warehouse_sheet.sum)"></span>
+                      {{CURRENCY}}
+                      
                     </div>
+                    {% endif %}
                 </td>
                 
                 {% if not product %}
