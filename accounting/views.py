@@ -295,12 +295,22 @@ def InvoiceContext(request,invoice,*args, **kwargs):
             context['edit_invoice_form']=EditFinancialEventForm()
     
     if 'warehouse' in kwargs and kwargs['warehouse']:
-        from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer
-
+        from warehouse.views import WareHouseSheetRepo,WareHouseSheetSerializer,AddInvoiceWareHouseSheetsForm
         warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id).order_by('date_added')
         context["warehouses"]=warehouse_sheets
         warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
-        context["warehouse_sheets_s"]=warehouse_sheets_s     
+        context["warehouse_sheets_s"]=warehouse_sheets_s  
+        ADD_WAREHOUSE_SHEETS=True
+        if ADD_WAREHOUSE_SHEETS:
+            from organization.views import OrganizationUnitRepo
+            from warehouse.views import WareHouseRepo,WareHouseSheetDirectionEnum
+            organization_units=OrganizationUnitRepo(request=request).list()
+            warehouses=WareHouseRepo(request=request).list()
+            directions=(i[0] for i in WareHouseSheetDirectionEnum.choices)
+            context['organization_units_for_add_invoice_warehouse_sheets_app']=organization_units
+            context['warehouses_for_add_invoice_warehouse_sheets_app']=warehouses
+            context['directions_for_add_invoice_warehouse_sheets_app']=directions
+            context['add_invoice_warehouse_sheets_form']=AddInvoiceWareHouseSheetsForm()
     return context
      
 def ProductContext(request,product,*args, **kwargs):

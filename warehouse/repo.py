@@ -381,7 +381,23 @@ class WareHouseSheetRepo():
             message='برگه انبار با موفقیت ذخیره شد.'
         return result,message,warehouse_sheet
 
-
+    def add_invoice_warehouse_sheets(self,*args, **kwargs):
+        message=''
+        invoice_id=kwargs['invoice_id']
+        from accounting.repo import InvoiceRepo
+        invoice=InvoiceRepo(request=self.request).invoice(invoice_id=invoice_id)
+        if invoice is None:
+            message='فاکتور پیدا نشد.'
+            return FAILED,message,[]
+        warehouse_sheets=[]
+        for invoice_line in invoice.invoiceline_set.all():
+            invoice_line_id=invoice_line.id
+            kwargs['invoice_line_id']=invoice_line_id
+            result,message,warehouse_sheet=self.add_warehouse_sheet(**kwargs)
+            if result==SUCCEED:
+                warehouse_sheets.append(warehouse_sheet)
+        return SUCCEED,message,warehouse_sheets
+        
 class ProductInWareHouseRepo():
     def __init__(self,request,*args, **kwargs):
         self.me=None

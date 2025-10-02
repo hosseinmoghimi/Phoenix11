@@ -20,6 +20,17 @@ class AddMaterialRequestForm(forms.Form):
     coef=forms.IntegerField(required=False)
     unit_name=forms.CharField(max_length=100, required=True)
 
+class AddInvoiceWareHouseSheetsForm(forms.Form):
+    invoice_id=forms.IntegerField(required=True) 
+    organization_unit_id=forms.IntegerField(required=False) 
+    warehouse_id=forms.IntegerField(required=True) 
+    shelf=forms.CharField(required=False,max_length=50)
+    row=forms.CharField(required=False,max_length=50)
+    col=forms.CharField(required=False,max_length=50)
+    direction=forms.CharField(required=True,max_length=50)
+    description=forms.CharField(required=False,max_length=500)
+     
+
 class AddWareHouseSheetForm(forms.Form):
     invoice_line_id=forms.IntegerField(required=True) 
     organization_unit_id=forms.IntegerField(required=False) 
