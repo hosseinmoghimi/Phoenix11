@@ -19,14 +19,7 @@ class PersonRepo():
             if self.request.user.has_perm(APP_NAME+'.view_person'):
                 self.objects=Person.objects.all()
             else:
-                self.objects=Person.objects.filter(user_id=request.user.id) 
-        # person=PersonRepo(request=request).me
-
-        
-       
-
-        # if person is not None:
-        #     self.me=self.objects.filter(person=person).first()
+                self.objects=Person.objects.filter(user_id=request.user.id)  
     def list(self,*args, **kwargs):
         objects=self.objects
         from django.db.models import Q
@@ -65,7 +58,25 @@ class PersonRepo():
                         return a
                 except:
                     pass
-       
+    def change_password(self,request,*args, **kwargs):
+        result,message=FAILED,'خطا'
+        leolog(kwargs=kwargs)
+        if self.request.user.has_perm(APP_NAME+".change_person"):
+            user=User.objects.filter(username=kwargs['username']).first()
+        else:
+            user=authenticate(request=request,username=kwargs['username'],password=kwargs['old_password'])
+            leolog(user=user)
+        if user is not None:
+            user.set_password(kwargs['new_password'])
+            user.save()
+            login(request,user)
+            if user.is_authenticated:
+                result=SUCCEED
+                message='با موفقیت تغییر یافت.'
+            return (request,user,result,message)
+
+    
+
     def delete_all(self,*args,**kwargs):
         result,message=FAILED,''
         if not self.request.user.has_perm(APP_NAME+".delete_person"):

@@ -17,6 +17,11 @@ class SelectPersonForm(forms.Form):
     person_id=forms.IntegerField(required=False)
 
 
+class ChangePasswordForm(forms.Form):
+    username=forms.CharField(max_length=100,required=True)
+    old_password=forms.CharField(max_length=100,required=False)
+    new_password=forms.CharField(max_length=100,required=True)
+    
 class AddPersonForm(forms.Form):
     user_id=forms.IntegerField(required=False)
     prefix=forms.CharField(max_length=11,required=False)

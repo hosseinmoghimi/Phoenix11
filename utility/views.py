@@ -223,6 +223,7 @@ class BackupDBView(View):
         import os
         from utility.calendar import PersianCalendar
         sss=PersianCalendar().from_gregorian(greg_date_time=timezone.now())
+        sss=sss.replace(' ','_')
         filename=DB_PREFIX_NAME+"__"+sss+".sqlite3"
         if os.path.exists(file_path):
             with open(file_path, 'rb') as fh:

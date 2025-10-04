@@ -116,5 +116,5 @@ class Person(models.Model,ImageHelper,LinkHelper):
         
         return f'{MEDIA_URL}{self.image_origin}'
     def get_change_password_url(self):
-        return reverse(APP_NAME+":change_password",kwargs={'pk':self.pk})
+        return reverse(APP_NAME+":change_user_password",kwargs={'pk':self.pk})
 Profile=Person

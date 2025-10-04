@@ -222,11 +222,12 @@ class ChangePasswordView(View):
             mv=MessageView(title=title,body=body)
             return mv.get(request=request)
         context['username']=person.user.username
+        context['NOT_NAVBAR']=True
+        context['NOT_FOOTER']=True
         return render(request,TEMPLATE_ROOT+"change-password.html",context)
     def post(self,request,*args, **kwargs):
-        context={}
-        from django.http import JsonResponse
-        return JsonResponse(context)
+        from .apis import ChangePasswordApi
+        return ChangePasswordApi().post(request,*args, **kwargs)
 
 class LogoutView(View):
     def get(self,request,*args, **kwargs):

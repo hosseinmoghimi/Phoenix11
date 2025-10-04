@@ -10,6 +10,25 @@ from django.http import JsonResponse
 from .forms import *
    
 
+class ChangePasswordApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        change_password_form=ChangePasswordForm(request.POST)
+        if change_password_form.is_valid():
+            log=333
+            cd=change_password_form.cleaned_data
+            (request,user,result,message)=PersonRepo(request=request).change_password(request,**cd)
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
 class AddPersonApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
