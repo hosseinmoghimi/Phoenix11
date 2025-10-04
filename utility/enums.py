@@ -16,7 +16,8 @@ class SignatureStatusEnum(TextChoices):
     REQUESTED="درخواست می شود",_("درخواست می شود")
     CONFIRMED="تایید می شود",_("تایید می شود")
     DENIED="رد می شود",_("رد می شود")
-    DELIVERED="تحویل شد",_("تحویل شد")
+    REVIEWED="بررسی می شود",_("بررسی می شود")
+    # DELIVERED="تحویل شد",_("تحویل شد")
 
 class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")

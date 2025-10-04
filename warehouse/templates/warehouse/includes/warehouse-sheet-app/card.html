@@ -264,12 +264,12 @@
 
               <td class="field-value">
                 <div class="media">
-                  <a href="{{warehouse_sheet.person.get_accountig_absolute_url}}">
-                    <img src="{{warehouse_sheet.person.image}}" width="48" class="rounded-circle" alt="">
+                  <a href="{{warehouse_sheet.employee.get_absolute_url}}">
+                    <img src="{{warehouse_sheet.employee.person_account.person.image}}" width="48" class="rounded-circle" alt="">
                   </a>
                   <div class="media-body mr-2">
-                    <a href="{{warehouse_sheet.person.get_accountig_absolute_url}}">
-                      {{warehouse_sheet.person.full_name}}
+                    <a href="{{warehouse_sheet.employee.get_absolute_url}}">
+                      {{warehouse_sheet.employee.person_account.person.full_name}}
                     </a>
                   </div>
                 </div>

@@ -56,12 +56,12 @@ class WareHouseSheet(models.Model,LinkHelper,DateTimeHelper):
     invoice_line=models.ForeignKey("accounting.invoiceline", verbose_name=_("invoice_line"), on_delete=models.PROTECT)
     direction=models.CharField(_("direction"),max_length=50,choices=WareHouseSheetDirectionEnum.choices)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    person=models.ForeignKey("authentication.person", verbose_name=_("person"), on_delete=models.PROTECT)
+    employee=models.ForeignKey("organization.employee", verbose_name=_("employee"), on_delete=models.PROTECT)
     shelf=models.CharField(_("shelf"),null=True,blank=True,max_length=50)
     row=models.CharField(_("row"),null=True,blank=True,max_length=50)
     col=models.CharField(_("col"),null=True,blank=True,max_length=50)
     description=models.CharField(_("description"),null=True,blank=True,max_length=500)
-    status=models.CharField(_("status"),choices=SignatureStatusEnum.choices, max_length=50)
+    status=models.CharField(_("status"),choices=SignatureStatusEnum.choices,default=SignatureStatusEnum.REQUESTED, max_length=50)
     class_name="warehousesheet"
     app_name=APP_NAME
     class Meta:
@@ -84,7 +84,7 @@ class WareHouseSheet(models.Model,LinkHelper,DateTimeHelper):
             return 0-self.quantity
   
     def save(self):
-        super(WareHouseSheet,self).save()
+        super(WareHouseSheet,self).save() 
         ProductInWareHouse.normalize_products_in_warehouse(warehouse_id=self.warehouse.id,product_id=self.invoice_line.invoice_line_item.id,unit_name=self.invoice_line.unit_name)
     
     def delete(self):

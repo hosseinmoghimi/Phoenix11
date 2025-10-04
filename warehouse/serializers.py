@@ -14,10 +14,10 @@ class WareHouseSheetSerializer(serializers.ModelSerializer):
        invoice_line=InvoiceLineWithInvoiceSerializer()
        warehouse=WareHouseSerializer()
        organization_unit=OrganizationUnitSerializer()
-       person=PersonSerializer()
+       employee=EmployeeSerializer()
        class Meta:
               model = WareHouseSheet
-              fields = ['id','shelf','organization_unit','sum','col','row','invoice_line','direction','warehouse','persian_date_added','person', 'get_absolute_url','get_edit_url','get_delete_url']
+              fields = ['id','shelf','organization_unit','sum','col','row','invoice_line','direction','warehouse','persian_date_added','employee', 'get_absolute_url','get_edit_url','get_delete_url']
   
 class WareHouseSheetSignatureSerializer(serializers.ModelSerializer):
        warehouse_sheet=WareHouseSheetSerializer()

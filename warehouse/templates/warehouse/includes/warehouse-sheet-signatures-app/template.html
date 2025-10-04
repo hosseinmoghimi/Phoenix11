@@ -34,9 +34,12 @@
               <th>وضعیت</th>
               <th>تاریخ</th> 
               <th>توضیحات</th>
+              {% if cscscadwhajxbjNvsa %}
+                
               <th>
-
+                
               </th>
+              {% endif %}
             </thead>
             <tbody>
               <tr v-for="warehouse_sheet_signature in warehouse_sheet_signatures">
@@ -70,7 +73,8 @@
                   
 
                 </td>
-                <td>
+                {% if sssasdasdsadasdasasc %}
+                  <td>
                   <a
                     target="_blank"
                     :href="warehouse_sheet_signature.get_edit_url"
@@ -89,7 +93,9 @@
                     <i class="fa fa-trash text-danger"> </i>
                     حذف
                   </a>
-                </td>
+                </td> 
+                {% endif %}
+               
               </tr>
             </tbody>
           </table>

@@ -158,14 +158,15 @@ class WareHouseSheetRepo():
         self.request=request
         self.me_person=PersonRepo(request=request).me
         self.me_employee=EmployeeRepo(request=request).me
-        self.objects=WareHouseSheet.objects.filter(person_id=self.me_person.id)
+        self.objects=WareHouseSheet.objects.filter(pk=0)
+        if self.me_employee is not None:
+            self.objects=WareHouseSheet.objects.filter(employee_id=self.me_employee.id)
         if self.me_person is not None:
             if request.user.has_perm(APP_NAME+".view_warehousesheet"):
                 self.objects=WareHouseSheet.objects
                 
             elif self.me_employee is not None :
                 for warehouse in self.me_employee.warehouse_set.all():
-                    
                     self.objects=WareHouseSheet.objects.filter(warehouse_id=warehouse.id).filter(status=SignatureStatusEnum.CONFIRMED)
 
     def list(self,*args, **kwargs):
@@ -322,9 +323,16 @@ class WareHouseSheetRepo():
  
                  
 
-        warehouse_sheet.person=self.me_person
+        warehouse_sheet.employee=self.me_employee
         warehouse_sheet.save()
         ProductInWareHouseRepo(request=self.request).normalize_product_in_warehouse(warehouse_id=warehouse_sheet.warehouse.id,product_id=warehouse_sheet.invoice_line.invoice_line_item.id)
+
+
+        warehouse_sheet_signature=WareHouseSheetSignature()
+        warehouse_sheet_signature.warehouse_sheet=warehouse_sheet
+        warehouse_sheet_signature.employee=self.me_employee
+        warehouse_sheet_signature.status=SignatureStatusEnum.REQUESTED
+        warehouse_sheet_signature.save()
 
         return result,message,warehouse_sheet,invoice_line
 
@@ -375,12 +383,22 @@ class WareHouseSheetRepo():
         if 'direction' in kwargs:
             warehouse_sheet.direction=kwargs["direction"]  
 
-
-        warehouse_sheet.person=self.me_person
+        if self.me_employee is None:
+            message="کاربر شما پرسنل مجاز برای افزودن درخواست ندارد."
+            return FAILED,message,None
+        warehouse_sheet.employee=self.me_employee
         warehouse_sheet.save()
         if warehouse_sheet.id is not None:
             result=SUCCEED
-            message='برگه انبار با موفقیت ذخیره شد.'
+            message='برگه انبار با موفقیت ذخیره و امضا شد.'
+
+        warehouse_sheet_signature=WareHouseSheetSignature()
+        warehouse_sheet_signature.warehouse_sheet=warehouse_sheet
+        warehouse_sheet_signature.employee=self.me_employee
+        warehouse_sheet_signature.status=SignatureStatusEnum.REQUESTED
+        warehouse_sheet_signature.save()
+        
+
         return result,message,warehouse_sheet
 
     def add_invoice_warehouse_sheets(self,*args, **kwargs):
