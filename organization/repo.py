@@ -19,11 +19,10 @@ class OrganizationUnitRepo():
         self.my_accounts=[]
         self.request=request
         self.objects=OrganizationUnit.objects.filter(id=0)
-        profile=PersonRepo(request=request).me
-        if profile is not None:
-            if request.user.has_perm(APP_NAME+".view_account"):
+        person=PersonRepo(request=request).me
+        if person is not None:
+            if request.user.has_perm(APP_NAME+".view_organizationunit"):
                 self.objects=OrganizationUnit.objects
-                self.my_accounts=self.objects 
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
