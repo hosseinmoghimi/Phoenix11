@@ -9,6 +9,7 @@
             title: "",
             barcode: "",
             category_id:0,
+            rop:0,
             coef:1,
             show_form: false,
             message: { show: false },
@@ -25,6 +26,7 @@
                     coef: this.coef,
                     barcode: this.barcode,
                     unit_price: parseInt(this.unit_price),
+                    rop: parseInt(this.rop),
                 }
                 console.log(payload)
                 let url = "{% url 'accounting:add_product' %}"

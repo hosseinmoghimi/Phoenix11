@@ -1425,6 +1425,16 @@ class InvoicesView(View):
         return render(request,TEMPLATE_ROOT+"invoices.html",context)
 
 
+class NewInvoiceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request) 
+        context['WIDE_LAYOUT']=True
+        context['expand_new_invoice']=True
+        if request.user.has_perm(APP_NAME+".add_invoice"):
+            context.update(AddInvoiceContext(request=request))
+        return render(request,TEMPLATE_ROOT+"invoice-new.html",context)
+
+
 class InvoiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

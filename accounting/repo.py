@@ -1302,6 +1302,11 @@ class ProductRepo():
             ili_unit.save()
                  
 
+        if 'rop' in kwargs:
+            rop=kwargs['rop']
+            product.rop=rop
+
+            
         if 'category_id' in kwargs:
             category_id=kwargs['category_id']
             if category_id is not None and category_id>0:

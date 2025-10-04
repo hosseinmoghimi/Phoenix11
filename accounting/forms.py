@@ -141,7 +141,7 @@ class AddProductForm(AddInvoiceLineItemForm):
     barcode=forms.CharField( max_length=100, required=False) 
     brand_id=forms.IntegerField(required=False)
     model=forms.CharField( max_length=100, required=False) 
-
+    rop=forms.IntegerField(required=False)
 
 class AddServiceForm(AddInvoiceLineItemForm):
     pass
