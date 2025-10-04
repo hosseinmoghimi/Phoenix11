@@ -3,6 +3,15 @@
  {% load to_persian_date %}
 <hr />
 
+{% if invoice %}
+  <h5>
+    <small class="text-muted">
+    شماره فاکتور :
+
+    </small>
+  {{invoice.invoice_no}}
+  </h5>
+{% endif %}
 <h5>
   <small class="text-muted"> تاریخ :</small>
   {{financial_event.event_datetime|to_persian_datetime|safe}}  

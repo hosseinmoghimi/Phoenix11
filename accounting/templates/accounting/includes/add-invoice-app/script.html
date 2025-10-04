@@ -9,6 +9,7 @@
     event_date: current_date,
     event_time: current_time,
     event_datetime: current_datetime,
+    invoice_no: 0 ,
     bedehkar: false ,
     bestankar: false ,
     bedehkar_code: "0",
@@ -122,6 +123,7 @@
         let payload = {
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           title: this.title,
+          invoice_no: this.invoice_no,
           event_datetime: this.event_date+" "+this.event_time,
           bedehkar_id: this.bedehkar.id,
           bestankar_id: this.bestankar.id,

@@ -133,6 +133,7 @@ class AddInvoiceLineItemForm(forms.Form):
     unit_price=forms.IntegerField(required=False)
     unit_name=forms.CharField( max_length=100, required=False) 
     coef=forms.IntegerField(required=False)
+    invoice_no=forms.IntegerField(required=False)
     category_id=forms.IntegerField(required=False)
 
 

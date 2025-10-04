@@ -2799,6 +2799,9 @@ class InvoiceRepo(FinancialEventRepo):
         if "id" in kwargs and kwargs["id"] is not None:
             return self.objects.filter(pk=kwargs['id']).first() 
          
+        if "invoice_no" in kwargs and kwargs["invoice_no"] is not None:
+            return self.objects.filter(invoice_no=kwargs['invoice_no']).first() 
+         
        
 
     def add_invoice(self,*args,**kwargs):
@@ -2837,6 +2840,11 @@ class InvoiceRepo(FinancialEventRepo):
 
         if 'type' in kwargs:
             invoice.type=kwargs["type"]
+
+           
+           
+        if 'invoice_no' in kwargs:
+            invoice.invoice_no=kwargs["invoice_no"]
 
            
         (result,message,invoice)=invoice.save()

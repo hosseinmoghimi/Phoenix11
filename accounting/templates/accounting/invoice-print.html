@@ -34,7 +34,11 @@
           <div class="col-4">
             <div>تاریخ : {{invoice.event_datetime|to_persian_datetime|safe}}</div>
 
-            <div>شماره : {{invoice.id}}</div>
+            <div>شماره : 
+              {{invoice.id}}
+              / 
+              {{invoice.invoice_no}}
+            </div>
           </div>
         </div>
       </div>

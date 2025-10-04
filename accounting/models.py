@@ -918,7 +918,9 @@ class Cheque(FinancialEvent,ImageHelper):
 
 
 class Invoice(FinancialEvent):
-    
+    invoice_no=models.IntegerField(_("invoice_no"),default=0)
+    # def get_absolute_url(self):
+    #     return reverse(APP_NAME+":invoice",kwargs={'invoice_no':self.invoice_no})
     @property
     def lines(self):
         return InvoiceLine.objects.filter(invoice_id=self.id).order_by('row')
@@ -935,6 +937,16 @@ class Invoice(FinancialEvent):
     def get_print_url(self):
         return reverse(APP_NAME+':invoice_print',kwargs={'pk':self.pk})
     def save(self,*args, **kwargs):
+        dd=Invoice.objects.exclude(pk=self.pk).filter(invoice_no=self.invoice_no).last()
+        if dd is not None:
+            self.invoice_no=0
+
+        if self.invoice_no==0:
+            ss=Invoice.objects.order_by('-invoice_no').first()
+            if ss is None:
+                self.invoice_no=1
+            else:
+                self.invoice_no=ss.invoice_no+1
         if self.class_name is None or self.class_name=="":
             self.class_name="invoice"
         if self.app_name is None or self.app_name=="":
