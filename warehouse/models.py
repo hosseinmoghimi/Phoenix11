@@ -83,7 +83,14 @@ class WareHouseSheet(models.Model,LinkHelper,DateTimeHelper):
         if self.direction==WareHouseSheetDirectionEnum.OUT:
             return 0-self.quantity
   
-
+    def save(self):
+        super(WareHouseSheet,self).save()
+        ProductInWareHouse.normalize_products_in_warehouse(warehouse_id=self.warehouse.id,product_id=self.invoice_line.invoice_line_item.id,unit_name=self.invoice_line.unit_name)
+    
+    def delete(self):
+        super(WareHouseSheet,self).delete()
+        ProductInWareHouse.normalize_products_in_warehouse(warehouse_id=self.warehouse.id,product_id=self.invoice_line.invoice_line_item.id,unit_name=self.invoice_line.unit_name)
+    
 class WareHouseSheetSignature(models.Model,LinkHelper,DateTimeHelper):
     warehouse_sheet=models.ForeignKey("warehousesheet", verbose_name=_("warehouse_sheet"), on_delete=models.PROTECT)
     employee=models.ForeignKey("organization.employee", verbose_name=_("employee"), on_delete=models.PROTECT)
@@ -163,7 +170,53 @@ class ProductInWareHouse(models.Model):
     unit_name=models.CharField(_("unit_name"), max_length=50)
     quantity=models.FloatField(_("quantity"))
 
+               
+    def normalize_products_in_warehouse(*args,**kwargs):
+        result,message,product_in_warehouse=FAILED,"",None
+        # if not self.request.user.has_perm(APP_NAME+".delete_productinwarehouse"):
+        #     message='دسترسی شما برای این فرآیند مجاز نمی باشد.'
+        #     return FAILED,message,None
+        
+        list1=ProductInWareHouse.objects.all()
 
+        if 'unit_name' in kwargs:
+            list1=list1.filter(unit_name=kwargs['unit_name'])
+       
+        if 'product_id' in kwargs:
+            list1=list1.filter(product_id=kwargs['product_id'])
+       
+        if 'warehouse_id' in kwargs:
+            list1=list1.filter(warehouse_id=kwargs['warehouse_id'])
+        list1.delete()
+
+        warehouse_sheets=WareHouseSheet.objects.all()
+        
+       
+        if 'product_id' in kwargs:
+            warehouse_sheets=warehouse_sheets.filter(invoice_line__invoice_line_item_id=kwargs['product_id'])
+        if 'warehouse_id' in kwargs:
+            warehouse_sheets=warehouse_sheets.filter(warehouse_id=kwargs['warehouse_id'])
+        if 'unit_name' in kwargs:
+            warehouse_sheets=warehouse_sheets.filter(invoice_line__unit_name=kwargs['unit_name'])
+       
+        for warehouse_sheet in warehouse_sheets:
+            product_in_warehouse=ProductInWareHouse.objects.filter(warehouse_id=warehouse_sheet.warehouse.id).filter(product_id=warehouse_sheet.invoice_line.invoice_line_item.id).filter(unit_name=warehouse_sheet.invoice_line.unit_name).first()
+            if product_in_warehouse is None:
+                product_in_warehouse=ProductInWareHouse()
+                product_in_warehouse.product_id=warehouse_sheet.invoice_line.invoice_line_item.id
+                product_in_warehouse.quantity=warehouse_sheet.invoice_line.quantity
+                product_in_warehouse.unit_name=warehouse_sheet.invoice_line.unit_name
+                product_in_warehouse.warehouse_id=warehouse_sheet.warehouse.id
+                product_in_warehouse.save()
+            else:
+                quantity=warehouse_sheet.invoice_line.quantity
+                if warehouse_sheet.direction==WareHouseSheetDirectionEnum.OUT:
+                    quantity=0-quantity
+                product_in_warehouse.quantity=product_in_warehouse.quantity+quantity
+                product_in_warehouse.save()
+        message='با موفقیت نرمال سازی شد.'
+        return SUCCEED,message,product_in_warehouse
+    
     class Meta:
         verbose_name = _("ProductInWareHouse")
         verbose_name_plural = _("ProductInWareHouses")

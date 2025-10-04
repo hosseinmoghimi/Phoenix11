@@ -41,8 +41,11 @@
                     {% endif %}
                 
                
-                <th>تعداد</th>
-                <th>واحد</th>
+                <th>موجودی</th>
+                <th>نقطه سفارش</th>
+                <th>
+                  توضیحات
+                </th>
             </thead>
             <tbody>
 
@@ -70,24 +73,42 @@
                  <td>
                   
                   {% if SHOW_QUANTITY %}
-                    
-                  <span v-text="product_in_warehouse.quantity"></span>
+                    <span :class="product_in_warehouse.quantity<0?'text-danger':'text-success'">
+
+                      <span v-text="product_in_warehouse.quantity"></span>
+                      
+                      <span v-text="product_in_warehouse.unit_name"></span>
+                    </span>
                   {% endif %}   
                      
                 </td>
-
                 
                  <td>
-                    <span v-text="product_in_warehouse.unit_name"></span>
-                     
-                </td>
-                
-               
-               
-                 
-                
+                  <div v-if="product_in_warehouse.product.rop>0">
 
-                 
+                    <div v-if="product_in_warehouse.product.rop>product_in_warehouse.quantity">
+                      <span class="text-danger" v-text="product_in_warehouse.product.rop"></span>
+                    </div> 
+                    <div v-else>
+                      <span class="text-success" v-text="product_in_warehouse.product.rop"></span>
+                    </div> 
+                  </div>
+                </td>
+                <td>
+                   <div v-if="product_in_warehouse.product.rop>0">
+
+                    <div class="text-danger" v-if="product_in_warehouse.product.rop>product_in_warehouse.quantity">
+                     زیر نقطه سفارش
+                    </div> 
+                     
+                  </div>
+
+                   <div class="text-danger" v-if="product_in_warehouse.quantity<0">
+
+                     موجودی منفی
+                     
+                  </div>
+                </td>
               </tr>
             </tbody>
             

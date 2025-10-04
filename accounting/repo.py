@@ -1280,6 +1280,10 @@ class ProductRepo():
                 message="بارکد تکراری برای کالای جدید"
                 return result,message,None
 
+        if 'rop' in kwargs:
+            rop=kwargs['rop']
+            product.rop=rop
+
         (result,message,product)=product.save()
         if 'unit_price' in kwargs and kwargs['unit_price'] is not None:
             if 'unit_name' in kwargs and kwargs['unit_name'] is not None:
@@ -1302,11 +1306,7 @@ class ProductRepo():
             ili_unit.save()
                  
 
-        if 'rop' in kwargs:
-            rop=kwargs['rop']
-            product.rop=rop
 
-            
         if 'category_id' in kwargs:
             category_id=kwargs['category_id']
             if category_id is not None and category_id>0:

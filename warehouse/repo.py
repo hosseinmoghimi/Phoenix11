@@ -381,7 +381,6 @@ class WareHouseSheetRepo():
         if warehouse_sheet.id is not None:
             result=SUCCEED
             message='برگه انبار با موفقیت ذخیره شد.'
-            ProductInWareHouseRepo(request=self.request).normalize_product_in_warehouse(warehouse_id=warehouse_sheet.warehouse.id,product_id=warehouse_sheet.invoice_line.invoice_line_item.id)
         return result,message,warehouse_sheet
 
     def add_invoice_warehouse_sheets(self,*args, **kwargs):
@@ -416,9 +415,9 @@ class ProductInWareHouseRepo():
              
     def normalize_product_in_warehouse(self,*args, **kwargs):
         result,message,product_in_warehouse=FAILED,"",None
-        if not self.request.user.has_perm(APP_NAME+".delete_productinwarehouse"):
-            message='دسترسی شما برای این فرآیند مجاز نمی باشد.'
-            return FAILED,message,None
+        # if not self.request.user.has_perm(APP_NAME+".delete_productinwarehouse"):
+        #     message='دسترسی شما برای این فرآیند مجاز نمی باشد.'
+        #     return FAILED,message,None
         warehouse=WareHouseRepo(request=self.request).warehouse(*args, **kwargs)
         if warehouse is None:
             message='انباری با این شناسه پیدا نشد.'
@@ -486,7 +485,7 @@ class ProductInWareHouseRepo():
         if len(ProductInWareHouse.objects.filter(name=kwargs["name"]))>0:
             message='نام تکراری برای انبار جدید'
             return FAILED,message,None 
-        if not self.request.user.has_perm(APP_NAME+".add_product_in_warehouse"):
+        if not self.request.user.has_perm(APP_NAME+".add_productinwarehouse"):
             message="دسترسی غیر مجاز"
             return result,message,product_in_warehouse
 
