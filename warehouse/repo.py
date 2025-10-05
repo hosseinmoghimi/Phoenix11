@@ -457,41 +457,7 @@ class ProductInWareHouseRepo():
         # if not self.request.user.has_perm(APP_NAME+".delete_productinwarehouse"):
         #     message='دسترسی شما برای این فرآیند مجاز نمی باشد.'
         #     return FAILED,message,None
-        warehouse=WareHouseRepo(request=self.request).warehouse(*args, **kwargs)
-        if warehouse is None:
-            message='انباری با این شناسه پیدا نشد.'
-            return FAILED,message,None
-        list1=ProductInWareHouse.objects.filter(warehouse_id=warehouse.id)
-        product=None
-        if 'product_id' in kwargs:
-            product_id=kwargs['product_id']
-            if product_id is not None and product_id>0:
-                from accounting.repo import ProductRepo
-                product=ProductRepo(request=self.request).product(*args, **kwargs)
-                if product is None:
-                    message='کالا به درستی انتخاب نشده است.'
-                    return False,message,None
-                else:
-                    list1=list1.filter(product_id=product.id)
-        list1.delete()
-        warehouse_sheets=WareHouseSheet.objects.filter(warehouse_id=warehouse.id)
-        if product is not None:
-            warehouse_sheets=warehouse_sheets.filter(invoice_line__invoice_line_item_id=product.id)
-        for warehouse_sheet in warehouse_sheets:
-            product_in_warehouse=ProductInWareHouse.objects.filter(warehouse_id=warehouse.id).filter(product_id=warehouse_sheet.invoice_line.invoice_line_item.id).filter(unit_name=warehouse_sheet.invoice_line.unit_name).first()
-            if product_in_warehouse is None:
-                product_in_warehouse=ProductInWareHouse()
-                product_in_warehouse.product_id=warehouse_sheet.invoice_line.invoice_line_item.id
-                product_in_warehouse.quantity=warehouse_sheet.invoice_line.quantity
-                product_in_warehouse.unit_name=warehouse_sheet.invoice_line.unit_name
-                product_in_warehouse.warehouse_id=warehouse_sheet.warehouse.id
-                product_in_warehouse.save()
-            else:
-                quantity=warehouse_sheet.invoice_line.quantity
-                if warehouse_sheet.direction==WareHouseSheetDirectionEnum.OUT:
-                    quantity=0-quantity
-                product_in_warehouse.quantity=product_in_warehouse.quantity+quantity
-                product_in_warehouse.save()
+        ProductInWareHouse.normalize_products_in_warehouse(**kwargs)
         message='با موفقیت نرمال سازی شد.'
         return SUCCEED,message,None
     def list(self,*args, **kwargs):

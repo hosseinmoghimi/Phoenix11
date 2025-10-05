@@ -5,7 +5,7 @@ from .apps import APP_NAME
 from accounting.models import Product,InvoiceLine,Invoice,CorePage
 from .enums import *
 from utility.enums import * 
-
+from utility.log import leolog
 IMAGE_FOLDER = APP_NAME+"/images/"
 
 class WareHouse(models.Model,LinkHelper,ImageHelper):
@@ -202,37 +202,38 @@ class ProductInWareHouse(models.Model):
         
         list1=ProductInWareHouse.objects.all()
 
-        if 'unit_name' in kwargs:
+        if 'unit_name' in kwargs and kwargs['unit_name'] is not None and len(kwargs['unit_name'])>0:
             list1=list1.filter(unit_name=kwargs['unit_name'])
        
-        if 'product_id' in kwargs:
+        if 'product_id' in kwargs and kwargs['product_id'] is not None and kwargs['product_id']>0:
             list1=list1.filter(product_id=kwargs['product_id'])
        
-        if 'warehouse_id' in kwargs:
+        if 'warehouse_id' in kwargs and kwargs['warehouse_id'] is not None and kwargs['warehouse_id']>0:
             list1=list1.filter(warehouse_id=kwargs['warehouse_id'])
         list1.delete()
 
         warehouse_sheets=WareHouseSheet.objects.filter(status=SignatureStatusEnum.CONFIRMED)
         
-       
-        if 'product_id' in kwargs:
+        leolog(warehouse_sheets=warehouse_sheets)
+        if 'product_id' in kwargs and kwargs['product_id'] is not None and kwargs['product_id']>0:
             warehouse_sheets=warehouse_sheets.filter(invoice_line__invoice_line_item_id=kwargs['product_id'])
-        if 'warehouse_id' in kwargs:
+        if 'warehouse_id' in kwargs and kwargs['warehouse_id'] is not None and kwargs['warehouse_id']>0:
             warehouse_sheets=warehouse_sheets.filter(warehouse_id=kwargs['warehouse_id'])
-        if 'unit_name' in kwargs:
+        if 'unit_name' in kwargs and kwargs['unit_name'] is not None and len(kwargs['unit_name'])>0:
             warehouse_sheets=warehouse_sheets.filter(invoice_line__unit_name=kwargs['unit_name'])
-       
+
         for warehouse_sheet in warehouse_sheets:
+            leolog(warehouse_sheet=warehouse_sheet)
             product_in_warehouse=ProductInWareHouse.objects.filter(warehouse_id=warehouse_sheet.warehouse.id).filter(product_id=warehouse_sheet.invoice_line.invoice_line_item.id).filter(unit_name=warehouse_sheet.invoice_line.unit_name).first()
             if product_in_warehouse is None:
                 product_in_warehouse=ProductInWareHouse()
                 quantity=warehouse_sheet.invoice_line.quantity
                 if warehouse_sheet.direction==WareHouseSheetDirectionEnum.OUT:
                     quantity=0-quantity
-                product_in_warehouse.product_id=warehouse_sheet.invoice_line.invoice_line_item.id
+                product_in_warehouse.product_id=warehouse_sheet.invoice_line.invoice_line_item_id
                 product_in_warehouse.quantity=quantity
                 product_in_warehouse.unit_name=warehouse_sheet.invoice_line.unit_name
-                product_in_warehouse.warehouse_id=warehouse_sheet.warehouse.id
+                product_in_warehouse.warehouse_id=warehouse_sheet.warehouse_id
                 product_in_warehouse.save()
             else:
                 quantity=warehouse_sheet.invoice_line.quantity
