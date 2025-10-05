@@ -226,8 +226,11 @@ class ProductInWareHouse(models.Model):
             product_in_warehouse=ProductInWareHouse.objects.filter(warehouse_id=warehouse_sheet.warehouse.id).filter(product_id=warehouse_sheet.invoice_line.invoice_line_item.id).filter(unit_name=warehouse_sheet.invoice_line.unit_name).first()
             if product_in_warehouse is None:
                 product_in_warehouse=ProductInWareHouse()
+                quantity=warehouse_sheet.invoice_line.quantity
+                if warehouse_sheet.direction==WareHouseSheetDirectionEnum.OUT:
+                    quantity=0-quantity
                 product_in_warehouse.product_id=warehouse_sheet.invoice_line.invoice_line_item.id
-                product_in_warehouse.quantity=warehouse_sheet.invoice_line.quantity
+                product_in_warehouse.quantity=quantity
                 product_in_warehouse.unit_name=warehouse_sheet.invoice_line.unit_name
                 product_in_warehouse.warehouse_id=warehouse_sheet.warehouse.id
                 product_in_warehouse.save()
