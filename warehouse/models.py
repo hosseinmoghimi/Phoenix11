@@ -214,7 +214,6 @@ class ProductInWareHouse(models.Model):
 
         warehouse_sheets=WareHouseSheet.objects.filter(status=SignatureStatusEnum.CONFIRMED)
         
-        leolog(warehouse_sheets=warehouse_sheets)
         if 'product_id' in kwargs and kwargs['product_id'] is not None and kwargs['product_id']>0:
             warehouse_sheets=warehouse_sheets.filter(invoice_line__invoice_line_item_id=kwargs['product_id'])
         if 'warehouse_id' in kwargs and kwargs['warehouse_id'] is not None and kwargs['warehouse_id']>0:
@@ -223,7 +222,6 @@ class ProductInWareHouse(models.Model):
             warehouse_sheets=warehouse_sheets.filter(invoice_line__unit_name=kwargs['unit_name'])
 
         for warehouse_sheet in warehouse_sheets:
-            leolog(warehouse_sheet=warehouse_sheet)
             product_in_warehouse=ProductInWareHouse.objects.filter(warehouse_id=warehouse_sheet.warehouse.id).filter(product_id=warehouse_sheet.invoice_line.invoice_line_item.id).filter(unit_name=warehouse_sheet.invoice_line.unit_name).first()
             if product_in_warehouse is None:
                 product_in_warehouse=ProductInWareHouse()
