@@ -215,6 +215,7 @@ class AddFinancialDocumentForm(forms.Form):
 
 class AddFinancialEventForm(forms.Form):
     title=forms.CharField(max_length=100, required=True)
+    status=forms.CharField(max_length=50, required=False)
     event_datetime=forms.CharField(max_length=50, required=True)
     bedehkar_id=forms.IntegerField(required=True)
     bestankar_id=forms.IntegerField(required=True)

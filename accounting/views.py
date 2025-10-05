@@ -355,6 +355,8 @@ def AddFinancialEventContext(request):
     context={}
     context['add_financial_event_form']=AddFinancialEventForm()
     person_accounts=PersonAccountRepo(request=request).list()
+    statuses=(i[0] for i in FinancialEventStatusEnum.choices)
+    context['statuses_for_add_financial_event']=statuses
     context['person_accounts']=person_accounts
     return context
 

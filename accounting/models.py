@@ -1106,4 +1106,4 @@ class Asset(CorePage):
         result,message,asset=SUCCEED,"دارایی با موفقیت افزوده شد.",self
         return result,message,asset
     
-    
+ 

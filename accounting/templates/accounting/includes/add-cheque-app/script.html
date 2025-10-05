@@ -6,6 +6,7 @@
             amount: 0,
             bedehkar: { code: "0", name: false },
             bestankar: { code: "0", name: false },
+            status:"",
             description:"",
             cheque_date: current_date,
             cheque_time: current_time,
@@ -107,6 +108,7 @@
                 }
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    status: this.status,
                     bestankar_id: this.bestankar.id,
                     bedehkar_id: this.bedehkar.id,
                     description: this.description,

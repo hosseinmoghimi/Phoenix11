@@ -2716,6 +2716,9 @@ class FinancialEventRepo():
         if "payment_method" in kwargs and kwargs["payment_method"] is not None:
             financial_event.payment_method=kwargs['payment_method'] 
 
+        if "status" in kwargs and kwargs["status"] is not None:
+            financial_event.status=kwargs['status'] 
+
         if 'title' in kwargs and kwargs["title"] is not None:
             financial_event.title=kwargs["title"]
         if 'description' in kwargs and kwargs["description"] is not None:
@@ -2845,6 +2848,10 @@ class InvoiceRepo(FinancialEventRepo):
 
         if 'type' in kwargs:
             invoice.type=kwargs["type"]
+
+           
+        if 'status' in kwargs:
+            invoice.status=kwargs["status"]
 
            
            
@@ -3288,6 +3295,8 @@ class ChequeRepo():
 
         if 'title' in kwargs and kwargs["title"] is not None:
             cheque.title=kwargs["title"]
+        if 'status' in kwargs and kwargs["status"] is not None:
+            cheque.status=kwargs["status"]
         if 'description' in kwargs and kwargs["description"] is not None:
             cheque.description=kwargs["description"]
         if 'parent_id' in kwargs and kwargs["parent_id"] is not None:
