@@ -25,6 +25,10 @@ class ChangePasswordApi(APIView):
             log=333
             cd=change_password_form.cleaned_data
             (request,user,result,message)=PersonRepo(request=request).change_password(request,**cd)
+            if user is not None:
+                person=PersonRepo(request=request).me
+                if person is not None:
+                    context['person']=PersonSerializer(person).data
         context['message']=message
         context['result']=result
         context['log']=log

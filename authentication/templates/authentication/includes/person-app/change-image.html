@@ -7,7 +7,7 @@
     >
       {% csrf_token %}
       <input type="hidden" name="person_id" value="{{person.id}}" />
-      <input type="file" name="image" id="" />
+      <input required type="file" name="image" id="" />
 
       <button type="submit" class="btn btn-success">تایید</button>
     </form>

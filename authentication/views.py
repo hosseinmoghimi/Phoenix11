@@ -211,17 +211,8 @@ class ChangePasswordView(View):
         person=person_repo.person(*args, **kwargs)
         if person is None:
             person=PersonRepo(request=request).me
-        if person is None:
-            body='فرد مورد نظر پیدا نشد.'
-            title='خطا'
-            mv=MessageView(title=title,body=body)
-            return mv.get(request=request)
-        if person.user is None:
-            body='فرد مورد نظر نام کاربری ندارد..'
-            title='خطا'
-            mv=MessageView(title=title,body=body)
-            return mv.get(request=request)
-        context['username']=person.user.username
+        if person is not None and person.user is not None:
+            context['username']=person.user.username
         context['NOT_NAVBAR']=True
         context['NOT_FOOTER']=True
         return render(request,TEMPLATE_ROOT+"change-password.html",context)

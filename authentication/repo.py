@@ -7,6 +7,7 @@ from utility.log import leolog
 class PersonRepo():
     def user(self,*args, **kwargs):
         user_id=0
+        self.objects=Person.objects.filter(pk=0)
         if 'user_id' in kwargs:
             user_id=kwargs['user_id']
             return User.objects.filter(pk=user_id).first()
@@ -66,6 +67,9 @@ class PersonRepo():
         else:
             user=authenticate(request=request,username=kwargs['username'],password=kwargs['old_password'])
             leolog(user=user)
+            if user is None:
+                message='نام کاربری و کلمه عبور صحیح نمی باشد.'
+                return (request,user,result,message)
         if user is not None:
             user.set_password(kwargs['new_password'])
             user.save()
