@@ -94,7 +94,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group">
-              <label for=""> وضعیت </label>
+              <label for=""> وضعیت کالا</label>
               <select v-model="status" class="form-control">
                  {% for status in invoice_line_statuses %}
                   <option value="{{status}}">{{status}}</option>
@@ -123,6 +123,38 @@
                 type="number"
                 class="form-control"
               />
+            </div>
+          </div>
+          
+
+          
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for=""> وضعیت برگه انبار</label>
+              <select class="form-control" v-model="status" >
+                  {% for status in statuses_for_add_warehouse_sheet_app %}
+                    
+                  <option value="{{status}}">{{status}}</option>
+                  {% endfor %}
+                </select>
+
+              
+            </div>
+          </div>
+          
+
+          
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for=""> نوع حواله انبار </label>
+              <select class="form-control" v-model="type" >
+                  {% for type in types_for_add_warehouse_sheet_app %}
+                    
+                  <option value="{{type}}">{{type}}</option>
+                  {% endfor %}
+                </select>
+
+            
             </div>
           </div>
           

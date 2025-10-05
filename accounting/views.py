@@ -303,7 +303,7 @@ def InvoiceContext(request,invoice,*args, **kwargs):
         ADD_WAREHOUSE_SHEETS=True
         if ADD_WAREHOUSE_SHEETS:
             from organization.views import OrganizationUnitRepo
-            from warehouse.views import WareHouseRepo,WareHouseSheetDirectionEnum
+            from warehouse.views import WareHouseRepo,WareHouseSheetDirectionEnum,SignatureStatusEnum,WareHouseSheetTypeEnum
             organization_units=OrganizationUnitRepo(request=request).list()
             warehouses=WareHouseRepo(request=request).list()
             directions=(i[0] for i in WareHouseSheetDirectionEnum.choices)
@@ -311,6 +311,12 @@ def InvoiceContext(request,invoice,*args, **kwargs):
             context['warehouses_for_add_invoice_warehouse_sheets_app']=warehouses
             context['directions_for_add_invoice_warehouse_sheets_app']=directions
             context['add_invoice_warehouse_sheets_form']=AddInvoiceWareHouseSheetsForm()
+
+            statuses=(i[0] for i in SignatureStatusEnum.choices)
+            types=(i[0] for i in WareHouseSheetTypeEnum.choices)
+            context['statuses_for_add_warehouse_sheet_app']=statuses
+            context['types_for_add_warehouse_sheet_app']=types
+
     return context
      
 def ProductContext(request,product,*args, **kwargs):

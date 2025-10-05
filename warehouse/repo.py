@@ -308,6 +308,17 @@ class WareHouseSheetRepo():
 
 
 
+
+        if 'status' in kwargs and kwargs['status'] is not None and len(kwargs['status'])>0:
+            warehouse_sheet.status=kwargs["status"]  
+
+
+
+        if 'type' in kwargs and kwargs['type'] is not None and len(kwargs['type'])>0:
+            warehouse_sheet.type=kwargs["type"]  
+
+
+
         if 'description' in kwargs:
             warehouse_sheet.description=kwargs["description"]  
 
@@ -364,6 +375,16 @@ class WareHouseSheetRepo():
 
         if 'col' in kwargs:
             warehouse_sheet.col=kwargs["col"]  
+
+
+
+        if 'status' in kwargs and kwargs['status'] is not None and len(kwargs['status'])>0:
+            warehouse_sheet.status=kwargs["status"]  
+
+
+
+        if 'type' in kwargs and kwargs['type'] is not None and len(kwargs['type'])>0:
+            warehouse_sheet.type=kwargs["type"]  
 
 
             
@@ -525,9 +546,8 @@ class WareHouseSheetSignatureRepo():
         self.objects=WareHouseSheetSignature.objects.filter(id=0)
         self.me_person=PersonRepo(request=request).me
         if self.me_person is not None:
-            if request.user.has_perm(APP_NAME+".view_account"):
+            if request.user.has_perm(APP_NAME+".view_warehousesheetsignature"):
                 self.objects=WareHouseSheetSignature.objects
-                self.my_accounts=self.objects 
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:

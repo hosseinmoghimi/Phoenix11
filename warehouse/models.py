@@ -62,8 +62,19 @@ class WareHouseSheet(models.Model,LinkHelper,DateTimeHelper):
     col=models.CharField(_("col"),null=True,blank=True,max_length=50)
     description=models.CharField(_("description"),null=True,blank=True,max_length=500)
     status=models.CharField(_("status"),choices=SignatureStatusEnum.choices,default=SignatureStatusEnum.REQUESTED, max_length=50)
+    type=models.CharField(_("type"),choices=WareHouseSheetTypeEnum.choices,default=WareHouseSheetTypeEnum.MISC, max_length=50)
     class_name="warehousesheet"
     app_name=APP_NAME
+    @property
+    def status_color(self):
+        if self.status==SignatureStatusEnum.REVIEWED:
+            return 'primary'
+        if self.status==SignatureStatusEnum.CONFIRMED:
+            return 'success'
+        if self.status==SignatureStatusEnum.DENIED:
+            return 'danger'
+        if self.status==SignatureStatusEnum.REQUESTED:
+            return 'secondary'
     class Meta:
         verbose_name = _("WareHouseSheet")
         verbose_name_plural = _("WareHouseSheets")
@@ -99,6 +110,18 @@ class WareHouseSheetSignature(models.Model,LinkHelper,DateTimeHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     class_name='warehousesheetsignature'
     app_name=APP_NAME
+    
+    @property
+    def status_color(self):
+        if self.status==SignatureStatusEnum.REVIEWED:
+            return 'primary'
+        if self.status==SignatureStatusEnum.CONFIRMED:
+            return 'success'
+        if self.status==SignatureStatusEnum.DENIED:
+            return 'danger'
+        if self.status==SignatureStatusEnum.REQUESTED:
+            return 'secondary'
+        
     class Meta:
         verbose_name = _("WareHouseSheetSignature")
         verbose_name_plural = _("WareHouseSheetSignatures")
@@ -189,7 +212,7 @@ class ProductInWareHouse(models.Model):
             list1=list1.filter(warehouse_id=kwargs['warehouse_id'])
         list1.delete()
 
-        warehouse_sheets=WareHouseSheet.objects.all()
+        warehouse_sheets=WareHouseSheet.objects.filter(status=SignatureStatusEnum.CONFIRMED)
         
        
         if 'product_id' in kwargs:

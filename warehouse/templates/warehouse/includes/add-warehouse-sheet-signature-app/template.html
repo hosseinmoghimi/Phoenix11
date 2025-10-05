@@ -16,12 +16,11 @@
 
     <div
       id="collapse-add-warehouse-sheet-signature"
-      class="collapse"
+      class="collapse show"
       aria-labelledby="heading-add-warehouse-sheet-signature"
       data-parent="#accordion-add-warehouse-sheet-signature"
     >
-      <div class="card-body">
-        <form @submit.prevent="add_warehouse_sheet_signature()">
+      <div class="card-body"> 
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -30,31 +29,21 @@
               </div>
             </div>
 
-            
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="">وضعیت</label>
-                <select v-model="status" id="" class="form-control">
-                    {% for status in warehouse_sheet_signature_statuses %}
-                      
-                    <option value="{{status}}">{{status}}</option>
-                    {% endfor %}
-                </select>
-               
-              </div>
-            </div>
-
+             
  
 
 
                    
 
-            <div class="col-md-12">
-              <button class="btn btn-success" type="submit">
-                <i class="fa fa-plus"></i>
-                افزودن
-              </button>
-            </div>
+            {% for status in warehouse_sheet_signature_statuses %}
+            <div class="col-3">
+                      
+               <button @click="add_warehouse_sheet_signature(`{{status.status}}`,`{{status.color}}`)" class="btn btn-{{status.color}}" >
+                 <i class="fa fa-plus"></i>
+                  {{status.status}}
+                </button>
+              </div>
+                {% endfor %}
           </div>
         </form>
       </div>

@@ -56,6 +56,14 @@ def AddWareHouseSheetContext(request):
     context['organization_units']=organization_units
     context['organization_units_s']=organization_units_s
 
+
+
+    statuses=(i[0] for i in SignatureStatusEnum.choices)
+    types=(i[0] for i in WareHouseSheetTypeEnum.choices)
+    context['statuses_for_add_warehouse_sheet_app']=statuses
+    context['types_for_add_warehouse_sheet_app']=types
+
+
     warehouses=WareHouseRepo(request=request).list()
     warehouses_s=json.dumps(WareHouseSerializer(warehouses,many=True).data)
     context['warehouses']=warehouses
@@ -115,6 +123,11 @@ class AddMaterialRequestView(View):
         context["WIDE_LAYOUT"]=True
         context.update(AddInvoiceLineContext(request=request))
 
+
+        statuses=(i[0] for i in SignatureStatusEnum.choices)
+        types=(i[0] for i in WareHouseSheetTypeEnum.choices)
+        context['statuses_for_add_warehouse_sheet_app']=statuses
+        context['types_for_add_warehouse_sheet_app']=types
 
         warehouses=WareHouseRepo(request=request).list(*args, **kwargs)
         context["warehouses"]=warehouses
@@ -248,15 +261,17 @@ class WareHouseSheetView(View):
             body='برگه انبار پیدا نشد.'
             mv=MessageView(title=title,body=body)
             return mv.get(request=request)
+        
         context["warehouse_sheet"]=warehouse_sheet
+
+        
         warehouse_sheet_s=json.dumps(WareHouseSheetSerializer(warehouse_sheet,many=False).data)
         context["warehouse_sheet_s"]=warehouse_sheet_s
 
-        warehouse_sheet_signatures=WareHouseSheetSignatureRepo(request=request).list(warehouse_sheet_id=warehouse_sheet.id,*args, **kwargs)
+        warehouse_sheet_signatures=WareHouseSheetSignatureRepo(request=request).list(warehouse_sheet_id=warehouse_sheet.id)
         context["warehouse_sheet_signatures"]=warehouse_sheet_signatures
         warehouse_sheet_signatures_s=json.dumps(WareHouseSheetSignatureSerializer(warehouse_sheet_signatures,many=True).data)
         context["warehouse_sheet_signatures_s"]=warehouse_sheet_signatures_s
-
 
 
         warehouse_sheet_labels=WareHouseSheetLabelRepo(request=request).list(warehouse_sheet_id=warehouse_sheet.id,*args, **kwargs)
@@ -272,7 +287,23 @@ class WareHouseSheetView(View):
             context['me_employee']=me_employee
             me_employee_s=json.dumps(EmployeeSerializer(me_employee).data)
             context['me_employee_s']=me_employee_s
-            context['warehouse_sheet_signature_statuses']=(i[0] for i in SignatureStatusEnum.choices)
+            statuses=(i[0] for i in SignatureStatusEnum.choices)
+            warehouse_sheet_signature_statuses=[]
+            for st in statuses:
+                colour=''
+                if st==SignatureStatusEnum.CONFIRMED:
+                    colour='success'
+                if st==SignatureStatusEnum.DENIED:
+                    colour='danger'
+                if st==SignatureStatusEnum.REQUESTED:
+                    colour='secondary'
+                if st==SignatureStatusEnum.REVIEWED:
+                    colour='primary'
+                warehouse_sheet_signature_statuses.append({
+                    'status':st,
+                    'color':colour,
+                })
+            context['warehouse_sheet_signature_statuses']=warehouse_sheet_signature_statuses
             context['add_warehouse_sheet_signature_form']=AddWareHouseSheetSignatureForm()
         if me_employee is not None:
             context['me_employee']=me_employee

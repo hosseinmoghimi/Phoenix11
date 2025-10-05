@@ -56,6 +56,7 @@
                 {% endif %}
                 <th>ثبت توسط</th>
                 <th>تاریخ</th>
+                <th>موقعیت کالا</th>
                 <th></th>
               <th></th>
             </thead>
@@ -176,6 +177,18 @@
                     </div>
                     <div v-if="warehouse_sheet.col">
                       ستون <span v-text="warehouse_sheet.col"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <small class="text-muted">وضعیت</small>
+                      <span :class="'badge badge-'+warehouse_sheet.status_color" v-text="warehouse_sheet.status"></span>
+                    </div>
+                    
+                    
+                    <div>
+                      <small class="text-muted">نوع</small>
+                      <span v-text="warehouse_sheet.type"></span>
                     </div>
                   </td>
                 <td>

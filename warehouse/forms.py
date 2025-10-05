@@ -13,6 +13,7 @@ class AddMaterialRequestForm(forms.Form):
     quantity=forms.FloatField(required=True)
     unit_price=forms.IntegerField(required=True)
     status=forms.CharField(max_length=50,required=False)
+    type=forms.CharField(max_length=50,required=False)
     default_price=forms.BooleanField(required=False)
     save=forms.BooleanField(required=False)
     direction=forms.CharField(max_length=50,required=False)
@@ -43,6 +44,8 @@ class AddWareHouseSheetForm(forms.Form):
     row=forms.CharField(required=False,max_length=50)
     col=forms.CharField(required=False,max_length=50)
     direction=forms.CharField(required=True,max_length=50)
+    status=forms.CharField(required=False,max_length=50)
+    type=forms.CharField(required=False,max_length=50)
     description=forms.CharField(required=False,max_length=500)
      
 class SelectWareHouseForm(forms.Form):

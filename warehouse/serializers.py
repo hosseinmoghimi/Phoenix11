@@ -17,14 +17,14 @@ class WareHouseSheetSerializer(serializers.ModelSerializer):
        employee=EmployeeSerializer()
        class Meta:
               model = WareHouseSheet
-              fields = ['id','shelf','organization_unit','sum','col','row','invoice_line','direction','warehouse','persian_date_added','employee', 'get_absolute_url','get_edit_url','get_delete_url']
+              fields = ['id','shelf','status_color','status','type','organization_unit','sum','col','row','invoice_line','direction','warehouse','persian_date_added','employee', 'get_absolute_url','get_edit_url','get_delete_url']
   
 class WareHouseSheetSignatureSerializer(serializers.ModelSerializer):
        warehouse_sheet=WareHouseSheetSerializer()
        employee=EmployeeSerializer()
        class Meta:
               model = WareHouseSheetSignature
-              fields = ['id', 'warehouse_sheet','status','description','persian_date_added','employee', 'get_edit_url','get_delete_url']
+              fields = ['id', 'warehouse_sheet','status_color','status','description','persian_date_added','employee', 'get_edit_url','get_delete_url']
   
 class WareHouseSheetLabelSerializer(serializers.ModelSerializer):
        warehouse_sheet=WareHouseSheetSerializer()

@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card" id="warehouse-sheet-app">
   {% load to_normal_number %} {% load to_price %} {% load to_persian_date %} {% load to_text_color %}
   <div class="card-header">برگه انبار</div>
   <div class="card-body">
@@ -252,9 +252,22 @@
         {% if warehouse_sheet.status %}
 
         <tr>
-          <td class="field_name">وضعیت</td>
+          <td class="field_name">وضعیت برگه انبار</td>
           <td class="field_value">
-            <div>{{warehouse_sheet.status}}</div>
+            <div :class="'alert alert-'+status_color">
+              <span v-text="status"></span>
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+
+        
+        {% if warehouse_sheet.type %}
+
+        <tr>
+          <td class="field_name">نوع برگه انبار</td>
+          <td class="field_value">
+            <div>{{warehouse_sheet.type}}</div>
           </td>
         </tr>
         {% endif %}
@@ -268,9 +281,20 @@
                     <img src="{{warehouse_sheet.employee.person_account.person.image}}" width="48" class="rounded-circle" alt="">
                   </a>
                   <div class="media-body mr-2">
-                    <a href="{{warehouse_sheet.employee.get_absolute_url}}">
-                      {{warehouse_sheet.employee.person_account.person.full_name}}
-                    </a>
+                    <h6>
+
+                      <a href="{{warehouse_sheet.employee.get_absolute_url}}">
+                        {{warehouse_sheet.employee.person_account.person.full_name}}
+                      </a>
+                    </h6>
+
+                    
+                    <h6>
+
+                      <a href="{{warehouse_sheet.employee.organization_unit.get_absolute_url}}">
+                        {{warehouse_sheet.employee.organization_unit.title}}
+                      </a>
+                    </h6>
                   </div>
                 </div>
               </td>
