@@ -447,7 +447,6 @@ class AccountRepo():
                 title=(ws['E'+i].value)
                 color=(ws['F'+i].value)
                 thumbnail_origin=(ws['G'+i].value)
-                # leolog(account='account',i=i,id=id,title=title,code=code,parent_id=parent_id,thumbnail_origin=thumbnail_origin)  
 
                 account['id']=id
                 account['parent_code']=parent_code
@@ -2063,7 +2062,6 @@ class ServiceRepo():
                 unit_name=(ws['D'+i].value)
                 unit_price=int(ws['E'+i].value)
                 thumbnail_origin=(ws['F'+i].value)
-                # leolog(service='service',i=i,id=id,title=title,unit_name=unit_name,unit_price=unit_price,thumbnail_origin=thumbnail_origin)  
                 service['id']=id
                 service['title']=title
                 service['unit_name']=unit_name
@@ -2224,7 +2222,6 @@ class FinancialDocumentLineRepo:
         
     def list(self,*args, **kwargs):
         objects=self.objects
-        leolog(list_list_kwargs=kwargs)
         if "start_date" in kwargs :
             start_date=kwargs["start_date"]
             if start_date is not None and not start_date=="":

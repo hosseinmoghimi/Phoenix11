@@ -95,6 +95,18 @@
                 </div>
               </td>
             </tr>
+            {% if invoice_line.description %}
+              
+            <tr>
+              <td class="field-name">توضیحات</td>
+              
+              <td class="field-value">
+                <p class="">
+                  
+                  {{invoice_line.description}}
+                </p>
+              </tr>
+              {% endif %}
 
             <tr>
               <td class="field-name">تعداد / مقدار</td>
