@@ -1265,10 +1265,10 @@ class ProductRepo():
                 product.brand_id=brand_id
         
             
-        if 'model' in kwargs:
+        if 'model' in kwargs and kwargs['model'] is not None:
             product.model=kwargs["model"]
             
-        if 'thumbnail_origin' in kwargs:
+        if 'thumbnail_origin' in kwargs and kwargs['thumbnail_origin'] is not None:
             product.thumbnail_origin=kwargs["thumbnail_origin"]
          
         if 'barcode' in kwargs and kwargs["barcode"] is not None and not kwargs["barcode"]=="":
@@ -1280,10 +1280,9 @@ class ProductRepo():
                 message="بارکد تکراری برای کالای جدید"
                 return result,message,None
 
-        if 'rop' in kwargs:
+        if 'rop' in kwargs  and kwargs['rop'] is not None:
             rop=kwargs['rop']
             product.rop=rop
-
         (result,message,product)=product.save()
         if 'unit_price' in kwargs and kwargs['unit_price'] is not None:
             if 'unit_name' in kwargs and kwargs['unit_name'] is not None:

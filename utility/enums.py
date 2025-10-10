@@ -13,8 +13,9 @@ class WeightUnitEnum(TextChoices):
 
  
 class SignatureStatusEnum(TextChoices):
-    REQUESTED="درخواست می شود",_("درخواست می شود")
-    CONFIRMED="تایید می شود",_("تایید می شود")
+    DRAFT="پیش نویس",_("پیش نویس")
+    REQUESTED="درخواست می شود",_("درخواست می شود"),
+    CONFIRMED="تایید می شود",_("تایید می شود"),
     DENIED="رد می شود",_("رد می شود")
     REVIEWED="بررسی می شود",_("بررسی می شود")
     # DELIVERED="تحویل شد",_("تحویل شد")
