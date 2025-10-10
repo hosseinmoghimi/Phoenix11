@@ -3,6 +3,8 @@
     <h5>گزارش گیری</h5>
   </div>
   <div class="card-body">
+    <form  @submit.prevent="get_report()">
+      
     <div class="row rtl">
       <div class="col-md-4">
         <div class="form-group">
@@ -18,8 +20,64 @@
           />
         </div>
       </div>
-      <div class="col-md-4"></div>
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="">شناسه حساب</label>
+
+          <input
+            type="number"
+            class="form-control"
+            v-model="account_id"
+          />
+        </div>
+      </div>
+
+      
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="">کد حساب</label>
+
+          <input
+            type="number"
+            class="form-control"
+            v-model="account_code"
+          />
+        </div>
+      </div>
+
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="">سند</label>
+
+          <input
+            type="number"
+            class="form-control"
+            v-model="financial_document_id"
+          />
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="">رویداد</label>
+
+          <input
+            type="number"
+            class="form-control"
+            v-model="financial_event_id"
+          />
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <button type="submit" class="btn btn-info">
+          گزارش بگیر
+        </button>
+      </div>
       <div class="col-md-4"></div>
     </div>
+    </form>
   </div>
 </div>

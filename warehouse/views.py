@@ -290,7 +290,7 @@ class WareHouseSheetView(View):
             statuses=(i[0] for i in SignatureStatusEnum.choices)
             warehouse_sheet_signature_statuses=[]
             for st in statuses:
-                colour=''
+                colour='secondary'
                 if st==SignatureStatusEnum.CONFIRMED:
                     colour='success'
                 if st==SignatureStatusEnum.DENIED:

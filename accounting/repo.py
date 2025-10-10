@@ -2224,15 +2224,18 @@ class FinancialDocumentLineRepo:
         
     def list(self,*args, **kwargs):
         objects=self.objects
-        if "start_date" in kwargs and kwargs["start_date"] is not None :
+        leolog(list_list_kwargs=kwargs)
+        if "start_date" in kwargs :
             start_date=kwargs["start_date"]
-            objects=objects.filter(date_time__gte=start_date) 
+            if start_date is not None and not start_date=="":
+                objects=objects.filter(date_time__gte=start_date) 
+        if "end_date" in kwargs:
+            end_date=kwargs["end_date"]
+            if end_date is not None and not end_date=="":
+                objects=objects.filter(date_time__lte=end_date) 
         if "id__in" in kwargs :
             id__in=kwargs["id__in"]
             objects=objects.filter(id__in=id__in) 
-        if "end_date" in kwargs and kwargs["end_date"] is not None :
-            end_date=kwargs["end_date"]
-            objects=objects.filter(date_time__lte=end_date) 
         if "search_for" in kwargs and kwargs["search_for"] is not None and len(kwargs["search_for"])>0 :
             objects=objects.filter(Q(title__contains=kwargs['search_for'])|Q(event__title__contains=kwargs['search_for']) )
         if "amount" in kwargs and kwargs["amount"] is not None and kwargs["amount"]>0 :
@@ -2250,9 +2253,10 @@ class FinancialDocumentLineRepo:
 
         if "account_code" in kwargs and kwargs["account_code"] is not None :
             account_code=kwargs["account_code"]
-            account=AccountRepo(request=self.request).account(code=account_code)
-            if account is not None:
-                objects=objects.filter(account_id=account.id)
+            if not account_code=="":
+                account=AccountRepo(request=self.request).account(code=account_code)
+                if account is not None:
+                    objects=objects.filter(account_id=account.id)
         if "account_id" in kwargs and kwargs["account_id"] is not None and kwargs["account_id"]>0 :
             account_id=kwargs["account_id"]
             objects=objects.filter(account_id=account_id)

@@ -106,7 +106,11 @@ class AddInvoiceLineItemUnitForm(forms.Form):
 
 class GetReportForm(forms.Form):
     account_id=forms.IntegerField(required=False)
+    financial_document_id=forms.IntegerField(required=False)
+    financial_event_id=forms.IntegerField(required=False)
+    account_id=forms.IntegerField(required=False)
     amount=forms.IntegerField(required=False)
+    account_code=forms.CharField( max_length=100, required=False)
     search_for=forms.CharField( max_length=100, required=False)
     start_date=forms.CharField( max_length=100, required=False)
     end_date=forms.CharField( max_length=100, required=False)

@@ -942,8 +942,33 @@ class AddProductApi(APIView):
         context['message']=message
         context['result']=result
         context['log']=log
+        return JsonRespon
+    
+class GetReportApi(APIView):
+    def post(self,request,*args, **kwargs):
+
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        get_report_form=GetReportForm(request.POST)
+        if get_report_form.is_valid():
+            log=333
+            cd=get_report_form.cleaned_data
+            result=SUCCEED
+            financial_document_lines=FinancialDocumentLineRepo(request=request).list(**cd)
+            context['financial_document_lines']=FinancialDocumentLineSerializer(financial_document_lines,many=True).data
+            financial_events=FinancialEventRepo(request=request).list(**cd)
+            context['financial_events']=FinancialEventSerializer(financial_events,many=True).data
+
+        context['message']=message
+        context['result']=result
+        context['log']=log
         return JsonResponse(context)
- 
 
 class AddServiceApi(APIView):
     def post(self,request,*args, **kwargs):

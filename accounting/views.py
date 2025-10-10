@@ -809,6 +809,7 @@ class FinancialDocumentLinesPrintView(View):
             financial_document_lines_ids=json.loads(financial_document_lines_ids)
             financial_document_lines=FinancialDocumentLineRepo(request=request).list(id__in=financial_document_lines_ids)
             context['financial_document_lines']=financial_document_lines
+            from .serializers import FinancialDocumentLineForPrintSerializer
             financial_document_lines_s=json.dumps(FinancialDocumentLineForPrintSerializer(financial_document_lines,many=True).data)
             context['financial_document_lines_s']=financial_document_lines_s
             context['print_financial_document_lines_form']=PrintFinancialDocumentLinesForm()
@@ -834,7 +835,11 @@ class FinancialDocumentLinesPrintView(View):
                     context['person']=person
                     context['person_s']=json.dumps(PersonSerializer(person).data)
             
-            
+        else:
+            title="داده های نا معتبر"
+            body="داده های ورودی معتبر نمی باشند"
+            mv=MessageView(title=title,body=body)
+            return mv.get(request=request)    
         context['NOT_REPONSIVE']=True
         context['NOT_NAVBAR']=True
         context['NOT_FOOTER']=True
@@ -1153,10 +1158,18 @@ class AssetsView(View):
 class ReportView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        
+        context['WIDE_LAYOUT']=True
 
+        financial_document_lines=[]
+
+        context['financial_document_lines']=financial_document_lines
+        financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
+        context['financial_document_lines_s']=financial_document_lines_s
         return render(request,TEMPLATE_ROOT+"report.html",context)   
 
+    def post(self,request,*args, **kwargs):
+        from .apis import GetReportApi
+        return GetReportApi().post(request=request)
 
 class ServiceView(View):
     def get(self,request,*args, **kwargs):

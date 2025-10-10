@@ -15,6 +15,8 @@ from utility.log import leolog
 from .enums import *
 from accounting.repo import InvoiceLine,FinancialEventStatusEnum,InvoiceRepo
 
+
+
 class WareHouseRepo():
     def __init__(self,request,*args, **kwargs):
         self.me=None
@@ -368,38 +370,26 @@ class WareHouseSheetRepo():
         if 'organization_unit_id' in kwargs:
             warehouse_sheet.organization_unit_id=kwargs["organization_unit_id"]
           
-
         if 'invoice_line_id' in kwargs:
             warehouse_sheet.invoice_line_id=kwargs["invoice_line_id"]
           
-
         if 'col' in kwargs:
             warehouse_sheet.col=kwargs["col"]  
-
-
 
         if 'status' in kwargs and kwargs['status'] is not None and len(kwargs['status'])>0:
             warehouse_sheet.status=kwargs["status"]  
 
-
-
         if 'type' in kwargs and kwargs['type'] is not None and len(kwargs['type'])>0:
             warehouse_sheet.type=kwargs["type"]  
-
-
             
         if 'row' in kwargs:
             warehouse_sheet.row=kwargs["row"]  
-
             
         if 'shelf' in kwargs:
             warehouse_sheet.shelf=kwargs["shelf"]  
 
-
-
         if 'description' in kwargs:
             warehouse_sheet.description=kwargs["description"]  
-
 
         if 'direction' in kwargs:
             warehouse_sheet.direction=kwargs["direction"]  
