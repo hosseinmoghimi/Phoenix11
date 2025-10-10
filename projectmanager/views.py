@@ -37,7 +37,7 @@ def TicketContext(request,ticket,*args, **kwargs):
 
     project=ticket.project
     context['project']=project
-    project_s=json.dumps(TicketSerializer(project).data)
+    project_s=json.dumps(ProjectSerializer(project).data)
     context['project_s']=project_s
 
     return context
