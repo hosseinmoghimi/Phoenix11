@@ -420,6 +420,7 @@ class RemoteClientRepo():
                 return result,message,remote_client
 
         a=kwargs.pop("project_id")
+        a=kwargs.pop("remote_client_id")
         remote_client=RemoteClient(*args, **kwargs)
         if remote_client.brand_id==0 or remote_client.brand_id is None:
             remote_client.brand=None
