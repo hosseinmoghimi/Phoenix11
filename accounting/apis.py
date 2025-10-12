@@ -942,7 +942,7 @@ class AddProductApi(APIView):
         context['message']=message
         context['result']=result
         context['log']=log
-        return JsonRespon
+        return JsonResponse(context)
     
 class GetReportApi(APIView):
     def post(self,request,*args, **kwargs):
