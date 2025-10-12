@@ -50,6 +50,7 @@ class AddProjectInvoiceForm(AddInvoiceForm):
     project_id=forms.IntegerField(required=True)
  
 class AddRemoteClientForm(forms.Form):
+    remote_client_id=forms.IntegerField(required=False) 
     project_id=forms.IntegerField(required=True) 
     name=forms.CharField(max_length=50, required=False)
     active_directory=forms.CharField(max_length=100, required=False)

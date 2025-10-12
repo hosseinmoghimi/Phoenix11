@@ -219,6 +219,7 @@ class ProjectView(View):
         context['invoice_lines_s']=invoice_lines_s
 
 
+
         events=project.events.order_by('-event_datetime')
         events_s=json.dumps(EventSerializer(events,many=True).data)
         context['events']=events
@@ -244,11 +245,8 @@ class ProjectView(View):
         context['tickets_s']=tickets_s
         if request.user.has_perm(APP_NAME+".add_ticket"):
             context.update(AddTicketContext(request=request,project=project))
-  
-
- 
-        
-        remote_clients = project.remote_clients.all()
+   
+        remote_clients = project.all_remote_clients.all()
         context['remote_clients'] = remote_clients
         remote_clients_s = json.dumps(RemoteClientSerializer(remote_clients, many=True).data)
         context['remote_clients_s'] = remote_clients_s

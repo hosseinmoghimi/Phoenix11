@@ -378,8 +378,15 @@ class RemoteClientRepo():
             product_id=kwargs['product_id']
             objects = objects.filter(product_id=product_id)
            
+
+           
         
-        
+        if 'id__in' in kwargs:
+            id__in=kwargs['id__in']
+            objects = objects.filter(id__in=id__in)
+           
+         
+           
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home'])) 
          
@@ -392,6 +399,26 @@ class RemoteClientRepo():
             message="شما مجوز لازم را برای افزودن سیستم کلاینت ندارید."
             return result,message,remote_client
         project_id=kwargs['project_id']
+        project=Project.objects.filter(pk=project_id).first()
+        if 'remote_client_id' in kwargs:
+            remote_client_id=kwargs['remote_client_id']
+            if remote_client_id is not None and remote_client_id >0:
+                remote_client=self.remote_client(pk=remote_client_id)
+                if remote_client is not None:
+                    if project is not None:
+                        if remote_client in project.remote_clients.all():
+                            
+                            project.remote_clients.remove(remote_client)
+                            
+                            result=SUCCEED
+                            message="با موفقیت حذف شد."
+                        else:
+                            project.remote_clients.add(remote_client)
+                            
+                            result=SUCCEED
+                            message="با موفقیت اضافه شد."
+                return result,message,remote_client
+
         a=kwargs.pop("project_id")
         remote_client=RemoteClient(*args, **kwargs)
         if remote_client.brand_id==0 or remote_client.brand_id is None:
@@ -399,7 +426,6 @@ class RemoteClientRepo():
         if remote_client.product_id==0 or remote_client.product_id is None:
             remote_client.product=None
         remote_client.save()
-        project=Project.objects.filter(pk=project_id).first()
         if project is not None:
             project.remote_clients.add(remote_client)
             result=SUCCEED

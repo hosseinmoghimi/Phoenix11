@@ -88,7 +88,19 @@ class Project(Event,LinkHelper,DateHelper):
   
     def get_status_color(self):
         return StatusColor(self)
- 
+    
+    @property
+    def all_remote_clients(self):
+        ids=[]
+        for remote_client in self.remote_clients.all():
+            ids.append(remote_client.id)
+
+            
+        for project in Project.objects.filter(parent_id=self.id):
+            for remote_client in project.all_remote_clients.all():
+                ids.append(remote_client.id)
+        aaa= RemoteClient.objects.filter(pk__in=ids)
+        return aaa
 
 class Ticket(models.Model,DateTimeHelper,LinkHelper):
     parent=models.ForeignKey("ticket",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)

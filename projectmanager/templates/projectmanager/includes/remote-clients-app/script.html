@@ -12,7 +12,7 @@
             message: { show: false },
             product_id:0,
             pattern:"",
-
+            remote_client_id:0,
             name: "",
             active_directory: "",
             work_group: "",
@@ -59,7 +59,7 @@
                 let url = "{% url 'projectmanager:add_remote_client' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-
+                    remote_client_id:this.remote_client_id,
                     project_id: project_id,
                     name: this.name,
                     active_directory: this.active_directory,
