@@ -27,7 +27,17 @@ class TicketSerializer(serializers.ModelSerializer):
         fields=['id','title','get_status_color','persian_datetime_added','status','project','get_absolute_url','description','person','get_edit_url','get_delete_url']
 
 
+  
+class TicketWithChildrenSerializer(serializers.ModelSerializer):
+    project=ProjectSerializer()
+    person=PersonSerializer()
+    class Meta:
+        model=Ticket
+        fields=['id','title','get_status_color','persian_datetime_added','status','project','get_absolute_url','description','person','get_edit_url','get_delete_url']
 
+
+
+   
 class RemoteClientSerializer(serializers.ModelSerializer):
     brand=BrandSerializer()
     product=ProductSerializer()

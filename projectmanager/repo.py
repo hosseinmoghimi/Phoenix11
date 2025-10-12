@@ -34,7 +34,8 @@ class TicketRepo():
             objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for)  )
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
-            objects=objects.filter(parent_id=parent_id)  
+            if parent_id is not None and parent_id>0:
+                objects=objects.filter(parent_id=parent_id)  
         if "project_id" in kwargs:
             project_id=kwargs["project_id"]
             objects=objects.filter(project_id=project_id)  

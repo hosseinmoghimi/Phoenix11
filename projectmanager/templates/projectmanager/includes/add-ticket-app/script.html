@@ -2,6 +2,7 @@
 {% include "authentication/includes/person-app/select-script.html" %} 
 {% include "projectmanager/includes/project-app/select-script.html" %}
 <script>
+  let parent_id_for_add_ticket_app=0
   let project_for_add_ticket_app = {};
   let project_id_for_add_ticket_app = 0;
 </script>
@@ -9,6 +10,11 @@
 <script>
   project_for_add_ticket_app = project;
   project_id_for_add_ticket_app = project_id;
+</script>
+{% endif %}
+{% if ticket %}
+<script>
+  parent_id_for_add_ticket_app = ticket_id;
 </script>
 {% endif %}
 <script>
@@ -19,6 +25,7 @@
       description: "",
 
       person_id: parseInt("{{me_person.id}}"),
+      parent_id: parent_id_for_add_ticket_app,
       person: me_person,
 
       weight: 0,
@@ -79,6 +86,7 @@
           description: this.description,
           person_id: parseInt(this.person_id),
           project_id: parseInt(this.project_id),
+          parent_id: parseInt(this.parent_id),
           type: this.type,
           event_datetime: this.event_date + " " + this.event_time,
           start_datetime: this.start_date + " " + this.start_time,

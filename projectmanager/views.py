@@ -3,7 +3,7 @@ from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_UR
 from django.views import View
 from .forms import *
 from utility.enums import *
-from .serializers import ProjectSerializer,RemoteClientSerializer,ProjectSerializerForGuantt,TicketSerializer
+from .serializers import ProjectSerializer,RemoteClientSerializer,TicketWithChildrenSerializer,ProjectSerializerForGuantt,TicketSerializer
 from .repo import ProjectRepo,RemoteClientRepo,TicketRepo
 from organization.views import OrganizationUnitRepo,OrganizationUnitSerializer
 from .apps import APP_NAME
@@ -35,16 +35,24 @@ def TicketContext(request,ticket,*args, **kwargs):
     ticket_s=json.dumps(TicketSerializer(ticket).data)
     context['ticket_s']=ticket_s
 
+
+    tickets=TicketRepo(request=request).list(parent_id=ticket.id)
+    context['tickets']=tickets
+    tickets_s=json.dumps(TicketWithChildrenSerializer(tickets,many=True).data)
+    context['tickets_s']=tickets_s
+
+
     project=ticket.project
     context['project']=project
     project_s=json.dumps(ProjectSerializer(project).data)
     context['project_s']=project_s
-
+    context.update(AddTicketContext(request=request))
     return context
 
-def AddTicketContext(request,project,*args, **kwargs):
+def AddTicketContext(request,*args, **kwargs):
     context={}
-    context['add_ticket_form']=AddTicketForm() 
+    if request.user.has_perm(APP_NAME+".add_ticket"):
+        context['add_ticket_form']=AddTicketForm() 
     return context
 
 def ProjectContext(request,project,*args, **kwargs):

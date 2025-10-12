@@ -7,7 +7,7 @@ from django.utils.translation import gettext as _
 from .apps import APP_NAME
 from accounting.models import InvoiceLine,Invoice
 from django.core.files.storage import FileSystemStorage
-
+from phoenix.server_settings import STATIC_URL,MEDIA_URL
 from phoenix.server_settings import UPLOAD_ROOT,QRCODE_ROOT
 IMAGE_FOLDER = APP_NAME+"/images/"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
@@ -102,7 +102,9 @@ class Ticket(models.Model,DateTimeHelper,LinkHelper):
     file = models.FileField(_("فایل ضمیمه"), null=True, blank=True,upload_to=APP_NAME+'/ticket-files', storage=upload_storage, max_length=100)
     class_name="ticket"
     app_name=APP_NAME
-
+    @property
+    def thumbnail(self):
+        return STATIC_URL+APP_NAME+f'/img/pages/thumbnail/ticket.png'
     class Meta:
         verbose_name = _("Ticket")
         verbose_name_plural = _("Tickets")
@@ -110,7 +112,8 @@ class Ticket(models.Model,DateTimeHelper,LinkHelper):
     def __str__(self):
         return self.title
      
-    
+    def sub_tickets(self):
+        return Ticket.objects.filter(parent_id=self.pk)
     def get_status_color(self):
         color="primary"
         if self.status==TicketStatusEnum.FINISHED:
