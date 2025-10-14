@@ -412,15 +412,15 @@ class RemoteClientRepo():
                             
                             result=SUCCEED
                             message="با موفقیت حذف شد."
+                            remote_client=None
+
                         else:
                             project.remote_clients.add(remote_client)
                             
                             result=SUCCEED
                             message="با موفقیت اضافه شد."
                 return result,message,remote_client
-
-        a=kwargs.pop("project_id")
-        a=kwargs.pop("remote_client_id")
+ 
         remote_client=RemoteClient(*args, **kwargs)
         if remote_client.brand_id==0 or remote_client.brand_id is None:
             remote_client.brand=None

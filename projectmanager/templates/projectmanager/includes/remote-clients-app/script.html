@@ -100,13 +100,22 @@
                 $.post(url, payload).done(data => {
                     console.log(data)
                     if (data.result === 'SUCCEED') {
-                        remote_clients_app.remote_clients.push(data.remote_client)
+                        if(data.remote_client==null){
+                            remote_clients_app.remote_clients=remote_clients_app.remote_clients.filter(remote_client=>remote_client.id!=remote_clients_app.remote_client_id)
+                            remote_clients_app.remote_client_id = 0
+                            
+                        }
+                        else{
+                            remote_clients_app.remote_clients.push(data.remote_client)
+
+                        }
 
                         remote_clients_app.message = { show: true, body: data.message, color: 'success' }
                         setTimeout(() => {
                             remote_clients_app.message = { show: false }
                         }, 3000);
 
+                        remote_clients_app.remote_client_id = 0
                         remote_clients_app.name = ""
                         remote_clients_app.active_directory = ""
                         remote_clients_app.work_group = ""
