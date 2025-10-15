@@ -65,6 +65,7 @@ class EditFinancialEventForm(forms.Form):
     short_description=forms.CharField(max_length=1000,required=False)
     description=forms.CharField(max_length=1000,required=False)
     status=forms.CharField(max_length=50,required=False)
+    valid=forms.BooleanField(required=False)
 
 class EditFinancialDocumentForm(forms.Form):
     financial_document_id=forms.IntegerField(required=True)
@@ -227,7 +228,8 @@ class AddFinancialEventForm(forms.Form):
     payment_method=forms.CharField(max_length=100,required=False)
     description=forms.CharField(max_length=1000,required=False)
     shipping_fee=forms.IntegerField(required=False)
-
+    valid=forms.BooleanField(required=False
+                             )
 class AddInvoiceForm(AddFinancialEventForm):
     pass
 

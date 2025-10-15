@@ -12,6 +12,14 @@
   {{invoice.invoice_no}}
   </h5>
 {% endif %}
+<h6>
+
+  {% if financial_event.valid %}
+  valid
+  {% else %}
+  invalid
+  {% endif %}
+</h6>
 <h5>
   <small class="text-muted"> تاریخ :</small>
   {{financial_event.event_datetime|to_persian_datetime|safe}}  

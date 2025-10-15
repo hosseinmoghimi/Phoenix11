@@ -164,6 +164,28 @@
             </div>
           </div>
 
+
+          
+          <div class="col-4">
+              <div class="form-group">
+              <label for="status">قابل محاسبه</label>
+              
+              <input type="checkbox" class="form-control" v-model="valid" name="" id="">
+              
+              </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="">وضعیت</label>
+              <select name="" v-model="status" class="form-control">
+                {% for status in invoice_statuses %}
+                  <option value="{{status}}">{{status}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          
           <div class="col-md-4">
             <div class="form-group">
               <label for="exampleInputDate">تاریخ</label>

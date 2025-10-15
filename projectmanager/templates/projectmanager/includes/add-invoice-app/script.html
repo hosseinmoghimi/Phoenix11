@@ -4,6 +4,8 @@
     el: "#add-invoice-app",
     data: {
       title: "",
+      valid:true,
+      status:"",
       event_date: current_date,
       event_time: current_time,
       event_datetime: current_datetime,
@@ -106,6 +108,8 @@
         let payload = {
           csrfmiddlewaretoken: csrfmiddlewaretoken,
           title: this.title,
+          status: this.status,
+          valid: this.valid,
           event_datetime: this.event_date + " " + this.event_time,
           bedehkar_id: this.bedehkar.id,
           bestankar_id: this.bestankar.id,

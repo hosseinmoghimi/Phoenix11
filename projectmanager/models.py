@@ -35,7 +35,8 @@ class Project(Event,LinkHelper,DateHelper):
             # child.normalize()
             sum+=child.amount
         for inv in self.invoices.all():
-            sum+=inv.amount
+            if inv.valid:
+                sum+=inv.amount
         self.amount=sum
         from utility.log import leolog
         super(Project,self).save()

@@ -2709,6 +2709,9 @@ class FinancialEventRepo():
         if 'bestankar_id' in kwargs:
             financial_event.bestankar_id=kwargs["bestankar_id"]
 
+        if 'valid' in kwargs and kwargs['valid'] is not None:
+            financial_event.valid=kwargs["valid"]
+
             
         if "shipping_fee" in kwargs and kwargs["shipping_fee"] is not None:
             financial_event.shipping_fee=kwargs['shipping_fee'] 
@@ -2824,6 +2827,10 @@ class InvoiceRepo(FinancialEventRepo):
             return result,message,invoice
 
         invoice=Invoice()
+        
+        if 'valid' in kwargs and kwargs['valid'] is not None:
+            invoice.valid=kwargs["valid"]
+
         if 'title' in kwargs:
             invoice.title=kwargs["title"]
         if 'parent_id' in kwargs:
@@ -2888,6 +2895,13 @@ class InvoiceRepo(FinancialEventRepo):
             return result,message,invoice
         if 'title' in kwargs:
             invoice.title=kwargs['title'] 
+
+
+
+        leolog(valid=kwargs['valid'])
+        if 'valid' in kwargs and kwargs['valid'] is not None:
+            invoice.valid=kwargs['valid'] 
+
 
         if 'bedehkar_id' in kwargs and kwargs['bedehkar_id'] is not None and not kwargs['bedehkar_id']=='':
             invoice.bedehkar_id=kwargs['bedehkar_id']

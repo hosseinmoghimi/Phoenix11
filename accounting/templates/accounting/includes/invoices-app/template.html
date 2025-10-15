@@ -84,6 +84,7 @@
                                         <div class="media-body mr-2">
                                             <h5>
                                                 <a :href="invoice.get_absolute_url">
+                                                    <span v-if="invoice.valid" class="ml-1">*</span>
                                                     <span v-text="invoice.title">
 
                                                     </span>

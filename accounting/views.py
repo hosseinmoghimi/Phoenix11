@@ -378,7 +378,8 @@ def AddChequeContext(request):
 
 def AddInvoiceContext(request):
     context=AddFinancialEventContext(request=request)
-
+    invoice_statuses=(i[0] for i in FinancialEventStatusEnum.choices)
+    context['invoice_statuses']=invoice_statuses
     context['add_invoice_form']=AddInvoiceForm()
     return context
 

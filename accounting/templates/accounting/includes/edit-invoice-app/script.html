@@ -3,7 +3,7 @@
   let edit_invoice_app_bedehkar=invoice.bedehkar
   let edit_invoice_app_description=""
   let edit_invoice_app_short_description=""
-
+  let edit_invoice_app_valid=false
   let edit_invoice_app_event_datetime= "{{invoice.persian_event_datetime}}"
    let edit_invoice_app_event_date= edit_invoice_app_event_datetime.substring(0,10)
    let edit_invoice_app_event_time= edit_invoice_app_event_datetime.substring(10,19)
@@ -14,6 +14,14 @@
     edit_invoice_app_description="{{invoice.description}}"
   </script>
 {% endif %}
+
+
+{% if invoice.valid %}
+  <script>
+    edit_invoice_app_valid=true
+  </script>
+{% endif %}
+
 {% if invoice.short_description %}
   <script>
     edit_invoice_app_short_description="{{invoice.short_description}}"
@@ -45,6 +53,7 @@
       bedehkar_code: `{{invoice.bedehkar.code}}`,
       bestankar_code: `{{invoice.bestankar.code}}`,
       waiting: false,
+      valid: edit_invoice_app_valid,
       message: { show: false },
       show_confirm:false,
     },
@@ -156,11 +165,14 @@
           tax_percentage: parseInt(edit_invoice_app.tax_percentage),
           shipping_fee: parseInt(edit_invoice_app.shipping_fee),
           status: edit_invoice_app.status,
+          valid: edit_invoice_app.valid,
           bedehkar_code: edit_invoice_app.bedehkar_code,
           bestankar_code: edit_invoice_app.bestankar_code,
         };
 
         console.log(payload);
+        console.log("payload.valid");
+        console.log(payload.valid);
         let url = "{% url 'accounting:edit_invoice' %}";
         console.log(url);
         $.post(url, payload).done((data) => {

@@ -612,6 +612,8 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
     discount=models.IntegerField(_("تخفیف"),default=0)
     shipping_fee=models.IntegerField(_("هزینه حمل"),default=0)
     sum_total=models.IntegerField(_("مبلغ نهایی"),default=0)
+    valid=models.BooleanField(_("valid"),default=True)
+
     # status=models.CharField(_("status"),choices=FinancialEventStatusEnum.choices,default=FinancialEventStatusEnum.DRAFT, max_length=50)
   
     class Meta:
