@@ -165,6 +165,11 @@ class MaintenanceView(View):
         context['invoice_lines']=invoice_lines
         context['invoice_lines_s']=invoice_lines_s
 
+        if request.user.has_perm('accounting.add_invoice'):
+            context['add_invoice_to_maintenance_form']=AddInvoiceToMaintenanceForm()
+            context['add_invoice_form']=AddInvoiceForm()
+            context.update(AddInvoiceContext(request=request))
+
         return render(request,TEMPLATE_ROOT+"maintenance.html",context) 
     
  

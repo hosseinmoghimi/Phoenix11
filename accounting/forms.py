@@ -228,8 +228,9 @@ class AddFinancialEventForm(forms.Form):
     payment_method=forms.CharField(max_length=100,required=False)
     description=forms.CharField(max_length=1000,required=False)
     shipping_fee=forms.IntegerField(required=False)
-    valid=forms.BooleanField(required=False
-                             )
+    valid=forms.BooleanField(required=False)
+
+    
 class AddInvoiceForm(AddFinancialEventForm):
     pass
 

@@ -93,7 +93,84 @@ class MaintenanceRepo():
         if "id" in kwargs and kwargs["id"] is not None:
             return self.objects.filter(pk=kwargs['id']).first() 
         
+    
+       
+
+    def add_invoice(self,*args,**kwargs):
+        result,message,invoice=FAILED,"",None 
+        from accounting.models import Invoice,PersianCalendar
+
+            
+        if not self.request.user.has_perm(APP_NAME+".add_invoice"):
+            message="دسترسی غیر مجاز"
+            return result,message,invoice
+
+        invoice=Invoice()
         
+        if 'valid' in kwargs and kwargs['valid'] is not None:
+            invoice.valid=kwargs["valid"]
+
+        if 'title' in kwargs:
+            invoice.title=kwargs["title"]
+        if 'parent_id' in kwargs:
+            if kwargs["parent_id"]>0:
+                invoice.parent_id=kwargs["parent_id"]
+        if 'color' in kwargs:
+            invoice.color=kwargs["color"]
+        if 'code' in kwargs:
+            invoice.code=kwargs["code"]
+        if 'priority' in kwargs:
+            invoice.priority=kwargs["priority"]
+        if 'bedehkar_id' in kwargs:
+            invoice.bedehkar_id=kwargs["bedehkar_id"]
+        if 'bestankar_id' in kwargs:
+            invoice.bestankar_id=kwargs["bestankar_id"]
+        if 'event_datetime' in kwargs:
+            
+            year=kwargs['event_datetime'][:2]
+            if year=="13" or year=="14":
+                kwargs['event_datetime']=PersianCalendar().to_gregorian(kwargs["event_datetime"])
+            invoice.event_datetime=kwargs["event_datetime"]
+
+        if 'type' in kwargs:
+            invoice.type=kwargs["type"]
+
+           
+        if 'status' in kwargs:
+            invoice.status=kwargs["status"]
+
+           
+           
+        if 'invoice_no' in kwargs:
+            invoice.invoice_no=kwargs["invoice_no"]
+
+
+        if 'maintenance_id' in kwargs:
+            maintenance_id=kwargs["maintenance_id"]
+            maintenance=Maintenance.objects.filter(pk=maintenance_id).first()
+            if maintenance is not None:
+                (result,message,invoice)=invoice.save()
+                maintenance.invoices.add(invoice.id)
+                result=SUCCEED
+                message='با موفقیت اضافه شد.'
+
+        return result,message,invoice
+
+     
+    def add_invoice_to_maintenance(self,*args, **kwargs):   
+        result,message,invoice=FAILED,'',None
+        if not self.request.user.has_perm(APP_NAME+".change_maintenance"):
+            message="دسترسی غیر مجاز"
+            return result,message,invoice
+        maintenance=Maintenance.objects.filter(pk=kwargs['maintenance_id']).first()
+        from accounting.repo import InvoiceRepo
+        invoice=InvoiceRepo(request=self.request).invoice(pk=kwargs['invoice_id'])
+        if maintenance is not None and invoice is not None:
+            maintenance.invoices.add(invoice.id)
+            result=SUCCEED
+            message='با موفقیت اضافه شد.'
+        return result,message,invoice
+    
     def add_maintenance(self,*args,**kwargs):
         result,message,maintenance=FAILED,"",None
         if not self.request.user.has_perm(APP_NAME+".add_maintenance"):

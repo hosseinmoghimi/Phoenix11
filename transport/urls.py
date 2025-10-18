@@ -10,8 +10,10 @@ urlpatterns = [
     path('vehicle/<int:pk>/',login_required(views.VehicleView.as_view()),name="vehicle"),
     path('add-vehicle/',login_required(apis.AddVehicleApi.as_view()),name="add_vehicle"),
 
+    path('add-invoice-to-maintenance/',login_required(apis.AddInvoiceToMaintenanceApi.as_view()),name="add_invoice_to_maintenance"),
 
     
+    path('add-invoice/',login_required(apis.AddInvoiceApi.as_view()),name="add_invoice"),
     path('maintenance-invoices/',login_required(views.MaintenanceInvoicesView.as_view()),name="maintenance_invoices"),
     path('maintenance-invoice/<int:pk>/',login_required(views.MaintenanceInvoiceView.as_view()),name="maintenanceinvoice"),
     path('add-maintenance-invoice/',login_required(apis.AddMaintenanceInvoiceApi.as_view()),name="add_maintenance_invoice"),

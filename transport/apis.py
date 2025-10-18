@@ -8,6 +8,7 @@ from .repo import VehicleRepo,MaintenanceInvoiceRepo,ServiceManRepo,MaintenanceR
 from .serializers import MaintenanceSerializer,VehicleSerializer,MaintenanceInvoiceSerializer,ServiceManSerializer
 from django.http import JsonResponse
 from .forms import *
+from accounting.serializers import InvoiceSerializer
 
 
 class AddVehicleApi(APIView):
@@ -35,8 +36,32 @@ class AddVehicleApi(APIView):
  
 
 
+class AddInvoiceToMaintenanceApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        add_invoice_to_maintenance_form=AddInvoiceToMaintenanceForm(request.POST)
+        if add_invoice_to_maintenance_form.is_valid():
+            log=333
+            cd=add_invoice_to_maintenance_form.cleaned_data
+            result,message,invoice=MaintenanceRepo(request=request).add_invoice_to_maintenance(**cd)
+            if invoice is not None:
+                context['invoice']=InvoiceSerializer(invoice).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
  
-
+ 
+ 
+ 
 class AddMaintenanceInvoiceApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -54,6 +79,30 @@ class AddMaintenanceInvoiceApi(APIView):
             result,message,maintenance_invoice=MaintenanceInvoiceRepo(request=request).add_maintenance_invoice(**cd)
             if maintenance_invoice is not None:
                 context['maintenance_invoice']=MaintenanceInvoiceSerializer(maintenance_invoice).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+    
+
+ 
+class AddInvoiceApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        add_maintenance_invoice_form=AddInvoiceForm(request.POST)
+        if add_maintenance_invoice_form.is_valid():
+            log=333
+            cd=add_maintenance_invoice_form.cleaned_data
+            result,message,invoice=MaintenanceRepo(request=request).add_invoice(**cd)
+            if invoice is not None:
+                context['invoice']=InvoiceSerializer(invoice).data
         context['message']=message
         context['result']=result
         context['log']=log
