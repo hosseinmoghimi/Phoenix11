@@ -213,7 +213,7 @@ class ProjectView(View):
 
 
         
-        invoice_lines=project.all_invocie_lines().order_by('invoice_line_item__title')
+        invoice_lines=project.all_invocie_lines().order_by('row').order_by('invoice_id')
         invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
         context['invoice_lines']=invoice_lines
         context['invoice_lines_s']=invoice_lines_s
