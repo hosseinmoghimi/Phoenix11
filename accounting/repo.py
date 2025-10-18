@@ -2898,7 +2898,6 @@ class InvoiceRepo(FinancialEventRepo):
 
 
 
-        leolog(valid=kwargs['valid'])
         if 'valid' in kwargs and kwargs['valid'] is not None:
             invoice.valid=kwargs['valid'] 
 

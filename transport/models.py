@@ -48,11 +48,14 @@ class Maintenance(Event):
     
     class_name='maintenance'
     app_name=APP_NAME
+
+
     @property
     def sum(self):
         sum=0
         for invoice in self.invoices.all():
-            sum+=invoice.amount
+            if invoice.valid:
+                sum+=invoice.sum_total
         return sum
     def save(self, *args, **kwargs):
         
@@ -78,7 +81,7 @@ class Maintenance(Event):
         invoice_ids=[]
         for invoice in self.invoices.all():
             invoice_ids.append(invoice.id)
-        return InvoiceLine.objects.filter(invoice_id__in=invoice_ids)
+        return InvoiceLine.objects.filter(invoice_id__in=invoice_ids).order_by('invoice_id')
 
 class MaintenanceInvoice(Invoice):
     kilometer=models.IntegerField(_("کیلومتر"),default=0)

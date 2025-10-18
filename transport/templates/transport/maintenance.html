@@ -1,4 +1,5 @@
 {% extends "transport/layout.html" %} {% block content %}
+{% load to_price %}
 <div class="row rtl farsi">
   <div class="col-md-3">
     <div class="card">
@@ -9,6 +10,13 @@
         </div>
         <div class="card-body">
             {{maintenance.title}}
+            <h5>
+              <small class="text-muted">
+                برآورد :
+              </small>
+              {{maintenance.sum|to_price}}
+              {{CURRENCY}}
+            </h5>
             {% if perms.transport.change_maintenance %}
   <a target="_blank" title="ویرایش" class="text-warning"  href="{{maintenance.get_edit_url}}">
     <i class="fa fa-edit text-warning"></i>
