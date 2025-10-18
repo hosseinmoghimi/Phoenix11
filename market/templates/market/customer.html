@@ -7,15 +7,7 @@
 {% block content %}
 
 <div class="row rtl">
-
-    <div class="col-md-4">
-        <h5 class="text-center">
-            <small class="text-muted">
-                مشتری :
-            </small>
-            {{customer.person_account.person.full_name}}
-        </h5>
-    </div>
+ 
     <div class="col-md-4">
         <div class="card">
             <div class="card-header ">
@@ -39,6 +31,16 @@
                     {{customer.person_account.person.full_name}}
 
                 </h6>
+
+                 <h6>
+                    <small class="text-muted">
+                    سطح :
+
+                    </small>
+                    {{customer.level}}
+
+                </h6>
+
                   <h6> 
                     <a href="{% url 'market:cart' customer_id=customer.id %}">سبد خرید</a>
 

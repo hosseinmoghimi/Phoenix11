@@ -12,11 +12,36 @@
       <div class="card-body">
         {% if supplier.person_account %}
         <h6>
+          <small class="text-muted">
+            حساب
+            :
+          </small>
           <a href="{{supplier.person_account.get_absolute_url}}">
             {{supplier.person_account.name}}
           </a>
         </h6>
         {% endif %}
+           <h6>
+                    <small class="text-muted">
+                    سطح :
+
+                    </small>
+                    {{supplier.level}}
+
+                </h6>
+
+                 <h6>
+                    <small class="text-muted">
+                    شخص :
+
+                    </small>
+                    <a href="{{supplier.person_account.person.get_absolute_url}}">
+
+                      {{supplier.person_account.person.full_name}}
+                    </a>
+
+                </h6>
+
         {% if perms.market.change_supplier %}
         <a
           href="{{supplier.get_edit_url}}"

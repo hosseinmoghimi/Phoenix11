@@ -1,6 +1,19 @@
+
+<script>
+  let cart_items = []
+
+</script>
+{% if cart_items_s %}
+  
+<script>
+  cart_items = JSON.parse(`{{cart_items_s|escapejs}}`);
+    
+</script>
+{% endif %}
+
+
 <script>
   let url_change_cart_item = "{% url 'market:change_cart_item' %}";
-  let cart_items = JSON.parse(`{{cart_items_s|escapejs}}`);
   let cart_item_component_template = `{% include 'market/includes/cart-app/component.html' %}`;
   let cart_item_component = Vue.component("cart-item-component", {
     data: function () {
