@@ -12,6 +12,7 @@ urlpatterns = [
     path('feeder/<int:pk>/',login_required(views.FeederView.as_view()),name='feeder'),
     path('relay/<int:pk>/',login_required(views.FeedersView.as_view()),name='relay'),
     path('command/<int:pk>/',login_required(views.FeedersView.as_view()),name='command'),
+    path('commands/',login_required(views.CommandsView.as_view()),name='commands'),
     path('scenario/<int:pk>/',login_required(views.FeedersView.as_view()),name='scenario'),
     
     path('export/',login_required(apis.ExportApi.as_view()),name="export"),

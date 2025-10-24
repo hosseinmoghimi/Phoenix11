@@ -22,11 +22,7 @@ def getContext(request,*args, **kwargs):
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        return FeedersView().get(request=request)
-        # commands=CommandRepo(request=request).list(for_home=True)
-        # context['commands']=commands
-        # context['commands_s']=json.dumps(CommandSerializer(commands,many=True).data)
-        # return render(request,TEMPLATE_ROOT+"index.html",context)
+        return render(request,TEMPLATE_ROOT+"index.html",context)
 
 class FeedersView(View):
     def get(self,request,*args, **kwargs):
@@ -37,6 +33,16 @@ class FeedersView(View):
         context['feeders_s']=feeders_s
         context['expands_feeders']=True
         return render(request,TEMPLATE_ROOT+"feeders.html",context)
+
+class CommandsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        commands=CommandRepo(request=request).list()
+        context['commands']=commands
+        commands_s=json.dumps(CommandSerializer(commands,many=True).data)
+        context['commands_s']=commands_s
+        context['expands_commands']=True
+        return render(request,TEMPLATE_ROOT+"commands.html",context)
 
 class LogView(View):
     def get(self,request,*args, **kwargs):
