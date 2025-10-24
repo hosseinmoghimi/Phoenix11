@@ -20,6 +20,23 @@
      
     </h5>
     {% endfor %}
+
+
+
+
+    {% for maintenance in invoice.maintenance_set.all %}
+    <h5>
+      <small class="text-muted">
+        تعمیر و نگهداری
+      </small>
+      <a target="_blank" href="{{maintenance.get_absolute_url}}" class="text-info mx-2">
+
+        {{maintenance.title}}
+      </a>
+     
+    </h5>
+    {% endfor %}
+    
     {% if edit_invoice_form %}
       
     <a class="text-info mx-2" href="{% url 'accounting:invoice_edit' pk=invoice.id%}"> تغییر </a>
