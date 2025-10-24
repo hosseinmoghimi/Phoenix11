@@ -21,7 +21,7 @@ TEMPLATE_ROOT='school/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
-from .constants import EXCEL_STUDENTS_DATA_START_ROW,EXCEL_TEACHERS_DATA_START_ROW
+from .constants import EXCEL_STUDENTS_DATA_START_ROW,EXCEL_TEACHERS_DATA_START_ROW,EXCEL_MAJORS_DATA_START_ROW
 
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
@@ -34,6 +34,16 @@ def AddCourseClassContext(request,*args, **kwargs):
     context['add_course_class_form']=AddCourseClassForm()
     return context
  
+def AddTeacherContext(request):
+    context={}
+    context['add_teacher_form']=AddTeacherForm()
+    return context
+
+def AddMajorContext(request):
+    context={}
+    context['add_major_form']=AddMajorForm()
+    return context
+
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -45,15 +55,17 @@ class IndexView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
-def AddTeacherContext(request):
-    context={}
-    context['add_teacher_form']=AddTeacherForm()
-    return context
+class SettingsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['import_from_excel_form']=ImportFromExcelForm()
+        context['name3']="name 3333"
+        phoenix_apps=context["phoenix_apps"]
+        phoenix_apps=phoenix_apps
+        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
 
-def AddMajorContext(request):
-    context={}
-    context['add_major_form']=AddMajorForm()
-    return context
+        context['phoenix_apps']=phoenix_apps
+        return render(request,TEMPLATE_ROOT+"settings.html",context)
 
 class TeachersView(View):
     def get(self,request,*args, **kwargs):
@@ -80,7 +92,8 @@ class StudentsView(View):
 # Create your views here. 
    
  
-         
+        
+ 
 
 class ExportStudentsToExcelView(View):
     def get(self,request,*args, **kwargs):
@@ -139,7 +152,7 @@ class ExportToExcelView(View):
                     'id':student.id,
                     'last_name':student.person_account.person.last_name,
                     'first_name':student.person_account.person.first_name,
-                    'father_name':student.father_name,
+                    'father_name':student.person_account.person.father_name,
                     'melli_code':student.person_account.person.melli_code,      
                     'birth_date':student.person_account.person.birth_date,      
                     'birth_location':student.person_account.person.birth_location,      
@@ -183,7 +196,7 @@ class ExportToExcelView(View):
                     'id':teacher.id,
                     'last_name':teacher.person_account.person.last_name,
                     'first_name':teacher.person_account.person.first_name,
-                    'father_name':teacher.father_name,
+                    'father_name':teacher.person_account.person.father_name,
                     'melli_code':teacher.person_account.person.melli_code,      
                     'personneli_code':teacher.personneli_code,      
                     'birth_date':teacher.person_account.person.birth_date,      
@@ -210,8 +223,8 @@ class ExportToExcelView(View):
                 table_has_header=False,
                 table_headers=headers,
                 style=style,
-                sheet_name='services',
-                title='services',
+                sheet_name='teachers',
+                title='teachers',
             )
 
         
@@ -219,31 +232,23 @@ class ExportToExcelView(View):
         if EXPORT_MAJORS:
             
             
-            accounts=AccountRepo(request=request).list()
+            majors=MajorRepo(request=request).list()
             
                 
             lines=[]
-            for i,account in enumerate(accounts,start=1):
+            for i,major in enumerate(majors,start=1):
                 line={
                     'row':i,
-                    'parent_code':account.parent_account.code if account.parent_account is not None else '',      
-                    'id':account.id,
-                    'code':account.code,      
-                    'title':account.title,
-                    'color':account.color,
-                    'thumbnail_origin':str(account.thumbnail_origin),       
+                    'id':major.id,
+                    'title':major.title,
                 }
                 lines.append(line)
             headers=['ردیف',
-                    'کد والد',
                     'شناسه',
-                    'کد',
                     'عنوان',
-                    'رنگ',
-                    'تصویر',
             ]
          
-            start_row=EXCEL_TEACHERS_DATA_START_ROW
+            start_row=EXCEL_MAJORS_DATA_START_ROW
             if start_row>2:
                 start_row-=1
             report_work_book.add_sheet(
@@ -252,11 +257,11 @@ class ExportToExcelView(View):
                 table_has_header=False,
                 table_headers=headers,
                 style=style,
-                sheet_name='accounts',
-                title='accounts',
+                sheet_name='majors',
+                title='majors',
             )
         
-        file_name=f"""Phoenix accounting {date.replace('/','').replace(':','')}.xlsx"""
+        file_name=f"""Phoenix school {date.replace('/','').replace(':','')}.xlsx"""
         
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         # response.AppendHeader("Content-Type", "application/vnd.ms-excel");

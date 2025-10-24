@@ -7,13 +7,15 @@ urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),  
 
+    path('settings/',login_required(views.SettingsView.as_view()),name="settings"),  
+    path('export-to-excel/',login_required(views.ExportToExcelView.as_view()),name="export_to_excel"),
+    path('import-from-excel/',login_required(apis.ImportFromExcelApi.as_view()),name="import_from_excel"),  
+
     path('schools/',login_required(views.SchoolsView.as_view()),name="schools"),  
     path('add-school/',login_required(apis.AddSchoolApi.as_view()),name="add_school"),
     path('school/<int:pk>/',login_required(views.SchoolView.as_view()),name="school"), 
 
-
     
-
     path('import-students-from-excel/',login_required(apis.ImportStudentsFromExcelApi.as_view()),name="import_students_from_excel"),  
     path('export-students-to-excel/',login_required(views.ExportStudentsToExcelView.as_view()),name="export_students_to_excel"),  
     path('students/',login_required(views.StudentsView.as_view()),name="students"),  

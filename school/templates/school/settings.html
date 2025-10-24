@@ -1,0 +1,129 @@
+{% extends "accounting/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row rtl">
+    
+
+    {% if import_from_excel_form %}
+
+    <div class="col-md-6">
+        {% include "school/includes/import-from-excel/template.html" %}
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    let settings_app = new Vue({
+        el: "#settings-app",
+        data: {
+            message: { show: false },
+            waiting: false,
+            show_delete: false,
+        },
+        methods: {
+            normalize_all_accounts: function () {
+                settings_app.message.show = false
+                settings_app.waiting = true
+                let url = "{% url 'accounting:normalize_all_accounts' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                }
+                posting = $.post(url, payload)
+                posting.done((data) => {
+                    console.log(data)
+                    settings_app.waiting = false
+
+                    // settings_app.waiting = false
+                    if (data.result === "SUCCEED") {
+                        let title = "موفق" 
+                        show_message(settings_app, title, data.message , "success", 20000)
+                    }
+                    else {
+                        show_message(settings_app, "ناموفق", data.message, "danger", 20000)
+                    }
+                })
+            },
+            
+            normalize_all_financial_documents: function () {
+                settings_app.message.show = false
+                settings_app.waiting = true
+                let url = "{% url 'accounting:normalize_all_financial_documents' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                }
+                posting = $.post(url, payload)
+                posting.done((data) => {
+                    console.log(data)
+                    settings_app.waiting = false
+
+                    // settings_app.waiting = false
+                    if (data.result === "SUCCEED") {
+                        let title = "موفق" 
+                        show_message(settings_app, title, data.message , "success", 20000)
+                    }
+                    else {
+                        show_message(settings_app, "ناموفق", data.message, "danger", 20000)
+                    }
+                })
+            },
+            
+            
+            init_all_accounts: function () {
+                settings_app.message.show = false
+                settings_app.waiting = true
+                let url = "{% url 'accounting:init_all_accounts' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                }
+                posting = $.post(url, payload)
+                posting.done((data) => {
+                    console.log(data)
+                    settings_app.waiting = false
+
+                    // settings_app.waiting = false
+                    if (data.result1 === "SUCCEED") {
+                        let title = "موفق"
+                        let message1 = data.message1
+                        let message2 = data.message2
+                        let message3 = data.message3
+                        show_message(settings_app, title, message1 + message2 + message3, "success", 20000)
+                    }
+                    else {
+                        show_message(settings_app, "ناموفق", data.message1 + message2 + message3, "danger", 20000)
+                    }
+                })
+            },
+            
+            delete_all_accounts: function () {
+                settings_app.message.show = false
+                settings_app.waiting = true
+                let url = "{% url 'accounting:delete_all_accounts' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                }
+                console.log("data")
+                posting = $.post(url, payload)
+                posting.done((data) => {
+                    console.log(data)
+                    settings_app.waiting = false
+                    if (data.result === "SUCCEED") {
+                        settings_app.show_delete = false
+
+                        show_message(settings_app, "موفق", data.message, "success", 20000)
+                    }
+                    else {
+                        show_message(settings_app, "ناموفق", data.message, "danger", 20000)
+                    }
+                })
+            },
+        }
+    })
+</script>
+{% if import_from_excel_form %}
+
+        {% include "school/includes/import-from-excel/script.html" %}
+{% endif %}
+{% endblock script %}
