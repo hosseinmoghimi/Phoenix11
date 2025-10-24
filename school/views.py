@@ -261,7 +261,7 @@ class ExportToExcelView(View):
                 title='majors',
             )
         
-        file_name=f"""Phoenix school {date.replace('/','').replace(':','')}.xlsx"""
+        file_name=f"""Phoenix__school__{date.replace('/','_').replace(':','_').replace(' ','__')}.xlsx"""
         
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
