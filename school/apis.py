@@ -11,6 +11,54 @@ from django.http import JsonResponse
 from .forms import *
    
  
+class ImportStudentsFromExcelApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        import_students_from_excel_form=ImportStudentFromExcelForm(request.POST)
+        if import_students_from_excel_form.is_valid():
+            log=333
+            cd=import_students_from_excel_form.cleaned_data
+            result,message,students=StudentRepo(request=request).import_students(**cd)
+            if students is not None:
+                context['students']=StudentSerializer(students,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+    
+
+
+
+class ImportTeachersFromExcelApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=111
+        context['result']=FAILED 
+        log=222
+        from utility.message import INVALID_FORM_VALUE_MESSAGE
+        message=INVALID_FORM_VALUE_MESSAGE
+        import_teachers_from_excel_form=ImportTeacherFromExcelForm(request.POST)
+        if import_teachers_from_excel_form.is_valid():
+            log=333
+            cd=import_teachers_from_excel_form.cleaned_data
+            result,message,teachers=TeacherRepo(request=request).import_teachers(**cd)
+            if teachers is not None:
+                context['teachers']=TeacherSerializer(teachers,many=True).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+    
+
 class AddSchoolApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

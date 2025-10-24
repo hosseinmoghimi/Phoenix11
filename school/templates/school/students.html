@@ -15,6 +15,11 @@
         {% include "school/includes/students-app/template.html" %}
     </div>
 
+    <div class="col-md-12">
+
+        
+        {% include "school/includes/import-students-app/template.html" %}
+    </div>
 </div>
 {% endblock content %}
 
@@ -24,4 +29,6 @@
 {% if add_student_form %}
 {% include "school/includes/add-student-app/script.html" %}
 {% endif %}
+{% include "school/includes/import-students-app/script.html" %}
+
 {% endblock script %}

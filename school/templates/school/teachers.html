@@ -15,6 +15,11 @@
         {% include "school/includes/teachers-app/template.html" %}
     </div>
 
+    <div class="col-md-12">
+
+        
+        {% include "school/includes/import-teachers-app/template.html" %}
+    </div>
 </div>
 {% endblock content %}
 
@@ -24,4 +29,6 @@
 {% if add_teacher_form %}
 {% include "school/includes/add-teacher-app/script.html" %}
 {% endif %}
+        {% include "school/includes/import-teachers-app/script.html" %}
+
 {% endblock script %}

@@ -100,7 +100,6 @@ class ReportWorkBook:
             self.work_book = Workbook()
             for sheet in self.sheets:
                 self.work_book.create_sheet(sheet.sheet_name)
-                ffff
         else:
             REPORT_ROOT=os.path.join(STATIC_ROOT,'report')
             filename =os.path.join(REPORT_ROOT,self.origin_file_name)   

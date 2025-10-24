@@ -14,6 +14,8 @@ urlpatterns = [
 
     
 
+    path('import-students-from-excel/',login_required(apis.ImportStudentsFromExcelApi.as_view()),name="import_students_from_excel"),  
+    path('export-students-to-excel/',login_required(views.ExportStudentsToExcelView.as_view()),name="export_students_to_excel"),  
     path('students/',login_required(views.StudentsView.as_view()),name="students"),  
     path('add-student/',login_required(apis.AddStudentApi.as_view()),name="add_student"),
     path('student/<int:pk>/',login_required(views.StudentView.as_view()),name="student"), 
@@ -45,6 +47,9 @@ urlpatterns = [
 
 
 
+
+    path('import-teachers-from-excel/',login_required(apis.ImportTeachersFromExcelApi.as_view()),name="import_teachers_from_excel"),  
+    path('export-teachers-to-excel/',login_required(views.ExportTeachersToExcelView.as_view()),name="export_teachers_to_excel"), 
     path('courses/',login_required(views.CoursesView.as_view()),name="courses"),  
     path('add-course/',login_required(apis.AddCourseApi.as_view()),name="add_course"),
     path('course/<int:pk>/',login_required(views.CourseView.as_view()),name="course"),  

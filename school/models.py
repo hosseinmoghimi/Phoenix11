@@ -196,6 +196,7 @@ class StudentInSession(models.Model,LinkHelper):
  
 class Teacher(models.Model,LinkHelper):
     person_account=models.ForeignKey("accounting.personaccount", verbose_name=_("person_account"), on_delete=models.PROTECT)
+    personneli_code=models.CharField(_("personneli_code"), max_length=20)
     
     class_name="teacher"
     app_name=APP_NAME

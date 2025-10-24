@@ -3,11 +3,13 @@ from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_UR
 from .repo import CourseRepo,SchoolRepo,CourseClassRepo,TeacherRepo,StudentRepo,MajorRepo,SessionRepo,StudentInSessionRepo
 from .serializers import CourseClassSerializer,SchoolSerializer,CourseSerializer,TeacherSerializer,StudentInSessionSerializer,SessionSerializer,StudentSerializer,MajorSerializer
 from django.views import View
+from django.http import HttpResponse
 from .forms import *
 from .apps import APP_NAME
 from core.views import CoreContext
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
+from utility.excel import ReportWorkBook,get_style
 import json
 from library.serializers import BookSerializer
 
@@ -19,7 +21,8 @@ TEMPLATE_ROOT='school/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
- 
+from .constants import EXCEL_STUDENTS_DATA_START_ROW,EXCEL_TEACHERS_DATA_START_ROW
+
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
  
@@ -77,6 +80,206 @@ class StudentsView(View):
 # Create your views here. 
    
  
+         
+
+class ExportStudentsToExcelView(View):
+    def get(self,request,*args, **kwargs):
+        
+        EXPORT_STUDENTS=True
+        EXPORT_TEACHERS=False
+        EXPORT_MAJORS=False
+        return ExportToExcelView().get(request=request,
+                                       EXPORT_STUDENTS=EXPORT_STUDENTS,
+                                       EXPORT_TEACHERS=EXPORT_TEACHERS,
+                                       EXPORT_MAJORS=EXPORT_MAJORS)
+         
+  
+
+class ExportTeachersToExcelView(View):
+    def get(self,request,*args, **kwargs):
+        
+        EXPORT_STUDENTS=False
+        EXPORT_TEACHERS=True
+        EXPORT_MAJORS=False
+        return ExportToExcelView().get(request=request,
+                                       EXPORT_STUDENTS=EXPORT_STUDENTS,
+                                       EXPORT_TEACHERS=EXPORT_TEACHERS,
+                                       EXPORT_MAJORS=EXPORT_MAJORS)
+         
+
+class ExportToExcelView(View):
+    def get(self,request,*args, **kwargs):
+        now=PersianCalendar().date
+        date=PersianCalendar().from_gregorian(now)
+
+        
+        report_work_book=ReportWorkBook(origin_file_name=f'school.xlsx')
+        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
+        
+        EXPORT_STUDENTS=True
+        EXPORT_TEACHERS=True
+        EXPORT_MAJORS=True
+
+        if 'EXPORT_STUDENTS' in kwargs:
+            EXPORT_STUDENTS=kwargs['EXPORT_STUDENTS']
+
+        if 'EXPORT_TEACHERS' in kwargs:
+            EXPORT_TEACHERS=kwargs['EXPORT_TEACHERS']
+
+        if 'EXPORT_MAJORS' in kwargs:
+            EXPORT_MAJORS=kwargs['EXPORT_MAJORS']
+
+        if EXPORT_STUDENTS:
+            students=StudentRepo(request=request).list()
+                
+            lines=[]
+            for i,student in enumerate(students,start=1):
+                line={
+                    'row':i,
+                    'id':student.id,
+                    'last_name':student.person_account.person.last_name,
+                    'first_name':student.person_account.person.first_name,
+                    'father_name':student.father_name,
+                    'melli_code':student.person_account.person.melli_code,      
+                    'birth_date':student.person_account.person.birth_date,      
+                    'birth_location':student.person_account.person.birth_location,      
+                }
+                lines.append(line)
+            headers=['ردیف',
+                    'شناسه',
+                    'نام خانوادگی',
+                    'نام', 
+                    'نام پدر', 
+                    'کد ملی',
+                    'تاریخ تولد',
+                    'محل تولد',
+            ]
+          
+            
+            start_row=EXCEL_STUDENTS_DATA_START_ROW
+            if start_row>2:
+                start_row-=1
+            report_work_book.add_sheet(
+                data=lines,
+                start_row=start_row,
+                table_has_header=False,
+                table_headers=headers,
+                style=style,
+                sheet_name='students',
+                title='students',
+            )
+
+            
+        if EXPORT_TEACHERS:
+            
+            
+            teachers=TeacherRepo(request=request).list()
+            
+                
+            lines=[]
+            for i,teacher in enumerate(teachers,start=1):
+                line={
+                    'row':i,
+                    'id':teacher.id,
+                    'last_name':teacher.person_account.person.last_name,
+                    'first_name':teacher.person_account.person.first_name,
+                    'father_name':teacher.father_name,
+                    'melli_code':teacher.person_account.person.melli_code,      
+                    'personneli_code':teacher.personneli_code,      
+                    'birth_date':teacher.person_account.person.birth_date,      
+                    'birth_location':teacher.person_account.person.birth_location,      
+                }
+                lines.append(line)
+            headers=['ردیف',
+                    'شناسه',
+                    'نام خانوادگی',
+                    'نام', 
+                    'نام پدر', 
+                    'کد ملی',
+                    'کد پرسنلی',
+                    'تاریخ تولد',
+                    'محل تولد',
+            ]
+         
+            start_row=EXCEL_TEACHERS_DATA_START_ROW
+            if start_row>2:
+                start_row-=1
+            report_work_book.add_sheet(
+                data=lines,
+                start_row=start_row,
+                table_has_header=False,
+                table_headers=headers,
+                style=style,
+                sheet_name='services',
+                title='services',
+            )
+
+        
+     
+        if EXPORT_MAJORS:
+            
+            
+            accounts=AccountRepo(request=request).list()
+            
+                
+            lines=[]
+            for i,account in enumerate(accounts,start=1):
+                line={
+                    'row':i,
+                    'parent_code':account.parent_account.code if account.parent_account is not None else '',      
+                    'id':account.id,
+                    'code':account.code,      
+                    'title':account.title,
+                    'color':account.color,
+                    'thumbnail_origin':str(account.thumbnail_origin),       
+                }
+                lines.append(line)
+            headers=['ردیف',
+                    'کد والد',
+                    'شناسه',
+                    'کد',
+                    'عنوان',
+                    'رنگ',
+                    'تصویر',
+            ]
+         
+            start_row=EXCEL_TEACHERS_DATA_START_ROW
+            if start_row>2:
+                start_row-=1
+            report_work_book.add_sheet(
+                data=lines,
+                start_row=start_row,
+                table_has_header=False,
+                table_headers=headers,
+                style=style,
+                sheet_name='accounts',
+                title='accounts',
+            )
+        
+        file_name=f"""Phoenix accounting {date.replace('/','').replace(':','')}.xlsx"""
+        
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
+        response["Content-disposition"]=f"attachment; filename={file_name}"
+        report_work_book.work_book.save(response)
+        report_work_book.work_book.close()
+        return response
+
+
+class ExportTeachersToExcelView(View):
+  
+    def get(self,request,*args, **kwargs):
+        
+        EXPORT_STUDENTS=False
+        EXPORT_TEACHERS=True
+        EXPORT_MAJORS=False
+        return ExportToExcelView().get(request=request,
+                                       EXPORT_STUDENTS=EXPORT_STUDENTS,
+                                       EXPORT_TEACHERS=EXPORT_TEACHERS,
+                                       EXPORT_MAJORS=EXPORT_MAJORS)
+          
+
+
  
 class StudentView(View):
     def get(self,request,*args, **kwargs):

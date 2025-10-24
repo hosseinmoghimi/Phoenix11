@@ -12,6 +12,16 @@ class AddCourseClassForm(forms.Form):
     school_id=forms.IntegerField(required=True)
     course_id=forms.IntegerField(required=True)
 
+class ImportStudentFromExcelForm(forms.Form): 
+    room=forms.CharField(max_length=50,required=False)
+    school_id=forms.IntegerField(required=True)
+    course_id=forms.IntegerField(required=True)
+    
+class ImportTeacherFromExcelForm(forms.Form): 
+    room=forms.CharField(max_length=50,required=False)
+    school_id=forms.IntegerField(required=True)
+    course_id=forms.IntegerField(required=True)
+
 class AddStudentForm(forms.Form):
     person_account_id=forms.IntegerField(required=True)
 
