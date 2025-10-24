@@ -23,13 +23,7 @@ def getContext(request,*args, **kwargs):
  
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
-
-def AddMaintenanceInvoiceContext(request,*args, **kwargs):
-    context=AddInvoiceContext(request=request)
-    context['add_maintenance_invoice_form']=AddMaintenanceInvoiceForm()
-    context['maintenance_types']=(i[0] for i in MaintenanceTypesEnum.choices)
-    return context
-
+ 
 def AddMaintenanceContext(request):
     context={}
     context['add_maintenance_form']=AddMaintenanceForm()
@@ -43,12 +37,12 @@ def AddMaintenanceContext(request):
 
 def VehicleContext(request,vehicle,*args, **kwargs):
     context=AssetContext(request=request,asset=vehicle)
-    if request.user.has_perm('accounting.add_invoice'):
-        context.update(AddMaintenanceInvoiceContext(request=request))
-    maintenance_invoices=MaintenanceInvoiceRepo(request=request).list(vehicle_id=vehicle.id)
-    maintenance_invoices_s=json.dumps(MaintenanceInvoiceSerializer(maintenance_invoices,many=True).data)
-    context['maintenance_invoices']=maintenance_invoices
-    context['maintenance_invoices_s']=maintenance_invoices_s
+    if request.user.has_perm('accounting.add_maintenance'):
+        context.update(AddMaintenanceContext(request=request))
+    maintenances=MaintenanceRepo(request=request).list(vehicle_id=vehicle.id)
+    maintenances_s=json.dumps(MaintenanceSerializer(maintenances,many=True).data)
+    context['maintenances']=maintenances
+    context['maintenances_s']=maintenances_s
 
 
 
@@ -197,10 +191,10 @@ class ServiceManView(View):
         context['service_man']=service_man
 
 
-        maintenance_invoices =MaintenanceInvoiceRepo(request=request).list(service_man_id=service_man.id)
-        context['maintenance_invoices']=maintenance_invoices
-        maintenance_invoices_s=json.dumps(MaintenanceInvoiceSerializer(maintenance_invoices,many=True).data)
-        context['maintenance_invoices_s']=maintenance_invoices_s
+        maintenances =MaintenanceRepo(request=request).list(service_man_id=service_man.id)
+        context['maintenances']=maintenances
+        maintenances_s=json.dumps(MaintenanceSerializer(maintenances,many=True).data)
+        context['maintenances_s']=maintenances_s
  
 
         return render(request,TEMPLATE_ROOT+"service-man.html",context) 

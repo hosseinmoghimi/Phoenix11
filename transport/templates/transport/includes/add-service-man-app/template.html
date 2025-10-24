@@ -23,7 +23,7 @@
       <div class="card-body">
         <form @submit.prevent="add_service_man()">
           <div class="row">
-            <div class="col-md-12">
+            <!-- <div class="col-md-12">
               <div class="form-group">
                 <label for="">عنوان</label>
                 <input
@@ -33,7 +33,7 @@
                   class="form-control"
                 />
               </div>
-            </div>
+            </div> -->
 
             <div class="col-md-6">
               <div class="form-group">
@@ -71,6 +71,7 @@
               </a>
               <div v-if="!person_account.full_name">
                 <h5 class="text-danger">حساب انتخاب نشده است.</h5>
+                <a href="{% url 'accounting:person_accounts' %}" target="_blank">همه حساب های افراد</a>
               </div>
             </div>
 

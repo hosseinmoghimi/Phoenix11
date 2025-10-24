@@ -83,6 +83,9 @@ class MaintenanceRepo():
         if "vehicle_id" in kwargs:
             vehicle_id=kwargs["vehicle_id"]
             objects=objects.filter(vehicle_id=vehicle_id)  
+        if "service_man_id" in kwargs:
+            service_man_id=kwargs["service_man_id"]
+            objects=objects.filter(service_man_id=service_man_id)
         return objects.all()
         
     def maintenance(self,*args, **kwargs):
@@ -242,7 +245,9 @@ class ServiceManRepo():
         if not self.request.user.has_perm(APP_NAME+".add_service_man"):
             message="دسترسی غیر مجاز"
             return result,message,service_man
-
+        if len(ServiceMan.objects.filter(person_account_id=kwargs["person_account_id"]))>0:
+            message='قبلا برای این شخص سرویس کار ایجاد شده است.'
+            return FAILED,message,None
         service_man=ServiceMan() 
         if 'person_account_id' in kwargs:
             service_man.person_account_id=kwargs["person_account_id"]
