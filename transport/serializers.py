@@ -15,23 +15,12 @@ class ServiceManSerializer(serializers.ModelSerializer):
         model=ServiceMan
         fields=['id', 'title','person_account','get_absolute_url',  'get_edit_url','get_delete_url']
  
- 
-
-class MaintenanceInvoiceSerializer(InvoiceSerializer):
-    # bedehkar=AccountBriefSerializer()
-    # bestankar=AccountBriefSerializer()
-    service_man=ServiceManSerializer()
-    vehicle=VehicleSerializer()
-    class Meta:
-        model=MaintenanceInvoice
-        fields = ['id','title','vehicle','service_man','bedehkar' ,'bestankar','sum_total','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
- 
-
+  
 class MaintenanceSerializer(serializers.ModelSerializer):
     vehicle=VehicleSerializer()
     service_man=ServiceManSerializer()
     class Meta:
         model=Maintenance
-        fields=['id', 'title','vehicle','sum','service_man','persian_event_datetime','persian_end_datetime','persian_start_datetime','get_absolute_url',  'get_edit_url','get_delete_url']
+        fields=['id', 'title','vehicle','kilometer','sum','service_man','persian_event_datetime','persian_end_datetime','persian_start_datetime','get_absolute_url',  'get_edit_url','get_delete_url']
  
  

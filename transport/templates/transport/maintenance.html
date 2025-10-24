@@ -4,22 +4,65 @@
     <div class="col-md-3">
       <div class="card">
         <div class="card-header">
-          <h5>تعمیر و نگهداری</h5>
+          <h4>تعمیر و نگهداری
+
+         
+
+          </h4>
         </div>
         <div class="card-body">
-          {{ maintenance.title }}
+          <h5>
+
+            {{ maintenance.title }}
+          </h5>
+          <div>
+               
+          <span>
+
+            {% if perms.transport.change_maintenance %}
+            <a target="_blank" title="ویرایش" class="text-warning" href="{{ maintenance.get_edit_url }}"><i class="fa fa-edit text-warning"></i></a>
+            {% endif %}
+            
+            {% if perms.transport.delete_maintenance %}
+            <a target="_blank" title="حذف" class="text-danger" href="{{ maintenance.get_delete_url }}"><i class="fa fa-trash text-danger"></i></a>
+            {% endif %}
+          </span>
+          </div>
           <h5>
             <small class="text-muted">برآورد :</small>
             {{ maintenance.sum|to_price }}
             {{ CURRENCY }}
           </h5>
-          {% if perms.transport.change_maintenance %}
-            <a target="_blank" title="ویرایش" class="text-warning" href="{{ maintenance.get_edit_url }}"><i class="fa fa-edit text-warning"></i></a>
-          {% endif %}
 
-          {% if perms.transport.delete_maintenance %}
-            <a target="_blank" title="حذف" class="text-danger" href="{{ maintenance.get_delete_url }}"><i class="fa fa-trash text-danger"></i></a>
-          {% endif %}
+
+           <h5>
+            <small class="text-muted">وسیله :</small>
+            <a href="{{maintenance.vehicle.get_absolute_url}}">
+            {{maintenance.vehicle}}
+
+            </a>
+          </h5>
+
+
+           <h5>
+            <small class="text-muted">کیلومتر :</small>
+            {{maintenance.kilometer|to_price}}
+
+          </h5>
+
+
+           <h5>
+            <small class="text-muted">نوع :</small>
+            {{maintenance.maintenance_type}}
+
+          </h5>
+
+            <small class="text-muted">تعمیرکار :</small>
+            <a href="{{maintenance.service_man.get_absolute_url}}">
+            {{maintenance.service_man}}
+
+            </a>
+          </h5>
         </div>
       </div>
     </div>

@@ -12,18 +12,13 @@ class AddInvoiceToMaintenanceForm(forms.Form):
 class AddInvoiceForm(AddInvoiceForm):
     maintenance_id=forms.IntegerField(required=True)
  
-
-class AddMaintenanceInvoiceForm(AddInvoiceForm):
-    kilometer=forms.IntegerField(  required=False)
-    service_man_id=forms.IntegerField(required=True)
-    vehicle_id=forms.IntegerField(required=True)
-    maintenance_type=forms.CharField(max_length=100, required=True)
-    
+ 
 class AddMaintenanceForm(AddEventForm):
     kilometer=forms.IntegerField(  required=False)
     service_man_id=forms.IntegerField(required=True)
     vehicle_id=forms.IntegerField(required=True)
     maintenance_type=forms.CharField(max_length=100, required=True)
+    description=forms.CharField(max_length=500, required=False)
     
 
     

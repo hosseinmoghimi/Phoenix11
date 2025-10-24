@@ -1,32 +1,20 @@
-{% extends "transport/layout.html" %}
-{% block content %}
+{% extends "transport/layout.html" %} {% block content %}
 <div class="row rtl farsi">
-     
-    {% if add_invoice_form %}
-    <div class="col-md-12">
-        {% include "transport/includes/add-invoice-app/template.html" %}
-    </div>
-    {% endif %}
-   
-    <div class="col-md-12 ">
-        {% include "transport/includes/maintenances-app/template.html" %}
-    </div>
-    
+  {% if add_maintenance_form %}
+  <div class="col-md-12">
+    {% include "transport/includes/add-maintenance-app/template.html" %}
+  </div>
+  {% endif %}
+
+  <div class="col-md-12">
+    {% include "transport/includes/maintenances-app/template.html" %}
+  </div>
 </div>
-{% endblock content %}
+{% endblock content %} {% block script %}
+<script></script>
 
-{% block script %}
-<script>
-    
-   
-    
-
-</script> 
-
-{% include "transport/includes/maintenances-app/script.html" %}
-
-{% if add_invoice_form %}
-{% include "accounting/includes/add-invoice-app/script.html" %}
-{% endif %}
- 
-{% endblock script %}
+{% include "transport/includes/maintenances-app/script.html" %} 
+{% if add_maintenance_form %}
+ {% include "transport/includes/add-maintenance-app/script.html" %} 
+ {% endif %} 
+ {% endblock script %}

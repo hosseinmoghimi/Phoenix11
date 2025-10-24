@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 import json
 from utility.calendar import PersianCalendar
 from utility.log import leolog
-from .repo import VehicleRepo,MaintenanceInvoiceRepo,ServiceManRepo,MaintenanceRepo
-from .serializers import MaintenanceSerializer,VehicleSerializer,MaintenanceInvoiceSerializer,ServiceManSerializer
+from .repo import VehicleRepo,ServiceManRepo,MaintenanceRepo
+from .serializers import MaintenanceSerializer,VehicleSerializer,ServiceManSerializer
 from django.http import JsonResponse
 from .forms import *
 from accounting.serializers import InvoiceSerializer
@@ -32,8 +32,6 @@ class AddVehicleApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-  
- 
 
 
 class AddInvoiceToMaintenanceApi(APIView):
@@ -59,33 +57,6 @@ class AddInvoiceToMaintenanceApi(APIView):
         return JsonResponse(context)
   
  
- 
- 
- 
-class AddMaintenanceInvoiceApi(APIView):
-    def post(self,request,*args, **kwargs):
-        context={}
-        result=FAILED
-        message=""
-        log=111
-        context['result']=FAILED 
-        log=222
-        from utility.message import INVALID_FORM_VALUE_MESSAGE
-        message=INVALID_FORM_VALUE_MESSAGE
-        add_maintenance_invoice_form=AddMaintenanceInvoiceForm(request.POST)
-        if add_maintenance_invoice_form.is_valid():
-            log=333
-            cd=add_maintenance_invoice_form.cleaned_data
-            result,message,maintenance_invoice=MaintenanceInvoiceRepo(request=request).add_maintenance_invoice(**cd)
-            if maintenance_invoice is not None:
-                context['maintenance_invoice']=MaintenanceInvoiceSerializer(maintenance_invoice).data
-        context['message']=message
-        context['result']=result
-        context['log']=log
-        return JsonResponse(context)
-    
-
- 
 class AddInvoiceApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -109,8 +80,6 @@ class AddInvoiceApi(APIView):
         return JsonResponse(context)
     
 
-    
-
 class AddMaintenanceApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -132,7 +101,6 @@ class AddMaintenanceApi(APIView):
         context['result']=result
         context['log']=log
         return JsonResponse(context)
-    
     
 
 class AddServiceManApi(APIView):

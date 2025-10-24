@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
-from .serializers import MaintenanceSerializer,VehicleSerializer,MaintenanceInvoiceSerializer,ServiceManSerializer
-from .repo import VehicleRepo,MaintenanceInvoiceRepo,ServiceManRepo,MaintenanceRepo
+from .serializers import MaintenanceSerializer,VehicleSerializer,ServiceManSerializer
+from .repo import VehicleRepo,ServiceManRepo,MaintenanceRepo
 from .forms import *
 from .apps import APP_NAME
 from phoenix.server_apps import phoenix_apps
@@ -16,7 +16,6 @@ TEMPLATE_ROOT='transport/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
 NO_NAVBAR="NO_NAVBAR"
- 
 
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
@@ -31,6 +30,16 @@ def AddMaintenanceInvoiceContext(request,*args, **kwargs):
     context['maintenance_types']=(i[0] for i in MaintenanceTypesEnum.choices)
     return context
 
+def AddMaintenanceContext(request):
+    context={}
+    context['add_maintenance_form']=AddMaintenanceForm()
+    vehicles=VehicleRepo(request=request).list()
+    service_mans=ServiceManRepo(request=request).list()
+    context['vehicles']=vehicles
+    context['service_mans']=service_mans
+    maintenance_types=(i[0] for i in MaintenanceTypesEnum.choices)
+    context['maintenance_types']=maintenance_types
+    return context
 
 def VehicleContext(request,vehicle,*args, **kwargs):
     context=AssetContext(request=request,asset=vehicle)
@@ -63,8 +72,6 @@ class IndexView(View):
 
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
-# Create your views here.
-
  
 
 class VehiclesView(View):
@@ -81,7 +88,6 @@ class VehiclesView(View):
         return render(request,TEMPLATE_ROOT+"vehicles.html",context) 
     
     
-    
 class VehicleView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -95,7 +101,6 @@ class VehicleView(View):
         context['maintenances_s']=maintenances_s
         return render(request,TEMPLATE_ROOT+"vehicle.html",context) 
     
- 
 
 class MaintenanceInvoicesView(View):
     def get(self,request,*args, **kwargs):
@@ -111,7 +116,6 @@ class MaintenanceInvoicesView(View):
         return render(request,TEMPLATE_ROOT+"maintenance-invoices.html",context) 
     
     
-    
 class MaintenanceInvoiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -123,7 +127,6 @@ class MaintenanceInvoiceView(View):
         return render(request,TEMPLATE_ROOT+"maintenance-invoice.html",context) 
     
 
-
 class MaintenancesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -134,9 +137,8 @@ class MaintenancesView(View):
  
         context[WIDE_LAYOUT]=False
         if request.user.has_perm(APP_NAME+'.add_maintenance'):
-            context['add_maintenance_form']=AddMaintenanceForm()
+            context.update(AddMaintenanceContext(request=request))
         return render(request,TEMPLATE_ROOT+"maintenances.html",context) 
-    
     
     
 class MaintenanceView(View):
@@ -172,8 +174,6 @@ class MaintenanceView(View):
 
         return render(request,TEMPLATE_ROOT+"maintenance.html",context) 
     
- 
- 
 
 class ServiceMansView(View):
     def get(self,request,*args, **kwargs):
@@ -187,8 +187,6 @@ class ServiceMansView(View):
         if request.user.has_perm(APP_NAME+'.add_serviceman'):
             context['add_service_man_form']=AddServiceManForm()
         return render(request,TEMPLATE_ROOT+"service-mans.html",context) 
-    
-    
  
     
 class ServiceManView(View):
@@ -206,4 +204,3 @@ class ServiceManView(View):
  
 
         return render(request,TEMPLATE_ROOT+"service-man.html",context) 
-    

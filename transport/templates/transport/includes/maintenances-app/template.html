@@ -66,6 +66,9 @@
                          
 
                             <th>
+                                کیلومتر
+                            </th>
+                            <th>
                                 تاریخ
                             </th>
                             
@@ -106,6 +109,13 @@
                                 </td>
                             {% endif %}
 
+
+                                <td>
+                                    <span v-text="separate(maintenance.kilometer)">
+
+                                    </span>
+                                </td>
+                              
 
                                 <td>
                                     <span v-text="maintenance.persian_event_datetime">

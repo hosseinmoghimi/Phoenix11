@@ -14,10 +14,7 @@ urlpatterns = [
 
     
     path('add-invoice/',login_required(apis.AddInvoiceApi.as_view()),name="add_invoice"),
-    path('maintenance-invoices/',login_required(views.MaintenanceInvoicesView.as_view()),name="maintenance_invoices"),
-    path('maintenance-invoice/<int:pk>/',login_required(views.MaintenanceInvoiceView.as_view()),name="maintenanceinvoice"),
-    path('add-maintenance-invoice/',login_required(apis.AddMaintenanceInvoiceApi.as_view()),name="add_maintenance_invoice"),
-
+  
     path('maintenances/',login_required(views.MaintenancesView.as_view()),name="maintenances"),
     path('maintenance/<int:pk>/',login_required(views.MaintenanceView.as_view()),name="maintenance"),
     path('add-maintenance/',login_required(apis.AddMaintenanceApi.as_view()),name="add_maintenance"),
