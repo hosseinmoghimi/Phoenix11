@@ -153,6 +153,7 @@ class ExportToExcelView(View):
                 line={
                     'row':i,
                     'id':student.id,
+                    'prefix':student.person_account.person.prefix,
                     'last_name':student.person_account.person.last_name,
                     'first_name':student.person_account.person.first_name,
                     'father_name':student.person_account.person.father_name,
@@ -163,6 +164,7 @@ class ExportToExcelView(View):
                 lines.append(line)
             headers=['ردیف',
                     'شناسه',
+                    'پیشوند',
                     'نام خانوادگی',
                     'نام', 
                     'نام پدر', 
@@ -197,6 +199,7 @@ class ExportToExcelView(View):
                 line={
                     'row':i,
                     'id':teacher.id,
+                    'prefix':teacher.person_account.person.prefix,
                     'last_name':teacher.person_account.person.last_name,
                     'first_name':teacher.person_account.person.first_name,
                     'father_name':teacher.person_account.person.father_name,
@@ -208,6 +211,7 @@ class ExportToExcelView(View):
                 lines.append(line)
             headers=['ردیف',
                     'شناسه',
+                    'پیشوند',
                     'نام خانوادگی',
                     'نام', 
                     'نام پدر', 

@@ -41,6 +41,8 @@ class PersonRepo():
             return self.objects.filter(pk=kwargs['person_id']).first()
         if "person" in kwargs:
             return kwargs['person'] 
+        if "melli_code" in kwargs and kwargs['melli_code'] is not None and not kwargs['melli_code']=="":
+            return self.objects.filter(melli_code=kwargs['melli_code']).first() 
         if "pk" in kwargs and kwargs["pk"] is not None:
             return self.objects.filter(pk=kwargs['pk']).first() 
         if "id" in kwargs and kwargs["id"] is not None:

@@ -98,50 +98,63 @@ class StudentRepo():
         students_to_import=[]
         START_ROW=EXCEL_STUDENTS_DATA_START_ROW
 
+        modified=added=0 
         for i in range(START_ROW,count+START_ROW):
-            student={}
             i=str(i) 
             # student['id']=ws['A'+str(i)].value
             iiiddd=ws['B'+i].value
-            modified=added=0 
             if iiiddd is not None:
                 id=int(ws['B'+i].value)
-                last_name=(ws['C'+i].value)
-                first_name=(ws['D'+i].value)
-                father_name=(ws['E'+i].value)
-                melli_code=(ws['F'+i].value)
-                birth_date=(ws['G'+i].value)
-                birth_location=(ws['H'+i].value)
-                from authentication.models import Person
-                from accounting.models import PersonAccount
-                person=Person()
-                person.first_name=first_name
-                person.last_name=last_name
-                person.melli_code=melli_code
-                person.birth_date=birth_date
-                person.birth_location=birth_location
-                person.father_name=father_name
+                prefix=str(ws['C'+i].value)
+                last_name=str(ws['D'+i].value)
+                first_name=str(ws['E'+i].value)
+                father_name=str(ws['F'+i].value)
+                melli_code=str(ws['G'+i].value)
+                birth_date=str(ws['H'+i].value)
+                birth_location=str(ws['I'+i].value)
+                leolog(prefix=prefix,first_name=first_name,last_name=last_name,melli_code=melli_code,father_name=father_name)
+                from authentication.repo import Person,PersonRepo
+                from accounting.repo import PersonAccount
+                person=PersonRepo(request=self.request).person(melli_code=melli_code)
+                if person is None:
+                    person=Person()
+                else:
+                    modified=modified+1
+                if prefix is not None and not prefix=='':
+                    person.prefix=prefix
+                if first_name is not None and not first_name=='':
+                    person.first_name=first_name
+                if last_name is not None and not last_name=='':
+                    person.last_name=last_name
+                if melli_code is not None and not melli_code=='':
+                    person.melli_code=melli_code
+                if birth_date is not None and not birth_date=='':
+                    person.birth_date=birth_date
+                if birth_location is not None and not birth_location=='':
+                    person.birth_location=birth_location
+                if father_name is not None and not father_name=='':
+                    person.father_name=father_name
                 result,message,person=person.save()
                 if result==FAILED:
-                    leolog(message=message)
-                    leolog(person=person)
-                    leolog(person_id=person.id)
                     return result,message,[]
                 person_account=PersonAccount()
                 person_account.person=person
                 person_category_id=kwargs['person_category_id']
                 person_account.person_category_id=person_category_id
                 person_account.save()
-                student=Student(person_account_id=person_account.id)
-                student.save()
-                added+=1
+                student=Student.objects.filter(person_account__person_id=person.id).first()
+                if student is None:
+                    student=Student(person_account_id=person_account.id)
+                    student.save()
+                    added=added+1
+                
         result=SUCCEED
         message=f"""{added} دانش آموز اضافه شد.
                     <br>
                     {modified} دانش آموز ویرایش شد. """
         students=self.list()
         result=SUCCEED
-        message='با موفقیت بازیابی شد.  '
+        message+='<br>'+'با موفقیت بازیابی شد.  '
         return result,message,students
     def list(self,*args, **kwargs):
         objects=self.objects
