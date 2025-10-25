@@ -7,6 +7,7 @@
             new_download_file: '',
             count:1000,
             is_open: false,
+            person_category_id:0,
             message:{show:false},
         },
         methods: {
@@ -16,9 +17,11 @@
                 let formData = new FormData();
                 let file1 = $('#import-students-from-excel-form')[0].elements[0].files[0]
                 formData.append("file1", file1);
+                formData.append("person_category_id", import_students_from_excel_app.person_category_id);
                 formData.append("is_open", import_students_from_excel_app.is_open);
                 formData.append("count", import_students_from_excel_app.count);
                 formData.append("csrfmiddlewaretoken", csrfmiddlewaretoken);
+                console.log(formData.values())
                 $.ajax({
                     url: url_import_students_from_excel,
                     type: 'post',

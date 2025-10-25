@@ -76,6 +76,73 @@ class StudentRepo():
             if request.user.has_perm(APP_NAME+".view_account"):
                 self.objects=Student.objects
                 self.my_accounts=self.objects 
+    def import_students(self,*args, **kwargs):
+        result,message,students=FAILED,'',[]
+        excel_file=kwargs['excel_file']
+        import openpyxl 
+
+        wb = openpyxl.load_workbook(excel_file)
+        try:
+            ws = wb['students']
+        except:
+            message='فایل شما برگه دانش آموزان ندارد.'
+            return result,message,None
+        count=kwargs['count']
+        try:
+            count=int(ws.cell(row=1, column=2).value)
+        except:
+            message='فایل برگه دانش آموزان ، تعداد ندارد.'
+            return result,message,None 
+        from .constants import EXCEL_MAJORS_DATA_START_ROW,EXCEL_STUDENTS_DATA_START_ROW,EXCEL_TEACHERS_DATA_START_ROW
+
+        students_to_import=[]
+        START_ROW=EXCEL_STUDENTS_DATA_START_ROW
+
+        for i in range(START_ROW,count+START_ROW):
+            student={}
+            i=str(i) 
+            # student['id']=ws['A'+str(i)].value
+            iiiddd=ws['B'+i].value
+            modified=added=0 
+            if iiiddd is not None:
+                id=int(ws['B'+i].value)
+                last_name=(ws['C'+i].value)
+                first_name=(ws['D'+i].value)
+                father_name=(ws['E'+i].value)
+                melli_code=(ws['F'+i].value)
+                birth_date=(ws['G'+i].value)
+                birth_location=(ws['H'+i].value)
+                from authentication.models import Person
+                from accounting.models import PersonAccount
+                person=Person()
+                person.first_name=first_name
+                person.last_name=last_name
+                person.melli_code=melli_code
+                person.birth_date=birth_date
+                person.birth_location=birth_location
+                person.father_name=father_name
+                result,message,person=person.save()
+                if result==FAILED:
+                    leolog(message=message)
+                    leolog(person=person)
+                    leolog(person_id=person.id)
+                    return result,message,[]
+                person_account=PersonAccount()
+                person_account.person=person
+                person_category_id=kwargs['person_category_id']
+                person_account.person_category_id=person_category_id
+                person_account.save()
+                student=Student(person_account_id=person_account.id)
+                student.save()
+                added+=1
+        result=SUCCEED
+        message=f"""{added} دانش آموز اضافه شد.
+                    <br>
+                    {modified} دانش آموز ویرایش شد. """
+        students=self.list()
+        result=SUCCEED
+        message='با موفقیت بازیابی شد.  '
+        return result,message,students
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:

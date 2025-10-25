@@ -88,6 +88,9 @@ class StudentsView(View):
         context["students_s"]=students_s
         if request.user.has_perm(APP_NAME+'.add_student'):
             context['add_student_form']=AddStudentForm()
+            from accounting.repo import PersonCategoryRepo
+            person_categories=PersonCategoryRepo(request=request).list()
+            context['person_categories']=person_categories
         return render(request,TEMPLATE_ROOT+"students.html",context)
 # Create your views here. 
    

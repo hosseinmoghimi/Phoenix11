@@ -24,7 +24,10 @@ class ImportStudentsFromExcelApi(APIView):
         import_students_from_excel_form=ImportStudentFromExcelForm(request.POST)
         if import_students_from_excel_form.is_valid():
             log=333
+            
+            excel_file = request.FILES['file1']
             cd=import_students_from_excel_form.cleaned_data
+            cd['excel_file']=excel_file
             result,message,students=StudentRepo(request=request).import_students(**cd)
             if students is not None:
                 context['students']=StudentSerializer(students,many=True).data
