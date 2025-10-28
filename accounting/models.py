@@ -507,9 +507,7 @@ class FinancialDocumentLine(models.Model,LinkHelper,DateTimeHelper):
     @property
     def rest(self):
         return 0
-    @property
-    def amount(self):  
-        return self.bedehkar+self.bestankar
+    
     class_name="financialdocumentline"
     app_name=APP_NAME 
 
@@ -611,7 +609,6 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
     tax_amount=models.IntegerField(_("مالیات"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)
     shipping_fee=models.IntegerField(_("هزینه حمل"),default=0)
-    sum_total=models.IntegerField(_("مبلغ نهایی"),default=0)
     valid=models.BooleanField(_("valid"),default=True)
 
     # status=models.CharField(_("status"),choices=FinancialEventStatusEnum.choices,default=FinancialEventStatusEnum.DRAFT, max_length=50)
@@ -636,8 +633,6 @@ class FinancialEvent(CoreEvent,DateTimeHelper):
             self.app_name=APP_NAME
         result=SUCCEED
         message='رویداد مالی با موفقیت ذخیره شد.'
-        self.tax_amount=self.amount*self.tax_percentage/100
-        self.sum_total=self.amount+self.tax_amount+self.shipping_fee-self.discount
         super(FinancialEvent,self).save()
         return result,message,financial_event
  
@@ -935,7 +930,12 @@ class Invoice(FinancialEvent):
     class Meta:
         verbose_name = _("فاکتور")
         verbose_name_plural = _("فاکتور ها")
-
+    @property
+    def lines_total(self):
+        s=0
+        for line in InvoiceLine.objects.filter(invoice_id=self.pk):
+            s+=line.line_total
+        return s
     def get_print_url(self):
         return reverse(APP_NAME+':invoice_print',kwargs={'pk':self.pk})
     def save(self,*args, **kwargs):
@@ -957,6 +957,8 @@ class Invoice(FinancialEvent):
         result,message,invoice=FAILED,"",self
         result=SUCCEED
         message='فاکتور با موفقیت ذخیره شد.'
+        self.tax_amount=self.lines_total*self.tax_percentage/100
+        self.amount=self.lines_total+self.tax_amount+self.shipping_fee-self.discount
         if self.id is not None:
             self.normalize()
         else:
@@ -976,7 +978,6 @@ class Invoice(FinancialEvent):
                 i+=1 
                 super(InvoiceLine,line).save()
  
-            self.amount=lines_total 
         super(Invoice,self).save()
         try:
             for project in self.project_set.all():

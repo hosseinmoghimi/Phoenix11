@@ -147,7 +147,7 @@
 
                     <td class="bordered farsi text-right">
                         {% if SHOW_PRICE %}
-                        <span v-text="to_price(sum_total())"></span>
+                        <span v-text="to_price(lines_total())"></span>
                             {% endif %}
                     </td>
                     <td></td>
@@ -196,13 +196,13 @@
                     <td colspan="5">
                         <div class="text-left">قابل پرداخت : 
                             {% if SHOW_PRICE %}
-                            {{ invoice.sum_total|to_horuf }} {{ CURRENCY }}</div>
+                            {{ invoice.amount|to_horuf }} {{ CURRENCY }}</div>
                             {% endif %}
                     </td>
 
                     <td class="bordered filled farsi text-right">
                         {% if SHOW_PRICE %}
-                        <span class="farsi text-right">{{ invoice.sum_total|to_price }}</span>
+                        <span class="farsi text-right">{{ invoice.amount|to_price }}</span>
                         {% endif %}
                     </td>
 
@@ -247,9 +247,9 @@
                                         v-text="to_price(sum_prices())"></div>  -->
                                         {% if SHOW_PRICE %}
                                         {% if invoice %}
-                                        {{ invoice.sum_total|to_price }}
+                                        {{ invoice.amount|to_price }}
                                         {% else %}
-                                        <span v-text="to_price(sum_total())"></span>
+                                        <span v-text="to_price(lines_total())"></span>
                                         {% endif %}
                                         {% endif %}
                     <div>{{ CURRENCY }}</div>

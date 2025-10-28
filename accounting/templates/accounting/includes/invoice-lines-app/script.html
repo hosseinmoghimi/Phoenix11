@@ -36,6 +36,17 @@
     to_price: function (vall) {
       return to_price(vall * currency_coef, "");
     },
+    lines_total: function () {
+      let sum = 0;
+      this.invoice_lines.forEach((invoice_line) => {
+        sum +=
+          (invoice_line.quantity *
+            invoice_line.unit_price *
+            (100 - invoice_line.discount_percentage)) /
+          100;
+      });
+      return sum;
+    },
     sum_total: function () {
       let sum = 0;
       this.invoice_lines.forEach((invoice_line) => {
