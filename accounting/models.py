@@ -967,6 +967,8 @@ class Invoice(FinancialEvent):
 
 
     def normalize(self): 
+        self.tax_amount=self.lines_total*self.tax_percentage/100
+        self.amount=self.lines_total+self.tax_amount+self.shipping_fee-self.discount
         
         lines_total=0 
         i=1
