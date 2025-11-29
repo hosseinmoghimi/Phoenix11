@@ -50,13 +50,13 @@
     {% endif %}
 
     <div class="col-lg-6">
-        {% include "attachments/includes/comments-app/template.html" %}
+        {% include "market/includes/comments-app/template.html" %}
     </div>
      
 </div>
 {% endblock content %}
 {% block script %}
-{% include "accounting/includes/product-app/script.html" %}
+{% include "market/includes/product-app/script.html" %}
 {% if shops %}
    {% include 'market/includes/product-shops-app/script.html' %} 
 {% endif %}

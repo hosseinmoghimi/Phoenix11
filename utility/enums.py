@@ -31,6 +31,7 @@ class UnitNameEnum(TextChoices):
     LITER="لیتر",_("لیتر")
     MILI_LITER="میلی لیتر",_("میلی لیتر")
     CC="سی سی ",_("سی سی ")
+    SHELL="شل",_("شل")
     SERVICE="سرویس",_("سرویس")
     SHAKHEH="شاخه",_("شاخه")
     Node="نود شبکه",_("نود شبکه")

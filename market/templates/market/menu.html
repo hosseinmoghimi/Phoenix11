@@ -1,38 +1,55 @@
 {% extends "market/layout.html" %} {% load static %} {% block content %}
 
 <div class="text-center">
-  <h1 class="text-center">
-  {{menu.title}}
+  <h1 class="text-center rtl">
+    {{menu.title}} {% if perms.market.change_menu %}
+    <small>
+      <a
+        href="{{menu.get_edit_url}}"
+        class="my-2 text-warning mx-2"
+        title="ویرایش"
+        target="_blank"
+      >
+        <i class="fa fa-edit text-warning"></i>
+      </a>
+      {% endif %} {% if perms.market.delete_menu %}
+      <a
+        href="{{menu.get_delete_url}}"
+        class="my-2 text-danger mx-2"
+        title="حذف"
+        target="_blank"
+      >
+        <i class="fa fa-trash text-danger"></i>
+      </a>
+    </small>
+    {% endif %}
   </h1>
-</div> 
+</div>
 <div class="row rtl farsi">
-  <div class="col-md-12" id="menu-app"> 
-        <div class="media" v-for="shop in shops">
-            <a :href="shop.product.get_market_absolute_url">
+  <div class="col-md-12" id="menu-app">
+    <div class="media" v-for="shop in shops">
+      <a :href="shop.product.get_market_absolute_url">
+        <img :src="shop.product.thumbnail" width="128" alt="" />
+      </a>
+      <div class="media-body mr-2">
+        <a :href="shop.product.get_market_absolute_url">
+          <h6 class="text-right">
+            <span v-text="shop.product.title"></span>
+          </h6>
+        </a>
 
-          <img :src="shop.product.thumbnail" width="128" alt="" />
-            </a>
-          <div class="media-body mr-2">
-            <a :href="shop.product.get_market_absolute_url">
+        <h6 class="text-right">
+          هر
+          <span v-text="shop.unit_name"></span>
 
-              <h6 class="text-right">
-                <span v-text="shop.product.title"></span>
-              </h6>
-            </a>
+          <span v-text="to_price(shop.unit_price)"></span> {{CURRENCY}}
+        </h6>
 
-            <h6 class="text-right">
-              هر
-              <span v-text="shop.unit_name"></span>
-           
-              <span v-text="to_price(shop.unit_price)"></span> {{CURRENCY}}
-            </h6>
-
-            <button class="btn btn-danger" @click="add_to_cart(shop)">
-                افزودن به سبد خرید
-            </button>
-          </div>
-        </div>
-       
+        <button class="btn btn-danger" @click="add_to_cart(shop)">
+          افزودن به سبد خرید
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock content %} {% block script %}
@@ -47,8 +64,8 @@
       to_price: function (vall) {
         return to_price(vall);
       },
-      add_to_cart:function(shop){
-        console.log(shop)
+      add_to_cart: function (shop) {
+        console.log(shop);
       },
     },
   });

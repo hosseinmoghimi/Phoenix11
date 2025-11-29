@@ -17,6 +17,7 @@ PAGE_TITLE_SEPERATOR=' / '
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 from utility.enums import class_title
 
+
 class Page(models.Model,LinkHelper,DateTimeHelper,ImageHelper):
     title=models.CharField(_("عنوان"), max_length=200)
     parent=models.ForeignKey("page",null=True,blank=True,related_name="childs", verbose_name=_("parent"), on_delete=models.CASCADE)
@@ -34,8 +35,10 @@ class Page(models.Model,LinkHelper,DateTimeHelper,ImageHelper):
     creator=models.ForeignKey("authentication.person",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
     related_pages=models.ManyToManyField("page",blank=True, verbose_name=_("related_pages"))
     locations=models.ManyToManyField("attachments.location", blank=True,verbose_name=_("locations"))
+     
     def get_status_color(self):
         return StatusColor(self)
+    
     def get_breadcrumb_link(self):
         aaa=f"""
                     <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">
@@ -50,6 +53,7 @@ class Page(models.Model,LinkHelper,DateTimeHelper,ImageHelper):
         if self.parent is None:
             return aaa
         return self.parent.get_breadcrumb_link()+aaa
+    
     def get_breadcrumb(self):
         return f"""
         
@@ -88,10 +92,6 @@ class Page(models.Model,LinkHelper,DateTimeHelper,ImageHelper):
         message=''
         result=SUCCEED
         return result,message,self
-    # def likes_count(self):
-    #     return len(PageLike.objects.filter(page_id=self.id))
-
-     
 
     def get_qrcode_url(self):
         if self.pk is None:
@@ -107,11 +107,6 @@ class Page(models.Model,LinkHelper,DateTimeHelper,ImageHelper):
 
     def class_title(self):
         return class_title(app_name=self.app_name,class_name=self.class_name)
-
-
-    # def my_like(self,profile_id):
-    #     my_likes=PageLike.objects.filter(page_id=self.id).filter(profile_id=profile_id)
-    #     return len(my_likes)>0
 
     class Meta:
         verbose_name = _("Page")
@@ -140,6 +135,7 @@ class Page(models.Model,LinkHelper,DateTimeHelper,ImageHelper):
         if self.parent is None:
             return self.title
         return self.parent.full_title+PAGE_TITLE_SEPERATOR+self.title
+    
     def all_sub_ids(self,*args, **kwargs):
         ids=[]
         children=Page.objects.filter(parent_id=self.id)

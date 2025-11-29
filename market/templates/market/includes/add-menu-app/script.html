@@ -24,9 +24,9 @@
       add_menu: function () {
         let payload = {
           csrfmiddlewaretoken: csrfmiddlewaretoken,
-          title: this.title,
-          supplier_id: parseInt(this.supplier_id),
-          event_datetime: this.event_date+" "+this.event_time,
+          title: add_menu_app.title,
+          supplier_id: parseInt(add_menu_app.supplier_id),
+          event_datetime: add_menu_app.event_date+" "+add_menu_app.event_time,
         };
 
         console.log(payload);

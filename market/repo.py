@@ -453,9 +453,9 @@ class ShipperRepo():
         self.request=request
         self.me=None
         self.objects=Shipper.objects
-        profile=PersonRepo(request=request).me
-        if profile is not None:
-            self.me=self.objects.filter(person_account__person__profile_id=profile.id).first()
+        me_person=PersonRepo(request=request).me
+        if me_person is not None:
+            self.me=self.objects.filter(person_account__person_id=me_person.id).first()
     def list(self,*args, **kwargs):
         objects=self.objects
         pure_code="876454453342236"
