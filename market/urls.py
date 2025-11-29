@@ -27,7 +27,7 @@ urlpatterns = [
     path('desks/',login_required(views.DesksView.as_view()),name="desks"),
     path('desk/<int:pk>/',login_required(views.DeskView.as_view()),name="desk"),
     path('desk/<int:desk_id>/menu/<int:menu_id>/',login_required(views.DeskMenuView.as_view()),name="desk-menu"),
-    path('menu/add/ ',login_required(apis.AddMenuApi.as_view()),name="add_menu"),
+    path('add-menu/',login_required(apis.AddMenuApi.as_view()),name="add_menu"),
     path('add-cart-item/',login_required(apis.AddCartItemApi.as_view()),name="add_cart_item"),
 
     path("change-cart-item/",login_required(apis.ChangeCartItemApi.as_view()),name="change_cart_item"),
