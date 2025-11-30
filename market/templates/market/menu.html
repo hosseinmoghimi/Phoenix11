@@ -2,32 +2,38 @@
 
 <div class="text-center">
   <h1 class="text-center rtl">
-    {{menu.title}} {% if perms.market.change_menu %}
-    <small>
+    {{menu.title}} 
+  </h1>
+
+  {% if perms.market.change_menu %}
+  <h3>
       <a
         href="{{menu.get_edit_url}}"
         class="my-2 text-warning mx-2"
         title="ویرایش"
         target="_blank"
-      >
-        <i class="fa fa-edit text-warning"></i>
-      </a>
+      ><i class="fa fa-edit text-warning"></i></a>
       {% endif %} {% if perms.market.delete_menu %}
       <a
         href="{{menu.get_delete_url}}"
         class="my-2 text-danger mx-2"
         title="حذف"
         target="_blank"
-      >
-        <i class="fa fa-trash text-danger"></i>
-      </a>
-    </small>
+      ><i class="fa fa-trash text-danger"></i></a>
+    </h3>
     {% endif %}
-  </h1>
+
+  <h4 class="text-center rtl">
+    <a href="{{menu.supplier.get_absolute_url}}">
+      {{menu.supplier.person_account.person.full_name}} 
+    </a>
+  </h4>
 </div>
-<div class="row rtl farsi">
-  <div class="col-md-12" id="menu-app">
-    <div class="media" v-for="shop in shops">
+<hr>
+
+<div class="row rtl farsi" id="menu-app">
+  <div class="col-md-4" v-for="shop in shops">
+    <div class="media">
       <a :href="shop.product.get_market_absolute_url">
         <img :src="shop.product.thumbnail" width="128" alt="" />
       </a>
@@ -44,12 +50,16 @@
 
           <span v-text="to_price(shop.unit_price)"></span> {{CURRENCY}}
         </h6>
+<div class="text-right">
 
-        <button class="btn btn-danger" @click="add_to_cart(shop)">
-          افزودن به سبد خرید
-        </button>
+  <button class="btn btn-danger" @click="add_to_cart(shop)">
+    افزودن به سبد خرید
+  </button>
+</div>
       </div>
     </div>
+    <hr>
+    
   </div>
 </div>
 {% endblock content %} {% block script %}
