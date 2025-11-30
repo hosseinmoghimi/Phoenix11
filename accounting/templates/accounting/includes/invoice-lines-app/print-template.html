@@ -218,7 +218,8 @@
                                         v-text="to_price(sum_prices())"></div> -->
 
                 <div>
-                  {{invoice.sum_total|to_price}} 
+                  
+                  {{invoice.amount|to_price}} 
                   {{CURRENCY}}
                 </div>
               </div>

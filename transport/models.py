@@ -55,7 +55,7 @@ class Maintenance(Event):
         sum=0
         for invoice in self.invoices.all():
             if invoice.valid:
-                sum+=invoice.sum_total
+                sum+=invoice.amount
         return sum
     def save(self, *args, **kwargs):
         

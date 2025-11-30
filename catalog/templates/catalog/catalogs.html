@@ -1,0 +1,27 @@
+
+{% extends "catalog/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="row rtl farsi">
+    {% if add_sample_class_form %}
+      <div class="col-md-12">
+          {% include "catalog/includes/add-catalog-app/template.html" %}
+
+      </div>
+    {% endif %}
+    <div class="col-md-12">
+
+        
+        {% include "catalog/includes/cataloges-app/template.html" %}
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "catalog/includes/cataloges-app/script.html" %}
+{% if add_sample_class_form %}
+{% include "catalog/includes/add-catalog-app/script.html" %}
+{% endif %}
+{% endblock script %}

@@ -1,5 +1,4 @@
 {% extends "market/layout.html" %}
-
 {% load to_price %}
 {% load static %}
 {% load to_persian_date %}
@@ -17,7 +16,6 @@
 </style>
 {% endblock style %}
 {% block content %}
-
 <div class="row rtl" style="background-color: #F2F3F5;">
     <div class="col-md-12">
         {% include 'market/includes/product-app/navbar.html' %}
@@ -38,8 +36,6 @@
         {% include "market/includes/product-app/relateds.html" %}
     </div>
     {% endif %}
-
-    
     {% if add_shop_form %}
     <div class="col-md-12">
         <h5 class="text-right mt-3">
@@ -48,11 +44,9 @@
         {% include "market/includes/add-shop-app/template.html" %}
     </div>
     {% endif %}
-
     <div class="col-lg-6">
         {% include "market/includes/comments-app/template.html" %}
     </div>
-     
 </div>
 {% endblock content %}
 {% block script %}
@@ -60,11 +54,7 @@
 {% if shops %}
    {% include 'market/includes/product-shops-app/script.html' %} 
 {% endif %}
-    
 {% if add_shop_form %}
 {% include "market/includes/add-shop-app/script.html" %}
 {% endif %}
-
-
-
 {% endblock script %}

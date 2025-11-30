@@ -24,5 +24,5 @@ class PrescriptionSerializer(serializers.Serializer):
        bestankar=AccountSerializer()
        class Meta:
         model = Prescription
-        fields = ['id','title','thumbnail','bedehkar' ,'bestankar','sum_total','amount','shipping_fee','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','thumbnail','bedehkar' ,'bestankar','amount','amount','shipping_fee','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
  

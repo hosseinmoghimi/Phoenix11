@@ -30,7 +30,7 @@
         };
 
         console.log(payload);
-        let url = "{% url 'market:add_menu' %}";
+        let url = "{% url 'market:add_menu' %}"
         let posting = $.post(url, payload);
         posting.done((data) => {
           console.log(data);

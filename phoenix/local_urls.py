@@ -19,6 +19,7 @@ urlpatterns = [
     path('organization/', include('organization.urls')),
     path('pm/', include('projectmanager.urls')),
     path('school/', include('school.urls')),
+    path('catalog/', include('catalog.urls')),
     path('attachments/', include('attachments.urls')),
     path('warehouse/', include('warehouse.urls')),
     path('transport/', include('transport.urls')),

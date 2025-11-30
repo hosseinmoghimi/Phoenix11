@@ -35,7 +35,7 @@
   <div class="col-md-4" v-for="shop in shops">
     <div class="media">
       <a :href="shop.product.get_market_absolute_url">
-        <img :src="shop.product.thumbnail" width="128" alt="" />
+        <img :src="shop.product.thumbnail" height="128" alt="" />
       </a>
       <div class="media-body mr-2">
         <a :href="shop.product.get_market_absolute_url">
@@ -59,7 +59,7 @@
       </div>
     </div>
     <hr>
-    
+
   </div>
 </div>
 {% endblock content %} {% block script %}
@@ -75,7 +75,17 @@
         return to_price(vall);
       },
       add_to_cart: function (shop) {
-        console.log(shop);
+        let payload={
+          csrfmiddlewaretoken:csrfmiddlewaretoken,
+          shop_id:shop.id,
+          
+        }
+        console.log(payload);
+        let url="{% url 'market:add_cart_item' %}"
+        let posting=$.post(url,payload)
+        posting.done(data=>{
+          console.log(data)
+        })
       },
     },
   });

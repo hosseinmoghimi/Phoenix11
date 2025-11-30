@@ -15,7 +15,7 @@ class FoodSerializer(serializers.ModelSerializer):
 class MealSerializer(FinancialEventSerializer):
        class Meta:
         model = Meal
-        fields = ['id','title','bedehkar','sum_total','bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','title','bedehkar','amount','bestankar','amount','persian_event_datetime','get_absolute_url','get_edit_url','get_delete_url']
 
 
 class MealItemSerializer(InvoiceLineSerializer):
