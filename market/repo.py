@@ -18,14 +18,14 @@ from accounting.repo import PersonCategoryEnum
 class MenuRepo():
     def __init__(self,request,*args, **kwargs):
         self.me=None
-        self.my_accounts=[]
         self.request=request
         self.objects=Menu.objects.filter(id=0)
-        profile=PersonRepo(request=request).me
-        if profile is not None:
+        person=PersonRepo(request=request).me
+
+        if person is not None:
+            self.objects=Menu.objects
             if request.user.has_perm(APP_NAME+".view_menu"):
                 self.objects=Menu.objects
-                self.my_accounts=self.objects 
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
@@ -570,6 +570,8 @@ class CartItemRepo():
          
         if 'quantity' in kwargs:
             quantity=kwargs["quantity"] 
+            if quantity is None:
+                quantity=1
 
         cart_item=CartItem.objects.filter(shop_id=shop_id).filter(customer_id=me_customer.id).first()
         if cart_item is None:
