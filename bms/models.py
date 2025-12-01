@@ -70,6 +70,7 @@ class Relay(models.Model,LinkHelper):
     color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
     state=models.BooleanField(_("state"),default=False)
     thumbnail_origin=models.ImageField(_("thumbnail"), upload_to=IMAGE_FOLDER+"relay/", height_field=None, width_field=None, max_length=None,null=True,blank=True)
+    priority=models.IntegerField(_("priority"),default=100)
     app_name=APP_NAME
     class_name="relay"
      
