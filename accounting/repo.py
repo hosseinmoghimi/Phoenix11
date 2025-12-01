@@ -1490,7 +1490,7 @@ class BankAccountRepo():
        
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
-            objects=objects.filter(Q(full_name__contains=search_for) | Q(melli_code__contains=search_for) | Q(code=search_for))
+            objects=objects.filter(Q(title__contains=search_for) | Q(account_no__contains=search_for) | Q(card_no__contains=search_for) | Q(shaba_no__contains=search_for)  )
         return objects.all()
      
     def bank_account(self,*args, **kwargs):

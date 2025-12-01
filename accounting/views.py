@@ -26,6 +26,10 @@ from utility.currency import to_price_colored
 import json 
 from core.views import MessageView
 from .models import UnitNameEnum
+from django.shortcuts import reverse,redirect
+
+
+
 LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='accounting/'
 WIDE_LAYOUT=True
@@ -465,6 +469,13 @@ def SearchContext(request,search_for,*args, **kwargs):
         WAS_FOUND=True
 
 
+    bank_accounts=BankAccountRepo(request=request).list(search_for=search_for)
+    if len(bank_accounts)>0:
+        context['bank_accounts']=bank_accounts
+        context['bank_accounts_s']=json.dumps(BankAccountSerializer(bank_accounts,many=True).data)
+        WAS_FOUND=True
+
+
         
 
     invoices=InvoiceRepo(request=request).list(search_for=search_for)
@@ -530,6 +541,7 @@ def SearchContext(request,search_for,*args, **kwargs):
 
     context['WAS_FOUND']=WAS_FOUND
     return context
+
 
 class IndexView(View):
     def get(self,request,*args, **kwargs):
@@ -1111,7 +1123,6 @@ class ChequesView(View):
             context.update(AddChequeContext(request=request))
         return render(request,TEMPLATE_ROOT+"cheques.html",context)
 
-from django.shortcuts import reverse,redirect
 
 class ChangeChequeImageView(View):
      def post(self,request,*args, **kwargs):
@@ -1130,6 +1141,7 @@ class ChangeChequeImageView(View):
         title='چک پیدا نشد'
         mv=MessageView(title=title,body=body,)
         return mv.get(request=request)
+
 
 class AssetView(View):
     def get(self,request,*args, **kwargs):
@@ -1171,6 +1183,7 @@ class ReportView(View):
     def post(self,request,*args, **kwargs):
         from .apis import GetReportApi
         return GetReportApi().post(request=request)
+
 
 class ServiceView(View):
     def get(self,request,*args, **kwargs):
@@ -1550,7 +1563,6 @@ class InvoicePrintView(View):
         context['invoice_s']=invoice_s
         context.update(InvoiceContext(request=request,invoice=invoice))
         return render(request,TEMPLATE_ROOT+"invoice-print.html",context)
-
 
 
 class InvoiceEstelamView(View):

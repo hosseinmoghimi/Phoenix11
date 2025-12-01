@@ -23,6 +23,14 @@
         {% include "projectmanager/includes/remote-clients-app/template.html" %}
     </div>
     {% endif %}
+
+
+    {% if bank_accounts %}
+      
+    <div class="col-md-12">
+        {% include "accounting/includes/bank-accounts-app/template.html" %}
+    </div>
+    {% endif %}
     
     {% if financial_documents %}
          
@@ -251,6 +259,11 @@
         {% include "projectmanager/includes/remote-clients-app/script.html" %}
     {% endif %}
 
+
+    {% if bank_accounts %}
+      
+        {% include "accounting/includes/bank-accounts-app/script.html" %}
+    {% endif %}
 <script>
     let log = '{{log}}'
     let WAS_FOUND = '{{WAS_FOUND}}'
