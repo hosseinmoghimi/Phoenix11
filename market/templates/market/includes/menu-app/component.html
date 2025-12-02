@@ -1,0 +1,32 @@
+  <div class="media">
+      <a :href="shop.product.get_market_absolute_url">
+        <img :src="shop.product.thumbnail" height="128" alt="" />
+      </a>
+      <div class="media-body mr-2">
+        <a :href="shop.product.get_market_absolute_url">
+          <h6 class="text-right">
+            <span v-text="shop.product.title"></span>
+          </h6>
+        </a>
+
+        <h6 class="text-right">
+          هر
+          <span v-text="shop.unit_name"></span>
+
+          <span v-text="to_price(shop.unit_price)"></span> {{CURRENCY}}
+        </h6>
+        <div class="text-right">
+          <button class="btn btn-danger" @click="add_to_cart(shop)">
+            افزودن به سبد خرید
+          </button>
+        </div>
+
+        <div v-if="quantity>0">
+          <span class="my-2">
+            <span v-text="quantity" class="text-success"></span>
+            <span v-text="unit_name" class="text-success"></span>
+          </span>
+          در سبد خرید
+        </div>
+      </div>
+    </div>
