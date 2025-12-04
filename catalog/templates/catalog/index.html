@@ -1,17 +1,17 @@
-{% extends "sample_app/layout.html" %}
+{% extends "catalog/layout.html" %}
 {% load static %}
 
 {% block content %}
 <div class="row rtl farsi">
   <div class="col-6 col-md-3 col-lg-2 text-center my-3">
-    <a href="{% url 'sample_app:sample_classes' %}">
+    <a href="{% url 'catalog:catalogs' %}">
       <img
-        src="{% static 'sample_app/img/logo.png' %}"
+        src="{% static 'catalog/img/logo.png' %}"
         width="64em"
         class="mb-2"
         alt=""
       />
-      <h6 class="text-center">کلاس های نمونه</h6>
+      <h6 class="text-center">کاتالوگ ها</h6>
     </a>
   </div>
  

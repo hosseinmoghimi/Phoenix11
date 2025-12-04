@@ -20,42 +20,29 @@ NO_NAVBAR="NO_NAVBAR"
  
 def getContext(request,*args, **kwargs):
     context=CoreContext(app_name=APP_NAME,request=request)
- 
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     return context
 
+
  
-
-
-def getContext(request,*args, **kwargs):
-    context=CoreContext(app_name=APP_NAME,request=request)
-    context[WIDE_LAYOUT]=False 
-    return context
  
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
-        phoenix_apps=context["phoenix_apps"]
-        phoenix_apps=phoenix_apps
-        phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
-
-        context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
-# Create your views here. 
 
  
  
-class CatalogesView(View):
+class CatalogsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        cataloges=CatalogRepo(request=request).list(*args, **kwargs)
-        context["cataloges"]=cataloges
-        cataloges_s=json.dumps(CatalogSerializer(cataloges,many=True).data)
-        context["cataloges_s"]=cataloges_s
+        catalogs=CatalogRepo(request=request).list(*args, **kwargs)
+        context["catalogs"]=catalogs
+        catalogs_s=json.dumps(CatalogSerializer(catalogs,many=True).data)
+        context["catalogs_s"]=catalogs_s
         if request.user.has_perm(APP_NAME+'.add_catalog'):
             context['add_catalog_form']=AddCatalogForm()
-        return render(request,TEMPLATE_ROOT+"cataloges.html",context)
+        return render(request,TEMPLATE_ROOT+"catalogs.html",context)
 # Create your views here. 
    
  

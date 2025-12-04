@@ -8,7 +8,7 @@ urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),  
 
-    path('cataloges/',login_required(views.CatalogesView.as_view()),name="cataloges"),  
+    path('catalogs/',login_required(views.CatalogsView.as_view()),name="catalogs"),  
     path('add-catalog/',login_required(apis.AddCatalogApi.as_view()),name="add_catalog"),
     path('catalog/<int:pk>/',login_required(views.CatalogView.as_view()),name="catalog"), 
 

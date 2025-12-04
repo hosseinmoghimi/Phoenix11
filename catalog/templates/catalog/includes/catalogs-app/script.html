@@ -1,10 +1,10 @@
 <script>
     
-    let sample_classes_for_sample_classes_app=JSON.parse("{{sample_classes_s|escapejs}}")
-    let sample_classes_app = new Vue({
-        el: "#cataloges-app",
+    let catalogs_for_catalogs_app=JSON.parse("{{catalogs_s|escapejs}}")
+    let catalogs_app = new Vue({
+        el: "#catalogs-app",
         data: {
-            sample_classes: sample_classes_for_sample_classes_app
+            catalogs: catalogs_for_catalogs_app
         },
         methods: {
             to_price: function(vall) { 

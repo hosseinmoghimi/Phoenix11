@@ -1,18 +1,18 @@
-<div id="accordion-sample-classes" class="rtl text-right farsi">
-  <div class="card" id="sample_classes-app">
+<div id="accordion-catalogs" class="rtl text-right farsi">
+  <div class="card" id="catalogs-app">
     <div class="card-header">
       <h5 class="text-center">
         <button
           class="btn btn-link"
           data-toggle="collapse"
-          data-target="#collapse-sample-classes"
+          data-target="#collapse-catalogs"
           aria-expanded="true"
-          aria-controls="collapse-sample-classes"
+          aria-controls="collapse-catalogs"
         >
-          کلاس های نمونه
-          <span v-if="sample_classes.length>0">
+          کاتالوگ ها
+          <span v-if="catalogs.length>0">
             <small class="text-danger mx-2">
-              <span v-text="sample_classes.length"></span>
+              <span v-text="catalogs.length"></span>
             </small>
           </span>
         </button>
@@ -20,42 +20,42 @@
     </div>
 
     <div
-      id="collapse-sample-classes"
-      class="collapse {% if expand_sample_classes %} show {% endif %}"
-      aria-labelledby="heading-sample-classes"
-      data-parent="#accordion-sample-classes"
+      id="collapse-catalogs"
+      class="collapse {% if expand_catalogs %} show {% endif %}"
+      aria-labelledby="heading-catalogs"
+      data-parent="#accordion-catalogs"
     >
       <div class="card-body">
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
-              <th>کلاس نمونه</th>
+              <th>کاتالوگ</th>
 
               <th></th>
             </thead>
             <tbody>
-              <tr v-for="sample_class in sample_classes">
+              <tr v-for="catalog in catalogs">
                 <td>
-                  <a :href="sample_class.get_absolute_url">
-                    <span v-text="sample_class.person.full_name"></span>
+                  <a :href="catalog.get_absolute_url">
+                    <span v-text="catalog.title"></span>
                   </a>
                 </td>
 
                 <td>
-                  {% if perms.sample_app.change_sampleclass %}
+                  {% if perms.catalog.change_catalog %}
                   <a
                     target="_blank"
-                    :href="sample_class.get_edit_url"
+                    :href="catalog.get_edit_url"
                     title="ویرایش"
                     class="text-warning mx-2"
                   >
                     <i class="fa fa-edit text-warning"> </i>
                     ویرایش
                   </a>
-                  {% endif %} {% if perms.sample_app.delete_sampleclass %}
+                  {% endif %} {% if perms.catalog.delete_catalog %}
                   <a
                     target="_blank"
-                    :href="sample_class.get_delete_url"
+                    :href="catalog.get_delete_url"
                     title="حذف"
                     class="text-danger mx-2"
                   >
