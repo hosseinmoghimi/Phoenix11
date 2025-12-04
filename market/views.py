@@ -207,10 +207,37 @@ class MenuView(View):
         shops=menu.shops.all()
         shops_s=json.dumps(ShopSerializer(shops,many=True).data)
         context['shops_s']=shops_s
- 
+
+
+        from .serializers import MenuItemSerializer,MenuItem
+        menu_items=[]
+        cart_item_repo=CartItemRepo(request=request)
+        me_customer=CustomerRepo(request=request).me
+        if me_customer is not None:
+            cart_items=cart_item_repo.list(customer_id=me_customer.id)
+            pass
+        else:
+            cart_items=None
+
+        for shop in shops:
+            in_cart=0
+            menu_item=MenuItem()
+            menu_item.shop=shop
+            menu_item.in_cart=in_cart
+            if cart_items is not None:
+                for cart_item in cart_items.filter(shop_id=shop.id):
+                    print(cart_item)
+                    in_cart=cart_item.quantity
+                    menu_item.in_cart=in_cart
+            menu_items.append(menu_item)
+
+
+        menu_items_s=json.dumps(MenuItemSerializer(menu_items,many=True).data)
+        context['menu_items_s']=menu_items_s
+
         context[WIDE_LAYOUT]=True
-        context['NOT_NAVBAR']=True
-        context['NOT_FOOTER']=True
+        # context['NOT_NAVBAR']=True
+        # context['NOT_FOOTER']=True
         return render(request,TEMPLATE_ROOT+"menu.html",context) 
     
     

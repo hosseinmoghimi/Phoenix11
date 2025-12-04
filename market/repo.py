@@ -524,11 +524,7 @@ class CartItemRepo():
         #     self.me=self.objects.filter(profile=profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects
-        pure_code="876454453342236"
-        try:
-            pure_code=int(kwargs["search_for"]) 
-        except:
-            pass
+        
         if "search_for" in kwargs:
             search_for=kwargs["search_for"]
             objects=objects.filter(Q(name__contains=search_for) | Q(code=search_for) | Q(pure_code=pure_code ) )
@@ -570,15 +566,17 @@ class CartItemRepo():
          
         if 'quantity' in kwargs:
             quantity=kwargs["quantity"] 
+
             if quantity is None:
                 quantity=1
+        leolog(quantity=quantity)
 
         cart_item=CartItem.objects.filter(shop_id=shop_id).filter(customer_id=me_customer.id).first()
         if cart_item is None:
             cart_item=CartItem(customer_id=me_customer.id,quantity=0) 
 
         cart_item.shop_id=shop_id
-        cart_item.quantity+=quantity
+        cart_item.quantity=quantity
         (result,message,cart_item)=cart_item.save() 
         cart_items=CartItem.objects.filter(customer_id=me_customer.id)
 

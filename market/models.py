@@ -222,10 +222,15 @@ class DeskCustomer(Customer):
         verbose_name = _("DeskCustomer")
         verbose_name_plural = _("DeskCustomers")  
 
- 
 
+class MenuItem(models.Model):
+    shop=models.ForeignKey("shop", verbose_name=_("shop"), on_delete=models.CASCADE)
+    in_cart=models.IntegerField(_("in_cart"),default=0)
 
-
+     
+    class Meta:
+        verbose_name = _("MenuItem")
+        verbose_name_plural = _("MenuItems")  
 
 
 
