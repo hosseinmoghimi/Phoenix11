@@ -569,7 +569,6 @@ class CartItemRepo():
 
             if quantity is None:
                 quantity=1
-        leolog(quantity=quantity)
 
         cart_item=CartItem.objects.filter(shop_id=shop_id).filter(customer_id=me_customer.id).first()
         if cart_item is None:

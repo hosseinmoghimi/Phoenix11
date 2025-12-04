@@ -226,7 +226,6 @@ class MenuView(View):
             menu_item.in_cart=in_cart
             if cart_items is not None:
                 for cart_item in cart_items.filter(shop_id=shop.id):
-                    print(cart_item)
                     in_cart=cart_item.quantity
                     menu_item.in_cart=in_cart
             menu_items.append(menu_item)
