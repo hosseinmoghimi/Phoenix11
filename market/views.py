@@ -296,6 +296,13 @@ class SupplierView(View):
         context['person']=supplier.person_account.person
         context['account']=supplier.person_account
 
+
+
+        menus =supplier.menu_set.all()
+        context['menus']=menus
+        menus_s=json.dumps(MenuSerializer(menus,many=True).data)
+        context['menus_s']=menus_s
+
         
         shops=ShopRepo(request=request).list(supplier_id=supplier.id)
         shops_s=json.dumps(ShopSerializer(shops,many=True).data)

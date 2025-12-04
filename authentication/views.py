@@ -160,6 +160,42 @@ class PersonView(View):
                 context['types2_for_edit_person_app']=(i[0] for i in PersonType2Enum.choices)
 
         return render(request,TEMPLATE_ROOT+"person.html",context)
+    
+class RegisterView(View):
+    def get(self,request,*args, **kwargs): 
+        messages=[]
+        if 'messages' in kwargs:
+            messages=kwargs['messages']
+        context=getContext(request=request)
+        context['register_form_header_image']=PictureRepo(request=request,app_name=APP_NAME).picture(name="تصویر ثبت نام")
+        context['messages']=messages
+        
+
+        PersonRepo(request=request).logout(request)
+        context['register_form']=RegisterForm() 
+         
+        return render(request,TEMPLATE_ROOT+"register.html",context)
+     
+    def post(self,request,*args, **kwargs):
+        next=SITE_URL
+
+        messages=[]
+        login_form=LoginForm(request.POST)
+        next=request.POST['next']
+        if login_form.is_valid():
+            username=login_form.cleaned_data['username']
+            password=login_form.cleaned_data['password']
+            if 'next' in login_form.cleaned_data:
+                next=login_form.cleaned_data['next']
+            
+            a=PersonRepo(request=request).login(request=request,username=username,password=password)
+            if a is not None:
+                (request,user)=a
+                return HttpResponseRedirect(next)
+            messages.append("نام کاربری و کلمه عبور صحیح نمی باشد.")
+        return self.get(request=request,messages=messages)
+            
+
  
  
 class LoginView(View):

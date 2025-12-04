@@ -8,6 +8,12 @@ class ChangePersonImageForm(forms.Form):
     person_id=forms.IntegerField(required=False)
 
   
+class RegisterForm(forms.Form):
+    username=forms.CharField(max_length=50,required=True)
+    password=forms.CharField(max_length=50,required=True)
+    first_name=forms.CharField(max_length=50,required=True)
+    last_name=forms.CharField(max_length=50,required=True)
+    mobile=forms.CharField(max_length=50,required=True)
 
 class SelectUserForm(forms.Form):
     user_id=forms.IntegerField(required=False)
