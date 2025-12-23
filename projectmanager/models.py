@@ -58,9 +58,7 @@ class Project(Event,LinkHelper,DateHelper):
         if self.parent is None:
             return None
         return Project.objects.filter(pk=self.parent_id).first()
-    @property    
-    def childs(self):
-        return self.children
+     
     
     @property    
     def total_price(self):
@@ -75,7 +73,9 @@ class Project(Event,LinkHelper,DateHelper):
             for inv in proj.invoices.all():
                 invoice_ids.append(inv.id) 
         return Invoice.objects.filter(id__in=invoice_ids)
-    
+    def all_sub_projects(self):
+        ids=self.all_sub_ids(same_class=True,my_id=True)
+        return Project.objects.filter(id__in=ids)
     def all_invocie_lines(self):
         ids=self.all_sub_ids(same_class=True,my_id=True)
          
