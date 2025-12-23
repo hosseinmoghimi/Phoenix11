@@ -61,7 +61,7 @@ def ProjectContext(request,project,*args, **kwargs):
     project_s=json.dumps(ProjectSerializer(project).data)
 
 
-    projects=project.childs.all().order_by('priority')
+    projects=project.children.filter(class_name=project.class_name).order_by('priority')
     context['projects']=projects
     projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
     context['projects_s']=projects_s
