@@ -5,7 +5,6 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
- 
 DB_PREFIX_NAME='dikoo24ir'
 
 CURRENCY='ریال'
