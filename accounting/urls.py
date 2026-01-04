@@ -134,6 +134,8 @@ urlpatterns = [
     path("make-financial-event-draft/",login_required(views.MakeFinancialEventDraftView.as_view()),name="make_financial_event_draft"),
       
     path("financial-events/",login_required(views.FinancialEventsView.as_view()),name="financial_events"),
+    path("new-financial-events/",login_required(views.NewFinancialEventView.as_view()),name="new_financial_event"),
+    
     path("financial-event/<int:pk>/",login_required(views.FinancialEventView.as_view()),name="financialevent"),
     path("add-financial-event/",login_required(apis.AddFinancialEventApi.as_view()),name="add_financial_event"),
     path("select-financial-event/",login_required(apis.SelectFinancialEventApi.as_view()),name="select_financial_event"),
