@@ -1404,6 +1404,7 @@ class NewFinancialEventView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request) 
         context['WIDE_LAYOUT']=False
+        context['expand_add_financial_event']=True
         if request.user.has_perm(APP_NAME+'.add_financialevnt'):
             context.update(AddFinancialEventContext(request=request))
         return render(request,TEMPLATE_ROOT+"new-financial-event.html",context)
