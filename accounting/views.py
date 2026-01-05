@@ -501,6 +501,14 @@ def SearchContext(request,search_for,*args, **kwargs):
         WAS_FOUND=True
 
 
+
+    financial_document_lines=FinancialDocumentLineRepo(request=request).list(search_for=search_for)
+    if len(financial_document_lines)>0:
+        context['financial_document_lines']=financial_document_lines
+        context['financial_document_lines_s']=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
+        WAS_FOUND=True
+
+
         
 
     persons=PersonRepo(request=request).list(search_for=search_for)
@@ -712,6 +720,21 @@ class TreeListView(View):
         context['accounts']=accounts
         context[WIDE_LAYOUT]=True
         return render(request,TEMPLATE_ROOT+"tree-list.html",context) 
+
+
+class FinancialDocumentLinesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        financial_document_lines=FinancialDocumentLineRepo(request=request).list(*args, **kwargs)
+
+        context['financial_document_lines']=financial_document_lines
+        financial_document_lines_s=json.dumps(FinancialDocumentLineSerializer(financial_document_lines,many=True).data)
+        context['financial_document_lines_s']=financial_document_lines_s
+        context['print_financial_document_lines_form']=PrintFinancialDocumentLinesForm()
+        context['expand_financial_document_lines']=True
+        context['WIDE_LAYOUT']=True
+
+        return render(request,TEMPLATE_ROOT+"financial-document-lines.html",context)
 
 
 class FinancialDocumentView(View):

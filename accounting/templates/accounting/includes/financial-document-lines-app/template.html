@@ -18,28 +18,57 @@
         >
           ریز اسناد حسابداری
 
+          
+         
+          <span v-if="financial_document_lines.length>0">
+
           <span
             v-if="total.bestankar>total.bedehkar"
             class="badge badge-success"
           >
-            <span v-text="to_price(total.bestankar-total.bedehkar)"> </span>
-            بستانکار
+           <span>
+            <span v-text="financial_document_lines.length"> </span>
+            سطر
+          </span>
+          {% if not search_for %}
+            
+          <span v-text="to_price(total.bestankar-total.bedehkar)"> </span>
+          ریال
+          بستانکار
+          {% endif %}
           </span>
 
           <span
             v-if="total.bedehkar>total.bestankar"
             class="badge badge-danger"
           >
+           <span>
+            <span v-text="financial_document_lines.length"> </span>
+            سطر
+          </span>
+          
+            {% if not search_for %}
+              
+
             <span v-text="to_price(total.bedehkar-total.bestankar)"> </span>
+            ریال 
             بدهکار
+            {% endif %}
           </span>
 
           <span
             v-if="total.bedehkar==total.bestankar"
             class="badge badge-primary"
           >
+           <span>
+            <span v-text="financial_document_lines.length"> </span>
+            سطر
+          </span>
             تراز
           </span>
+            
+          </span>
+
         </button>
     </h5>
     </div>

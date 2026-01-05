@@ -2234,7 +2234,7 @@ class FinancialDocumentLineRepo:
             id__in=kwargs["id__in"]
             objects=objects.filter(id__in=id__in) 
         if "search_for" in kwargs and kwargs["search_for"] is not None and len(kwargs["search_for"])>0 :
-            objects=objects.filter(Q(title__contains=kwargs['search_for'])|Q(event__title__contains=kwargs['search_for']) )
+            objects=objects.filter(Q(title__contains=kwargs['search_for'])|Q(financial_event__title__contains=kwargs['search_for']) )
         if "amount" in kwargs and kwargs["amount"] is not None and kwargs["amount"]>0 :
             objects=objects.filter(Q(bedehkar=kwargs['amount']) | Q(bestankar=kwargs['amount']) )
 

@@ -57,6 +57,7 @@ urlpatterns = [
     path("select-financial-document/",login_required(apis.SelectFinancialDocumentApi.as_view()),name="select_financial_document"),
     path("edit-financial-document/",login_required(apis.EditFinancialDocumentApi.as_view()),name="edit_financial_document"),
     
+    path('financial-document-lines/',login_required(views.FinancialDocumentLinesView.as_view()),name="financial_document_lines"),
     path('financial-document-lines-print/',login_required(views.FinancialDocumentLinesPrintView.as_view()),name="financial_document_lines_print"),
     path('financial-document-line/<int:pk>/',login_required(views.FinancialDocumentLineView.as_view()),name="financialdocumentline"),
     path('add-financial-document-line/',login_required(apis.AddFinancialDocumentLineApi.as_view()),name="add_financial_document_line"),

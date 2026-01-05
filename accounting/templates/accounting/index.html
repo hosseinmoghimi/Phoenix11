@@ -154,6 +154,17 @@
       <h6 class="text-center">اسناد مالی</h6>
     </a>
   </div>
+  <div class="col-6 col-md-3 col-lg-2 text-center my-3">
+    <a href="{% url 'accounting:financial_document_lines' %}">
+      <img
+        src="{% static 'accounting/img/financialdocument.png' %}"
+        width="64em"
+        class="mb-2"
+        alt=""
+      />
+      <h6 class="text-center">سطر های اسناد مالی</h6>
+    </a>
+  </div>
 
   <div class="col-6 col-md-3 col-lg-2 text-center my-3">
     <a href="{% url 'accounting:financial_years'  %}">
