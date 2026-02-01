@@ -50,7 +50,7 @@
 
                   {% if not invoice_line_item %}
                     <td class="bordered farsi text-right">
-                      <a :href="invoice_line.invoice_line_item.get_absolute_url">
+                      <a :title="invoice_line.description" :href="invoice_line.invoice_line_item.get_absolute_url">
                         <div class="media text-right farsi">
                           <img width="48" class="rounded" :src="invoice_line.invoice_line_item.thumbnail" alt="" />
                           <div class="media-body mr-2">
