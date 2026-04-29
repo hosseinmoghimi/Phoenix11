@@ -4,4 +4,4 @@ from .models import Food,FoodItem,Meal,MealItem
 admin.site.register(Food)
 admin.site.register(FoodItem)
 admin.site.register(Meal)
-admin.site.register(MealItem)
+admin.site.register(MealItem) 
