@@ -90,7 +90,7 @@
           if (data.result === "SUCCEED") {
             if (typeof persons_app != "undefined") {
               persons_app.persons.push(data.person);
-              show_message(add_person_app,"موفق",data.message,'success',10000)
+              show_message(add_person_app,"موفق",data.message+`<a href="${data.person.get_absolute_url}"><h5>${data.person.full_name}</h5></a>`,'success',10000)
             }
           }else{
             show_message(add_person_app,"خطا",data.message,'danger',10000)
