@@ -297,8 +297,15 @@ class ComingSoonView(View):
         context['NOT_FOOTER']=True
         context['NOT_NAVBAR']=True
         context['WIDE_LAYOUT']=True
+        parameter_repo=ParameterRepo(request=request,app_name=APP_NAME)
+        coming_soon_title=parameter_repo.parameter(name="عنوان بزودی").value
+        coming_soon_subtitle=parameter_repo.parameter(name="زیرعنوان بزودی").value
+        coming_soon_text=parameter_repo.parameter(name="متن بزودی").value
+        context['coming_soon_title']=coming_soon_title
+        context['coming_soon_subtitle']=coming_soon_subtitle
+        context['coming_soon_text']=coming_soon_text
         coming_soon_picture=PictureRepo(request=request,app_name=APP_NAME).picture(name='coming_soon')
         context['coming_soon_picture']=coming_soon_picture
         context['LAYOUT_PARENT']=LAYOUT_PARENT
-        return render(request,TEMPLATE_ROOT+"coming-soon.html",context)
+        return render(request,"comingsoon/index.html",context)
  
