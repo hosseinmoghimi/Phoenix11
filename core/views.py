@@ -290,3 +290,15 @@ class IndexView(View):
         context['phoenix_apps']=phoenix_apps
         return render(request,TEMPLATE_ROOT+"index.html",context)
  
+class ComingSoonView(View):
+    def get(self,request,*args, **kwargs):
+        context={}
+        context['name3']="name 3333"
+        context['NOT_FOOTER']=True
+        context['NOT_NAVBAR']=True
+        context['WIDE_LAYOUT']=True
+        coming_soon_picture=PictureRepo(request=request,app_name=APP_NAME).picture(name='coming_soon')
+        context['coming_soon_picture']=coming_soon_picture
+        context['LAYOUT_PARENT']=LAYOUT_PARENT
+        return render(request,TEMPLATE_ROOT+"coming-soon.html",context)
+ 

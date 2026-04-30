@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'archive',
     'health',
     'messenger',
+    'cafe',
     'bms',
     'resume',
     'tax',
@@ -78,6 +79,7 @@ INSTALLED_APPS = [
 
 TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'en-us'
+COMING_SOON =True
 
 
 

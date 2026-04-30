@@ -7,6 +7,7 @@ urlpatterns = [
     
     path('',login_required(views.IndexView.as_view()),name="index"),
     path('settings/',login_required(views.IndexView.as_view()),name="settings"),
+    path('coming-soon/',login_required(views.ComingSoonView.as_view()),name="comingsoon"),
     path('search/',login_required(views.SearchView.as_view()),name="search"),
     path('toggle-like/',apis.TogglePageLikeApi.as_view(),name="toggle_like"),
     path('page/<int:pk>/',views.PageView.as_view(),name="page"),

@@ -27,5 +27,6 @@ phoenix_apps=[
     {'priority':3,'name':'scheduler','url':SITE_URL+'scheduler/','title':'برنامه ریز','logo':STATIC_URL+'scheduler'+'/img/'+'logo.png','color':'warning','on_nav':True,'on_index':True,},
     {'priority':3,'name':'polls','url':SITE_URL+'polls/','title':'نظر سنجی','logo':STATIC_URL+'polls'+'/img/'+'logo.png','color':'warning','on_nav':True,'on_index':True,},
     {'priority':3,'name':'catalog','url':SITE_URL+'catalog/','title':'کاتالوگ','logo':STATIC_URL+'catalog'+'/img/'+'logo.png','color':'warning','on_nav':True,'on_index':True,},
+    {'priority':0,'name':'cafe','url':SITE_URL+'cafe/','title':'کافه','logo':STATIC_URL+'cafe'+'/img/'+'logo.png','color':'warning','on_nav':True,'on_index':True,},
 
 ]

@@ -12,6 +12,7 @@ PUSHER_IS_ENABLE=server_settings.PUSHER_IS_ENABLE
 DB_PREFIX_NAME=server_settings.DB_PREFIX_NAME
 TEMPORARY_ROOT=server_settings.TEMPORARY_ROOT
 DB_FILE_PATH=server_settings.DB_FILE_PATH
+COMING_SOON=server_settings.COMING_SOON
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
