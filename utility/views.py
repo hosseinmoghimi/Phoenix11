@@ -194,6 +194,15 @@ class MessageView(View):
     def response(self,request,*args,**kwargs):
         return self.get(request,*args,**kwargs)
 
+class PicturesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['WIDE_LAYOUT']=True
+        context['phoenix_apps']=phoenix_apps
+ 
+        return render(request,TEMPLATE_ROOT+"pictures.html",context) 
+
+ 
 
 class ParametersView(View):
     def get(self,request,*args, **kwargs):

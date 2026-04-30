@@ -1,9 +1,15 @@
 from rest_framework import serializers
-from .models import  Parameter,MyLink
+from .models import  Parameter,MyLink,Picture
 from attachments.serializer import PersonSerializer,LinkSerializer
 
 
 
+class PictureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Picture
+        fields=['id','name','app_name','image','get_edit_url','get_delete_url']
+
+ 
  
 class ParameterSerializer(serializers.ModelSerializer):
     class Meta:

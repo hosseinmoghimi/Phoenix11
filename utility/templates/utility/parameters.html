@@ -1,14 +1,14 @@
 {% extends "utility/layout.html" %} {% block content %}
-<div class="row rtl" id="parameters-app">
+<div class="row rtl">
   <div class="col-md-3">
-    <div class="card">
+    <div class="card" id="select-app">
       <div class="card-header">انتخاب اپ</div>
       <div class="card-body">
         {% for phoenix_app in phoenix_apps %}
         <div class="my-2">
           <button
             class="btn btn-block btn-{{phoenix_app.color}}"
-            @click="get_parameters('{{phoenix_app.name}}','{{phoenix_app.url}}','{{phoenix_app.title}}','{{phoenix_app.color}}')"
+            @click="get_parameters_and_pictures('{{phoenix_app.name}}','{{phoenix_app.url}}','{{phoenix_app.title}}','{{phoenix_app.color}}')"
           >
             {{phoenix_app.title}}
           </button>
@@ -18,8 +18,8 @@
     </div>
   </div>
 
-  <div class="col-md-9">
-    <div class="card">
+  <div class="col-md-9"  >
+    <div class="card"  id="parameters-app">
       <div class="card-header">پارامتر ها</div>
       <div class="card-body">
         <div v-show="app.title">
@@ -73,6 +73,30 @@
         </div>
       </div>
     </div>
+
+     <div class="card"  id="pictures-app">
+      <div class="card-header">تصویر ها</div>
+      <div class="card-body">
+         
+<div class="row">
+
+  <div class="col-4" v-for="picture in pictures">
+    <a :href="picture.get_edit_url">
+    
+    <img :src="picture.image" width="90%" alt="">
+    </a>
+
+    <a :href="picture.get_edit_url">
+      <h6 class="text-center" v-text="picture.name"></h6>
+    </a>
+  </div>
+  
+</div>
+        
+       
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -125,23 +149,6 @@
       parameter_component,
     },
     methods: {
-      get_parameters: function (app_name, app_url, app_title, app_color) {
-        this.app_name = app_name;
-        let payload = {
-          csrfmiddlewaretoken: csrfmiddlewaretoken,
-          app_name: app_name,
-        };
-        let url = "{% url 'utility:get_parameters' %}";
-        console.log(payload);
-        let posting = $.post(url, payload);
-        posting.done((data) => {
-          console.log(data);
-          parameters_app.parameters = data.parameters;
-          parameters_app.app.url = app_url;
-          parameters_app.app.title = app_title;
-          parameters_app.app.color = app_color;
-        });
-      },
       add_parameter: function () {
         let payload = {
           csrfmiddlewaretoken: csrfmiddlewaretoken,
@@ -161,5 +168,43 @@
       },
     },
   });
+let pictures_app = new Vue({
+    el: "#pictures-app",
+    data: {
+      pictures: [],   
+    },
+     
+    methods: {
+      },
+  });
+let select_app=new Vue({
+  el:"#select-app",
+  methods:{
+get_parameters_and_pictures: function (app_name, app_url, app_title, app_color) {
+        this.app_name = app_name;
+        let payload = {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+          app_name: app_name,
+        };
+        let url = "{% url 'utility:get_parameters_and_pictures' %}";
+        console.log(payload);
+        let posting = $.post(url, payload);
+        posting.done((data) => {
+          console.log(data);
+          if(typeof pictures_app != 'undefined'){
+            
+            pictures_app.pictures = data.pictures;
+          }
+          if(typeof parameters_app != 'undefined'){
+            parameters_app.parameters = data.parameters;
+            parameters_app.app.url = app_url;
+            parameters_app.app.title = app_title;
+            parameters_app.app.color = app_color;
+          }
+        });
+      },
+      
+  },
+})
 </script>
 {% endblock script %}

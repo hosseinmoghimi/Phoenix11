@@ -1,8 +1,8 @@
-from .serializers import ParameterSerializer,MyLinkSerializer
+from .serializers import ParameterSerializer,MyLinkSerializer,PictureSerializer
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
-from .repo import ParameterRepo,ClipBoardItemRepo,MyLinkRepo
+from .repo import ParameterRepo,ClipBoardItemRepo,MyLinkRepo,PictureRepo
 from utility.constants import SUCCEED, FAILED
 from utility.utils import str_to_html
  
@@ -152,6 +152,32 @@ class GetParametersApi(APIView):
                 parameters=ParameterRepo(request=request,app_name=app_name).list()
                 parameters=ParameterSerializer(parameters,many=True).data
                 context['parameters']=parameters
+                result = SUCCEED
+
+        context['result'] = result
+        context['log'] = log
+        return JsonResponse(context)
+
+
+
+class GetParametersAndPicturesApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        result = FAILED
+        if request.method == 'POST':
+            log =2
+            get_parameters_form = GetParametersForm(request.POST)
+            if get_parameters_form.is_valid():
+                log =3
+                cd=get_parameters_form.cleaned_data
+                app_name = cd['app_name']
+                parameters=ParameterRepo(request=request,app_name=app_name).list()
+                parameters=ParameterSerializer(parameters,many=True).data
+                pictures=PictureRepo(request=request,app_name=app_name).list()
+                pictures=PictureSerializer(pictures,many=True).data
+                context['parameters']=parameters
+                context['pictures']=pictures
                 result = SUCCEED
 
         context['result'] = result
