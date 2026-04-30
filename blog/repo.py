@@ -34,6 +34,11 @@ class BlogRepo():
         if "parent_id" in kwargs:
             parent_id=kwargs["parent_id"]
             objects=objects.filter(parent_id=parent_id)  
+        if "for_home" in kwargs:
+            for_home=kwargs["for_home"]
+            from django.utils import timezone
+            now=timezone.now()
+            objects=objects.filter(for_home=for_home).filter(start_date__lte=now).filter(end_date__gte=now)  
         return objects.all()
         
     def blog(self,*args, **kwargs):

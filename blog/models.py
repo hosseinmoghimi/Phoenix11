@@ -5,8 +5,9 @@ from .apps import APP_NAME
 from accounting.models import FinancialEvent
 
 class Blog(Page):
-
-    
+    for_home=models.BooleanField(_("for home"), default=False)
+    start_date=models.DateTimeField(_("start_date"),null=True,blank=True, auto_now=False, auto_now_add=False)
+    end_date=models.DateTimeField(_("start_date"),null=True,blank=True, auto_now=False, auto_now_add=False)
     app_name=APP_NAME
     class_name="blog"
 

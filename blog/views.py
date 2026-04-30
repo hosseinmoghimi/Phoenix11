@@ -5,14 +5,13 @@ from .serializers import BlogSerializer
 from django.views import View
 from .forms import *
 from .apps import APP_NAME
-from core.views import CoreContext
+from core.views import CoreContext,PageContext
 from phoenix.server_apps import phoenix_apps
 from utility.calendar import PersianCalendar
 import json
 from utility.enums import UnitNameEnum
 from utility.log import leolog
 from accounting.views import AddInvoiceLineContext,InvoiceContext,ProductContext
-LAYOUT_PARENT='phoenix/layout.html'
 TEMPLATE_ROOT='blog/'
 WIDE_LAYOUT="WIDE_LAYOUT"
 NO_FOOTER="NO_FOOTER"
@@ -30,7 +29,8 @@ def getContext(request,*args, **kwargs):
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['name3']="name 3333"
+        blogs=BlogRepo(request=request).list(for_home=True)
+        context['blogs']=blogs
         phoenix_apps=context["phoenix_apps"]
         phoenix_apps=phoenix_apps
         phoenix_apps = sorted(phoenix_apps, key=lambda d: d['priority'])
@@ -59,6 +59,7 @@ class BlogView(View):
         context=getContext(request=request)
         context['name3']="name 3333"
         blog=BlogRepo(request=request).blog(*args, **kwargs)
+        context.update(PageContext(request=request,page=blog))
         context["blog"]=blog
         blog_s=json.dumps(BlogSerializer(blog,many=False).data)
         context["blog_s"]=blog_s
