@@ -300,10 +300,12 @@ class ComingSoonView(View):
         parameter_repo=ParameterRepo(request=request,app_name=APP_NAME)
         coming_soon_title=parameter_repo.parameter(name="عنوان بزودی").value
         coming_soon_subtitle=parameter_repo.parameter(name="زیرعنوان بزودی").value
+        coming_soon_page_title=parameter_repo.parameter(name="عنوان صفحه بزودی").value
         coming_soon_text=parameter_repo.parameter(name="متن بزودی").value
         context['coming_soon_title']=coming_soon_title
         context['coming_soon_subtitle']=coming_soon_subtitle
         context['coming_soon_text']=coming_soon_text
+        context['coming_soon_page_title']=coming_soon_page_title
         coming_soon_picture=PictureRepo(request=request,app_name=APP_NAME).picture(name='coming_soon')
         context['coming_soon_picture']=coming_soon_picture
         context['LAYOUT_PARENT']=LAYOUT_PARENT

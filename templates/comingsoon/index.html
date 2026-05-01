@@ -9,7 +9,8 @@
     <meta name="viewport" content="width=device-width" />
     <link href="{% static 'leo/css/font-farsi.css' %}" rel="stylesheet">
     
-    <title>Sssoon Page </title>
+    <title>
+      {{coming_soon_page_title}} </title>
     
     <link href="/static/comingsoon/css/bootstrap.css" rel="stylesheet" />
 	<link href="/static/comingsoon/css/coming-sssoon.css" rel="stylesheet" />    
@@ -23,7 +24,7 @@
 
 <body>
  
-<div class="main" style="background-image: url('/static/comingsoon/images/default.jpg')">
+<div class="main" style="background-image: url('{{coming_soon_picture.image}}')">
 
 <!--    Change the image source '/images/default.jpg' with your favourite image.     -->
     
@@ -31,9 +32,9 @@
      
 <!--   You can change the black color for the filter with those colors: blue, green, red, orange       -->
 
-    <div class="container">
+    <div class="container  farsi">
         <h1 class="logo cursive farsi">
-          <small>
+          <small style="color: #fff;">
 
             {{coming_soon_title}}
           </small>
@@ -43,23 +44,23 @@
         <div class="content">
           {% if coming_soon_subtitle %}
             
-          <h4 class="motto">{{coming_soon_subtitle}}</h4>
+          <h4 class="motto farsi"  style="color: #ccc;">{{coming_soon_subtitle}}</h4>
           {% endif %}
           <div class="subscribe">
             {% if coming_soon_text %}
-            <h5 class="info-text">
+            <h5 class="info-text farsi">
                 
               {{coming_soon_text}}
             </h5>
             {% endif %}
                 <div class="row">
                     <div class="col-md-4 col-md-offset-4 col-sm6-6 col-sm-offset-3 ">
-                        <form class="form-inline" role="form">
+                        <form class="form-inline" style="direction: rtl;" role="form">
                           <div class="form-group">
-                            <label class="sr-only" for="exampleInputEmail2">Email address</label>
-                            <input type="email" class="form-control transparent" placeholder="Your email here...">
+                            <label class="sr-only" for="exampleInputEmail2">آدرس ایمیل</label>
+                            <input type="email" class="form-control transparent" placeholder="آدرس ایمیل ...">
                           </div>
-                          <button type="submit" class="btn btn-danger btn-fill">Notify Me</button>
+                          <button type="submit" class="btn btn-danger btn-fill">اطلاع بده</button>
                         </form>
 
                     </div>
@@ -68,8 +69,9 @@
         </div>
     </div>
     <div class="footer">
-      <div class="container">
-             Made with <i class="fa fa-heart heart"></i> by <a href="http://www.creative-tim.com">Creative Tim</a>. Free download <a href="http://www.creative-tim.com/product/coming-sssoon-page">here.</a>
+      <div class="container text-center farsi"  style="color: #fff;direction: rtl;">
+       
+             طراحی و پیاده سازی <i class="fa fa-heart heart"></i> : <a href="mailto:hossein.moghimi.ce@gmail.com">hossein.moghimi.ce@gmail.com</a> 
       </div>
     </div>
  </div>
