@@ -30,6 +30,7 @@
           <table class="table table-striped">
             <thead> 
               <th>میز</th>
+              <th>کد </th>
               <th>فروشنده</th>
               <th>
 
@@ -44,10 +45,19 @@
                   </a>
  
                 </td>
+
+                
+                <td>
+                  <a :href="desk.get_absolute_url">
+                    <span v-text="desk.code"></span>
+                  </a>
+ 
+                </td>
+
                 <td>
                      
                       <a :href="desk.supplier.get_absolute_url">
-                    <span v-text="desk.supplier.account.full_name"></span>
+                    <span v-text="desk.supplier.full_name"></span>
                   </a>
                 </td>
 

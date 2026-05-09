@@ -1,18 +1,18 @@
 
-{% extends "market/layout.html" %}
+{% extends "cafe/layout.html" %}
 {% load static %}
 {% block content %}
 <div class="row rtl farsi">
     {% if add_desk_form %}
       <div class="col-md-12">
-          {% include "market/includes/add-desk-app/template.html" %}
+          {% include "cafe/includes/add-desk-app/template.html" %}
 
       </div>
     {% endif %}
     <div class="col-md-12">
 
         
-        {% include "market/includes/desks-app/template.html" %}
+        {% include "cafe/includes/desks-app/template.html" %}
     </div>
 
 </div>
@@ -20,8 +20,8 @@
 
 
 {% block script %}
-{% include "market/includes/desks-app/script.html" %}
+{% include "cafe/includes/desks-app/script.html" %}
 {% if add_desk_form %}
-{% include "market/includes/add-desk-app/script.html" %}
+{% include "cafe/includes/add-desk-app/script.html" %}
 {% endif %}
 {% endblock script %}

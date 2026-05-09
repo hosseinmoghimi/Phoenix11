@@ -1,5 +1,5 @@
 from core.serializers import serializers
-from .models import ShopPackage,Shop,Menu,MenuItem,Supplier,Customer,CartItem,Shipper,Desk,DeskCustomer
+from .models import ShopPackage,Shop,Supplier,Customer,CartItem,Shipper 
 from accounting.serializers import Category,Product,AccountBriefSerializer,PersonSerializer,PersonAccountSerializer
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -44,36 +44,6 @@ class ShipperSerializer(serializers.ModelSerializer):
         fields=['id','full_name','person_account', 'get_absolute_url','get_edit_url','get_delete_url']
 
 
-class MenuSerializer(serializers.ModelSerializer):
-    supplier=SupplierSerializer()
-    shops=ShopSerializer(many=True)
-    class Meta:
-        model=Menu
-        fields=['id','title','supplier','shops', 'get_absolute_url', 'get_edit_url','get_delete_url']
-
-
-
-class MenuItemSerializer(serializers.ModelSerializer):
-    shop=ShopSerializer()
-    class Meta:
-        model=MenuItem
-        fields=['id','shop','in_cart']
-
-
-class DeskSerializer(serializers.ModelSerializer):
-    supplier=SupplierSerializer()
-    class Meta:
-        model=Desk 
-        fields=['id','code','title','supplier',  'get_absolute_url', 'get_edit_url','get_delete_url']
- 
-
-class DeskCustomerSerializer(serializers.ModelSerializer):
-    account=AccountBriefSerializer()
-    desk=DeskSerializer()
-    class Meta:
-        model=DeskCustomer 
-        fields=['id','desk','account',  'get_absolute_url', 'get_edit_url','get_delete_url']
- 
 
 class ShopPackageSerializer(serializers.ModelSerializer):
     supplier=SupplierSerializer()

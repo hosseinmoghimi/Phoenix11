@@ -1,9 +1,6 @@
 from django import forms
 
-class AddMenuForm(forms.Form):
-    title=forms.CharField(max_length=100, required=True)
-    supplier_id=forms.IntegerField(required=True)
-    
+
 class AddShopToMenuForm(forms.Form):
     title=forms.CharField(max_length=100, required=True)
     supplier_id=forms.IntegerField(required=True)

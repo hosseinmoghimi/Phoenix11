@@ -1,0 +1,86 @@
+<div id="accordion-add-desk" class="rtl text-right farsi">
+  <div class="card" id="add-desk-app">
+    <div class="card-header">
+      <h5 class="text-center">
+        <button
+          class="btn btn-link"
+          data-toggle="collapse"
+          data-target="#collapse-add-desk"
+          aria-expanded="true"
+          aria-controls="collapse-add-desk"
+        >
+          افزودن میز
+        </button>
+      </h5>
+    </div>
+
+    <div
+      id="collapse-add-desk"
+      class="collapse {% if expand_add_desk %} show {% endif %}"
+      aria-labelledby="heading-add-desk"
+      data-parent="#accordion-add-desk"
+    >
+      <div class="card-body">
+        <form @submit.prevent="add_desk()">
+          <div class="row rtl">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="">عنوان</label>
+                <input
+                  class="form-control"
+                  required
+                  type="text"
+                  v-model="title"
+                  id=""
+                />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="">کد میز</label>
+                <input
+                  class="form-control"
+                  required
+                  type="text"
+                  v-model="code"
+                  id=""
+                />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="">فروشنده</label>
+                <select
+                  v-model="supplier_id"
+                  required
+                  class="form-control"
+                  id=""
+                >
+                  <option
+                    v-for="supplier in suppliers"
+                    :value="supplier.id"
+                    v-text="supplier.full_name"
+                  ></option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <button class="btn btn-success" type="submit">
+                  <i class="fa fa-plus mx-2"></i>
+                  افزودن
+                </button>
+              </div>
+            </div>
+            <div class="col-md-12">
+              {% include "utility/includes/message.html" %}
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

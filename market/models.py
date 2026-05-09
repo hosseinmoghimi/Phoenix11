@@ -171,68 +171,6 @@ class CartItem(models.Model,DateTimeHelper):
         return sum
 
 
-class Menu(CorePage):
-    supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
-    # title=models.CharField(_("title"), max_length=50)
-    shops=models.ManyToManyField("shop", verbose_name=_("shops"),blank=True)
-    
-
-    class Meta:
-        verbose_name = _("Menu")
-        verbose_name_plural = _("Menus")
-    def save(self):
-        (result,message,menu)=FAILED,'',self
-        if self.class_name is None or self.class_name=="":
-            self.class_name="menu"
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
-        super(Menu,self).save()   
-        result=SUCCEED
-        message="آیتم غذایی با موفقیت اضافه شد."
-        return (result,message,menu)
-         
- 
-class Desk(models.Model,LinkHelper):
-    title=models.CharField(_("title"), max_length=50)
-    code=models.CharField(_("code"),null=True,blank=True, max_length=50)
-    supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
-    app_name=APP_NAME
-    class_name='desk'
-
-
-    class Meta:
-        verbose_name = _("Desk")
-        verbose_name_plural = _("Desks")
-    def __str__(self):
-        return self.title
-    def save(self):
-        (result,message,desk)=FAILED,'',self
-         
-        super(Desk,self).save()   
-        result=SUCCEED
-        message="میز با موفقیت اضافه شد."
-        return (result,message,desk)
-
-
-class DeskCustomer(Customer):
-    desk=models.ForeignKey("desk", verbose_name=_("desk"), on_delete=models.CASCADE)
-    class_name="deskcustomer"
-
-    class Meta:
-        verbose_name = _("DeskCustomer")
-        verbose_name_plural = _("DeskCustomers")  
-
-
-class MenuItem(models.Model):
-    shop=models.ForeignKey("shop", verbose_name=_("shop"), on_delete=models.CASCADE)
-    in_cart=models.IntegerField(_("in_cart"),default=0)
-
-     
-    class Meta:
-        verbose_name = _("MenuItem")
-        verbose_name_plural = _("MenuItems")  
-
-
 
 
 

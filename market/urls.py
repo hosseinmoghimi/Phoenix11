@@ -17,17 +17,10 @@ urlpatterns = [
     path("add-shop/",login_required(apis.AddShopApi.as_view()),name="add_shop"),
     path("add-customer/",login_required(apis.AddCustomerApi.as_view()),name="add_customer"),
     path("add-shipper/",login_required(apis.AddShipperApi.as_view()),name="add_shipper"),
-    path('desk-customer/<int:pk>/',login_required(views.ProductView.as_view()),name="deskcustomer"),
     path('shop/<int:pk>/',login_required(views.ProductView.as_view()),name="shop"),
 
     path('category/<int:pk>/',login_required(views.CategoryView.as_view()),name="category"),
     
-    path('menus/',login_required(views.MenusView.as_view()),name="menus"),
-    path('menu/<int:pk>/',login_required(views.MenuView.as_view()),name="menu"),
-    path('desks/',login_required(views.DesksView.as_view()),name="desks"),
-    path('desk/<int:pk>/',login_required(views.DeskView.as_view()),name="desk"),
-    path('desk/<int:desk_id>/menu/<int:menu_id>/',login_required(views.DeskMenuView.as_view()),name="desk-menu"),
-    path('add-menu/',login_required(apis.AddMenuApi.as_view()),name="add_menu"),
     path('add-cart-item/',login_required(apis.AddCartItemApi.as_view()),name="add_cart_item"),
 
     path("change-cart-item/",login_required(apis.ChangeCartItemApi.as_view()),name="change_cart_item"),

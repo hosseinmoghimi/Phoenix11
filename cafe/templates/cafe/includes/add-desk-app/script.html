@@ -1,0 +1,42 @@
+<script>
+    let url_add_desk="{% url 'cafe:add_desk' %}"
+    let suppliers_for_add_desk_app=JSON.parse(`{{suppliers_s|escapejs}}`)
+    let add_desk_app=new Vue({
+        el:"#add-desk-app",
+        data:{
+            title:"",
+            code:"",   
+            supplier_id:0, 
+            suppliers:suppliers_for_add_desk_app,       
+            message:{show:false},    
+        },
+        methods:{
+            add_desk:function(){
+                let payload={
+                    csrfmiddlewaretoken:csrfmiddlewaretoken,
+                    title:add_desk_app.title,
+                    code:(add_desk_app.code),
+                    supplier_id:parseInt(add_desk_app.supplier_id),
+                }
+                console.log(payload)
+                let posting=$.post(url_add_desk,payload)
+                posting.done(data=>{
+                    console.log(data)
+                    if(data.result==='SUCCEED'){
+                        show_message(add_desk_app,'موفق',data.message,'success',5000)
+                        add_desk_app.code=''
+                        // add_desk_app.title=''
+                        if(typeof desks_app != 'undefined'){
+                            desks_app.desks.push(data.desk)
+                        }
+                    }
+
+                     if(data.result!='SUCCEED'){
+                        show_message(add_desk_app,'خطا',data.message,'danger',5000)
+                    }
+                })
+                console.log("add desk")
+            },
+        }
+    })
+</script>

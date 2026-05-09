@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from phoenix.server_settings import DEBUG,ADMIN_URL,MEDIA_URL,SITE_URL,STATIC_URL
 from accounting.views import ProductRepo,PersonAccountRepo,AddPersonAccountContext,PersonAccountSerializer
-from .serializers import CartItemSerializer,ShopPackageSerializer,ProductSerializer,MenuSerializer,SupplierSerializer,ShopSerializer,DeskSerializer,DeskCustomerSerializer
-from .repo import CartItemRepo,ShopPackageRepo,MenuRepo,SupplierRepo,DeskRepo,DeskCustomerRepo,ShopRepo,CustomerRepo,ShipperRepo
+from .serializers import CartItemSerializer,ShopPackageSerializer,ProductSerializer,SupplierSerializer,ShopSerializer
+from .repo import CartItemRepo,ShopPackageRepo,SupplierRepo,ShopRepo,CustomerRepo,ShipperRepo
 from .forms import *
 from .apps import APP_NAME
 from .serializers import ShipperSerializer
@@ -179,66 +179,6 @@ class ProductView(View):
 
         return render(request,TEMPLATE_ROOT+"product.html",context) 
     
-
-class MenusView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        menus =MenuRepo(request=request).list(*args, **kwargs)
-        context['menus']=menus
-        menus_s=json.dumps(MenuSerializer(menus,many=True).data)
-        context['menus_s']=menus_s
- 
-        context[WIDE_LAYOUT]=True
-        if request.user.has_perm(APP_NAME+".add_menu"):
-            context['add_menu_form']=AddMenuForm()
-            suppliers=SupplierRepo(request=request).list()
-            context['suppliers']=suppliers
-        return render(request,TEMPLATE_ROOT+"menus.html",context) 
-    
-
-class MenuView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        menu =MenuRepo(request=request).menu(*args, **kwargs) 
-        context['menu']=menu
-        menu_s=json.dumps(MenuSerializer(menu,many=False).data)
-        context['menu_s']=menu_s
-
-        shops=menu.shops.all()
-        shops_s=json.dumps(ShopSerializer(shops,many=True).data)
-        context['shops_s']=shops_s
-
-
-        from .serializers import MenuItemSerializer,MenuItem
-        menu_items=[]
-        cart_item_repo=CartItemRepo(request=request)
-        me_customer=CustomerRepo(request=request).me
-        if me_customer is not None:
-            cart_items=cart_item_repo.list(customer_id=me_customer.id)
-            pass
-        else:
-            cart_items=None
-
-        for shop in shops:
-            in_cart=0
-            menu_item=MenuItem()
-            menu_item.shop=shop
-            menu_item.in_cart=in_cart
-            if cart_items is not None:
-                for cart_item in cart_items.filter(shop_id=shop.id):
-                    in_cart=cart_item.quantity
-                    menu_item.in_cart=in_cart
-            menu_items.append(menu_item)
-
-
-        menu_items_s=json.dumps(MenuItemSerializer(menu_items,many=True).data)
-        context['menu_items_s']=menu_items_s
-
-        context[WIDE_LAYOUT]=True
-        # context['NOT_NAVBAR']=True
-        # context['NOT_FOOTER']=True
-        return render(request,TEMPLATE_ROOT+"menu.html",context) 
-    
     
 class SuppliersView(View):
     def get(self,request,*args,**kwargs):
@@ -320,66 +260,6 @@ class SupplierView(View):
 
         return render(request,TEMPLATE_ROOT+"supplier.html",context) 
 
-    
-class DeskView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        desk =DeskRepo(request=request).desk(*args, **kwargs)
-        context['desk']=desk
-        
-        menus=desk.supplier.menu_set.all()
-        menus_s=json.dumps(MenuSerializer(menus,many=True).data)
-        context['menus']=menus
-        context['menus_s']=menus_s
- 
-  
-        context['NOT_NAVBAR']=True
-        context['NOT_FOOTER']=True
-        return render(request,TEMPLATE_ROOT+"desk.html",context) 
-    
-    
-class DeskMenuView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        desk =DeskRepo(request=request).desk(*args, **kwargs)
-        menu =MenuRepo(request=request).menu(*args, **kwargs)
-        context['desk']=desk
-        context['menu']=menu
-        
-        
-        desk_customer=DeskCustomerRepo(request=request).desk_customer(desk_id=desk.id)
-        context['desk_customer']=desk_customer
-
-        desk_customer_s=json.dumps(DeskCustomerSerializer(desk_customer,many=False).data)
-        menu_s=json.dumps(MenuSerializer(menu,many=False).data)
-        context['desk_customer_s']=desk_customer_s
-        context['menu_s']=menu_s
-
-
-  
-        shops=menu.shops.all()
-        shops_s=json.dumps(ShopSerializer(shops,many=True).data)
-        
-        
-        context['shops_s']=shops_s
- 
-        context['NOT_NAVBAR']=True
-        context['NOT_FOOTER']=True
-        return render(request,TEMPLATE_ROOT+"desk-menu.html",context) 
-
-    
-class DesksView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        desks =DeskRepo(request=request).list(*args, **kwargs)
-        context['desks']=desks
-        
-        desks_s=json.dumps(DeskSerializer(desks,many=True).data)
-        context['desks_s']=desks_s
- 
- 
-        return render(request,TEMPLATE_ROOT+"desks.html",context) 
-    
     
 class ShippersView(View):
     def get(self,request,*args, **kwargs):
