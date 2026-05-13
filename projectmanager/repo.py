@@ -122,6 +122,7 @@ class ProjectRepo():
             if request.user.has_perm(APP_NAME+".view_project"):
                 self.objects=Project.objects
                 self.my_accounts=self.objects 
+    
     def list(self,*args, **kwargs):
         objects=self.objects
         if "search_for" in kwargs:
@@ -262,6 +263,17 @@ class ProjectRepo():
         if project is None or invoice is None:
             message='داده های مرتبط یافت نشد.'
             return FAILED,message,None
+        old=project.invoices.filter(pk=invoice.id).first()
+        leolog(old=old,pk=invoice.id)
+        if old is not None:
+            project.invoices.remove(invoice)
+            project.save() 
+            result=SUCCEED
+            message='با موفقیت حذف شد.'
+            return result,message,invoice
+
+
+            
         project.invoices.add(invoice.id) 
         result=SUCCEED
         message='با موفقیت اضافه شد.'
