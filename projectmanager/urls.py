@@ -21,6 +21,7 @@ urlpatterns = [
     path("project_guantt/<int:pk>/",login_required(views.ProjectGuanttView.as_view()),name="project_guantt"),
     path('project/',login_required(views.ProjectView.as_view()),name="project_null"),  
     path('all-projects/',login_required(views.AllProjectsView.as_view()),name="all_projects"),
+    path('normalize-project/',login_required(apis.NormalizeProjectApi.as_view()),name="normalize_project"),  
     path('edit-project/',login_required(apis.EditProjectApi.as_view()),name="edit_project"),  
     path('select-project/',login_required(apis.SelectProjectApi.as_view()),name="select_project"),
     

@@ -269,6 +269,25 @@ class ProjectRepo():
 
 
 
+
+
+    def normalize_project(self,*args, **kwargs):
+        
+        result=FAILED
+        message="خطا در نرمال سازی "
+        project=None
+        if not self.request.user.has_perm(APP_NAME+".change_project"):
+            message="عدم دسترسی مجاز "
+            return result,message,project
+        project=self.project(*args, **kwargs)
+        if project is not None:
+            project.normalize()
+            result=SUCCEED
+            message="با موفقیت نرمال سازی شد"
+            return result,message,project
+
+    
+
     def edit_project(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+".change_project"):
             return None

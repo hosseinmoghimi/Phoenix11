@@ -107,6 +107,27 @@ class EditProjectApi(APIView):
         return JsonResponse(context)
  
  
+class NormalizeProjectApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        if request.method=='POST':
+            log=2
+            result=FAILED
+            message=""
+            normalize_project_form=NormalizeProjectForm(request.POST)
+            if normalize_project_form.is_valid():
+                cd=normalize_project_form.cleaned_data 
+              
+                result,message,project=ProjectRepo(request=request).normalize_project(**cd)
+                if project is not None: 
+                    context['project']=ProjectSerializer(project).data
+        context['result']=result
+        context['message']=message
+        context['log']=log
+        return JsonResponse(context)
+ 
+ 
 class AddRemoteClientApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

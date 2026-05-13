@@ -22,7 +22,7 @@
       data-parent="#accordion-project-edit"
     >
       <div class="card-body">
-        <form @submit.prevent="edit_project()">
+        
           <div class="row">
             <div class="col-12">
               <div class="form-group">
@@ -195,11 +195,23 @@
               <button
                 v-if="!waiting"
                 class="btn btn-success btn-block"
-                type="submit"
+                @click="edit_project()"
               >
                 <i class="material-icons"> check_circle_outline </i>
                 <span class="farsi"> ذخیره تغییرات </span>
               </button>
+
+
+
+               <button
+                v-if="!waiting"
+                class="btn btn-warning btn-block"
+                @click="normalize()"
+              >
+                <i class="material-icons"> check_circle_outline </i>
+                <span class="farsi"> نرمال سازی </span>
+              </button>
+
             </div>
             <div v-if="SUCCEED" class="col-12">
               <div class="alert alert-success my-3 farsi text-right">
@@ -210,8 +222,11 @@
                 </p>
               </div>
             </div>
+            <div class="col-12 my-3">
+              {% include "utility/includes/message.html" %}
+            </div>
           </div>
-        </form>
+         
       </div>
       <!-- <div class="card-footer ">
                 

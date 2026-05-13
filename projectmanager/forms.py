@@ -4,7 +4,10 @@ from core.forms import EditPageForm
 class AddSubProjectForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)
     parent_id=forms.IntegerField(required=True)
-     
+    
+class NormalizeProjectForm(forms.Form):
+    project_id=forms.IntegerField(required=True)
+    
 class AddTicketForm(forms.Form):
     title=forms.CharField(max_length=50,required=True)
     parent_id=forms.IntegerField(required=False)

@@ -102,6 +102,18 @@ class Project(Event,LinkHelper,DateHelper):
                 ids.append(remote_client.id)
         aaa= RemoteClient.objects.filter(pk__in=ids)
         return aaa
+    
+    def normalize(self):
+        
+        for child in self.children.all():
+            child.normalize()
+
+        all_invocie_lines=self.all_invocie_lines()
+        self.amount=0
+        for invocie_line in all_invocie_lines:
+            self.amount+=invocie_line.line_total
+        self.save() 
+        return self
 
 class Ticket(models.Model,DateTimeHelper,LinkHelper):
     parent=models.ForeignKey("ticket",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
