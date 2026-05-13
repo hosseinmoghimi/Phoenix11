@@ -22,29 +22,18 @@
     >
       <div class="card-body">
         <div class="row">
-
+<div class="col-md-12">
+  {% for invoice in project.invoices.all %}
+    <a href="{{invoice.get_absolute_url}}" class="btn btn-info">{{invoice.pk}} - {{invoice.title}} </a>
+  {% endfor %}
+</div>
 
           <div class="col-md-6">
             <div class="form-group">
               <label for="">شماره فاکتور</label>
               <input v-model="invoice_id" type="number" class="form-control" />
             </div>
-          </div>
-
-
-          <div class="col-md-6">
-            
-          </div>
-
-          <div class="col-md-12">
-            <div v-if="message.show">
-              <div :class="'my-2 alert alert-'+message.color">
-                <h5 v-text="message.title"></h5>
-                <div v-html="message.body"></div>
-              </div>
-            </div>
-
-            <button
+              <button
               class="btn btn-success"
               @click="add_invoice_to_project()"
               v-if="!waiting"
@@ -53,6 +42,19 @@
               <i class="fa fa-plus"></i>
               افزودن
             </button>
+          </div>
+
+
+          <div class="col-md-6">
+             
+            <div v-if="message.show">
+              <div :class="'my-2 alert alert-'+message.color">
+                <h5 v-text="message.title"></h5>
+                <div v-html="message.body"></div>
+              </div>
+            </div>
+
+          
           </div>
         </div>
       </div>
