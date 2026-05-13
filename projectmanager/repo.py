@@ -264,7 +264,6 @@ class ProjectRepo():
             message='داده های مرتبط یافت نشد.'
             return FAILED,message,None
         old=project.invoices.filter(pk=invoice.id).first()
-        leolog(old=old,pk=invoice.id)
         if old is not None:
             project.invoices.remove(invoice)
             project.save() 
